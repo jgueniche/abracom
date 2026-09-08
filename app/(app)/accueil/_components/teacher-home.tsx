@@ -6,6 +6,8 @@ import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CurrentUser } from "@/lib/auth/session";
+
+import { UpcomingEvents } from "@/app/(app)/agenda/_components/upcoming-events";
 import { getWeeklySummary } from "@/server/queries/class-space";
 import { getMyTeachingClasses } from "@/server/queries/classes";
 
@@ -63,6 +65,7 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
           })}
         </div>
       )}
+      <UpcomingEvents userId={user.id} />
     </>
   );
 }

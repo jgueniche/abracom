@@ -7,6 +7,8 @@ import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { CurrentUser } from "@/lib/auth/session";
+
+import { UpcomingEvents } from "@/app/(app)/agenda/_components/upcoming-events";
 import { getPendingAcknowledgements } from "@/server/queries/announcements";
 import { getMyChildren } from "@/server/queries/family";
 
@@ -46,6 +48,7 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
           <StudentCard key={child.student.id} child={child} compact />
         ))}
       </div>
+      <UpcomingEvents userId={user.id} />
     </>
   );
 }

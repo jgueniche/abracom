@@ -373,6 +373,16 @@ insert into public.event_slot_signups (slot_id, user_id) values
   (pg_temp.uid('0', 2304 + 1), pg_temp.person_uid('c', 1, 1)),
   (pg_temp.uid('0', 2304 + 2), pg_temp.person_uid('c', 7, 1));
 
+-- School holidays, zone C 2026-2027 (source: data.gouv.fr, « Le calendrier scolaire », ministère de
+-- l'Éducation nationale). All-day events; `ends_at` is the last day off.
+insert into public.events (id, school_id, scope, target_ids, title, description_md, starts_at, ends_at, all_day, kind, created_by) values
+  (pg_temp.uid('0', 2048 + 9), pg_temp.uid('0', 1), 'school', '{}', 'Vacances de la Toussaint', 'Reprise des cours le lundi 2 novembre.', '2026-10-17', '2026-11-01', true, 'holiday', pg_temp.uid('a', 1)),
+  (pg_temp.uid('0', 2048 + 10), pg_temp.uid('0', 1), 'school', '{}', 'Vacances de Noël', 'Reprise des cours le lundi 4 janvier.', '2026-12-19', '2027-01-03', true, 'holiday', pg_temp.uid('a', 1)),
+  (pg_temp.uid('0', 2048 + 11), pg_temp.uid('0', 1), 'school', '{}', 'Vacances d''hiver (zone C)', 'Reprise des cours le lundi 22 février.', '2027-02-06', '2027-02-21', true, 'holiday', pg_temp.uid('a', 1)),
+  (pg_temp.uid('0', 2048 + 12), pg_temp.uid('0', 1), 'school', '{}', 'Vacances de printemps (zone C)', 'Reprise des cours le lundi 19 avril.', '2027-04-03', '2027-04-18', true, 'holiday', pg_temp.uid('a', 1)),
+  (pg_temp.uid('0', 2048 + 13), pg_temp.uid('0', 1), 'school', '{}', 'Pont de l''Ascension', 'Pas de classe le vendredi 7 mai.', '2027-05-07', '2027-05-07', true, 'holiday', pg_temp.uid('a', 1)),
+  (pg_temp.uid('0', 2048 + 14), pg_temp.uid('0', 1), 'school', '{}', 'Vacances d''été', 'Fin des cours le vendredi 2 juillet.', '2027-07-03', '2027-07-06', true, 'holiday', pg_temp.uid('a', 1));
+
 -- documents ------------------------------------------------------------------------
 insert into public.document_folders (id, school_id, name, sort_order) values
   (pg_temp.uid('0', 2560 + 1), pg_temp.uid('0', 1), 'Règlement', 1),

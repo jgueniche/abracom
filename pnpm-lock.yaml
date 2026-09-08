@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@hebcal/core':
+        specifier: ^6.9.2
+        version: 6.9.2
+      '@hebcal/locales':
+        specifier: ^6.5.2
+        version: 6.5.2
       '@supabase/ssr':
         specifier: ^0.12.7
         version: 0.12.7(@supabase/supabase-js@2.116.0)
@@ -701,6 +707,20 @@ packages:
 
   '@formatjs/intl-localematcher@0.8.13':
     resolution: {integrity: sha512-kHEAFOkeJSPNi7c5PaKaRjxcBrJwzzt81ifUu+8uve1EDW/VJl83KsxmqgqNZLzcFEhSliZGvx3+pk/RH0IOmg==}
+
+  '@hebcal/core@6.9.2':
+    resolution: {integrity: sha512-6GNcu3dWPAcngSWC4SB9nZebl99l+x2fN+GFQOrll+CXg+VX9yuXjzv91c9/Q/RF5HaHQwy1GkKTbCvQPPWIbA==}
+    engines: {node: '>= 18'}
+
+  '@hebcal/hdate@0.22.8':
+    resolution: {integrity: sha512-kTGFm9zHbF2qz6/Pst3e8Zr7TWzVLcYCWQLKu1HacDJAocKXITEqMPYS0AJpO2V4YTD26EkWR2BgMYL44Dh39w==}
+
+  '@hebcal/locales@6.5.2':
+    resolution: {integrity: sha512-XsYXmRExW3+U4w+xqvD51Xrh4ai8J6bmZPQFrwizBDUKnHqmJVUgyonxiERArYzXty+vNgUCzNk/oCHpDXLqUQ==}
+
+  '@hebcal/noaa@0.12.3':
+    resolution: {integrity: sha512-CQId2yEpUPGl0EWVxditqkG2MvEd9uKibiQtrcEQux9UnTILTPM6mwyKMTygZmNBwJl1kXqvuPQCJm0NxqLykA==}
+    engines: {node: '>=18'}
 
   '@hono/node-server@2.1.1':
     resolution: {integrity: sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==}
@@ -4604,6 +4624,10 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
+  quick-lru@7.3.0:
+    resolution: {integrity: sha512-k9lSsjl36EJdK7I06v7APZCbyGT2vMTsYSRX1Q2nbYmnkBqgUhRkAuzH08Ciotteu/PLJmIF2+tti7o3C/ts2g==}
+    engines: {node: '>=18'}
+
   radix-ui@1.6.7:
     resolution: {integrity: sha512-QBdhh1arIEUvPC0dQ5+nwWAxt7+N+oP/9jPwjJkGFoSk/sqxg32gJtSXGtFh8frAIcS6oC9cx2Q+7KYCQLOAeA==}
     peerDependencies:
@@ -5030,6 +5054,15 @@ packages:
   tapable@2.3.3:
     resolution: {integrity: sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A==}
     engines: {node: '>=6'}
+
+  temporal-polyfill@1.0.4:
+    resolution: {integrity: sha512-MLEU0qOD2uXlz24oINNtdLZQl8RgmMxSnRtKEGZGGetTJjlRwQJjk+VsJ4EREaUoiaTb8NJOcUiKtoAiWn9EBg==}
+
+  temporal-spec@1.0.1:
+    resolution: {integrity: sha512-wxVoanmDeavXie1vu2JaQ3WIc3JZnWAOYFBsJyATaVsXsycKYUflGsyBmrRSnoCpZJpwPyr38VpgSUlQ8CbFxg==}
+
+  temporal-utils@1.0.2:
+    resolution: {integrity: sha512-1B8Dl4KzrOvsNUlpoWGno2VLQlxroLjDgc5NBjVC9ax9ymdo+ezfyvhyjEMx+IVfhINr6CIG2gcnlP95iRrybQ==}
 
   tiny-invariant@1.3.3:
     resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
@@ -6010,6 +6043,23 @@ snapshots:
   '@formatjs/intl-localematcher@0.8.13':
     dependencies:
       '@formatjs/fast-memoize': 3.1.7
+
+  '@hebcal/core@6.9.2':
+    dependencies:
+      '@hebcal/hdate': 0.22.8
+      '@hebcal/noaa': 0.12.3
+      quick-lru: 7.3.0
+      temporal-polyfill: 1.0.4
+
+  '@hebcal/hdate@0.22.8': {}
+
+  '@hebcal/locales@6.5.2':
+    dependencies:
+      '@hebcal/hdate': 0.22.8
+
+  '@hebcal/noaa@0.12.3':
+    dependencies:
+      temporal-polyfill: 1.0.4
 
   '@hono/node-server@2.1.1(hono@4.13.7)':
     dependencies:
@@ -10009,6 +10059,8 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
+  quick-lru@7.3.0: {}
+
   radix-ui@1.6.7(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@radix-ui/primitive': 1.1.7
@@ -10657,6 +10709,15 @@ snapshots:
   tailwindcss@4.3.3: {}
 
   tapable@2.3.3: {}
+
+  temporal-polyfill@1.0.4:
+    dependencies:
+      temporal-spec: 1.0.1
+      temporal-utils: 1.0.2
+
+  temporal-spec@1.0.1: {}
+
+  temporal-utils@1.0.2: {}
 
   tiny-invariant@1.3.3: {}
 

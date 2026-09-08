@@ -13,7 +13,7 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 | 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | 🟡 code complet, parcours à valider sur une stack Supabase (upload Storage, e-mails)  |
 | 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | 🟡 code complet, upload photos à valider sur une stack Supabase                       |
 | 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | 🟡 code complet, échange à 2 navigateurs (Realtime) à valider sur une stack Supabase  |
-| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | ⬜                                                                                    |
+| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | 🟡 code complet, abonnement ICS à vérifier dans Google Agenda sur une stack Supabase  |
 | 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | ⬜                                                                                    |
 | 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | ⬜                                                                                    |
 | 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | ⬜                                                                                    |
@@ -216,6 +216,36 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
       pgTAP : 81 assertions (membres, modérateurs, DM refusés, guardians exclus)
 - [ ] Valider sur une stack Supabase : échange instantané entre 2 navigateurs, uploads, captures mobile
 - [ ] Notifications push / e-mail des nouveaux messages : session 10 ; indicateur « en train d'écrire » : plus tard
+
+## Session 9 — détail
+
+- [x] `lib/hebcal` (`@hebcal/core` + `@hebcal/locales`, calcul local, cache par année) : fêtes catégorisées
+      (majeure / mineure / moderne / jeûne / veille / h'ol hamoed / **lendemain de fête** / Roch H'odech),
+      allumage des bougies et havdalah aux coordonnées de l'école, parachah de la semaine, date hébraïque,
+      **fenêtres Chabbat / yom tov** (`quietWindows`, `isQuietTime`) prêtes pour le mode Chabbat de la session 10
+- [x] `lib/calendar` : jours fériés français (calcul de Pâques), conversions fuseau (`zonedToUtc`,
+      `utcToZonedNaive`), écriture ICS sans dépendance (pliage à 75 octets, UTC, journées entières)
+- [x] Vacances scolaires zone C 2026-2027 en seed (source data.gouv.fr « Le calendrier scolaire »), en
+      événements `holiday` toute la journée modifiables par la direction
+- [x] `/agenda` : vue par mois (navigation, filtres tout / événements / fêtes), date hébraïque et parachah du
+      jour, badges fêtes / jours fériés / Chabbat, horaires d'allumage, événements multi-jours
+- [x] `/agenda/[id]` : description Markdown, lieu, participation, **RSVP oui / non / peut-être +
+      accompagnants** (fonction SQL `rsvp_event` : date limite, jauge, **liste d'attente promue
+      automatiquement** avec notification), créneaux de bénévolat (capacité en trigger, guardians exclus),
+      liste des réponses et des sans-réponse pour l'équipe
+- [x] `/agenda/nouveau` et `/agenda/[id]/modifier` : modèles prédéfinis (réunion de rentrée, fête de classe,
+      kabbalat Chabbat, Hanoucca, Pourim, Yom Ha'atsmaout, Lag Baomer, kermesse, sortie, photo de classe),
+      audience école / niveau / classe (enseignants : leurs classes uniquement), créneaux, suppression,
+      notification `event.new` à la publication ; `/admin/evenements` pour la direction
+- [x] **Flux ICS privé** par utilisateur (`calendar_feeds`, jeton 48 hex, régénération, fêtes juives et
+      jours fériés optionnels) servi par `/api/calendar/[token]` ; carte d'abonnement (copie, Google Agenda,
+      Apple / Outlook)
+- [x] Rappels J-7 / J-1 (`queue_event_reminders`, idempotent, service role) à planifier en pg_cron (session 10)
+- [x] Widget « Prochains événements » sur les accueils parent et enseignant ; notifications `event.*`
+- [x] Tests : 19 unitaires (hebcal, fériés, ICS, dates), 42 pgTAP (`003_agenda.sql`), e2e agenda
+- [ ] Vérifier sur une stack Supabase : abonnement ICS visible dans Google Agenda (rafraîchissement ~24 h
+      côté Google), notifications de liste d'attente, captures mobile
+- [ ] Événements personnels (par enfant) et export CSV des réponses : plus tard
 
 ## Questions ouvertes (§15 du brief)
 

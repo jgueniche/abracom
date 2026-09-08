@@ -299,7 +299,8 @@
       "audit": "Audit log",
       "announcements": "Announcements",
       "documents": "Documents",
-      "reports": "Reports"
+      "reports": "Reports",
+      "events": "Events"
     },
     "years": {
       "title": "School years",
@@ -547,7 +548,10 @@
     "bell": "Notifications ({count})",
     "kinds": {
       "default": "Notification",
-      "announcementReminder": "Reminder: please read “{title}”"
+      "announcementReminder": "Reminder: please read “{title}”",
+      "eventNew": "New event: {title}",
+      "eventReminder": "{days, plural, =1 {Tomorrow} other {In # days}}: {title}",
+      "eventConfirmed": "A seat freed up: you are registered for “{title}”"
     }
   },
   "adminAnnouncements": {
@@ -878,5 +882,247 @@
     "note": "Closure note",
     "openThread": "Open the conversation",
     "alreadyRemoved": "Message already removed"
+  },
+  "agenda": {
+    "title": "Calendar",
+    "subtitle": "School events, Jewish holidays and the school calendar.",
+    "today": "Today",
+    "hebrewToday": "{date}",
+    "parashaOfWeek": "This week's parasha: {name}",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "empty": "Nothing planned this month.",
+    "new": "New event",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this event? Answers and sign-ups will be lost.",
+    "back": "Back to the calendar",
+    "allDay": "All day",
+    "continued": "(continued)",
+    "shabbat": "Shabbat",
+    "candles": "Candle lighting {time}",
+    "havdalah": "Havdalah {time}",
+    "parasha": "Parashat {name}",
+    "publicHoliday": "Public holiday",
+    "isruChagTitle": "Day after {name}",
+    "filters": {
+      "all": "All",
+      "events": "Events",
+      "holidays": "Holidays and breaks"
+    },
+    "kinds": {
+      "celebration": "Celebration",
+      "outing": "Outing",
+      "meeting": "Meeting",
+      "volunteer": "Volunteering",
+      "holiday": "Break / closure",
+      "other": "Other"
+    },
+    "categories": {
+      "major": "Holiday",
+      "minor": "Minor holiday",
+      "modern": "Modern holiday",
+      "fast": "Fast",
+      "erev": "Eve of holiday",
+      "cholHamoed": "Chol Hamoed",
+      "isruChag": "Day after a holiday",
+      "roshChodesh": "Rosh Chodesh",
+      "special": "Special Shabbat"
+    },
+    "publicHolidays": {
+      "newYear": "New Year's Day",
+      "easterMonday": "Easter Monday",
+      "labourDay": "Labour Day",
+      "victoryDay": "Victory in Europe Day",
+      "ascension": "Ascension Day",
+      "whitMonday": "Whit Monday",
+      "bastilleDay": "Bastille Day",
+      "assumption": "Assumption",
+      "allSaints": "All Saints' Day",
+      "armistice": "Armistice Day",
+      "christmas": "Christmas"
+    },
+    "scope": {
+      "school": "Whole school",
+      "level": "Year group",
+      "class": "Class"
+    },
+    "by": "Organised by {name}",
+    "location": "Location",
+    "cost": "Contribution",
+    "rsvp": {
+      "title": "Your answer",
+      "yes": "I'm coming",
+      "no": "I can't come",
+      "maybe": "Maybe",
+      "guests": "Guests (besides yourself)",
+      "note": "Message for the organiser (optional)",
+      "submit": "Save my answer",
+      "deadline": "Please answer before {date}",
+      "closed": "Registrations are closed.",
+      "saved": "Answer saved.",
+      "waitlisted": "Full: you are on the waiting list. We will let you know if a seat frees up.",
+      "waitlistedBadge": "Waiting list",
+      "confirmedBadge": "Registered",
+      "maybeBadge": "Maybe",
+      "noBadge": "Not coming",
+      "capacity": "{seats} / {capacity} seats",
+      "seats": "{count, plural, =0 {No attendee} one {# attendee} other {# attendees}}",
+      "waiting": "{count, plural, one {# on the waiting list} other {# on the waiting list}}",
+      "invalid": "Invalid answer.",
+      "error": "The answer could not be saved.",
+      "forbidden": "You cannot answer this event.",
+      "readOnly": "Your read-only access does not allow answering."
+    },
+    "slots": {
+      "title": "Volunteering",
+      "needed": "{taken} / {needed}",
+      "join": "Sign me up",
+      "leave": "Withdraw",
+      "full": "Full",
+      "volunteers": "Volunteers",
+      "joined": "Thank you! Your sign-up is saved.",
+      "error": "Sign-up failed.",
+      "forbidden": "You cannot sign up.",
+      "invalid": "Invalid slot.",
+      "note": "Details (optional)"
+    },
+    "attendees": {
+      "title": "Answers received",
+      "summary": "{yes} yes · {maybe} maybe · {no} no · {pending} no answer",
+      "name": "Name",
+      "answer": "Answer",
+      "guests": "Guests",
+      "note": "Message",
+      "pending": "No answer",
+      "showPending": "Show people without an answer ({count})"
+    },
+    "form": {
+      "newTitle": "New event",
+      "editTitle": "Edit event",
+      "template": "Template",
+      "templates": {
+        "none": {
+          "label": "No template"
+        },
+        "backToSchool": {
+          "label": "Back-to-school meeting",
+          "title": "Back-to-school meeting",
+          "kind": "meeting",
+          "body": "Presentation of the year, the team and the educational project.\n\nPlease let us know whether you will attend."
+        },
+        "classParty": {
+          "label": "Class party",
+          "title": "Class party",
+          "kind": "celebration",
+          "body": "Families are invited to share a friendly moment with the class."
+        },
+        "kabbalatShabbat": {
+          "label": "Class Kabbalat Shabbat",
+          "title": "Class Kabbalat Shabbat",
+          "kind": "celebration",
+          "body": "Families are invited to the class Kabbalat Shabbat. Please tell us what you can bring in the slots below."
+        },
+        "chanukah": {
+          "label": "Chanukah",
+          "title": "Chanukah: candle lighting and doughnuts",
+          "kind": "celebration",
+          "body": "Candle lighting with the families, followed by a snack."
+        },
+        "purim": {
+          "label": "Purim",
+          "title": "Purim: costume day",
+          "kind": "celebration",
+          "body": "Children come in costume. Megillah reading and mishloach manot."
+        },
+        "yomHaatzmaut": {
+          "label": "Yom Ha'atzmaut",
+          "title": "Yom Ha'atzmaut",
+          "kind": "celebration",
+          "body": "Yom Ha'atzmaut celebration with the children."
+        },
+        "lagBaomer": {
+          "label": "Lag BaOmer",
+          "title": "Lag BaOmer",
+          "kind": "celebration",
+          "body": "Outdoor games day for Lag BaOmer."
+        },
+        "fair": {
+          "label": "School fair",
+          "title": "School fair",
+          "kind": "volunteer",
+          "body": "End-of-year fair. We need volunteers to run the stalls: sign up in the slots below."
+        },
+        "outing": {
+          "label": "School outing",
+          "title": "School outing",
+          "kind": "outing",
+          "body": "Class outing. The permission slip must be signed in the documents. Chaperones are welcome."
+        },
+        "classPhoto": {
+          "label": "Class photo",
+          "title": "Class photo",
+          "kind": "other",
+          "body": "The photographer comes to school that day. Please mind the children's outfits."
+        }
+      },
+      "title": "Title",
+      "description": "Description",
+      "kind": "Type",
+      "allDay": "All day",
+      "startsAt": "Starts",
+      "endsAt": "Ends",
+      "startDate": "First day",
+      "endDate": "Last day",
+      "location": "Location",
+      "requiresRsvp": "Ask for an answer (RSVP)",
+      "capacity": "Number of seats",
+      "capacityHint": "Beyond that, families are placed on a waiting list.",
+      "rsvpDeadline": "Answer deadline",
+      "costNote": "Financial contribution",
+      "notify": "Notify the families concerned when publishing",
+      "save": "Save",
+      "create": "Publish the event",
+      "saved": "Event saved.",
+      "invalid": "Invalid form.",
+      "targetsRequired": "Choose at least one year group or class.",
+      "classOnly": "Teachers can only create class events.",
+      "invalidDates": "Invalid dates.",
+      "saveError": "The event could not be saved.",
+      "slots": "Volunteer slots",
+      "slotsHint": "E.g. bring fruit, chaperone the outing, prepare the kiddush.",
+      "slotLabel": "Label",
+      "slotNeeded": "People",
+      "addSlot": "Add a slot",
+      "removeSlot": "Remove",
+      "slotAdded": "Slot added.",
+      "noSlots": "No slot yet."
+    },
+    "feed": {
+      "title": "Calendar subscription",
+      "description": "Get the school's events in Google Calendar, Apple Calendar or Outlook. This link is personal: do not share it.",
+      "create": "Create my subscription link",
+      "url": "Feed address",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "google": "Google Calendar",
+      "apple": "Apple / Outlook",
+      "rotate": "Regenerate the link",
+      "rotateHint": "The old link will stop working.",
+      "includeHolidays": "Include Jewish holidays and public holidays",
+      "rotatedOn": "Link created on {date}"
+    },
+    "upcoming": {
+      "title": "Upcoming events",
+      "empty": "No upcoming event.",
+      "seeAll": "Open the calendar"
+    },
+    "admin": {
+      "title": "Events",
+      "subtitle": "Every school event with the answers received.",
+      "answers": "{yes} yes · {maybe} maybe · {no} no",
+      "waiting": "{count} waiting",
+      "noRsvp": "No RSVP"
+    }
   }
 }

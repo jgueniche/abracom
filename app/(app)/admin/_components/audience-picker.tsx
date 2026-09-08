@@ -19,18 +19,21 @@ export function AudiencePicker({
   initialTargets = [],
   locale,
   allowCustom = true,
+  allowed,
 }: {
   options: AudienceOptions;
   initialAudience?: Audience;
   initialTargets?: string[];
   locale: string;
   allowCustom?: boolean;
+  /** Restricts the selectable audiences (e.g. teachers may only target their classes). */
+  allowed?: Audience[];
 }) {
   const t = useTranslations("adminAnnouncements.fields");
   const [audience, setAudience] = useState<Audience>(initialAudience);
-  const kinds: Audience[] = allowCustom
-    ? ["school", "level", "class", "custom"]
-    : ["school", "level", "class"];
+  const kinds: Audience[] =
+    allowed ??
+    (allowCustom ? ["school", "level", "class", "custom"] : ["school", "level", "class"]);
   const labels: Record<Audience, string> = {
     school: t("audienceSchool"),
     level: t("audienceLevel"),

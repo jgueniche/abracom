@@ -113,19 +113,15 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 ## 10. État d'avancement
 
 - **Session 1 — terminée** : bootstrap Next 15.5 + Tailwind v4 + shadcn (preset Nova/Radix) + next-intl
-  - next-themes + zod, clients Supabase, `supabase/config.toml` (projet `kesher`), CI GitHub Actions
-    (lint, types, format, unit, build, e2e), Husky + commitlint, tests unitaires (9) et e2e (8) verts,
-    `vercel.json` (région `cdg1`), projet Vercel `abracom` importé depuis GitHub (production :
-    https://abracom.vercel.app, previews par branche). **Reste** : vérifier `supabase start` sur un poste
-    avec Docker ; créer le projet Supabase cloud `kesher-staging` (UE) avant la session 3.
+  - next-themes + zod, clients Supabase, `supabase/config.toml`, CI GitHub Actions (lint, types, format,
+    unit, build, e2e, database), Husky + commitlint, `vercel.json` (`cdg1`), projet Vercel `abracom`
+    (https://abracom.vercel.app). **Reste** : créer le projet Supabase cloud `kesher-staging` (UE).
 - **Session 2 — terminée (validation visuelle en attente)** : palette dérivée du logo (sarcelle `#01525e`,
-  rouge brique `#852624`, or doux, taupe), tokens clair (papier + sarcelle) / sombre (bleu nuit + sable) dans
-  `app/globals.css`, contraste AA testé, Inter + Fraunces, page `/dev/ui` (dev + preview Vercel), icônes PWA
-  et manifest, `scripts/brand/*` (extraction, contraste, icônes) et `scripts/dev/screenshots.mjs`.
+  rouge brique `#852624`), tokens clair / sombre dans `app/globals.css`, contraste AA testé, Inter + Fraunces,
+  page `/dev/ui`, icônes PWA et manifest, `scripts/brand/*`, `scripts/dev/screenshots.mjs`.
 - **Session 3 — terminée (à rejouer sur Supabase dès disponible)** : 10 migrations, 47 tables, 23 enums,
-  fonctions `can_access_*`, 132 politiques RLS (+ storage), triggers (profil auto, droit à l'image), seed
-  fictif complet (137 comptes, 66 élèves), 53 tests pgTAP verts sur PostgreSQL 16 local et en CI (job
-  `database`), types générés (`pnpm db:types:local`). Voir `supabase/tests/README.md`.
+  fonctions `can_access_*`, 132 politiques RLS (+ storage), triggers, seed fictif (137 comptes, 66 élèves),
+  pgTAP vert sur PostgreSQL 16 local et en CI (job `database`), types générés. Voir `supabase/tests/README.md`.
 - **Session 4 — code complet, validation Supabase en attente** : middleware de session, magic link sans
   inscription libre, callbacks PKCE / token hash, onboarding avec CGU versionnées et activation des
   memberships, `lib/auth` + `lib/permissions`, perspectives multi-rôle, coquille connectée par rôle. Le flux
@@ -133,10 +129,9 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 - **Session 5 — code complet, chronométrage Supabase en attente** : espace `/admin` (familles, classes,
   utilisateurs, années, import CSV testé, journal), comptes créés sans e-mail puis invitations par lots de 20,
   droits par responsable + restriction judiciaire, audit de toutes les actions.
-- **Session 6 — code complet, validation Supabase en attente** : annonces (éditeur Markdown + modèles,
-  ciblage, planification, accusés de lecture, relance en un clic, export CSV, pièces jointes), documents
-  (dossiers, signatures électroniques par famille / enfant, droit à l'image → élève, signatures manquantes),
-  notifications in-app (cloche). 63 assertions pgTAP.
+- **Session 6 — code complet, validation Supabase en attente** : annonces (Markdown + modèles, ciblage,
+  planification, accusés de lecture, relance, export CSV, pièces jointes), documents (dossiers, signatures
+  par famille / enfant, droit à l'image → élève, signatures manquantes), notifications in-app.
 - **Session 7 — code complet, validation Supabase en attente** : espace classe (fil typé, devoirs « vu »,
   cahier de vie avec photos normalisées et tag soumis au droit à l'image, mots individuels avec accusé de
   lecture, absences avec justificatif et validation), vue hebdo enseignant. 71 assertions pgTAP.
@@ -144,6 +139,10 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   `postgres_changes`), DM selon `can_direct_message`, fils officiels et groupes de classe (`ensure_class_threads`),
   réponses, réactions, mentions, pièces jointes, recherche, silencieux, signalement, modération, verrouillage,
   archivage, `/admin/signalements`. 81 assertions pgTAP. **Fin du code du MVP** (sessions 1–8).
-- **Prochaine session — 9** : agenda (fêtes juives via `@hebcal/core`, événements, RSVP, créneaux de
-  bénévolat, flux ICS par utilisateur). Puis 10 : notifications push / Resend / digest + mode Shabbat.
+- **Session 9 — code complet, validation Supabase en attente** : agenda (`lib/hebcal`, `lib/calendar`),
+  fêtes juives + Chabbat + parachah + fériés, vacances zone C en seed, événements avec RSVP / jauge / liste
+  d'attente (`rsvp_event`), créneaux de bénévolat, flux ICS privé (`/api/calendar/[token]`), rappels J-7 / J-1
+  à planifier. 90 tests unitaires, 123 assertions pgTAP.
+- **Prochaine session — 10** : notifications (Web Push, e-mail Resend, digest pg_cron, préférences par type,
+  **mode Chabbat / fêtes** via `quietWindows`, quiet hours), planification de `queue_event_reminders`.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

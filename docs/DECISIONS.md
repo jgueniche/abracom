@@ -233,3 +233,23 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 - **Conséquences** : pas de présence ni d'indicateur « en train d'écrire » (Realtime Broadcast possible plus
   tard) ; les notifications de nouveaux messages arrivent en session 10 ; la publication Realtime doit être
   créée sur chaque environnement (elle l'est par la migration).
+
+## ADR-0021 — Calendrier hébraïque calculé localement, flux ICS par jeton, RSVP en SQL
+
+- **Contexte** : l'agenda doit afficher les fêtes juives, les horaires de Chabbat et la parachah (§7.5, §10),
+  alimenter le mode Chabbat (§7.8), s'abonner depuis Google / Apple Calendar, et gérer jauge, liste d'attente
+  et créneaux de bénévolat sans incohérence entre clients.
+- **Décision** : `@hebcal/core` (+ `@hebcal/locales` pour le français) tourne côté serveur, sans appel réseau,
+  avec un cache par année civile et les coordonnées de l'école (`schools.latitude / longitude / timezone`) ;
+  les catégories (majeure, mineure, jeûne, veille, lendemain…) sont dérivées des drapeaux hebcal. Les vacances
+  scolaires sont de simples événements `holiday` (pas de table dédiée), pré-remplis depuis data.gouv.fr. Le flux
+  ICS est privé : un jeton aléatoire de 24 octets par utilisateur (`calendar_feeds`), résolu par des fonctions
+  SQL `security definer` appelées avec la clé anonyme, régénérable à tout moment ; le fichier est écrit par
+  `lib/calendar/ics.ts` (RFC 5545) sans dépendance. Les réponses passent exclusivement par `rsvp_event()`
+  (date limite, capacité, liste d'attente promue dans l'ordre d'arrivée, guardians exclus) : la politique
+  d'écriture directe sur `event_rsvps` est supprimée. Les rappels J-7 / J-1 sont une fonction idempotente
+  réservée au service role, planifiée en session 10 avec le digest.
+- **Conséquences** : un seul fuseau (`Europe/Paris`) est supposé pour les saisies de formulaire ; les
+  horaires d'allumage utilisent la havdalah « nuit tombée » (8,5°) d'hebcal, réglable plus tard par école ;
+  le flux ICS expose les événements à quiconque détient le jeton (d'où la régénération et l'absence de
+  données d'autres familles dans le flux).

@@ -19,6 +19,9 @@ function linkFor(kind: string, payload: Record<string, unknown>): string | null 
   if (kind.startsWith("announcement.") && typeof payload.announcement_id === "string") {
     return `/annonces/${payload.announcement_id}`;
   }
+  if (kind.startsWith("event.") && typeof payload.event_id === "string") {
+    return `/agenda/${payload.event_id}`;
+  }
   return null;
 }
 
@@ -49,10 +52,17 @@ export default async function NotificationsPage() {
         <ul className="flex flex-col gap-2">
           {notifications.map((n) => {
             const payload = (n.payload ?? {}) as Record<string, unknown>;
+            const title = String(payload.title ?? "");
             const label =
               n.kind === "announcement.reminder"
-                ? t("kinds.announcementReminder", { title: String(payload.title ?? "") })
-                : t("kinds.default");
+                ? t("kinds.announcementReminder", { title })
+                : n.kind === "event.new"
+                  ? t("kinds.eventNew", { title })
+                  : n.kind === "event.reminder"
+                    ? t("kinds.eventReminder", { title, days: Number(payload.days ?? 1) })
+                    : n.kind === "event.confirmed"
+                      ? t("kinds.eventConfirmed", { title })
+                      : t("kinds.default");
             const href = linkFor(n.kind, payload);
             const body = (
               <div

@@ -518,6 +518,30 @@ export type Database = {
           },
         ]
       }
+      calendar_feeds: {
+        Row: {
+          created_at: string
+          include_holidays: boolean
+          rotated_at: string
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          include_holidays?: boolean
+          rotated_at?: string
+          token?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          include_holidays?: boolean
+          rotated_at?: string
+          token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       class_post_media: {
         Row: {
           blurhash: string | null
@@ -1091,6 +1115,8 @@ export type Database = {
           student_id: string | null
           updated_at: string
           user_id: string
+          waitlisted: boolean
+          waitlisted_at: string | null
         }
         Insert: {
           created_at?: string
@@ -1101,6 +1127,8 @@ export type Database = {
           student_id?: string | null
           updated_at?: string
           user_id: string
+          waitlisted?: boolean
+          waitlisted_at?: string | null
         }
         Update: {
           created_at?: string
@@ -1111,6 +1139,8 @@ export type Database = {
           student_id?: string | null
           updated_at?: string
           user_id?: string
+          waitlisted?: boolean
+          waitlisted_at?: string | null
         }
         Relationships: [
           {
@@ -2456,6 +2486,37 @@ export type Database = {
           user_id: string
         }[]
       }
+      calendar_feed: {
+        Args: { feed_token: string }
+        Returns: {
+          include_holidays: boolean
+          latitude: number
+          locale: string
+          longitude: number
+          school_name: string
+          timezone: string
+          user_id: string
+        }[]
+      }
+      calendar_feed_events: {
+        Args: { feed_token: string }
+        Returns: {
+          all_day: boolean
+          created_at: string
+          description_md: string
+          ends_at: string
+          id: string
+          kind: Database["public"]["Enums"]["event_kind"]
+          location: string
+          my_status: Database["public"]["Enums"]["rsvp_status"]
+          requires_rsvp: boolean
+          scope: Database["public"]["Enums"]["event_scope"]
+          starts_at: string
+          title: string
+          updated_at: string
+          waitlisted: boolean
+        }[]
+      }
       can_access_class: {
         Args: { class_: string; uid?: string }
         Returns: boolean
@@ -2466,6 +2527,10 @@ export type Database = {
       }
       can_direct_message: {
         Args: { target: string; uid?: string }
+        Returns: boolean
+      }
+      can_view_event: {
+        Args: { event: string; uid?: string }
         Returns: boolean
       }
       can_view_profile: {
@@ -2506,6 +2571,31 @@ export type Database = {
         Returns: {
           official: string
           parents_group: string
+        }[]
+      }
+      event_counts: {
+        Args: { event: string }
+        Returns: {
+          maybe_count: number
+          no_count: number
+          waitlisted_count: number
+          waitlisted_seats: number
+          yes_count: number
+          yes_seats: number
+        }[]
+      }
+      event_recipients: {
+        Args: { event: string }
+        Returns: {
+          answered_at: string
+          first_name: string
+          guests_count: number
+          last_name: string
+          note: string
+          role: Database["public"]["Enums"]["membership_role"]
+          status: Database["public"]["Enums"]["rsvp_status"]
+          user_id: string
+          waitlisted: boolean
         }[]
       }
       find_user_id_by_email: { Args: { email: string }; Returns: string }
@@ -2553,6 +2643,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      my_calendar_feed: {
+        Args: { with_holidays?: boolean }
+        Returns: {
+          created_at: string
+          include_holidays: boolean
+          rotated_at: string
+          token: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calendar_feeds"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       my_threads: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -2575,8 +2681,40 @@ export type Database = {
           unread_count: number
         }[]
       }
+      notify_event: { Args: { event: string }; Returns: number }
       open_dm: { Args: { other: string }; Returns: string }
+      promote_event_waitlist: { Args: { event: string }; Returns: number }
+      queue_event_reminders: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       remind_announcement: { Args: { announcement: string }; Returns: number }
+      rotate_calendar_feed: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          include_holidays: boolean
+          rotated_at: string
+          token: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calendar_feeds"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      rsvp_event: {
+        Args: {
+          answer: Database["public"]["Enums"]["rsvp_status"]
+          event: string
+          guests?: number
+          note?: string
+          student?: string
+        }
+        Returns: boolean
+      }
       set_current_school_year: { Args: { year_id: string }; Returns: undefined }
       student_school_id: { Args: { student: string }; Returns: string }
       teacher_class_ids: { Args: { uid?: string }; Returns: string[] }

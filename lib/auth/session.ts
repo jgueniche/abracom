@@ -17,7 +17,7 @@ import type { Tables } from "@/lib/supabase/types";
 
 export type SchoolSummary = Pick<
   Tables<"schools">,
-  "id" | "slug" | "name" | "locale_default" | "modules"
+  "id" | "slug" | "name" | "locale_default" | "modules" | "timezone" | "latitude" | "longitude"
 >;
 
 export type CurrentUser = {
@@ -52,7 +52,9 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
     supabase
       .from("memberships")
-      .select("*, school:schools(id, slug, name, locale_default, modules)")
+      .select(
+        "*, school:schools(id, slug, name, locale_default, modules, timezone, latitude, longitude)",
+      )
       .eq("user_id", user.id)
       .order("created_at"),
   ]);
