@@ -3,23 +3,23 @@
 Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committée**.
 **MVP présentable à la direction = sessions 1–8.** Sessions 9–15 = V1 complète.
 
-| #   | Livrable                                                                                                                     | Definition of done                                      | État |
-| --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ---- |
-| 1   | Bootstrap : Next 15, Tailwind, shadcn, Supabase local, CI lint/test, Vercel preview, CLAUDE.md, ROADMAP                      | `pnpm dev` OK, déploiement preview vert                 | ✅   |
-| 2   | Identité visuelle : extraction palette logo, tokens, thème clair/sombre, page de style `/dev/ui`                             | Validation visuelle par le porteur                      | ⬜   |
-| 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ⬜   |
-| 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | ⬜   |
-| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | ⬜   |
-| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | ⬜   |
-| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | ⬜   |
-| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | ⬜   |
-| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | ⬜   |
-| 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | ⬜   |
-| 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | ⬜   |
-| 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | ⬜   |
-| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | ⬜   |
-| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | ⬜   |
-| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | ⬜   |
+| #   | Livrable                                                                                                                     | Definition of done                                      | État                                                                 |
+| --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------- |
+| 1   | Bootstrap : Next 15, Tailwind, shadcn, Supabase local, CI lint/test, Vercel preview, CLAUDE.md, ROADMAP                      | `pnpm dev` OK, déploiement preview vert                 | 🟡 (reste : import Vercel manuel, `supabase start` sur poste Docker) |
+| 2   | Identité visuelle : extraction palette logo, tokens, thème clair/sombre, page de style `/dev/ui`                             | Validation visuelle par le porteur                      | ⬜                                                                   |
+| 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ⬜                                                                   |
+| 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | ⬜                                                                   |
+| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | ⬜                                                                   |
+| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | ⬜                                                                   |
+| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | ⬜                                                                   |
+| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | ⬜                                                                   |
+| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | ⬜                                                                   |
+| 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | ⬜                                                                   |
+| 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | ⬜                                                                   |
+| 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | ⬜                                                                   |
+| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | ⬜                                                                   |
+| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | ⬜                                                                   |
+| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | ⬜                                                                   |
 
 ## Session 1 — détail
 
@@ -36,7 +36,12 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 - [x] ESLint (Next + TS + Prettier) · Prettier (plugin Tailwind) · Husky (`pre-commit` lint-staged, `commit-msg` commitlint)
 - [x] Vitest (3 fichiers, 9 tests) · Playwright (mobile + desktop, 8 tests, `CI=1` ⇒ `next start`)
 - [x] CI GitHub Actions : quality (lint, types, format, unit) · build · e2e
-- [x] `vercel.json` (framework nextjs, région `cdg1`) · projet Vercel lié au dépôt GitHub (previews)
+- [x] `vercel.json` (framework nextjs, région `cdg1`, install/build pnpm)
+- [ ] Projet Vercel lié au dépôt GitHub (previews par branche / PR) — **à faire manuellement par le porteur** :
+      le connecteur Vercel de la session refuse la création de projet (`403 forbidden`). Étapes : Vercel →
+      Add New → Project → Import `jgueniche/abracom` (framework Next.js détecté, `vercel.json` appliqué) →
+      Environment Variables : `NEXT_PUBLIC_APP_NAME=Kesher`, `NEXT_PUBLIC_SITE_URL=<url preview>` → Deploy.
+      Puis vérifier que la preview de la branche `claude/kesher-community-platform-2wxuya` est verte.
 - [ ] `supabase start` vérifié localement (Docker indisponible dans l'environnement de la session 1 ; à faire sur le poste du porteur)
 
 ## Session 2 — à faire

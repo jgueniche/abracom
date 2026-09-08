@@ -68,8 +68,9 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 
 ## ADR-0008 — Déploiement Vercel lié à GitHub, région `cdg1`
 
-- **Décision** : projet Vercel créé depuis le dépôt GitHub (previews automatiques par branche / PR,
-  production sur `main`). `vercel.json` fixe `regions: ["cdg1"]` (Paris) pour les fonctions serverless,
+- **Décision** : projet Vercel importé depuis le dépôt GitHub (previews automatiques par branche / PR,
+  production sur la branche par défaut, `main` à créer). La création via l'intégration Vercel de la
+  session 1 a été refusée (`403 forbidden`) : l'import se fait depuis le tableau de bord Vercel. `vercel.json` fixe `regions: ["cdg1"]` (Paris) pour les fonctions serverless,
   conformément à l'hébergement UE (§9). Pas d'analytics tiers ; Vercel Analytics privacy-first
   éventuellement plus tard (session 13), sans cookies.
 - **Conséquences** : les variables `NEXT_PUBLIC_SUPABASE_*` de preview pointeront vers `kesher-staging`

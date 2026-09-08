@@ -114,7 +114,8 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 - **Session 1 — terminée** : bootstrap Next 15.5 + Tailwind v4 + shadcn (preset Nova/Radix) + next-intl
   - next-themes + zod, clients Supabase, `supabase/config.toml` (projet `kesher`), CI GitHub Actions
     (lint, types, format, unit, build, e2e), Husky + commitlint, tests unitaires (9) et e2e (8) verts,
-    `vercel.json` (région `cdg1`), projet Vercel lié au dépôt (previews par branche/PR).
+    `vercel.json` (région `cdg1`). **Reste** : importer le dépôt dans Vercel à la main (le connecteur de la
+    session n'a pas le droit de créer un projet) et vérifier `supabase start` sur un poste avec Docker.
 - **Prochaine session — 2** : identité visuelle (téléchargement du logo, extraction de palette, tokens
   `primary` / `accent` / `surface` / `muted`, typographies Inter + serif, page `/dev/ui`, icônes PWA).
 - Le schéma BDD n'a **pas** été commencé (session 3), conformément au brief.

@@ -52,7 +52,7 @@ export default async function HomePage() {
             <CardContent>
               <Button asChild variant="outline" className="min-h-11">
                 <a
-                  href="https://github.com/jgueniche/abracom/blob/main/docs/ROADMAP.md"
+                  href="https://github.com/jgueniche/abracom/blob/HEAD/docs/ROADMAP.md"
                   target="_blank"
                   rel="noreferrer"
                 >
