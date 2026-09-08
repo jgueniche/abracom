@@ -15,36 +15,25 @@
     },
     "loading": "Chargement…",
     "back": "Retour",
-    "backHome": "Retour à l'accueil"
+    "backHome": "Retour à l'accueil",
+    "soon": "Bientôt disponible",
+    "soonHint": "Cette rubrique arrive dans une prochaine session.",
+    "notConfigured": "Base de données non configurée sur cet environnement.",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "close": "Fermer"
   },
   "nav": {
     "home": "Accueil",
     "classes": "Classe(s)",
     "messages": "Messages",
     "agenda": "Agenda",
-    "more": "Plus"
-  },
-  "home": {
-    "eyebrow": "Session 1 · socle technique",
-    "title": "Bienvenue sur {appName}",
-    "subtitle": "La plateforme communautaire de l'école : annonces officielles, espace classe, messagerie, agenda et entraide, en un seul endroit.",
-    "stack": {
-      "title": "Ce qui est en place",
-      "description": "Chaque brique ci-dessous est installée, configurée et vérifiée par la CI.",
-      "items": {
-        "next": "Next.js 15 · App Router · TypeScript strict",
-        "ui": "Tailwind CSS v4 · shadcn/ui · lucide",
-        "i18n": "next-intl · français par défaut, anglais",
-        "theme": "Mode clair / sombre (next-themes)",
-        "supabase": "Supabase local (config.toml) · clients navigateur / serveur / admin",
-        "quality": "ESLint · Prettier · Vitest · Playwright · Husky · Conventional Commits"
-      }
-    },
-    "next": {
-      "title": "Prochaine étape",
-      "description": "Session 2 : identité visuelle (palette dérivée du logo, typographies, page de style /dev/ui)."
-    },
-    "roadmap": "Voir la feuille de route"
+    "more": "Plus",
+    "dashboard": "Tableau de bord",
+    "announcements": "Annonces",
+    "family": "Ma famille",
+    "profile": "Mon profil",
+    "styleGuide": "Guide de style"
   },
   "errors": {
     "notFound": {
@@ -55,6 +44,10 @@
       "title": "Une erreur est survenue",
       "description": "Nous n'avons pas pu afficher cette page. Merci de réessayer dans un instant.",
       "retry": "Réessayer"
+    },
+    "forbidden": {
+      "title": "Accès refusé",
+      "description": "Vous n'avez pas les droits nécessaires pour cette action."
     }
   },
   "devUi": {
@@ -146,5 +139,150 @@
     "icons": {
       "description": "Générées depuis le logo officiel, sans altération, par scripts/brand/generate-icons.ts (favicon, iOS, PWA standard et maskable)."
     }
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "subtitle": "Saisissez l'adresse e-mail communiquée à l'école : vous recevrez un lien de connexion, sans mot de passe.",
+      "email": "Adresse e-mail",
+      "submit": "Recevoir mon lien",
+      "sending": "Envoi…",
+      "sentTitle": "Vérifiez votre boîte mail",
+      "sentBody": "Si un accès existe pour {email}, un lien de connexion vient d'être envoyé. Il est valable une heure.",
+      "again": "Utiliser une autre adresse",
+      "invalidEmail": "Adresse e-mail invalide.",
+      "notConfigured": "La connexion n'est pas encore disponible sur cet environnement.",
+      "rateLimited": "Trop de demandes. Réessayez dans quelques minutes.",
+      "linkError": "Ce lien est invalide ou a expiré. Demandez-en un nouveau.",
+      "noAccount": "Pas encore d'accès ? L'école vous enverra une invitation par e-mail."
+    },
+    "onboarding": {
+      "title": "Bienvenue, faisons connaissance",
+      "subtitle": "Quelques informations pour finaliser votre accès à {appName}.",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "language": "Langue de l'interface",
+      "legalTitle": "Textes à accepter",
+      "legalHint": "Versions horodatées, consultables à tout moment depuis votre profil.",
+      "read": "Lire le texte",
+      "version": "version {version}",
+      "kind": {
+        "terms": "Conditions générales d'utilisation",
+        "charter": "Charte de bonne conduite",
+        "privacy": "Politique de confidentialité"
+      },
+      "accept": "J'ai lu et j'accepte",
+      "submit": "Accéder à l'application",
+      "mustAccept": "Merci d'accepter l'ensemble des textes.",
+      "required": "Merci de renseigner votre prénom et votre nom.",
+      "saveError": "Enregistrement impossible pour le moment. Réessayez."
+    },
+    "signOut": "Se déconnecter"
+  },
+  "perspective": {
+    "label": "Voir comme",
+    "admin": "Direction",
+    "teacher": "Enseignant·e",
+    "parent": "Parent"
+  },
+  "appHome": {
+    "greeting": "Bonjour {name}",
+    "parent": {
+      "title": "Aujourd'hui",
+      "children": "Mes enfants",
+      "pendingAcks": "{count, plural, =0 {Aucune annonce à confirmer} one {# annonce à confirmer} other {# annonces à confirmer}}",
+      "pendingHint": "Les accusés de lecture arrivent avec les annonces (session 6).",
+      "seeFamily": "Voir ma famille"
+    },
+    "teacher": {
+      "title": "Mes classes",
+      "students": "{count, plural, =0 {Aucun élève} one {# élève} other {# élèves}}",
+      "noClasses": "Aucune classe ne vous est affectée pour cette année.",
+      "room": "Salle {room}"
+    },
+    "admin": {
+      "title": "Tableau de bord",
+      "students": "Élèves",
+      "families": "Familles",
+      "classes": "Classes",
+      "activation": "Comptes parents activés",
+      "activationHint": "{active} actifs sur {total} invités",
+      "classesTitle": "Classes de l'année"
+    }
+  },
+  "family": {
+    "title": "Ma famille",
+    "subtitle": "Vos enfants, leurs classes et leurs enseignants.",
+    "noChildren": "Aucun enfant n'est rattaché à votre compte pour l'instant. Contactez le secrétariat si c'est une erreur.",
+    "born": "Né·e le {date}",
+    "class": "Classe",
+    "noClass": "Pas de classe cette année",
+    "teachers": "Équipe de la classe",
+    "allergies": "Allergies / PAI",
+    "imageRights": {
+      "signed": "Droit à l'image signé",
+      "unsigned": "Droit à l'image à signer"
+    },
+    "relation": {
+      "mother": "Mère",
+      "father": "Père",
+      "guardian": "Responsable",
+      "other": "Autre"
+    },
+    "teacherRole": {
+      "main": "Enseignant·e",
+      "assistant": "ATSEM / assistant·e",
+      "specialist": "Intervenant·e"
+    },
+    "readOnly": "Accès en lecture seule (sans évaluations ni messagerie)."
+  },
+  "profile": {
+    "title": "Mon profil",
+    "subtitle": "Vos informations et vos préférences.",
+    "email": "Adresse e-mail",
+    "emailHint": "Pour changer d'adresse, contactez le secrétariat.",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "phone": "Téléphone",
+    "language": "Langue",
+    "hebrewDate": "Afficher la date hébraïque",
+    "hebrewDateHint": "À côté de la date civile dans l'agenda.",
+    "save": "Enregistrer",
+    "saved": "Profil enregistré.",
+    "invalid": "Certains champs sont invalides.",
+    "saveError": "Enregistrement impossible pour le moment.",
+    "roles": "Mes rôles",
+    "legal": "Textes acceptés",
+    "acceptedOn": "acceptée le {date}",
+    "notAccepted": "non acceptée"
+  },
+  "more": {
+    "title": "Plus",
+    "account": "Mon compte",
+    "school": "École",
+    "educartable": "Ouvrir Educartable",
+    "educartableHint": "Devoirs et bulletins existants (site externe).",
+    "preferences": "Préférences",
+    "language": "Langue",
+    "theme": "Thème"
+  },
+  "roles": {
+    "super_admin": "Super administrateur",
+    "school_admin": "Direction",
+    "staff": "Secrétariat",
+    "teacher": "Enseignant·e",
+    "parent": "Parent",
+    "guardian": "Responsable (lecture seule)"
+  },
+  "levels": {
+    "TPS": "Toute petite section",
+    "PS": "Petite section",
+    "MS": "Moyenne section",
+    "GS": "Grande section",
+    "CP": "CP",
+    "CE1": "CE1",
+    "CE2": "CE2",
+    "CM1": "CM1",
+    "CM2": "CM2"
   }
 }

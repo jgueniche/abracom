@@ -147,3 +147,23 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
   - `notifications` insérées uniquement côté serveur (pas de politique d'insertion utilisateur).
 - **Conséquences** : toute nouvelle table doit arriver avec `enable row level security`, ses politiques,
   un index sur chaque FK et une assertion pgTAP (la CI échoue si une table publique reste sans RLS).
+
+## ADR-0015 — Authentification : invitations Supabase + magic link, onboarding bloquant
+
+- **Décision** :
+  - aucun formulaire d'inscription : les comptes sont créés par la direction (`auth.admin.inviteUserByEmail`,
+    e-mail français avec lien signé par GoTrue) ; la page `/connexion` n'envoie qu'un magic link
+    (`shouldCreateUser: false`) et répond de la même façon pour une adresse inconnue ;
+  - `@supabase/ssr` avec cookies : `middleware.ts` rafraîchit la session à chaque requête et redirige
+    vers `/connexion?next=` ; `getCurrentUser()` (React `cache`) charge profil + memberships une fois par
+    requête ;
+  - première connexion bloquante sur `/bienvenue` tant que le prénom est vide ou qu'un texte légal courant
+    (CGU, charte, confidentialité — versionnés par école ou globaux) n'est pas accepté ; l'acceptation est
+    horodatée et l'activation des memberships passe par `activate_my_memberships()` (security definer) ;
+  - multi-rôle par « perspective » (admin > enseignant > parent) stockée dans un cookie et validée
+    côté serveur contre les memberships ;
+  - clés étrangères supplémentaires vers `profiles` pour permettre les jointures PostgREST sans exposer
+    `auth.users`.
+- **Conséquences** : l'OTP SMS (Twilio) reste optionnel (§15) ; les URL de redirection autorisées doivent
+  inclure les previews Vercel (`https://*-jeremys-projects-472f663b.vercel.app/**`) dans la configuration
+  Supabase ; le rate limiting applicatif (Upstash / table) arrive en session 14.

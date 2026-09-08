@@ -126,7 +126,11 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   fonctions `can_access_*`, 132 politiques RLS (+ storage), triggers (profil auto, droit à l'image), seed
   fictif complet (137 comptes, 66 élèves), 53 tests pgTAP verts sur PostgreSQL 16 local et en CI (job
   `database`), types générés (`pnpm db:types:local`). Voir `supabase/tests/README.md`.
-- **Prochaine session — 4** : auth (magic link, invitations par lien signé, onboarding parent / enseignant,
-  CGU versionnées, profil, multi-rôle), middleware de session, flux e2e « invitation → 1re connexion ».
-  Bloquant pour l'exécution de bout en bout : une stack Supabase (Docker local ou `kesher-staging`).
+- **Session 4 — code complet, validation Supabase en attente** : middleware de session, magic link sans
+  inscription libre, callbacks PKCE / token hash, onboarding avec CGU versionnées et activation des
+  memberships, `lib/auth` + `lib/permissions`, perspectives multi-rôle, coquille connectée (accueil par rôle,
+  famille, profil, plus). Le flux e2e « invitation → 1re connexion » est écrit (`SUPABASE_E2E=1`) mais ne
+  peut tourner qu'avec une stack Supabase.
+- **Prochaine session — 5** : administration (écoles, années, classes, affectations, import CSV des familles,
+  invitations en masse via `auth.admin.inviteUserByEmail`, réinitialisation d'accès), journal d'audit.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

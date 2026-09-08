@@ -15,36 +15,25 @@
     },
     "loading": "Loading…",
     "back": "Back",
-    "backHome": "Back to home"
+    "backHome": "Back to home",
+    "soon": "Coming soon",
+    "soonHint": "This section arrives in a later session.",
+    "notConfigured": "Database not configured on this environment.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close"
   },
   "nav": {
     "home": "Home",
     "classes": "Class(es)",
     "messages": "Messages",
     "agenda": "Calendar",
-    "more": "More"
-  },
-  "home": {
-    "eyebrow": "Session 1 · technical foundation",
-    "title": "Welcome to {appName}",
-    "subtitle": "The school's community platform: official announcements, class space, messaging, calendar and mutual aid, all in one place.",
-    "stack": {
-      "title": "What is in place",
-      "description": "Every building block below is installed, configured and verified by CI.",
-      "items": {
-        "next": "Next.js 15 · App Router · strict TypeScript",
-        "ui": "Tailwind CSS v4 · shadcn/ui · lucide",
-        "i18n": "next-intl · French by default, English",
-        "theme": "Light / dark mode (next-themes)",
-        "supabase": "Local Supabase (config.toml) · browser / server / admin clients",
-        "quality": "ESLint · Prettier · Vitest · Playwright · Husky · Conventional Commits"
-      }
-    },
-    "next": {
-      "title": "Next step",
-      "description": "Session 2: visual identity (palette derived from the logo, typography, /dev/ui style page)."
-    },
-    "roadmap": "View the roadmap"
+    "more": "More",
+    "dashboard": "Dashboard",
+    "announcements": "Announcements",
+    "family": "My family",
+    "profile": "My profile",
+    "styleGuide": "Style guide"
   },
   "errors": {
     "notFound": {
@@ -55,6 +44,10 @@
       "title": "Something went wrong",
       "description": "We could not display this page. Please try again in a moment.",
       "retry": "Try again"
+    },
+    "forbidden": {
+      "title": "Access denied",
+      "description": "You do not have the rights required for this action."
     }
   },
   "devUi": {
@@ -146,5 +139,150 @@
     "icons": {
       "description": "Generated from the official logo, unaltered, by scripts/brand/generate-icons.ts (favicon, iOS, standard and maskable PWA icons)."
     }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Enter the e-mail address you gave the school: you will receive a sign-in link, no password needed.",
+      "email": "E-mail address",
+      "submit": "Send me a link",
+      "sending": "Sending…",
+      "sentTitle": "Check your inbox",
+      "sentBody": "If an account exists for {email}, a sign-in link has just been sent. It is valid for one hour.",
+      "again": "Use another address",
+      "invalidEmail": "Invalid e-mail address.",
+      "notConfigured": "Sign-in is not available on this environment yet.",
+      "rateLimited": "Too many requests. Try again in a few minutes.",
+      "linkError": "This link is invalid or has expired. Request a new one.",
+      "noAccount": "No access yet? The school will send you an invitation by e-mail."
+    },
+    "onboarding": {
+      "title": "Welcome, let's get acquainted",
+      "subtitle": "A few details to finish setting up your access to {appName}.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "language": "Interface language",
+      "legalTitle": "Texts to accept",
+      "legalHint": "Timestamped versions, available at any time from your profile.",
+      "read": "Read the text",
+      "version": "version {version}",
+      "kind": {
+        "terms": "Terms of use",
+        "charter": "Code of conduct",
+        "privacy": "Privacy policy"
+      },
+      "accept": "I have read and accept",
+      "submit": "Enter the app",
+      "mustAccept": "Please accept every text.",
+      "required": "Please enter your first and last name.",
+      "saveError": "Could not save right now. Please try again."
+    },
+    "signOut": "Sign out"
+  },
+  "perspective": {
+    "label": "View as",
+    "admin": "School office",
+    "teacher": "Teacher",
+    "parent": "Parent"
+  },
+  "appHome": {
+    "greeting": "Hello {name}",
+    "parent": {
+      "title": "Today",
+      "children": "My children",
+      "pendingAcks": "{count, plural, =0 {No announcement to confirm} one {# announcement to confirm} other {# announcements to confirm}}",
+      "pendingHint": "Read receipts arrive with announcements (session 6).",
+      "seeFamily": "See my family"
+    },
+    "teacher": {
+      "title": "My classes",
+      "students": "{count, plural, =0 {No student} one {# student} other {# students}}",
+      "noClasses": "No class is assigned to you this year.",
+      "room": "Room {room}"
+    },
+    "admin": {
+      "title": "Dashboard",
+      "students": "Students",
+      "families": "Families",
+      "classes": "Classes",
+      "activation": "Activated parent accounts",
+      "activationHint": "{active} active out of {total} invited",
+      "classesTitle": "This year's classes"
+    }
+  },
+  "family": {
+    "title": "My family",
+    "subtitle": "Your children, their classes and their teachers.",
+    "noChildren": "No child is linked to your account yet. Contact the school office if this is a mistake.",
+    "born": "Born on {date}",
+    "class": "Class",
+    "noClass": "No class this year",
+    "teachers": "Class team",
+    "allergies": "Allergies / care plan",
+    "imageRights": {
+      "signed": "Image rights signed",
+      "unsigned": "Image rights to sign"
+    },
+    "relation": {
+      "mother": "Mother",
+      "father": "Father",
+      "guardian": "Guardian",
+      "other": "Other"
+    },
+    "teacherRole": {
+      "main": "Teacher",
+      "assistant": "Assistant",
+      "specialist": "Specialist"
+    },
+    "readOnly": "Read-only access (no assessments, no messaging)."
+  },
+  "profile": {
+    "title": "My profile",
+    "subtitle": "Your details and preferences.",
+    "email": "E-mail address",
+    "emailHint": "To change your address, contact the school office.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phone": "Phone",
+    "language": "Language",
+    "hebrewDate": "Show the Hebrew date",
+    "hebrewDateHint": "Next to the civil date in the calendar.",
+    "save": "Save",
+    "saved": "Profile saved.",
+    "invalid": "Some fields are invalid.",
+    "saveError": "Could not save right now.",
+    "roles": "My roles",
+    "legal": "Accepted texts",
+    "acceptedOn": "accepted on {date}",
+    "notAccepted": "not accepted"
+  },
+  "more": {
+    "title": "More",
+    "account": "My account",
+    "school": "School",
+    "educartable": "Open Educartable",
+    "educartableHint": "Existing homework and reports (external site).",
+    "preferences": "Preferences",
+    "language": "Language",
+    "theme": "Theme"
+  },
+  "roles": {
+    "super_admin": "Super administrator",
+    "school_admin": "School office",
+    "staff": "Secretariat",
+    "teacher": "Teacher",
+    "parent": "Parent",
+    "guardian": "Guardian (read-only)"
+  },
+  "levels": {
+    "TPS": "Pre-nursery",
+    "PS": "Nursery",
+    "MS": "Lower kindergarten",
+    "GS": "Upper kindergarten",
+    "CP": "Year 1",
+    "CE1": "Year 2",
+    "CE2": "Year 3",
+    "CM1": "Year 4",
+    "CM2": "Year 5"
   }
 }

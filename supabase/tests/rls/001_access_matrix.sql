@@ -1,7 +1,7 @@
 -- pgTAP: role matrix from brief §5 against the demo seed. Run by scripts/db/test-local.sh
 -- (or `supabase test db` once the Supabase stack is available).
 begin;
-select plan(49);
+select plan(52);
 
 create or replace function pg_temp.login(uid uuid) returns void language plpgsql as $$
 begin
@@ -34,6 +34,7 @@ end $$;
 \set guardian18 '''c0000000-0000-4000-8000-000000180003'''
 \set student18 '''d0000000-0000-4000-8000-000000180001'''
 \set blocked44 '''c0000000-0000-4000-8000-000000440002'''
+\set invited51 '''c0000000-0000-4000-8000-000000510002'''
 \set student44 '''d0000000-0000-4000-8000-000000440001'''
 \set ann_school '''00000000-0000-4000-8000-000000001281'''
 \set ann_class_ps '''00000000-0000-4000-8000-000000001284'''
@@ -139,6 +140,16 @@ select throws_ok(
 select pg_temp.login(:blocked44);
 select is((select count(*) from public.students), 0::bigint, 'blocked guardian sees no student');
 select is((select count(*) from public.student_guardians), 0::bigint, 'blocked guardian does not even see the relationship row');
+
+-- invited parent (family 051, parent 02): activates only their own membership ---------
+select pg_temp.login(:invited51);
+select is((select count(*) from public.students), 0::bigint, 'an invited (not yet active) parent sees nothing');
+select is(public.activate_my_memberships(), 1, 'onboarding activates the invited membership');
+select is(
+  (select status from public.memberships where user_id = :invited51),
+  'active'::public.membership_status,
+  'the membership is now active'
+);
 
 -- teacher PS Tournesols ------------------------------------------------------------
 select pg_temp.login(:teacher_ps);

@@ -1,0 +1,46 @@
+import { describe, expect, it } from "vitest";
+
+import { APP_HOME_PATH, isPublicPath, safeNextPath } from "@/lib/auth/routes";
+
+describe("isPublicPath", () => {
+  it("keeps login, auth callbacks, style guide and PWA files public", () => {
+    for (const path of [
+      "/",
+      "/connexion",
+      "/auth/callback",
+      "/auth/confirm",
+      "/dev/ui",
+      "/manifest.webmanifest",
+      "/robots.txt",
+    ]) {
+      expect(isPublicPath(path), path).toBe(true);
+    }
+  });
+
+  it("protects the application", () => {
+    for (const path of ["/accueil", "/famille", "/profil", "/classes/abc", "/bienvenue"]) {
+      expect(isPublicPath(path), path).toBe(false);
+    }
+  });
+});
+
+describe("safeNextPath", () => {
+  it("accepts same-origin relative paths only", () => {
+    expect(safeNextPath("/famille")).toBe("/famille");
+    expect(safeNextPath("/classes/x?tab=1")).toBe("/classes/x?tab=1");
+  });
+
+  it("falls back for open-redirect attempts and auth routes", () => {
+    for (const bad of [
+      "https://evil.example",
+      "//evil.example",
+      "/\\evil",
+      "/auth/callback",
+      "/connexion",
+      42,
+      null,
+    ]) {
+      expect(safeNextPath(bad), String(bad)).toBe(APP_HOME_PATH);
+    }
+  });
+});
