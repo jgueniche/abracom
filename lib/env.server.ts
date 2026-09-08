@@ -5,15 +5,16 @@ import { z } from "zod";
 /** Server-only secrets. Never import this module from a Client Component. */
 const serverEnvSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().trim().min(1).optional(),
-  /** Bearer secret expected by `/api/jobs/*` (Vercel Cron sends it automatically). */
-  CRON_SECRET: z.string().trim().min(16).optional(),
+  /** Bearer secret expected by `/api/jobs/*` (at least 16 characters, checked by the route). */
+  CRON_SECRET: z.string().trim().min(1).optional(),
   RESEND_API_KEY: z.string().trim().min(1).optional(),
   EMAIL_FROM: z.string().trim().min(3).optional(),
   VAPID_PRIVATE_KEY: z.string().trim().min(1).optional(),
+  /** `mailto:` or `https:` contact for push services (RFC 8292). */
   VAPID_SUBJECT: z
     .string()
     .trim()
-    .regex(/^mailto:/)
+    .regex(/^(mailto:|https:\/\/)/)
     .optional(),
 });
 

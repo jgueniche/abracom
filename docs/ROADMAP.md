@@ -413,11 +413,12 @@ migrations `20260908172400` et `20260908172500` (ADR-0029) et dans l'application
       réinvitation limitée aux membres, élève vérifié avant création de compte, nettoyage des envois
       refusés, neutralisation des formules CSV, exports traduits et gardés, livret réservé aux ayants
       droit, chemins de retour sans caractères de contrôle, 2FA évaluée sur tous les rôles
-- [ ] Notifications : repli exponentiel et gestion des 429, budget de temps du worker, digest horaire
-      hors Chabbat, planificateur unique (pg_cron), en-tête `List-Unsubscribe`, étiquette push par
-      notification
-- [ ] PWA : nonce du script de thème, réabonnement push (`pushsubscriptionchange`), désinscription à la
-      déconnexion, navigation vérifiée dans le service worker, cache versionné par build
+- [x] Notifications : repli exponentiel et gestion des 429, budget de temps du worker, digest horaire
+      hors Chabbat (une fois par 20 h), planificateur unique (pg_cron, `vercel.json` sans cron),
+      en-tête `List-Unsubscribe`, étiquette push par notification, secrets Vault hors éditeur SQL
+- [x] PWA : nonce du script de thème, réabonnement push (`pushsubscriptionchange` + `/api/push/subscription`),
+      désinscription à la déconnexion et à la reprise d'un appareil partagé, navigation vérifiée dans le
+      service worker, cache versionné par build (`/sw.js` servi par une route)
 - [ ] Interface : cibles tactiles ≥ 44 px partout, titres de fils traduits, libellés de niveau selon la
       langue, badge de restriction lisible, requêtes groupées (mots, anniversaires), pagination des
       membres, attestation à l'envoi de photos et révocation du droit à l'image

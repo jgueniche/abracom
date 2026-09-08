@@ -3,21 +3,23 @@
 Le worker est la route `POST|GET /api/jobs/notifications?task=dispatch|digest|reminders`
 (`server/jobs/notifications.ts`), protégée par le bearer `CRON_SECRET`.
 
-| Tâche       | Rôle                                                                                                                                              | Fréquence conseillée  |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| `dispatch`  | fan-out du contenu publié, envoi des push (VAPID) et e-mails (Resend) dus, report des envois tombant pendant Chabbat / fêtes ou les heures calmes | toutes les 5 min      |
-| `digest`    | un e-mail par personne avec les notifications non lues de la journée (hors messages déjà e-mailés)                                                | 18 h heure de l'école |
-| `reminders` | rappels J-7 / J-1 des événements (`queue_event_reminders()`)                                                                                      | tous les matins       |
+| Tâche       | Rôle                                                                                                                                                 | Fréquence conseillée      |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `dispatch`  | fan-out du contenu publié, envoi des push (VAPID) et e-mails (Resend) dus, report des envois tombant pendant Chabbat / fêtes ou les heures calmes    | toutes les 5 min          |
+| `digest`    | un e-mail par personne avec les notifications non lues (hors messages déjà e-mailés), au plus une fois par 20 h, entre 17 h et 21 h heure de l'école | chaque heure, 15–20 h UTC |
+| `reminders` | rappels J-7 / J-1 des événements, J-3 des anniversaires, purge de rétention                                                                          | tous les matins           |
 
 ## Déclenchement
 
-- **Vercel Cron** (`vercel.json`) : `digest` et `reminders` une fois par jour. Sur un plan Hobby,
-  Vercel n'autorise que des tâches quotidiennes ; Vercel ajoute lui-même l'en-tête
-  `Authorization: Bearer $CRON_SECRET`.
-- **Supabase pg_cron + pg_net** (`cron.sql`) : `dispatch` toutes les cinq minutes (et, en option,
-  le digest et les rappels si l'on préfère tout piloter depuis la base). Les secrets vivent dans
-  Vault, jamais dans une migration.
+- **Supabase pg_cron + pg_net** (`cron.sql`) est le seul planificateur : `dispatch` toutes les cinq
+  minutes, `digest` chaque heure du soir, rappels et purge chaque matin. Les secrets vivent dans
+  Vault, jamais dans une migration ni dans l'éditeur SQL. Un plan Hobby Vercel n'autorise que des
+  crons quotidiens, et deux planificateurs enverraient des doublons : `vercel.json` n'en déclare
+  aucun.
 - **À la main** : `curl -H "Authorization: Bearer $CRON_SECRET" "$SITE/api/jobs/notifications?task=dispatch"`.
+  Une livraison réclamée est verrouillée deux minutes ; les échecs sont rejoués avec un repli
+  exponentiel (5, 10, 20, 40 min) puis abandonnés et journalisés après cinq tentatives ; un 429 de
+  Resend est rejoué une minute plus tard sans consommer de tentative.
 
 ## Variables d'environnement (Vercel)
 

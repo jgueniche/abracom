@@ -55,3 +55,9 @@ export function isDeliverableNow(
 ): boolean {
   return nextAllowedTime(now, policy, location).getTime() === now.getTime();
 }
+
+/** The daily digest goes out in the evening of the school's time zone (17:00 – 21:00 by default). */
+export function isDigestWindow(now: Date, timeZone: string, fromHour = 17, toHour = 21): boolean {
+  const hour = Number(localTime(now, timeZone).slice(0, 2));
+  return hour >= fromHour && hour < toHour;
+}

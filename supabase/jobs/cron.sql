@@ -1,14 +1,17 @@
 -- Kesher — planification des jobs de notification avec pg_cron + pg_net (projet Supabase cloud).
--- À exécuter UNE FOIS dans l'éditeur SQL du projet, après avoir remplacé les deux secrets.
--- Vercel Cron (vercel.json) couvre déjà le digest et les rappels quotidiens ; ce script ajoute
--- l'envoi des push / e-mails toutes les cinq minutes, qu'un plan Hobby Vercel ne permet pas.
+-- À exécuter UNE FOIS dans l'éditeur SQL du projet, après avoir créé les deux secrets dans Vault
+-- (tableau de bord → Vault, ou psql ; jamais en clair dans l'éditeur SQL, dont l'historique est
+-- conservé). pg_cron est le SEUL planificateur : aucun cron Vercel ne double ces appels.
 
 create extension if not exists pg_cron with schema pg_catalog;
 create extension if not exists pg_net with schema extensions;
 
--- 1. Secrets dans Vault (jamais dans une migration) : URL publique du site et CRON_SECRET (Vercel).
-select vault.create_secret('https://abracom.vercel.app', 'kesher_site_url', 'URL publique de Kesher');
-select vault.create_secret('remplacer-par-le-CRON_SECRET-de-vercel', 'kesher_cron_secret', 'Secret des jobs Kesher');
+-- 1. Secrets attendus dans Vault : `kesher_site_url` (URL publique) et `kesher_cron_secret`
+--    (identique à CRON_SECRET sur Vercel, 16 caractères minimum). Exemple via psql :
+--      \set site 'https://abracom.vercel.app'
+--      \set secret 'valeur-lue-depuis-un-gestionnaire-de-mots-de-passe'
+--      select vault.create_secret(:'site', 'kesher_site_url', 'URL publique de Kesher');
+--      select vault.create_secret(:'secret', 'kesher_cron_secret', 'Secret des jobs Kesher');
 
 -- 2. Envoi des notifications en attente (push + e-mail), toutes les cinq minutes.
 select cron.schedule(
@@ -27,12 +30,12 @@ select cron.schedule(
   $$
 );
 
--- 3. Digest quotidien à 18 h heure de Paris : pg_cron évalue les horaires en UTC, d'où deux
---    déclenchements (16 h UTC = 18 h en été, 17 h UTC = 18 h en hiver) ; le second ne renvoie que
---    les nouveautés arrivées entre-temps (les notifications déjà résumées sont marquées).
+-- 3. Digest du soir : appelé chaque heure entre 15 h et 20 h UTC ; le worker n'envoie qu'entre
+--    17 h et 21 h heure de l'école, hors Chabbat / fêtes / heures calmes, et au plus une fois par
+--    20 heures et par personne (un vendredi d'hiver, le digest part donc le samedi soir).
 select cron.schedule(
   'kesher-notifications-digest',
-  '0 16,17 * * *',
+  '0 15-20 * * *',
   $$
   select net.http_post(
     url := (select decrypted_secret from vault.decrypted_secrets where name = 'kesher_site_url') || '/api/jobs/notifications?task=digest',
@@ -46,11 +49,12 @@ select cron.schedule(
   $$
 );
 
--- 4. Rappels J-7 / J-1 des événements, tous les matins (7 h 30 en été, 6 h 30 en hiver).
+-- 4. Rappels J-7 / J-1 des événements et J-3 des anniversaires, tous les matins (7 h 30 en été,
+--    6 h 30 en hiver ; les envois avant 7 h sont reportés par les heures calmes).
 select cron.schedule(
   'kesher-event-reminders',
   '30 5 * * *',
-  $$ select public.queue_event_reminders(); $$
+  $$ select public.queue_event_reminders(); select public.queue_birthday_reminders(); $$
 );
 
 -- 5. Purge de rétention (docs/RGPD.md), chaque nuit à 3 h UTC.

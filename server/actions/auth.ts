@@ -120,8 +120,21 @@ export async function signInWithPassword(
   redirect(safeNextPath(formData.get("next")));
 }
 
-export async function signOut(): Promise<never> {
+/** Signs out; the push subscription of this browser is forgotten so a shared device stays quiet. */
+export async function signOut(pushEndpoint?: string | null): Promise<never> {
   const supabase = await createClient();
+  if (typeof pushEndpoint === "string" && pushEndpoint.length > 0) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from("push_subscriptions")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("endpoint", pushEndpoint);
+    }
+  }
   await supabase.auth.signOut();
   redirect(LOGIN_PATH);
 }

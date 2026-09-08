@@ -3,9 +3,27 @@ import "server-only";
 import { appName } from "@/lib/env";
 import { getServerEnv } from "@/lib/env.server";
 
-export type EmailMessage = { to: string; subject: string; html: string; text: string };
+export type EmailMessage = {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+  /** Preferences page advertised through `List-Unsubscribe`. */
+  unsubscribeUrl?: string;
+};
 
 export type EmailSender = (message: EmailMessage) => Promise<void>;
+
+/** Failure of the provider; `status` lets the worker tell a rate limit (429) from a hard error. */
+export class EmailSendError extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = "EmailSendError";
+  }
+}
 
 /** Resend (EU region is a workspace setting) through its REST API — no SDK needed. */
 export async function sendWithResend(message: EmailMessage): Promise<void> {
@@ -21,10 +39,20 @@ export async function sendWithResend(message: EmailMessage): Promise<void> {
       subject: message.subject,
       html: message.html,
       text: message.text,
+      headers: message.unsubscribeUrl
+        ? {
+            "List-Unsubscribe": `<${message.unsubscribeUrl}>`,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+          }
+        : undefined,
     }),
   });
-  if (!response.ok)
-    throw new Error(`Resend ${response.status}: ${(await response.text()).slice(0, 200)}`);
+  if (!response.ok) {
+    throw new EmailSendError(
+      response.status,
+      `Resend ${response.status}: ${(await response.text()).slice(0, 200)}`,
+    );
+  }
 }
 
 export function isEmailConfigured(): boolean {

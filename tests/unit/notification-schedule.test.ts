@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { localTime } from "@/lib/calendar/dates";
 import { DEFAULT_LOCATION } from "@/lib/hebcal";
-import { isDeliverableNow, nextAllowedTime } from "@/lib/notifications/schedule";
+import { isDeliverableNow, isDigestWindow, nextAllowedTime } from "@/lib/notifications/schedule";
 
 const paris = (iso: string) => localTime(iso, "Europe/Paris");
 
@@ -51,5 +51,14 @@ describe("nextAllowedTime (Shabbat mode and quiet hours)", () => {
     );
     expect(at.toISOString().slice(0, 10)).toBe("2026-09-13");
     expect(at.getTime()).toBeGreaterThan(new Date("2026-09-13T18:00:00Z").getTime());
+  });
+});
+
+describe("isDigestWindow", () => {
+  it("opens between 17:00 and 21:00 in the school's time zone", () => {
+    expect(isDigestWindow(new Date("2026-01-15T16:30:00Z"), "Europe/Paris")).toBe(true); // 17:30
+    expect(isDigestWindow(new Date("2026-01-15T15:30:00Z"), "Europe/Paris")).toBe(false); // 16:30
+    expect(isDigestWindow(new Date("2026-07-15T15:30:00Z"), "Europe/Paris")).toBe(true); // 17:30 DST
+    expect(isDigestWindow(new Date("2026-07-15T19:30:00Z"), "Europe/Paris")).toBe(false); // 21:30 DST
   });
 });

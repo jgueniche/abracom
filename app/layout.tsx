@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
+import { headers } from "next/headers";
 import { getLocale, getTranslations } from "next-intl/server";
 import { type ReactNode } from "react";
 
@@ -47,7 +48,8 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-  const locale = await getLocale();
+  const [locale, requestHeaders] = await Promise.all([getLocale(), headers()]);
+  const nonce = requestHeaders.get("x-nonce") ?? undefined;
 
   return (
     <html
@@ -57,7 +59,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     >
       <body className="min-h-dvh font-sans antialiased">
         <NextIntlClientProvider>
-          <Providers>{children}</Providers>
+          <Providers nonce={nonce}>{children}</Providers>
         </NextIntlClientProvider>
       </body>
     </html>

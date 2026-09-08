@@ -6,15 +6,5 @@
   "buildCommand": "pnpm build",
   "github": {
     "silent": false
-  },
-  "crons": [
-    {
-      "path": "/api/jobs/notifications?task=digest",
-      "schedule": "0 16 * * *"
-    },
-    {
-      "path": "/api/jobs/notifications?task=reminders",
-      "schedule": "30 5 * * *"
-    }
-  ]
+  }
 }

@@ -6,7 +6,7 @@ const now = new Date("2026-09-08T10:00:00Z");
 
 describe("ics", () => {
   it("escapes text values", () => {
-    expect(escapeText("a, b; c\\d\nline")).toBe("a\\, b\; c\\\\d\\nline");
+    expect(escapeText("a, b; c\\d\nline")).toBe("a\\, b\\; c\\\\d\\nline");
   });
 
   it("folds long lines at 75 octets without breaking UTF-8 characters", () => {

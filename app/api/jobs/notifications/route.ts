@@ -9,13 +9,15 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 /**
- * Notification worker endpoint. Called by Vercel Cron (daily tasks) and by Supabase pg_cron
- * every five minutes for `dispatch` (see supabase/jobs/README.md). Authenticated with the
- * `CRON_SECRET` bearer token only.
+ * Notification worker endpoint, called by Supabase pg_cron + pg_net (supabase/jobs/cron.sql):
+ * `dispatch` every five minutes, `digest` hourly in the evening, `reminders` every morning.
+ * Authenticated with the `CRON_SECRET` bearer token only.
  */
+const MIN_SECRET_LENGTH = 16;
+
 function authorized(request: NextRequest): boolean {
   const { CRON_SECRET } = getServerEnv();
-  if (!CRON_SECRET) return false;
+  if (!CRON_SECRET || CRON_SECRET.length < MIN_SECRET_LENGTH) return false;
   const header = request.headers.get("authorization") ?? "";
   const expected = `Bearer ${CRON_SECRET}`;
   if (header.length !== expected.length) return false;
@@ -23,8 +25,9 @@ function authorized(request: NextRequest): boolean {
 }
 
 async function handle(request: NextRequest, task: string | null): Promise<NextResponse> {
-  if (!getServerEnv().CRON_SECRET) {
-    return NextResponse.json({ error: "CRON_SECRET manquant" }, { status: 503 });
+  const secret = getServerEnv().CRON_SECRET;
+  if (!secret || secret.length < MIN_SECRET_LENGTH) {
+    return NextResponse.json({ error: "CRON_SECRET manquant ou trop court" }, { status: 503 });
   }
   if (!authorized(request)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const resolved = (task ?? "dispatch") as JobTask;

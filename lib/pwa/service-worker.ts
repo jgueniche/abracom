@@ -1,5 +1,14 @@
-/* Kesher service worker: offline fallback, static asset cache and Web Push (sessions 10 and 13). */
-var CACHE = "kesher-v2";
+import "server-only";
+
+/**
+ * Service worker source (sessions 10 and 13), served by `app/sw.js/route.ts` with a cache name
+ * derived from the build so that the precached offline page is refreshed on every deployment.
+ * Pages are never cached (private data); only immutable build assets and icons are.
+ */
+export function buildServiceWorker(buildId: string): string {
+  const cacheName = `kesher-${buildId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
+  return `/* Kesher service worker — build ${buildId} */
+var CACHE = ${JSON.stringify(cacheName)};
 var OFFLINE_URL = "/hors-ligne";
 var PRECACHE = [OFFLINE_URL, "/icons/icon-192.png", "/icons/icon-512.png", "/manifest.webmanifest"];
 
@@ -26,11 +35,13 @@ self.addEventListener("activate", function (event) {
       .keys()
       .then(function (keys) {
         return Promise.all(
-          keys.filter(function (key) {
-            return key !== CACHE;
-          }).map(function (key) {
-            return caches.delete(key);
-          }),
+          keys
+            .filter(function (key) {
+              return key !== CACHE;
+            })
+            .map(function (key) {
+              return caches.delete(key);
+            }),
         );
       })
       .then(function () {
@@ -48,6 +59,16 @@ function isStaticAsset(url) {
   );
 }
 
+/** Only same-origin paths may be opened from a notification. */
+function safeHref(value) {
+  try {
+    var url = new URL(value || "/notifications", self.location.origin);
+    return url.origin === self.location.origin ? url.pathname + url.search : "/notifications";
+  } catch (error) {
+    return "/notifications";
+  }
+}
+
 self.addEventListener("fetch", function (event) {
   var request = event.request;
   if (request.method !== "GET") return;
@@ -59,7 +80,13 @@ self.addEventListener("fetch", function (event) {
     event.respondWith(
       fetch(request).catch(function () {
         return caches.match(OFFLINE_URL).then(function (cached) {
-          return cached || new Response("Hors ligne", { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+          return (
+            cached ||
+            new Response("Hors ligne", {
+              status: 503,
+              headers: { "Content-Type": "text/plain; charset=utf-8" },
+            })
+          );
         });
       }),
     );
@@ -89,7 +116,7 @@ self.addEventListener("push", function (event) {
   var data = {};
   try {
     data = event.data ? event.data.json() : {};
-  } catch {
+  } catch (error) {
     data = { title: event.data ? event.data.text() : "" };
   }
   var options = {
@@ -97,14 +124,14 @@ self.addEventListener("push", function (event) {
     icon: "/icons/icon-192.png",
     badge: "/icons/icon-192.png",
     tag: data.tag || undefined,
-    data: { href: data.href || "/notifications" },
+    data: { href: safeHref(data.href) },
   };
   event.waitUntil(self.registration.showNotification(data.title || "Kesher", options));
 });
 
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
-  var href = (event.notification.data && event.notification.data.href) || "/";
+  var href = safeHref(event.notification.data && event.notification.data.href);
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (list) {
       for (var i = 0; i < list.length; i++) {
@@ -118,3 +145,33 @@ self.addEventListener("notificationclick", function (event) {
     }),
   );
 });
+
+// The browser rotated the subscription: subscribe again and tell the server.
+self.addEventListener("pushsubscriptionchange", function (event) {
+  var options = event.oldSubscription ? event.oldSubscription.options : null;
+  if (!options || !options.applicationServerKey) return;
+  event.waitUntil(
+    self.registration.pushManager
+      .subscribe({ userVisibleOnly: true, applicationServerKey: options.applicationServerKey })
+      .then(function (subscription) {
+        return fetch("/api/push/subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify(subscription.toJSON()),
+        });
+      })
+      .catch(function () {}),
+  );
+});
+`;
+}
+
+/** Stable per deployment: the git commit on Vercel, otherwise the process start time. */
+export function currentBuildId(): string {
+  return (
+    process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 12) ?? process.env.NEXT_PUBLIC_BUILD_ID ?? startedAt
+  );
+}
+
+const startedAt = Date.now().toString(36);

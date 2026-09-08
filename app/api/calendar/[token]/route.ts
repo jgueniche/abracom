@@ -6,7 +6,7 @@ import { frenchPublicHolidaysBetween } from "@/lib/calendar/french-holidays";
 import { buildIcs, type IcsEvent } from "@/lib/calendar/ics";
 import { jewishCalendar, locationFor } from "@/lib/hebcal";
 import { TIME_ZONE } from "@/lib/i18n/config";
-import { appName } from "@/lib/env";
+import { appName, publicEnv } from "@/lib/env";
 import { createAnonClient } from "@/lib/supabase/anon";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +32,7 @@ export async function GET(
   const locale = feed.locale === "en" ? "en" : "fr";
   const t = await getTranslations({ locale, namespace: "agenda" });
   const timezone = feed.timezone ?? TIME_ZONE;
-  const origin = request.nextUrl.origin;
+  const origin = publicEnv.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
 
   const icsEvents: IcsEvent[] = (events ?? []).map((e) => ({
     uid: `event-${e.id}@kesher`,

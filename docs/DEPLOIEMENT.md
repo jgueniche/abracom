@@ -39,12 +39,13 @@
 
 3. **Storage** : buckets privés `attachments`, `documents`, `class-media`, `avatars`, `justifications`,
    `messages` (créés par les migrations ; vérifier les politiques).
-4. **Secrets Vault + pg_cron** : `supabase/jobs/cron.sql` (dispatch toutes les 5 minutes, digest, rappels,
-   purge de rétention).
+4. **Secrets Vault + pg_cron** : créer `kesher_site_url` et `kesher_cron_secret` dans Vault (tableau de
+   bord, jamais dans l'éditeur SQL), puis exécuter `supabase/jobs/cron.sql` (dispatch toutes les
+   5 minutes, digest horaire du soir, rappels et purge chaque matin). C'est le seul planificateur.
 5. **Vercel** : variables `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
    `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, puis `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`,
    clés VAPID, Sentry (`pnpm ops:check-env --prod` après `vercel env pull`) ; branche de production `main`,
-   région `cdg1`, crons de `vercel.json` actifs (plan Hobby : quotidiens).
+   région `cdg1`. Aucun cron Vercel : toute la planification vient de pg_cron (étape 4).
 6. **Premier compte de direction** : `scripts/ops/create-account.sql` (psql ou éditeur SQL, mot de passe
    jamais committé — ADR-0028) ; la validation en deux étapes est demandée à la première connexion.
 7. **Données réelles** : import CSV des familles depuis l'administration, puis invitations par lots.

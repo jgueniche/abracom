@@ -2827,6 +2827,7 @@ export type Database = {
           email: string
           first_name: string
           kind: string
+          last_digest_at: string
           latitude: number
           locale: string
           longitude: number

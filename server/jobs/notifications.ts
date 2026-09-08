@@ -7,6 +7,7 @@ import { locationFor } from "@/lib/hebcal";
 import {
   type EmailItem,
   type EmailSender,
+  EmailSendError,
   isEmailConfigured,
   renderEmail,
   sendWithResend,
@@ -14,7 +15,7 @@ import {
 import { parseQuietHours } from "@/lib/notifications/kinds";
 import { isPushConfigured, sendPush } from "@/lib/notifications/push";
 import { renderNotification, type Translate } from "@/lib/notifications/render";
-import { nextAllowedTime } from "@/lib/notifications/schedule";
+import { isDigestWindow, nextAllowedTime } from "@/lib/notifications/schedule";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type JobTask = "dispatch" | "digest" | "reminders";
@@ -31,25 +32,45 @@ export type JobReport = {
 
 type JobOptions = { now?: Date; sendEmail?: EmailSender };
 
-async function translator(locale: "fr" | "en", namespace: string): Promise<Translate> {
-  const t = await getTranslations({ locale, namespace });
-  return (key, values) => t(key as never, values as never);
-}
+/** Wall-clock budget of one run (the route allows 60 s, pg_net waits 55 s). */
+const TIME_BUDGET_MS = 45_000;
+/** A delivery is retried at most this many times (mirrors the SQL claim). */
+const MAX_ATTEMPTS = 5;
+/** A person receives at most one digest per 20 hours. */
+const DIGEST_SPACING_MS = 20 * 3_600_000;
 
 /**
  * Delivery worker (brief §7.8). `dispatch` sends due push / e-mail deliveries and postpones the
  * ones falling on Shabbat / yom tov or in the user's quiet hours; `digest` e-mails the unread
- * notifications of the day; `reminders` queues the J-7 / J-1 event reminders.
+ * notifications of the day (run hourly in the evening window); `reminders` queues the J-7 / J-1
+ * event reminders, the birthday reminders and the retention purge.
  */
 export async function runNotificationJob(
   task: JobTask,
   options: JobOptions = {},
 ): Promise<JobReport> {
   const now = options.now ?? new Date();
+  const started = Date.now();
   const report: JobReport = { task, processed: 0, sent: 0, deferred: 0, failed: 0, skipped: 0 };
   const admin = createAdminClient();
   const sendEmail = options.sendEmail ?? sendWithResend;
   const site = publicEnv.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+  const preferencesUrl = `${site}/notifications/preferences`;
+
+  const translators = new Map<string, Promise<Translate>>();
+  function translator(locale: "fr" | "en", namespace: string): Promise<Translate> {
+    const key = `${locale}:${namespace}`;
+    let cached = translators.get(key);
+    if (!cached) {
+      cached = getTranslations({ locale, namespace }).then(
+        (t): Translate =>
+          (k, values) =>
+            t(k as never, values as never),
+      );
+      translators.set(key, cached);
+    }
+    return cached;
+  }
 
   if (task === "reminders") {
     const [events, birthdays, purge] = await Promise.all([
@@ -75,6 +96,7 @@ export async function runNotificationJob(
       byUser.set(row.user_id, list);
     }
     for (const rows of byUser.values()) {
+      if (Date.now() - started > TIME_BUDGET_MS) break;
       const first = rows[0]!;
       report.processed += rows.length;
       const policy = {
@@ -86,7 +108,16 @@ export async function runNotificationJob(
         longitude: first.longitude,
         timezone: first.timezone,
       });
-      if (!first.email || !isEmailConfigured() || nextAllowedTime(now, policy, location) > now) {
+      const recentlyDigested =
+        first.last_digest_at !== null &&
+        now.getTime() - new Date(first.last_digest_at).getTime() < DIGEST_SPACING_MS;
+      if (
+        !first.email ||
+        !isEmailConfigured() ||
+        recentlyDigested ||
+        !isDigestWindow(now, location.timezone) ||
+        nextAllowedTime(now, policy, location) > now
+      ) {
         report.skipped += rows.length;
         continue;
       }
@@ -108,25 +139,32 @@ export async function runNotificationJob(
         intro: te("digestIntro", { count: rows.length }),
         items,
         cta: { label: te("open"), href: `${site}/notifications` },
-        footer: te("footer", { app: appName, url: `${site}/notifications/preferences` }),
+        footer: te("footer", { app: appName, url: preferencesUrl }),
       });
+      const ids = rows.map((r) => r.notification_id);
+      // claimed before sending so that an overlapping run never sends the same digest twice
+      const { data: claimed } = await admin
+        .from("notifications")
+        .update({ digested_at: now.toISOString() })
+        .in("id", ids)
+        .is("digested_at", null)
+        .select("id");
+      if (!claimed?.length) {
+        report.skipped += rows.length;
+        continue;
+      }
       try {
         await sendEmail({
           to: first.email,
           subject: te("digestSubject", { app: appName, count: rows.length }),
           html,
           text,
+          unsubscribeUrl: preferencesUrl,
         });
-        await admin
-          .from("notifications")
-          .update({ digested_at: now.toISOString() })
-          .in(
-            "id",
-            rows.map((r) => r.notification_id),
-          );
         report.sent += rows.length;
       } catch (error) {
-        console.error("[digest]", error);
+        console.error("[digest]", error instanceof Error ? error.message : String(error));
+        await admin.from("notifications").update({ digested_at: null }).in("id", ids);
         report.failed += rows.length;
       }
     }
@@ -139,7 +177,7 @@ export async function runNotificationJob(
   const { error: formsError } = await admin.rpc("notify_due_forms");
   if (formsError) throw formsError;
   await admin.rpc("expire_community_posts");
-  const { data: rows, error } = await admin.rpc("claim_notification_deliveries", { batch: 200 });
+  const { data: rows, error } = await admin.rpc("claim_notification_deliveries", { batch: 100 });
   if (error) throw error;
   const deliveries = rows ?? [];
   report.processed = deliveries.length;
@@ -154,7 +192,11 @@ export async function runNotificationJob(
           .in("user_id", pushUsers)
       : { data: [] as Array<{ id: string; user_id: string; endpoint: string; keys: unknown }> };
 
-  for (const row of deliveries) {
+  for (const [index, row] of deliveries.entries()) {
+    if (Date.now() - started > TIME_BUDGET_MS) {
+      await release(deliveries.slice(index));
+      break;
+    }
     const policy = { quietHours: parseQuietHours(row.quiet_hours), shabbatMode: row.shabbat_mode };
     const location = locationFor({
       latitude: row.latitude,
@@ -165,7 +207,11 @@ export async function runNotificationJob(
     if (allowed > now) {
       await admin
         .from("notification_deliveries")
-        .update({ scheduled_for: allowed.toISOString(), attempts: Math.max(0, row.attempts - 1) })
+        .update({
+          scheduled_for: allowed.toISOString(),
+          attempts: Math.max(0, row.attempts - 1),
+          claimed_at: null,
+        })
         .eq("id", row.delivery_id);
       report.deferred++;
       continue;
@@ -192,7 +238,12 @@ export async function runNotificationJob(
         if (!keys?.p256dh || !keys.auth) continue;
         const result = await sendPush(
           { endpoint: subscription.endpoint, keys: { p256dh: keys.p256dh, auth: keys.auth } },
-          { title: rendered.title, body: rendered.body, href: rendered.href, tag: row.kind },
+          {
+            title: rendered.title,
+            body: rendered.body,
+            href: rendered.href,
+            tag: `${row.kind}:${row.notification_id}`,
+          },
         );
         if (result === "sent") delivered = true;
         if (result === "gone")
@@ -203,10 +254,7 @@ export async function runNotificationJob(
         if (delivered) report.sent++;
         else report.skipped++;
       } else {
-        await admin
-          .from("notification_deliveries")
-          .update({ last_error: "push_failed" })
-          .eq("id", row.delivery_id);
+        await markFailed(row.delivery_id, row.attempts, "push_failed");
         report.failed++;
       }
       continue;
@@ -223,19 +271,37 @@ export async function runNotificationJob(
       intro: te("singleIntro"),
       items: [{ ...rendered, href }],
       cta: { label: te("open"), href },
-      footer: te("footer", { app: appName, url: `${site}/notifications/preferences` }),
+      footer: te("footer", { app: appName, url: preferencesUrl }),
     });
     try {
-      await sendEmail({ to: row.email, subject: `${appName} · ${rendered.title}`, html, text });
+      await sendEmail({
+        to: row.email,
+        subject: `${appName} · ${rendered.title}`,
+        html,
+        text,
+        unsubscribeUrl: preferencesUrl,
+      });
       await markSent(row.delivery_id, null);
       report.sent++;
     } catch (sendError) {
-      console.error("[email]", sendError);
-      await admin
-        .from("notification_deliveries")
-        .update({ last_error: String(sendError).slice(0, 300) })
-        .eq("id", row.delivery_id);
-      report.failed++;
+      const message = sendError instanceof Error ? sendError.message : String(sendError);
+      console.error("[email]", message);
+      if (sendError instanceof EmailSendError && sendError.status === 429) {
+        // rate limited: try again in a minute without consuming an attempt
+        await admin
+          .from("notification_deliveries")
+          .update({
+            scheduled_for: new Date(now.getTime() + 60_000).toISOString(),
+            attempts: Math.max(0, row.attempts - 1),
+            claimed_at: null,
+            last_error: "rate_limited",
+          })
+          .eq("id", row.delivery_id);
+        report.deferred++;
+      } else {
+        await markFailed(row.delivery_id, row.attempts, message.slice(0, 300));
+        report.failed++;
+      }
     }
   }
   return report;
@@ -247,11 +313,42 @@ export async function runNotificationJob(
       .eq("id", id);
   }
 
-  /** Not configured on this deployment: keep the row pending without burning attempts. */
+  /** Exponential backoff: 5, 10, 20, 40 minutes; the fifth failure is final and logged. */
+  async function markFailed(id: string, attempts: number, note: string) {
+    if (attempts >= MAX_ATTEMPTS) {
+      console.error(`[notifications] delivery ${id} abandoned after ${attempts} attempts: ${note}`);
+    }
+    const delay = 5 * 60_000 * 2 ** Math.max(0, attempts - 1);
+    await admin
+      .from("notification_deliveries")
+      .update({
+        scheduled_for: new Date(now.getTime() + delay).toISOString(),
+        claimed_at: null,
+        last_error: note,
+      })
+      .eq("id", id);
+  }
+
+  /** Not configured on this deployment: look again in an hour, without burning attempts. */
   async function skip(id: string, attempts: number, note: string) {
     await admin
       .from("notification_deliveries")
-      .update({ attempts: Math.max(0, attempts - 1), last_error: note })
+      .update({
+        attempts: Math.max(0, attempts - 1),
+        scheduled_for: new Date(now.getTime() + 3_600_000).toISOString(),
+        claimed_at: null,
+        last_error: note,
+      })
       .eq("id", id);
+  }
+
+  /** Out of time: hand the rows back to the next run. */
+  async function release(rows: typeof deliveries) {
+    for (const row of rows) {
+      await admin
+        .from("notification_deliveries")
+        .update({ attempts: Math.max(0, row.attempts - 1), claimed_at: null })
+        .eq("id", row.delivery_id);
+    }
   }
 }

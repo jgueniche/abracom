@@ -33,7 +33,25 @@ export function PushToggle({ publicKey }: { publicKey: string | null }) {
     navigator.serviceWorker
       .register("/sw.js")
       .then((registration) => registration.pushManager.getSubscription())
-      .then((subscription) => setState(subscription ? "on" : "off"))
+      .then(async (subscription) => {
+        if (!subscription) {
+          setState("off");
+          return;
+        }
+        // the browser subscription must belong to the signed-in person (shared devices)
+        const json = subscription.toJSON();
+        const result = await subscribeToPush({
+          endpoint: json.endpoint ?? "",
+          keys: { p256dh: json.keys?.p256dh ?? "", auth: json.keys?.auth ?? "" },
+          userAgent: navigator.userAgent.slice(0, 300),
+        });
+        if (result.status === "success") {
+          setState("on");
+        } else {
+          await subscription.unsubscribe().catch(() => false);
+          setState("off");
+        }
+      })
       .catch(() => setState("unsupported"));
   }, [publicKey]);
 
@@ -47,6 +65,8 @@ export function PushToggle({ publicKey }: { publicKey: string | null }) {
         return;
       }
       const registration = await navigator.serviceWorker.ready;
+      const previous = await registration.pushManager.getSubscription();
+      if (previous) await previous.unsubscribe().catch(() => false);
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: toUint8Array(publicKey) as BufferSource,
