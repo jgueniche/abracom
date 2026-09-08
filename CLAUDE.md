@@ -112,11 +112,10 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 
 ## 10. État d'avancement
 
-- **Session 1 — terminée** : bootstrap Next 15.5 + Tailwind v4 + shadcn + next-intl + next-themes + zod,
-  clients Supabase, CI GitHub Actions (lint, types, format, unit, build, e2e, database), Husky + commitlint,
-  Vercel `abracom` (`cdg1`, https://abracom.vercel.app). **Reste** : projet Supabase cloud `kesher-staging`.
-- **Session 2 — terminée (validation visuelle en attente)** : palette dérivée du logo (sarcelle `#01525e`,
-  rouge brique `#852624`), tokens clair / sombre, contraste AA testé, Inter + Fraunces, `/dev/ui`, icônes PWA.
+- **Sessions 1–2 — terminées** : bootstrap Next 15.5 + Tailwind v4 + shadcn + next-intl + next-themes +
+  zod, clients Supabase, CI (lint, types, format, unit, build, e2e, database), Husky + commitlint, Vercel
+  `abracom` (`cdg1`) ; palette dérivée du logo (sarcelle `#01525e`, brique `#852624`), Inter + Fraunces,
+  `/dev/ui`, icônes PWA. **Validation visuelle par le porteur en attente.**
 - **Session 3 — terminée (à rejouer sur Supabase)** : 10 migrations, 47 tables, 23 enums, `can_access_*`,
   132 politiques RLS (+ storage), seed fictif (137 comptes, 66 élèves), pgTAP en CI (job `database`).
 - **Session 4 — code complet, validation Supabase en attente** : middleware de session, magic link (+ mot
@@ -144,6 +143,7 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 - **Session 15 — code et documents complets** : guides utilisateurs (`content/guides`, `/aide`, PDF),
   assistant de promotion de niveau (`promote_school_year`), `docs/DEMO.md`, `docs/DEPLOIEMENT.md`, scripts
   `ops:check-env`, `ops:storage-sweep`, `promote.sh`. 302 assertions pgTAP (revue de sécurité, ADR-0029). **V1 codée en intégralité.**
-- **Suite** : créer `kesher-staging` (org Supabase gratuite, `eu-west-3`), renseigner les clés, rejouer les
-  validations listées par session dans `docs/ROADMAP.md`, dérouler la démo avec la direction.
+- **Suite** : partager le projet Supabase « Kesher » avec le connecteur, appliquer les 28 migrations et
+  le seed, variables Vercel, `supabase config push` (Auth, modèles), pg_cron (`supabase/jobs/cron.sql`),
+  puis rejouer les validations « à valider sur une stack Supabase » de `docs/ROADMAP.md` et la démo.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».
