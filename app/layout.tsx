@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { type ReactNode } from "react";
 
 import { Providers } from "@/components/layouts/providers";
+import { themeColorHex } from "@/lib/design/tokens";
 import { appName, publicEnv } from "@/lib/env";
 
 import "./globals.css";
@@ -15,6 +16,13 @@ const inter = Inter({
   display: "swap",
 });
 
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  display: "swap",
+  axes: ["opsz"],
+});
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("common");
   return {
@@ -22,6 +30,8 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { default: appName, template: `%s · ${appName}` },
     description: t("tagline"),
     applicationName: appName,
+    manifest: "/manifest.webmanifest",
+    appleWebApp: { capable: true, statusBarStyle: "default", title: appName },
     robots: { index: false, follow: false },
   };
 }
@@ -31,8 +41,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: light)", color: themeColorHex.light },
+    { media: "(prefers-color-scheme: dark)", color: themeColorHex.dark },
   ],
 };
 
@@ -40,7 +50,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const locale = await getLocale();
 
   return (
-    <html lang={locale} className={inter.variable} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${inter.variable} ${fraunces.variable}`}
+      suppressHydrationWarning
+    >
       <body className="min-h-dvh font-sans antialiased">
         <NextIntlClientProvider>
           <Providers>{children}</Providers>

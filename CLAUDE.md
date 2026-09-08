@@ -117,7 +117,11 @@ durées de conservation dans `docs/RGPD.md` (session 14).
     `vercel.json` (région `cdg1`), projet Vercel `abracom` importé depuis GitHub (production :
     https://abracom.vercel.app, previews par branche). **Reste** : vérifier `supabase start` sur un poste
     avec Docker ; créer le projet Supabase cloud `kesher-staging` (UE) avant la session 3.
-- **Prochaine session — 2** : identité visuelle (téléchargement du logo, extraction de palette, tokens
-  `primary` / `accent` / `surface` / `muted`, typographies Inter + serif, page `/dev/ui`, icônes PWA).
-- Le schéma BDD n'a **pas** été commencé (session 3), conformément au brief.
+- **Session 2 — terminée (validation visuelle en attente)** : palette dérivée du logo (sarcelle `#01525e`,
+  rouge brique `#852624`, or doux, taupe), tokens clair (papier + sarcelle) / sombre (bleu nuit + sable) dans
+  `app/globals.css`, contraste AA testé, Inter + Fraunces, page `/dev/ui` (dev + preview Vercel), icônes PWA
+  et manifest, `scripts/brand/*` (extraction, contraste, icônes) et `scripts/dev/screenshots.mjs`.
+- **Prochaine session — 3** : schéma BDD complet + RLS + `can_access_*` + seed fictif + tests RLS (pgTAP).
+  Sans Docker ni projet cloud, les migrations sont validées sur un PostgreSQL 16 local (apt) avec un shim
+  du schéma `auth` (voir `supabase/tests/README.md` une fois créé).
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

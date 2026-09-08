@@ -3,23 +3,23 @@
 Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committée**.
 **MVP présentable à la direction = sessions 1–8.** Sessions 9–15 = V1 complète.
 
-| #   | Livrable                                                                                                                     | Definition of done                                      | État |
-| --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ---- |
-| 1   | Bootstrap : Next 15, Tailwind, shadcn, Supabase local, CI lint/test, Vercel preview, CLAUDE.md, ROADMAP                      | `pnpm dev` OK, déploiement preview vert                 | ✅   |
-| 2   | Identité visuelle : extraction palette logo, tokens, thème clair/sombre, page de style `/dev/ui`                             | Validation visuelle par le porteur                      | ⬜   |
-| 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ⬜   |
-| 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | ⬜   |
-| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | ⬜   |
-| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | ⬜   |
-| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | ⬜   |
-| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | ⬜   |
-| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | ⬜   |
-| 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | ⬜   |
-| 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | ⬜   |
-| 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | ⬜   |
-| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | ⬜   |
-| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | ⬜   |
-| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | ⬜   |
+| #   | Livrable                                                                                                                     | Definition of done                                      | État                                           |
+| --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------- |
+| 1   | Bootstrap : Next 15, Tailwind, shadcn, Supabase local, CI lint/test, Vercel preview, CLAUDE.md, ROADMAP                      | `pnpm dev` OK, déploiement preview vert                 | ✅                                             |
+| 2   | Identité visuelle : extraction palette logo, tokens, thème clair/sombre, page de style `/dev/ui`                             | Validation visuelle par le porteur                      | ✅ (validation visuelle du porteur en attente) |
+| 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ⬜                                             |
+| 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | ⬜                                             |
+| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | ⬜                                             |
+| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | ⬜                                             |
+| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | ⬜                                             |
+| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | ⬜                                             |
+| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | ⬜                                             |
+| 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | ⬜                                             |
+| 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | ⬜                                             |
+| 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | ⬜                                             |
+| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | ⬜                                             |
+| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | ⬜                                             |
+| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | ⬜                                             |
 
 ## Session 1 — détail
 
@@ -50,13 +50,24 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 - [ ] `supabase start` vérifié localement (Docker indisponible dans l'environnement de la session 1 ; à faire
       sur le poste du porteur).
 
-## Session 2 — à faire
+## Session 2 — détail
 
-- [ ] Télécharger le logo officiel (`public/brand/`), extraire la palette, dériver les tokens Tailwind
-- [ ] Si logo monochrome : proposer 2 palettes (bleu profond / or doux, bleu nuit / sable) et demander validation
-- [ ] Typographies : Inter (UI) + serif discrète pour les titres (Fraunces ou Newsreader) — proposer, valider
-- [ ] Page `/dev/ui` : tokens, composants, états, dark mode, contraste WCAG AA
-- [ ] Icônes PWA 192/512, splash, favicon dérivés du logo (sans l'altérer)
+- [x] Logo officiel téléchargé (`public/brand/logo-abravanel.png`, non altéré), palette extraite par
+      `scripts/brand/extract-palette.mjs` et `extract-hue.mjs`
+- [x] Logo polychrome (sarcelle, rouge brique, or doux, taupe) → une seule palette dérivée, sans variante à
+      arbitrer : clair = papier + sarcelle, sombre = bleu nuit + sable (ADR-0010)
+- [x] Tokens dans `app/globals.css` (shadcn + `surface`, `brand-*`, `shadow-soft`), rayon 0,875 rem ;
+      contraste WCAG AA de chaque paire texte vérifié par `tests/unit/design-tokens.test.ts` (30 assertions)
+      et `scripts/brand/check-contrast.ts`
+- [x] Typographies : Inter (UI) + Fraunces (titres) via `next/font`, mono système (ADR-0011)
+- [x] Page `/dev/ui` : tokens résolus dans le navigateur avec contraste calculé, typographie, boutons,
+      formulaires, superpositions, aperçus de cartes métier, icônes ; visible en dev et en preview Vercel
+- [x] Icônes PWA 192 / 512 + maskable, `apple-icon`, favicon PNG, `app/manifest.ts`
+      (`scripts/brand/generate-icons.ts`)
+- [x] `scripts/dev/screenshots.mjs` : captures mobile / desktop, clair / sombre, pour les PR
+- [x] Tests : 44 unitaires, 12 e2e (dont manifest + icônes + `/dev/ui`)
+- [ ] **Validation visuelle par le porteur** : ouvrir `/dev/ui` sur la preview Vercel de la branche ou
+      regarder les captures envoyées dans la session ; ajustements de teinte possibles sans toucher aux composants
 
 ## Questions ouvertes (§15 du brief)
 

@@ -84,3 +84,33 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 
 - **Décision** : `pre-commit` → lint-staged (ESLint --fix + Prettier), `commit-msg` → commitlint
   (`@commitlint/config-conventional`). Messages en anglais.
+
+## ADR-0010 — Palette dérivée du logo polychrome, une seule proposition
+
+- **Contexte** : le brief prévoyait deux palettes si le logo était monochrome. Le logo officiel est
+  polychrome : aleph et étoile sarcelle `#01525e`, titre et mandala rouge brique `#852624`, pétales or doux
+  `#e3b383` / `#fbe29e`, traits du livre taupe `#584a47` (extraction par comptage de pixels,
+  `scripts/brand/extract-palette.mjs`).
+- **Décision** : une seule palette dérivée. `primary` = sarcelle (légèrement éclairci en clair, pastel en
+  sombre), `secondary` = sable / or doux, `accent` = sarcelle très pâle (survols), `destructive` = rouge
+  brique, neutres chauds tirés du taupe, fond clair « papier » `oklch(0.985 0.006 80)`, fond sombre « bleu
+  nuit » `oklch(0.2 0.014 220)`. Tokens supplémentaires : `surface`, `brand-*`, `shadow-soft`. Toute paire
+  texte doit rester ≥ 4,5:1 (test unitaire bloquant), l'anneau de focus ≥ 3:1.
+- **Conséquences** : les composants shadcn ne sont pas modifiés ; un changement de teinte se fait uniquement
+  dans `app/globals.css` (+ `lib/design/tokens.ts` pour le fond) et doit passer le test de contraste.
+
+## ADR-0011 — Typographies Inter + Fraunces
+
+- **Décision** : Inter pour l'interface (`--font-sans`), Fraunces (axe optique) pour les titres
+  (`--font-heading`, appliqué aux `h1`–`h4` par la couche de base), pile monospace système pour les
+  horodatages. Chargement par `next/font/google` (auto-hébergé au build, pas de requête Google côté
+  utilisateur, `display: swap`).
+- **Conséquences** : Newsreader reste l'alternative si le porteur préfère une serif plus classique ;
+  le changement se limite à `app/layout.tsx`.
+
+## ADR-0012 — `/dev/ui` visible en preview Vercel, 404 en production
+
+- **Décision** : le guide de style est servi en développement et lorsque `VERCEL_ENV=preview`, pour que le
+  porteur valide l'identité depuis son téléphone sans installer le projet. Il renvoie 404 en production.
+- **Conséquences** : aucune donnée réelle n'y figure (contenus fictifs traduits) ; la CI teste le 404 en
+  mode production.

@@ -28,6 +28,17 @@ pnpm build        # build de production
 pnpm test:e2e     # Playwright (mobile + desktop) ; CI=1 pour tester contre `next start`
 ```
 
+## Scripts utilitaires
+
+```bash
+node scripts/brand/extract-palette.mjs        # couleurs dominantes du logo
+node scripts/brand/check-contrast.ts          # contraste AA des tokens (les deux thèmes)
+node scripts/brand/generate-icons.ts          # icônes PWA / favicon / apple-icon depuis le logo
+node scripts/dev/screenshots.mjs http://127.0.0.1:3000 ./screenshots /dev/ui /   # captures mobile + desktop
+```
+
+Le guide de style est disponible sur `/dev/ui` (développement et previews Vercel).
+
 ## Stack
 
 Next.js 15 (App Router, Server Actions) · TypeScript strict · Tailwind CSS v4 · shadcn/ui · next-intl

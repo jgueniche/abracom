@@ -56,5 +56,95 @@
       "description": "We could not display this page. Please try again in a moment.",
       "retry": "Try again"
     }
+  },
+  "devUi": {
+    "title": "Style guide",
+    "subtitle": "Tokens derived from the Institutions Abravanel logo. Development-only page, hidden in production.",
+    "sections": {
+      "palette": "Palette",
+      "typography": "Typography",
+      "buttons": "Buttons",
+      "forms": "Forms",
+      "feedback": "Feedback and overlays",
+      "cards": "Domain cards",
+      "icons": "PWA icons"
+    },
+    "palette": {
+      "brand": "Brand colours (constant)",
+      "themeTokens": "Theme tokens (light / dark)",
+      "contrast": "contrast",
+      "pass": "AA",
+      "fail": "Too low",
+      "onBackground": "on page background"
+    },
+    "typography": {
+      "heading": "Headings · Fraunces",
+      "body": "Body · Inter",
+      "sample": "The quick brown fox jumps over the lazy dog",
+      "lead": "A lead paragraph, slightly larger, for important announcements from the school office.",
+      "muted": "Secondary text for metadata, hints and timestamps."
+    },
+    "buttons": {
+      "default": "Primary",
+      "secondary": "Secondary",
+      "outline": "Outline",
+      "ghost": "Ghost",
+      "link": "Link",
+      "destructive": "Destructive",
+      "small": "Small",
+      "large": "Large",
+      "icon": "Icon"
+    },
+    "forms": {
+      "email": "Email address",
+      "emailPlaceholder": "first.last@example.com",
+      "message": "Message",
+      "messagePlaceholder": "Your message to the teacher…",
+      "child": "Child",
+      "childPlaceholder": "Pick a child",
+      "notifications": "Push notifications",
+      "notificationsHint": "Queued during Shabbat and holidays."
+    },
+    "feedback": {
+      "openDialog": "Open a dialog",
+      "openSheet": "Open a sheet",
+      "toast": "Show a toast",
+      "toastMessage": "Announcement sent to 24 families.",
+      "dialogTitle": "Confirm reading",
+      "dialogDescription": "By confirming, you let the school office know you have read this circular.",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "sheetTitle": "Filters",
+      "sheetDescription": "Narrow down the list of posts.",
+      "tooltip": "Tooltip",
+      "tooltipText": "Read receipt required",
+      "loading": "Loading (skeletons)"
+    },
+    "mock": {
+      "announcementBadge": "School office",
+      "announcementTitle": "Back-to-school meeting for nursery classes",
+      "announcementBody": "Monday at 6:30 pm in the multipurpose room. Please confirm your attendance.",
+      "ack": "Mark as read",
+      "readCount": "{read} / {total} read",
+      "homeworkBadge": "To prepare",
+      "homeworkTitle": "Bring a family photo",
+      "homeworkDue": "Due Thursday",
+      "seen": "Seen",
+      "eventBadge": "Celebration",
+      "eventTitle": "Class Kabbalat Shabbat",
+      "eventWhen": "Friday 4 pm · Tournesols room",
+      "rsvp": "I'm coming",
+      "studentName": "Fictional name",
+      "className": "PS Tournesols",
+      "tabs": {
+        "today": "Today",
+        "week": "Week",
+        "month": "Month"
+      },
+      "tabContent": "Content of the “{tab}” tab."
+    },
+    "icons": {
+      "description": "Generated from the official logo, unaltered, by scripts/brand/generate-icons.ts (favicon, iOS, standard and maskable PWA icons)."
+    }
   }
 }

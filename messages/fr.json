@@ -56,5 +56,95 @@
       "description": "Nous n'avons pas pu afficher cette page. Merci de réessayer dans un instant.",
       "retry": "Réessayer"
     }
+  },
+  "devUi": {
+    "title": "Guide de style",
+    "subtitle": "Tokens dérivés du logo des Institutions Abravanel. Page réservée au développement, invisible en production.",
+    "sections": {
+      "palette": "Palette",
+      "typography": "Typographie",
+      "buttons": "Boutons",
+      "forms": "Formulaires",
+      "feedback": "Retours et superpositions",
+      "cards": "Cartes métier",
+      "icons": "Icônes PWA"
+    },
+    "palette": {
+      "brand": "Couleurs de marque (constantes)",
+      "themeTokens": "Tokens du thème (clair / sombre)",
+      "contrast": "contraste",
+      "pass": "AA",
+      "fail": "Insuffisant",
+      "onBackground": "sur fond de page"
+    },
+    "typography": {
+      "heading": "Titres · Fraunces",
+      "body": "Texte · Inter",
+      "sample": "Portez ce vieux whisky au juge blond qui fume",
+      "lead": "Un texte d'introduction, un peu plus grand, pour les annonces importantes de la direction.",
+      "muted": "Texte secondaire pour les métadonnées, les aides et les horodatages."
+    },
+    "buttons": {
+      "default": "Principal",
+      "secondary": "Secondaire",
+      "outline": "Contour",
+      "ghost": "Discret",
+      "link": "Lien",
+      "destructive": "Destructif",
+      "small": "Petit",
+      "large": "Grand",
+      "icon": "Icône"
+    },
+    "forms": {
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "prenom.nom@exemple.fr",
+      "message": "Message",
+      "messagePlaceholder": "Votre message à l'enseignante…",
+      "child": "Enfant",
+      "childPlaceholder": "Choisir un enfant",
+      "notifications": "Notifications push",
+      "notificationsHint": "Mises en file pendant Shabbat et les fêtes."
+    },
+    "feedback": {
+      "openDialog": "Ouvrir une boîte de dialogue",
+      "openSheet": "Ouvrir un panneau",
+      "toast": "Afficher une notification",
+      "toastMessage": "Annonce publiée à 24 familles.",
+      "dialogTitle": "Confirmer la lecture",
+      "dialogDescription": "En confirmant, vous indiquez à la direction que vous avez pris connaissance de cette circulaire.",
+      "confirm": "Confirmer",
+      "cancel": "Annuler",
+      "sheetTitle": "Filtres",
+      "sheetDescription": "Affiner la liste des publications.",
+      "tooltip": "Infobulle",
+      "tooltipText": "Accusé de lecture requis",
+      "loading": "Chargement (squelettes)"
+    },
+    "mock": {
+      "announcementBadge": "Direction",
+      "announcementTitle": "Réunion de rentrée des classes maternelles",
+      "announcementBody": "Rendez-vous lundi à 18 h 30 dans la salle polyvalente. Merci de confirmer votre présence.",
+      "ack": "J'ai lu",
+      "readCount": "{read} / {total} lus",
+      "homeworkBadge": "À préparer",
+      "homeworkTitle": "Apporter une photo de famille",
+      "homeworkDue": "Pour jeudi",
+      "seen": "Vu",
+      "eventBadge": "Fête",
+      "eventTitle": "Kabbalat Shabbat de la classe",
+      "eventWhen": "Vendredi 16 h · Salle des Tournesols",
+      "rsvp": "Je viens",
+      "studentName": "Prénom fictif",
+      "className": "PS Tournesols",
+      "tabs": {
+        "today": "Aujourd'hui",
+        "week": "Semaine",
+        "month": "Mois"
+      },
+      "tabContent": "Contenu de l'onglet « {tab} »."
+    },
+    "icons": {
+      "description": "Générées depuis le logo officiel, sans altération, par scripts/brand/generate-icons.ts (favicon, iOS, PWA standard et maskable)."
+    }
   }
 }
