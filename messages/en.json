@@ -298,7 +298,8 @@
       "import": "CSV import",
       "audit": "Audit log",
       "announcements": "Announcements",
-      "documents": "Documents"
+      "documents": "Documents",
+      "reports": "Reports"
     },
     "years": {
       "title": "School years",
@@ -783,5 +784,99 @@
       "period": "{from} → {to}",
       "readOnly": "Declarations are reserved for parents."
     }
+  },
+  "messaging": {
+    "title": "Messages",
+    "subtitle": "Conversations with the team and the class parents.",
+    "empty": "No conversation.",
+    "new": "New message",
+    "kinds": {
+      "dm": "Direct message",
+      "class_group": "Parents group",
+      "class_official": "Official channel",
+      "event": "Event",
+      "custom": "Discussion"
+    },
+    "unread": "{count, plural, one {# unread} other {# unread}}",
+    "muted": "Muted",
+    "locked": "Locked",
+    "archived": "Archived",
+    "readOnlyChannel": "Read-only channel: only the team posts here.",
+    "responseHours": "The team usually replies within 48 working hours; no replies during Shabbat and holidays.",
+    "composer": {
+      "placeholder": "Your message… (@Name to mention)",
+      "send": "Send",
+      "attach": "Attach (image or PDF, 10 MB)",
+      "replyingTo": "Replying to {name}",
+      "cancel": "Cancel",
+      "readOnly": "Your access is read-only.",
+      "closed": "This conversation is closed."
+    },
+    "message": {
+      "reply": "Reply",
+      "react": "React",
+      "report": "Report",
+      "delete": "Delete",
+      "deleted": "Message deleted",
+      "moderated": "Message removed by moderation: {reason}",
+      "edited": "edited",
+      "moderate": "Remove (moderation)",
+      "reason": "Reason",
+      "attachments": "Attachments",
+      "you": "You",
+      "unknown": "Member"
+    },
+    "report": {
+      "title": "Report this message",
+      "reason": "Describe the problem",
+      "submit": "Send the report",
+      "sent": "Report sent to the school office."
+    },
+    "reported": "Report sent to the school office.",
+    "moderated": "Message removed.",
+    "reasonRequired": "Give a reason.",
+    "invalid": "Empty or too long message.",
+    "notAllowed": "You cannot write in this conversation.",
+    "sendError": "Could not send.",
+    "fileType": "Attachment: image or PDF up to 10 MB.",
+    "uploadError": "Could not upload the attachment.",
+    "search": "Search",
+    "searchPlaceholder": "Search in the conversation",
+    "searchResults": "{count, plural, =0 {No result} one {# result} other {# results}} for “{query}”",
+    "clearSearch": "Back to the conversation",
+    "members": "{count, plural, one {# member} other {# members}}",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "lock": "Lock",
+    "unlock": "Unlock",
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "contacts": {
+      "title": "New message",
+      "subtitle": "Parents can write to their children's teachers and to the school office.",
+      "empty": "No contact available.",
+      "write": "Write",
+      "team": "Team",
+      "parents": "Parents"
+    },
+    "classDiscussion": "Class discussion",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "loadOlder": "Older messages"
+  },
+  "adminReports": {
+    "title": "Reports",
+    "subtitle": "Messages reported by members; removal with a reason and closure.",
+    "open": "Open",
+    "resolved": "Handled",
+    "none": "No report.",
+    "reporter": "Reported by {name}",
+    "author": "Author: {name}",
+    "reason": "Reason",
+    "remove": "Remove the message",
+    "resolve": "Close without removal",
+    "note": "Closure note",
+    "openThread": "Open the conversation",
+    "alreadyRemoved": "Message already removed"
   }
 }

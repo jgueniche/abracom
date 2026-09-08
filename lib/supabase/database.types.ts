@@ -2464,6 +2464,10 @@ export type Database = {
         Args: { student: string; uid?: string }
         Returns: boolean
       }
+      can_direct_message: {
+        Args: { target: string; uid?: string }
+        Returns: boolean
+      }
       can_view_profile: {
         Args: { target: string; uid?: string }
         Returns: boolean
@@ -2477,6 +2481,16 @@ export type Database = {
         Returns: boolean
       }
       class_school_id: { Args: { class_: string }; Returns: string }
+      dm_contacts: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          class_names: string
+          first_name: string
+          last_name: string
+          role: Database["public"]["Enums"]["membership_role"]
+          user_id: string
+        }[]
+      }
       document_missing_signatures: {
         Args: { document: string }
         Returns: {
@@ -2485,6 +2499,13 @@ export type Database = {
           student_id: string
           student_name: string
           user_id: string
+        }[]
+      }
+      ensure_class_threads: {
+        Args: { class_: string }
+        Returns: {
+          official: string
+          parents_group: string
         }[]
       }
       find_user_id_by_email: { Args: { email: string }; Returns: string }
@@ -2532,6 +2553,29 @@ export type Database = {
         }
         Returns: boolean
       }
+      my_threads: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          allow_replies: boolean
+          archived: boolean
+          class_id: string
+          class_name: string
+          kind: Database["public"]["Enums"]["thread_kind"]
+          last_author_first_name: string
+          last_message_at: string
+          last_message_preview: string
+          locked: boolean
+          member_role: Database["public"]["Enums"]["thread_member_role"]
+          muted: boolean
+          other_first_name: string
+          other_last_name: string
+          other_user_id: string
+          thread_id: string
+          title: string
+          unread_count: number
+        }[]
+      }
+      open_dm: { Args: { other: string }; Returns: string }
       remind_announcement: { Args: { announcement: string }; Returns: number }
       set_current_school_year: { Args: { year_id: string }; Returns: undefined }
       student_school_id: { Args: { student: string }; Returns: string }

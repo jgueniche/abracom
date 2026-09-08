@@ -128,21 +128,22 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   `database`), types générés (`pnpm db:types:local`). Voir `supabase/tests/README.md`.
 - **Session 4 — code complet, validation Supabase en attente** : middleware de session, magic link sans
   inscription libre, callbacks PKCE / token hash, onboarding avec CGU versionnées et activation des
-  memberships, `lib/auth` + `lib/permissions`, perspectives multi-rôle, coquille connectée (accueil par rôle,
-  famille, profil, plus). Le flux e2e « invitation → 1re connexion » est écrit (`SUPABASE_E2E=1`) mais ne
-  peut tourner qu'avec une stack Supabase.
+  memberships, `lib/auth` + `lib/permissions`, perspectives multi-rôle, coquille connectée par rôle. Le flux
+  e2e « invitation → 1re connexion » (`SUPABASE_E2E=1`) ne peut tourner qu'avec une stack Supabase.
 - **Session 5 — code complet, chronométrage Supabase en attente** : espace `/admin` (familles, classes,
-  utilisateurs, années, import CSV, journal), import CSV testé unitairement, comptes créés sans e-mail puis
-  invitations par lots de 20, droits par responsable + restriction judiciaire journalisée, audit de toutes
-  les actions.
+  utilisateurs, années, import CSV testé, journal), comptes créés sans e-mail puis invitations par lots de 20,
+  droits par responsable + restriction judiciaire, audit de toutes les actions.
 - **Session 6 — code complet, validation Supabase en attente** : annonces (éditeur Markdown + modèles,
   ciblage, planification, accusés de lecture, relance en un clic, export CSV, pièces jointes), documents
   (dossiers, signatures électroniques par famille / enfant, droit à l'image → élève, signatures manquantes),
   notifications in-app (cloche). 63 assertions pgTAP.
-- **Session 7 — code complet, validation Supabase en attente** : espace classe (fil typé, devoirs avec « vu »,
-  cahier de vie avec photos normalisées côté serveur et tag soumis au droit à l'image, mots individuels avec
-  accusé de lecture, absences avec justificatif et validation), vue hebdo enseignant. 71 assertions pgTAP.
-- **Prochaine session — 8** : messagerie temps réel (DM parent ↔ enseignant / direction, fils officiels de
-  classe, groupes de classe, réponses en fil, réactions, pièces jointes, mentions, recherche, mode silencieux,
-  signalement, modération, verrouillage, archivage, bandeau des horaires de réponse). Fin du MVP.
+- **Session 7 — code complet, validation Supabase en attente** : espace classe (fil typé, devoirs « vu »,
+  cahier de vie avec photos normalisées et tag soumis au droit à l'image, mots individuels avec accusé de
+  lecture, absences avec justificatif et validation), vue hebdo enseignant. 71 assertions pgTAP.
+- **Session 8 — code complet, validation Supabase en attente** : messagerie temps réel (Realtime
+  `postgres_changes`), DM selon `can_direct_message`, fils officiels et groupes de classe (`ensure_class_threads`),
+  réponses, réactions, mentions, pièces jointes, recherche, silencieux, signalement, modération, verrouillage,
+  archivage, `/admin/signalements`. 81 assertions pgTAP. **Fin du code du MVP** (sessions 1–8).
+- **Prochaine session — 9** : agenda (fêtes juives via `@hebcal/core`, événements, RSVP, créneaux de
+  bénévolat, flux ICS par utilisateur). Puis 10 : notifications push / Resend / digest + mode Shabbat.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

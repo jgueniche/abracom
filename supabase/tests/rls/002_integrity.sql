@@ -1,6 +1,6 @@
 -- pgTAP: integrity rules that must hold regardless of role.
 begin;
-select plan(5);
+select plan(7);
 
 select throws_ok(
   $$insert into public.school_years (school_id, label, starts_on, ends_on, is_current)
@@ -37,6 +37,16 @@ select isnt(
   (select image_rights_signed_at from public.students where id = 'd0000000-0000-4000-8000-000000040001'),
   null,
   'image-rights signature stamps students.image_rights_signed_at'
+);
+
+-- class threads are created once and members kept in sync
+select set_config('role', 'authenticated', true);
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+select lives_ok($$select * from public.ensure_class_threads('00000000-0000-4000-8000-000000000514')$$, 'ensure_class_threads runs for the direction');
+select is(
+  (select count(*) from public.threads where class_id = '00000000-0000-4000-8000-000000000514' and not archived),
+  2::bigint,
+  'ensure_class_threads is idempotent (official + group only)'
 );
 
 select * from finish();

@@ -216,3 +216,20 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
   la normalisation serveur.
 - **Conséquences** : `sharp` est une dépendance de production (déjà utilisée par `next/image`) ; les vidéos
   et PDF du cahier de vie restent à traiter (limite 25 Mo, pas de transcodage).
+
+## ADR-0020 — Messagerie : Realtime `postgres_changes` et règles de contact en SQL
+
+- **Contexte** : le brief exige une messagerie instantanée modérée (§4.3) sans serveur WebSocket dédié, et
+  des règles strictes sur qui peut écrire à qui (parents ↔ enseignant / direction, jamais parent ↔ parent
+  par défaut, guardians en lecture seule).
+- **Décision** : les fils vivent dans `threads` / `thread_members` / `messages` ; le client s'abonne à
+  Supabase Realtime (`postgres_changes` filtré sur `thread_id`), ce qui applique les RLS existantes à chaque
+  événement. Les règles de contact sont des fonctions SQL (`can_direct_message`, `open_dm`,
+  `ensure_class_threads`) appelées par les Server Actions : un même DM est réutilisé, les fils de classe sont
+  créés à la demande et de façon idempotente. La messagerie parent ↔ parent est un module désactivé par école
+  (`schools.modules->'messaging'->>'parentToParent'`). Les messages supprimés sont masqués (soft delete)
+  pour conserver la trace de modération ; les pièces jointes passent par le bucket privé `messages` et des
+  URL signées de 10 minutes.
+- **Conséquences** : pas de présence ni d'indicateur « en train d'écrire » (Realtime Broadcast possible plus
+  tard) ; les notifications de nouveaux messages arrivent en session 10 ; la publication Realtime doit être
+  créée sur chaque environnement (elle l'est par la migration).

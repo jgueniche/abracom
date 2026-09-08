@@ -12,7 +12,7 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 | 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | 🟡 code complet, chronométrage de l'import à réaliser sur une stack Supabase          |
 | 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | 🟡 code complet, parcours à valider sur une stack Supabase (upload Storage, e-mails)  |
 | 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | 🟡 code complet, upload photos à valider sur une stack Supabase                       |
-| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | ⬜                                                                                    |
+| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | 🟡 code complet, échange à 2 navigateurs (Realtime) à valider sur une stack Supabase  |
 | 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | ⬜                                                                                    |
 | 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | ⬜                                                                                    |
 | 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | ⬜                                                                                    |
@@ -196,6 +196,26 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 - [x] pgTAP : 71 assertions (vu, absences, mots, interdictions parent / guardian)
 - [ ] Valider sur une stack Supabase : upload et affichage des photos (Storage), captures mobile
 - [ ] Pointage du matin (optionnel) et compression côté client avant envoi : plus tard
+
+## Session 8 — détail
+
+- [x] Migration `20260908171600_messaging` : bucket privé `messages` (`{school_id}/{thread_id}/{fichier}`),
+      publication Realtime (`messages`, `message_reactions`, `thread_members`), `can_direct_message`
+      (parent → enseignant de la classe d'un enfant ou direction ; jamais parent ↔ parent sauf module
+      `messaging.parentToParent` ; guardians exclus), `open_dm` (réutilise le DM existant), `ensure_class_threads`
+      (fil officiel + groupe de parents, idempotent), `my_threads` (non-lus, aperçu, interlocuteur), `dm_contacts`
+- [x] `/messages` : liste des fils (actifs / archivés, badges non-lus, mode silencieux), `/messages/nouveau`
+      (contacts autorisés), `/messages/[threadId]` : **temps réel** (`postgres_changes` filtré par fil),
+      séparateurs par jour, mentions `@`, réponses en fil, réactions (5 emojis), pièces jointes (3 max,
+      10 Mo, image / PDF, URL signées via `/api/storage/messages`), recherche plein texte (`websearch`,
+      dictionnaire `french_unaccent`), bandeau des horaires de réponse de l'école
+- [x] Modération : signalement avec motif, suppression par l'auteur, masquage par un modérateur (journalisé,
+      clôt les signalements), verrouillage et archivage d'un fil (journalisés), file `/admin/signalements`
+- [x] Espace classe : bouton « Discussion » (crée / ouvre les fils de classe pour l'équipe, lien parents)
+- [x] Unitaires : segmentation des mentions, clé de jour par fuseau, parsing des pièces jointes ;
+      pgTAP : 81 assertions (membres, modérateurs, DM refusés, guardians exclus)
+- [ ] Valider sur une stack Supabase : échange instantané entre 2 navigateurs, uploads, captures mobile
+- [ ] Notifications push / e-mail des nouveaux messages : session 10 ; indicateur « en train d'écrire » : plus tard
 
 ## Questions ouvertes (§15 du brief)
 

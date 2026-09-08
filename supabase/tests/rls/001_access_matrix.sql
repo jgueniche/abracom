@@ -1,7 +1,7 @@
 -- pgTAP: role matrix from brief §5 against the demo seed. Run by scripts/db/test-local.sh
 -- (or `supabase test db` once the Supabase stack is available).
 begin;
-select plan(66);
+select plan(74);
 
 create or replace function pg_temp.login(uid uuid) returns void language plpgsql as $$
 begin
@@ -149,6 +149,21 @@ select throws_ok(
   '42501', null,
   'parent cannot publish in the class feed'
 );
+
+-- messaging helpers ----------------------------------------------------------------
+select ok(public.can_direct_message(:teacher_ps), 'parent may message the teacher of their child');
+select ok(not public.can_direct_message(:parent3_a), 'parent may not message another parent');
+select ok(public.can_direct_message(:admin), 'parent may message the direction');
+select ok(not public.can_direct_message(:teacher_ms), 'parent may not message a teacher of another class');
+select lives_ok(format('select public.open_dm(%L)', :teacher_ps), 'parent opens a DM with the teacher');
+select is(
+  (select count(*) from public.threads t join public.thread_members a on a.thread_id = t.id and a.user_id = :parent1
+     join public.thread_members b on b.thread_id = t.id and b.user_id = :teacher_ps where t.kind = 'dm'),
+  1::bigint,
+  'open_dm reuses the existing DM instead of creating a duplicate'
+);
+select ok((select count(*) from public.my_threads()) >= 3, 'my_threads lists the parent conversations');
+select throws_ok(format('select public.open_dm(%L)', :parent3_a), '42501', null, 'open_dm refuses parent to parent');
 
 -- separated family (003): parents do not see each other's profile ---------------
 select pg_temp.login(:parent3_b);

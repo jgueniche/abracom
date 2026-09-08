@@ -155,3 +155,12 @@ begin
   execute format('alter database %I set search_path = public, extensions', current_database());
 end
 $$;
+
+-- Supabase ships the `supabase_realtime` publication (tables are added by migrations).
+do $$
+begin
+  if not exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    create publication supabase_realtime;
+  end if;
+end
+$$;

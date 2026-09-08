@@ -298,7 +298,8 @@
       "import": "Import CSV",
       "audit": "Journal",
       "announcements": "Annonces",
-      "documents": "Documents"
+      "documents": "Documents",
+      "reports": "Signalements"
     },
     "years": {
       "title": "Années scolaires",
@@ -783,5 +784,99 @@
       "period": "{from} → {to}",
       "readOnly": "Les déclarations sont réservées aux parents."
     }
+  },
+  "messaging": {
+    "title": "Messages",
+    "subtitle": "Conversations avec l'équipe et les parents de la classe.",
+    "empty": "Aucune conversation.",
+    "new": "Nouveau message",
+    "kinds": {
+      "dm": "Message direct",
+      "class_group": "Groupe de parents",
+      "class_official": "Canal officiel",
+      "event": "Événement",
+      "custom": "Discussion"
+    },
+    "unread": "{count, plural, one {# non lu} other {# non lus}}",
+    "muted": "Silencieux",
+    "locked": "Verrouillée",
+    "archived": "Archivée",
+    "readOnlyChannel": "Canal en lecture seule : seule l'équipe publie ici.",
+    "responseHours": "L'équipe répond en général sous 48 h ouvrés ; pas de réponse pendant Shabbat et les fêtes.",
+    "composer": {
+      "placeholder": "Votre message… (@Prénom pour mentionner)",
+      "send": "Envoyer",
+      "attach": "Joindre (image ou PDF, 10 Mo)",
+      "replyingTo": "Réponse à {name}",
+      "cancel": "Annuler",
+      "readOnly": "Votre accès est en lecture seule.",
+      "closed": "Cette conversation est fermée."
+    },
+    "message": {
+      "reply": "Répondre",
+      "react": "Réagir",
+      "report": "Signaler",
+      "delete": "Supprimer",
+      "deleted": "Message supprimé",
+      "moderated": "Message retiré par la modération : {reason}",
+      "edited": "modifié",
+      "moderate": "Retirer (modération)",
+      "reason": "Motif",
+      "attachments": "Pièces jointes",
+      "you": "Vous",
+      "unknown": "Membre"
+    },
+    "report": {
+      "title": "Signaler ce message",
+      "reason": "Décrivez le problème",
+      "submit": "Envoyer le signalement",
+      "sent": "Signalement envoyé à la direction."
+    },
+    "reported": "Signalement envoyé à la direction.",
+    "moderated": "Message retiré.",
+    "reasonRequired": "Indiquez un motif.",
+    "invalid": "Message vide ou trop long.",
+    "notAllowed": "Vous ne pouvez pas écrire dans cette conversation.",
+    "sendError": "Envoi impossible.",
+    "fileType": "Pièce jointe : image ou PDF de 10 Mo maximum.",
+    "uploadError": "Envoi de la pièce jointe impossible.",
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher dans la conversation",
+    "searchResults": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}} pour « {query} »",
+    "clearSearch": "Revenir à la conversation",
+    "members": "{count, plural, one {# membre} other {# membres}}",
+    "mute": "Mettre en silencieux",
+    "unmute": "Réactiver les notifications",
+    "lock": "Verrouiller",
+    "unlock": "Déverrouiller",
+    "archive": "Archiver",
+    "unarchive": "Désarchiver",
+    "contacts": {
+      "title": "Nouveau message",
+      "subtitle": "Les parents peuvent écrire aux enseignants de leurs enfants et à la direction.",
+      "empty": "Aucun contact disponible.",
+      "write": "Écrire",
+      "team": "Équipe",
+      "parents": "Parents"
+    },
+    "classDiscussion": "Discussion de la classe",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "loadOlder": "Messages plus anciens"
+  },
+  "adminReports": {
+    "title": "Signalements",
+    "subtitle": "Messages signalés par les membres ; retrait avec motif et clôture.",
+    "open": "Ouverts",
+    "resolved": "Traités",
+    "none": "Aucun signalement.",
+    "reporter": "Signalé par {name}",
+    "author": "Auteur : {name}",
+    "reason": "Motif",
+    "remove": "Retirer le message",
+    "resolve": "Clore sans retrait",
+    "note": "Note de clôture",
+    "openThread": "Ouvrir la conversation",
+    "alreadyRemoved": "Message déjà retiré"
   }
 }
