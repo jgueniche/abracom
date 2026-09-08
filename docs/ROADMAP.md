@@ -17,7 +17,7 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 | 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | 🟡 code complet ; push réel et e-mails à valider avec clés VAPID + Resend sur une stack Supabase    |
 | 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | 🟡 code complet ; livret PDF généré en test unitaire, rendu réel à valider sur une stack Supabase   |
 | 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | 🟡 code complet, réservation de créneau testée en pgTAP ; parcours à valider sur une stack Supabase |
-| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | ⬜                                                                                                  |
+| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | 🟡 code complet ; installation à valider sur iOS / Android, Lighthouse mesuré sur le déploiement    |
 | 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | ⬜                                                                                                  |
 | 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | ⬜                                                                                                  |
 
@@ -321,6 +321,26 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 - [ ] Valider sur une stack Supabase : parcours complet annonce → modération → contact, rappel d'anniversaire
 - [ ] Coordination gâteau via `event_slots` (bouton « organiser un goûter » pré-rempli) et messagerie
       parent ↔ parent sur réglage admin : plus tard
+
+## Session 13 — détail
+
+- [x] **PWA** : service worker `public/sw.js` (page hors ligne et icônes pré-cachées, assets `_next/static`
+      en cache-first, pages toujours réseau — aucune donnée privée stockée —, gestion des push), page
+      `/hors-ligne`, enregistrement en production uniquement, bannière d'installation (invite native
+      Android / bureau, consignes iOS « Partager → Sur l'écran d'accueil », mémorisée si refusée)
+- [x] **Recherche globale** `/recherche` : fonction SQL `global_search` (invoker : la RLS s'applique) sur
+      annonces, publications de classe, messages, petites annonces, événements et documents, dictionnaire
+      français sans accents, extraits surlignés ; champ de recherche dans l'en-tête (formulaire natif)
+- [x] **Accessibilité** : lien d'évitement, repère `main` focalisable, libellés et `aria-current` vérifiés,
+      test e2e axe (WCAG 2.1 AA, aucune violation sérieuse) sur les pages publiques
+- [x] **Performance** : script `pnpm perf` (Lighthouse mobile, seuil 90 avec `STRICT=1`), compression des
+      photos côté client avant envoi (`lib/media-client`, canvas 1600 px, JPEG 0,82, orientation EXIF
+      respectée) en complément de la normalisation serveur
+- [x] Tests : pgTAP `007_search.sql` (5), e2e axe (2), routes publiques ; Lighthouse mobile local sur `/connexion` :
+      performance 95, accessibilité 100, bonnes pratiques 100 (SEO 54, attendu : application privée en `noindex`)
+- [ ] Valider sur le déploiement : installation iOS / Android, notification push après installation,
+      score Lighthouse ≥ 90 sur les pages connectées (mesure sur Vercel avec `pnpm perf <url>`)
+- [ ] Mode hors ligne en lecture (dernières annonces mises en cache) : plus tard, si besoin exprimé
 
 ## Questions ouvertes (§15 du brief)
 

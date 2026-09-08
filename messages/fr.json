@@ -21,7 +21,8 @@
     "notConfigured": "Base de données non configurée sur cet environnement.",
     "save": "Enregistrer",
     "cancel": "Annuler",
-    "close": "Fermer"
+    "close": "Fermer",
+    "skipToContent": "Aller au contenu"
   },
   "nav": {
     "home": "Accueil",
@@ -36,7 +37,8 @@
     "styleGuide": "Guide de style",
     "admin": "Administration",
     "documents": "Documents",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "search": "Recherche"
   },
   "errors": {
     "notFound": {
@@ -753,7 +755,8 @@
       "uploadError": "Envoi d'une photo impossible.",
       "imageRightsBlocked": "Un élève tagué n'a pas de droit à l'image signé.",
       "delete": "Supprimer",
-      "deleteMedia": "Retirer la photo"
+      "deleteMedia": "Retirer la photo",
+      "compressing": "Compression des photos…"
     },
     "journal": {
       "empty": "Pas encore de photos.",
@@ -1487,5 +1490,33 @@
       "results": "Réponses",
       "open": "Voir le formulaire"
     }
+  },
+  "search": {
+    "title": "Recherche",
+    "placeholder": "Rechercher…",
+    "submit": "Rechercher",
+    "hint": "Annonces, publications de classe, messages, événements, documents et petites annonces auxquels vous avez accès.",
+    "empty": "Aucun résultat.",
+    "results": "{count, plural, =0 {Aucun résultat pour « {query} »} one {# résultat pour « {query} »} other {# résultats pour « {query} »}}",
+    "kinds": {
+      "announcement": "Annonce",
+      "class_post": "Classe",
+      "message": "Message",
+      "community": "Petite annonce",
+      "event": "Agenda",
+      "document": "Document"
+    }
+  },
+  "pwa": {
+    "install": "Installer Kesher sur cet appareil",
+    "installHint": "Accès direct depuis l'écran d'accueil, notifications et mode hors ligne.",
+    "iosHint": "Sur iPhone : bouton Partager, puis « Sur l'écran d'accueil ».",
+    "installButton": "Installer",
+    "dismiss": "Ne plus proposer"
+  },
+  "offline": {
+    "title": "Vous êtes hors ligne",
+    "description": "Kesher a besoin d'une connexion pour afficher les informations de l'école. Réessayez dès que le réseau revient.",
+    "retry": "Réessayer"
   }
 }

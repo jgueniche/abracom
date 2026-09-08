@@ -1,10 +1,88 @@
-/* Kesher service worker: Web Push display and click handling (session 10). */
-self.addEventListener("install", function () {
-  self.skipWaiting();
+/* Kesher service worker: offline fallback, static asset cache and Web Push (sessions 10 and 13). */
+var CACHE = "kesher-v2";
+var OFFLINE_URL = "/hors-ligne";
+var PRECACHE = [OFFLINE_URL, "/icons/icon-192.png", "/icons/icon-512.png", "/manifest.webmanifest"];
+
+self.addEventListener("install", function (event) {
+  event.waitUntil(
+    caches
+      .open(CACHE)
+      .then(function (cache) {
+        return Promise.all(
+          PRECACHE.map(function (url) {
+            return cache.add(new Request(url, { cache: "reload" })).catch(function () {});
+          }),
+        );
+      })
+      .then(function () {
+        return self.skipWaiting();
+      }),
+  );
 });
 
 self.addEventListener("activate", function (event) {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches
+      .keys()
+      .then(function (keys) {
+        return Promise.all(
+          keys.filter(function (key) {
+            return key !== CACHE;
+          }).map(function (key) {
+            return caches.delete(key);
+          }),
+        );
+      })
+      .then(function () {
+        return self.clients.claim();
+      }),
+  );
+});
+
+function isStaticAsset(url) {
+  return (
+    url.pathname.startsWith("/_next/static/") ||
+    url.pathname.startsWith("/icons/") ||
+    url.pathname.startsWith("/brand/") ||
+    url.pathname === "/manifest.webmanifest"
+  );
+}
+
+self.addEventListener("fetch", function (event) {
+  var request = event.request;
+  if (request.method !== "GET") return;
+  var url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  // Pages: always from the network (private data is never stored), offline fallback otherwise.
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request).catch(function () {
+        return caches.match(OFFLINE_URL).then(function (cached) {
+          return cached || new Response("Hors ligne", { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" } });
+        });
+      }),
+    );
+    return;
+  }
+
+  // Immutable build assets and icons: cache first.
+  if (isStaticAsset(url)) {
+    event.respondWith(
+      caches.match(request).then(function (cached) {
+        if (cached) return cached;
+        return fetch(request).then(function (response) {
+          if (response.ok) {
+            var copy = response.clone();
+            caches.open(CACHE).then(function (cache) {
+              cache.put(request, copy);
+            });
+          }
+          return response;
+        });
+      }),
+    );
+  }
 });
 
 self.addEventListener("push", function (event) {

@@ -10,6 +10,7 @@ const PUBLIC_PREFIXES = [
   "/manifest.webmanifest",
   "/robots.txt",
   "/sw.js",
+  "/hors-ligne",
   // authenticated by their own secret (private feed token, CRON_SECRET), never by a session
   "/api/calendar/",
   "/api/jobs/",

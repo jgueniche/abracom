@@ -2834,6 +2834,18 @@ export type Database = {
         Returns: number
       }
       find_user_id_by_email: { Args: { email: string }; Returns: string }
+      global_search: {
+        Args: { max_results?: number; q: string }
+        Returns: {
+          context_id: string
+          happened_at: string
+          id: string
+          kind: string
+          rank: number
+          snippet: string
+          title: string
+        }[]
+      }
       guardian_class_ids: { Args: { uid?: string }; Returns: string[] }
       guardian_student_ids: { Args: { uid?: string }; Returns: string[] }
       has_school_role: {

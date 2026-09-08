@@ -134,15 +134,16 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 - **Session 9 — code complet** : agenda (`lib/hebcal`, `lib/calendar`), fêtes juives + Chabbat + parachah +
   fériés, vacances zone C, RSVP / jauge / liste d'attente, bénévolat, flux ICS privé, rappels J-7 / J-1.
 - **Session 10 — code complet, clés réelles à valider** : livraisons planifiées par trigger selon les
-  préférences, fan-out SQL (annonces, documents, posts, mots, messages, signalements, absences), worker
-  `/api/jobs/notifications` (push VAPID, e-mails Resend, digest 18 h, rappels), **mode Chabbat / heures
-  calmes** appliqués par le worker, page de préférences + activation push. 159 assertions pgTAP.
-- **Session 11 — code complet, validation Supabase en attente** : matrice de compétences par période,
-  appréciations, publication différée notifiée (`publish_assessments`), livret PDF `/api/livret/[studentId]`
-  (`@react-pdf/renderer`), notes /20 optionnelles (module `assessments.scores`). 176 assertions pgTAP.
+  préférences, fan-out SQL, worker `/api/jobs/notifications` (push VAPID, Resend, digest, rappels), **mode
+  Chabbat / heures calmes** appliqués par le worker, préférences + activation push.
+- **Session 11 — code complet** : matrice de compétences par période, appréciations, publication différée
+  notifiée, livret PDF `/api/livret/[studentId]` (`@react-pdf/renderer`), notes /20 optionnelles.
 - **Session 12 — code complet, validation Supabase en attente** : annuaire opt-in, anniversaires (rappel
   J-3), petites annonces modérées a priori (trigger), RDV parents-enseignant (`book_appointment`, un par
   famille), formulaires / sondages avec constructeur et export CSV. 200 assertions pgTAP.
-- **Prochaine session — 13** : PWA (manifest, offline, installation iOS / Android), recherche globale,
-  accessibilité et performance (Lighthouse ≥ 90 mobile), compression photo côté client.
+- **Session 13 — code complet** : PWA (service worker hors ligne + assets, bannière d'installation),
+  recherche globale `/recherche` (`global_search` sous RLS), lien d'évitement + tests axe, script
+  `pnpm perf` (Lighthouse mobile), compression photo côté client. 205 assertions pgTAP.
+- **Prochaine session — 14** : RGPD (export et suppression de compte, `docs/RGPD.md`, durées de
+  conservation, 2FA admin, CSP stricte + HSTS, Sentry) ; puis 15 : guides, démo, bascule staging → prod.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

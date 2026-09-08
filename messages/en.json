@@ -21,7 +21,8 @@
     "notConfigured": "Database not configured on this environment.",
     "save": "Save",
     "cancel": "Cancel",
-    "close": "Close"
+    "close": "Close",
+    "skipToContent": "Skip to content"
   },
   "nav": {
     "home": "Home",
@@ -36,7 +37,8 @@
     "styleGuide": "Style guide",
     "admin": "Administration",
     "documents": "Documents",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "search": "Search"
   },
   "errors": {
     "notFound": {
@@ -753,7 +755,8 @@
       "uploadError": "Could not upload a photo.",
       "imageRightsBlocked": "A tagged student has no signed image rights.",
       "delete": "Delete",
-      "deleteMedia": "Remove photo"
+      "deleteMedia": "Remove photo",
+      "compressing": "Compressing photos…"
     },
     "journal": {
       "empty": "No photo yet.",
@@ -1487,5 +1490,33 @@
       "results": "Answers",
       "open": "Open the form"
     }
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search…",
+    "submit": "Search",
+    "hint": "Announcements, class posts, messages, events, documents and classifieds you have access to.",
+    "empty": "No result.",
+    "results": "{count, plural, =0 {No result for “{query}”} one {# result for “{query}”} other {# results for “{query}”}}",
+    "kinds": {
+      "announcement": "Announcement",
+      "class_post": "Class",
+      "message": "Message",
+      "community": "Classified",
+      "event": "Calendar",
+      "document": "Document"
+    }
+  },
+  "pwa": {
+    "install": "Install Kesher on this device",
+    "installHint": "Direct access from the home screen, notifications and offline mode.",
+    "iosHint": "On iPhone: Share button, then “Add to Home Screen”.",
+    "installButton": "Install",
+    "dismiss": "Don't ask again"
+  },
+  "offline": {
+    "title": "You are offline",
+    "description": "Kesher needs a connection to show the school's information. Try again as soon as the network is back.",
+    "retry": "Try again"
   }
 }

@@ -309,3 +309,19 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
   par les coordonnées partagées ; les rappels d'anniversaire ne partent que pour les enfants dont un
   responsable a coché l'option ; les formulaires dynamiques restent volontairement simples (sept types de
   champs, pas de logique conditionnelle).
+
+## ADR-0025 — PWA sans mise en cache des pages privées, recherche en SQL sous RLS
+
+- **Contexte** : l'application doit être installable et supporter les coupures réseau (§8), mais elle
+  affiche des données de mineurs sur des appareils partagés ; la recherche globale doit respecter la
+  matrice des rôles sans dupliquer la logique côté serveur.
+- **Décision** : le service worker (écrit à la main, sans bibliothèque) ne met jamais de page HTML en cache :
+  les navigations vont au réseau et basculent sur `/hors-ligne` en cas d'échec ; seuls les assets immuables
+  (`/_next/static`, icônes, manifest) sont servis cache-first. Les push restent gérés par le même worker.
+  La recherche est une fonction SQL `security invoker` qui unit les colonnes `search` (tsvector français
+  sans accents) des tables existantes : chaque branche est filtrée par les politiques RLS de sa table,
+  donc une recherche ne peut rien révéler de plus que les pages elles-mêmes. Les mesures de qualité sont
+  outillées plutôt qu'affirmées : axe-core en e2e (WCAG 2.1 AA) et un script Lighthouse mobile.
+- **Conséquences** : pas de lecture hors ligne des contenus (à ajouter plus tard avec un cache borné et
+  chiffré si le besoin est confirmé) ; la recherche ignore les pièces jointes et le contenu des PDF ; les
+  scores Lighthouse des pages connectées se mesurent sur le déploiement, pas en CI.

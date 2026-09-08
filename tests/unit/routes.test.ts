@@ -7,6 +7,7 @@ describe("isPublicPath", () => {
     expect(isPublicPath("/api/calendar/abc")).toBe(true);
     expect(isPublicPath("/api/jobs/notifications")).toBe(true);
     expect(isPublicPath("/sw.js")).toBe(true);
+    expect(isPublicPath("/hors-ligne")).toBe(true);
     expect(isPublicPath("/api/storage/messages")).toBe(false);
     expect(isPublicPath("/api/livret/123")).toBe(false);
   });
