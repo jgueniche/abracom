@@ -11,6 +11,7 @@ const TABS = [
   { segment: "devoirs", key: "homework" },
   { segment: "cahier", key: "journal" },
   { segment: "mots", key: "notes" },
+  { segment: "evaluations", key: "assessments" },
   { segment: "absences", key: "absences" },
 ] as const;
 

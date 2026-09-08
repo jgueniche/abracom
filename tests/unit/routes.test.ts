@@ -3,6 +3,14 @@ import { describe, expect, it } from "vitest";
 import { APP_HOME_PATH, isPublicPath, safeNextPath } from "@/lib/auth/routes";
 
 describe("isPublicPath", () => {
+  it("keeps token-authenticated API routes and the service worker public", () => {
+    expect(isPublicPath("/api/calendar/abc")).toBe(true);
+    expect(isPublicPath("/api/jobs/notifications")).toBe(true);
+    expect(isPublicPath("/sw.js")).toBe(true);
+    expect(isPublicPath("/api/storage/messages")).toBe(false);
+    expect(isPublicPath("/api/livret/123")).toBe(false);
+  });
+
   it("keeps login, auth callbacks, style guide and PWA files public", () => {
     for (const path of [
       "/",

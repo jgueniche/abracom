@@ -38,7 +38,7 @@ export default async function FamilyPage() {
                 <StudentCard child={child} />
                 {classId && (
                   <div className="flex flex-wrap gap-2">
-                    {(["", "devoirs", "cahier", "mots", "absences"] as const).map(
+                    {(["", "devoirs", "cahier", "mots", "evaluations", "absences"] as const).map(
                       (segment, index) => (
                         <Button
                           key={segment}
@@ -53,9 +53,16 @@ export default async function FamilyPage() {
                             }
                           >
                             {tSpace(
-                              (["feed", "homework", "journal", "notes", "absences"] as const)[
-                                index
-                              ]!,
+                              (
+                                [
+                                  "feed",
+                                  "homework",
+                                  "journal",
+                                  "notes",
+                                  "assessments",
+                                  "absences",
+                                ] as const
+                              )[index]!,
                             )}
                           </Link>
                         </Button>

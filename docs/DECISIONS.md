@@ -272,3 +272,21 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 - **Conséquences** : latence maximale de cinq minutes pour le push (acceptable pour une école) ; le
   digest tourne deux fois (16 h et 17 h UTC) pour couvrir l'heure d'été et d'hiver ; les secrets du cron
   vivent dans Supabase Vault ; une Edge Function pourra remplacer la route si l'on quitte Vercel.
+
+## ADR-0023 — Livret PDF rendu côté serveur, publication des évaluations par période
+
+- **Contexte** : le brief demande une saisie « matrice » des compétences, une publication différée et un
+  export PDF « livret » par élève (§7.3), sans notes chiffrées en maternelle et avec un score optionnel en
+  élémentaire ; Vercel n'embarque pas de navigateur pour imprimer du HTML.
+- **Décision** : le livret est décrit comme un document React (`lib/pdf/report-card.tsx`) rendu par
+  `@react-pdf/renderer` dans une route Node (`/api/livret/[studentId]`), avec les polices standard (pas de
+  fichier de police à embarquer) et des libellés traduits par l'appelant ; le paquet est déclaré
+  `serverExternalPackages`. Les données passent par le client Supabase de session : la RLS garantit qu'une
+  famille n'obtient que les évaluations publiées et visibles, l'équipe voit aussi les brouillons (mention
+  explicite). La publication est une fonction SQL par classe et période (`publish_assessments`) qui rend
+  visibles toutes les cases saisies, notifie une fois les responsables autorisés et journalise ; les cases
+  ajoutées après publication attendent la publication suivante. Les appréciations générales vivent dans une
+  table dédiée (`assessment_remarks`) liée à la période, visible aux mêmes conditions que les évaluations.
+- **Conséquences** : le PDF est généré à la demande (pas de stockage, donc pas de rétention à gérer) ; les
+  scores restent limités à `/20` dans l'interface ; le commentaire par compétence existe en base mais n'est pas
+  saisi dans la matrice pour l'instant.

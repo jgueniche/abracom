@@ -373,6 +373,71 @@ export type Database = {
           },
         ]
       }
+      assessment_remarks: {
+        Row: {
+          body: string
+          class_id: string
+          created_at: string
+          id: string
+          period_id: string
+          school_id: string
+          student_id: string
+          teacher_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          class_id: string
+          created_at?: string
+          id?: string
+          period_id: string
+          school_id: string
+          student_id: string
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          class_id?: string
+          created_at?: string
+          id?: string
+          period_id?: string
+          school_id?: string
+          student_id?: string
+          teacher_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_remarks_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_remarks_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_periods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_remarks_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_remarks_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessments: {
         Row: {
           class_id: string
@@ -2798,6 +2863,10 @@ export type Database = {
       notify_event: { Args: { event: string }; Returns: number }
       open_dm: { Args: { other: string }; Returns: string }
       promote_event_waitlist: { Args: { event: string }; Returns: number }
+      publish_assessments: {
+        Args: { class_: string; period: string }
+        Returns: number
+      }
       queue_event_reminders: {
         Args: Record<PropertyKey, never>
         Returns: number

@@ -28,6 +28,8 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
+  // PDF rendering runs in Node.js only (report cards): keep the package out of the bundle.
+  serverExternalPackages: ["@react-pdf/renderer"],
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },

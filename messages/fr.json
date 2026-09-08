@@ -564,7 +564,8 @@
       "absenceJustified": "Absence de {student} : justifiée",
       "absenceUnjustified": "Absence de {student} : non justifiée",
       "reportNew": "Nouveau signalement à traiter",
-      "test": "Notification de test"
+      "test": "Notification de test",
+      "assessmentPublished": "Évaluations de {student} publiées ({period})"
     },
     "preferences": "Préférences"
   },
@@ -689,7 +690,8 @@
       "journal": "Cahier de vie",
       "notes": "Mots",
       "absences": "Absences",
-      "team": "Équipe"
+      "team": "Équipe",
+      "assessments": "Évaluations"
     },
     "type": {
       "homework": "À préparer",
@@ -1224,5 +1226,65 @@
     "digestSubject": "{app} · {count, plural, one {# nouveauté} other {# nouveautés}} aujourd'hui",
     "open": "Ouvrir dans l'application",
     "footer": "Vous recevez cet e-mail car vous faites partie de la communauté de l'école. Gérer vos préférences : {url}"
+  },
+  "assessments": {
+    "title": "Évaluations",
+    "subtitle": "Compétences par période, publiées aux familles quand l'équipe le décide.",
+    "period": "Période",
+    "noPeriods": "Aucune période d'évaluation n'est définie pour cette année.",
+    "noAccess": "Les évaluations sont réservées à l'équipe enseignante et à la direction.",
+    "readOnly": "Votre accès ne permet pas de consulter les évaluations.",
+    "nothingPublished": "Aucune évaluation publiée pour cette période.",
+    "levels": {
+      "not_yet": "Non acquis",
+      "in_progress": "En cours d'acquisition",
+      "acquired": "Acquis",
+      "mastered": "Maîtrisé"
+    },
+    "short": {
+      "not_yet": "NA",
+      "in_progress": "EC",
+      "acquired": "A",
+      "mastered": "M"
+    },
+    "empty": "—",
+    "legend": "NA : non acquis · EC : en cours d'acquisition · A : acquis · M : maîtrisé",
+    "student": "Élève",
+    "score": "Note /20",
+    "save": "Enregistrer la grille",
+    "saved": "{count, plural, =0 {Grille enregistrée.} one {# évaluation enregistrée.} other {# évaluations enregistrées.}}",
+    "invalid": "Grille invalide.",
+    "saveError": "Enregistrement impossible pour le moment.",
+    "publish": "Publier aux familles",
+    "publishConfirm": "Publier les évaluations de cette période ? Les familles concernées seront notifiées.",
+    "draftCount": "{count, plural, =0 {Tout est publié.} one {# évaluation en attente de publication} other {# évaluations en attente de publication}}",
+    "publishedOn": "Publié le {date}",
+    "remarks": "Appréciations de la période",
+    "remark": "Appréciation générale",
+    "remarkPlaceholder": "Quelques mots pour la famille…",
+    "comment": "Commentaire",
+    "pdf": "Livret PDF",
+    "pdfHint": "Le livret reprend les compétences publiées, l'appréciation et les absences de la période.",
+    "students": "{count, plural, one {# élève} other {# élèves}}",
+    "absences": {
+      "title": "Absences et retards",
+      "days": "{count, plural, one {# jour d'absence} other {# jours d'absence}}",
+      "lates": "{count, plural, one {# retard} other {# retards}}"
+    },
+    "pdfLabels": {
+      "title": "Livret de compétences",
+      "period": "Période",
+      "born": "Né·e le {date}",
+      "class": "Classe",
+      "teacher": "Enseignant·e",
+      "legend": "Légende",
+      "remark": "Appréciation",
+      "absences": "Absences",
+      "none": "Aucune",
+      "draft": "Brouillon — non publié",
+      "noData": "Aucune évaluation pour cette période.",
+      "generatedOn": "Généré le {date} par {app}",
+      "confidentiality": "Document confidentiel destiné à la famille de l'élève."
+    }
   }
 }

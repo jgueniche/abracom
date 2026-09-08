@@ -117,8 +117,7 @@ durées de conservation dans `docs/RGPD.md` (session 14).
     unit, build, e2e, database), Husky + commitlint, `vercel.json` (`cdg1`), projet Vercel `abracom`
     (https://abracom.vercel.app). **Reste** : créer le projet Supabase cloud `kesher-staging` (UE).
 - **Session 2 — terminée (validation visuelle en attente)** : palette dérivée du logo (sarcelle `#01525e`,
-  rouge brique `#852624`), tokens clair / sombre dans `app/globals.css`, contraste AA testé, Inter + Fraunces,
-  page `/dev/ui`, icônes PWA et manifest, `scripts/brand/*`, `scripts/dev/screenshots.mjs`.
+  rouge brique `#852624`), tokens clair / sombre, contraste AA testé, Inter + Fraunces, `/dev/ui`, icônes PWA.
 - **Session 3 — terminée (à rejouer sur Supabase)** : 10 migrations, 47 tables, 23 enums, `can_access_*`,
   132 politiques RLS (+ storage), seed fictif (137 comptes, 66 élèves), pgTAP en CI (job `database`).
 - **Session 4 — code complet, validation Supabase en attente** : middleware de session, magic link sans
@@ -126,12 +125,10 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   perspectives multi-rôle, coquille par rôle. E2e « invitation → 1re connexion » réservé à une stack Supabase.
 - **Session 5 — code complet** : espace `/admin` (familles, classes, utilisateurs, années, import CSV testé,
   journal), invitations par lots de 20, droits par responsable + restriction judiciaire, audit.
-- **Session 6 — code complet, validation Supabase en attente** : annonces (Markdown + modèles, ciblage,
-  planification, accusés de lecture, relance, export CSV, pièces jointes), documents (dossiers, signatures
-  par famille / enfant, droit à l'image → élève, signatures manquantes), notifications in-app.
-- **Session 7 — code complet, validation Supabase en attente** : espace classe (fil typé, devoirs « vu »,
-  cahier de vie avec photos normalisées et tag soumis au droit à l'image, mots individuels avec accusé de
-  lecture, absences avec justificatif et validation), vue hebdo enseignant. 71 assertions pgTAP.
+- **Session 6 — code complet** : annonces (Markdown + modèles, ciblage, planification, accusés de lecture,
+  relance, export CSV, pièces jointes), documents et signatures électroniques, notifications in-app.
+- **Session 7 — code complet** : espace classe (fil typé, devoirs « vu », cahier de vie normalisé + droit à
+  l'image, mots individuels avec accusé de lecture, absences justifiées), vue hebdo enseignant.
 - **Session 8 — code complet, validation Supabase en attente** : messagerie temps réel (Realtime
   `postgres_changes`), DM selon `can_direct_message`, fils officiels et groupes de classe (`ensure_class_threads`),
   réponses, réactions, mentions, pièces jointes, recherche, silencieux, signalement, modération, verrouillage,
@@ -144,6 +141,9 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   préférences, fan-out SQL (annonces, documents, posts, mots, messages, signalements, absences), worker
   `/api/jobs/notifications` (push VAPID, e-mails Resend, digest 18 h, rappels), **mode Chabbat / heures
   calmes** appliqués par le worker, page de préférences + activation push. 159 assertions pgTAP.
-- **Prochaine session — 11** : évaluations par compétences (grilles PS/MS/GS, saisie enseignant, livret PDF
-  par élève), vue absences par élève ; puis 12 communauté (annuaire opt-in, petites annonces, RDV, formulaires).
+- **Session 11 — code complet, validation Supabase en attente** : matrice de compétences par période,
+  appréciations, publication différée notifiée (`publish_assessments`), livret PDF `/api/livret/[studentId]`
+  (`@react-pdf/renderer`), notes /20 optionnelles (module `assessments.scores`). 176 assertions pgTAP.
+- **Prochaine session — 12** : communauté (annuaire opt-in, petites annonces modérées, anniversaires,
+  prise de RDV parents-enseignant, formulaires / sondages).
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

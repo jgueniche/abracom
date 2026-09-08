@@ -564,7 +564,8 @@
       "absenceJustified": "{student}'s absence: justified",
       "absenceUnjustified": "{student}'s absence: unjustified",
       "reportNew": "New report to review",
-      "test": "Test notification"
+      "test": "Test notification",
+      "assessmentPublished": "{student}'s assessments published ({period})"
     },
     "preferences": "Preferences"
   },
@@ -689,7 +690,8 @@
       "journal": "Class diary",
       "notes": "Notes",
       "absences": "Absences",
-      "team": "Team"
+      "team": "Team",
+      "assessments": "Assessments"
     },
     "type": {
       "homework": "To prepare",
@@ -1224,5 +1226,65 @@
     "digestSubject": "{app} · {count, plural, one {# update} other {# updates}} today",
     "open": "Open in the app",
     "footer": "You receive this e-mail as a member of the school community. Manage your preferences: {url}"
+  },
+  "assessments": {
+    "title": "Assessments",
+    "subtitle": "Skills per period, published to families when the team decides.",
+    "period": "Period",
+    "noPeriods": "No assessment period is defined for this year.",
+    "noAccess": "Assessments are reserved to teachers and the head of school.",
+    "readOnly": "Your access does not include assessments.",
+    "nothingPublished": "No assessment published for this period.",
+    "levels": {
+      "not_yet": "Not yet",
+      "in_progress": "In progress",
+      "acquired": "Acquired",
+      "mastered": "Mastered"
+    },
+    "short": {
+      "not_yet": "NY",
+      "in_progress": "IP",
+      "acquired": "A",
+      "mastered": "M"
+    },
+    "empty": "—",
+    "legend": "NY: not yet · IP: in progress · A: acquired · M: mastered",
+    "student": "Student",
+    "score": "Score /20",
+    "save": "Save the grid",
+    "saved": "{count, plural, =0 {Grid saved.} one {# assessment saved.} other {# assessments saved.}}",
+    "invalid": "Invalid grid.",
+    "saveError": "Saving is not possible right now.",
+    "publish": "Publish to families",
+    "publishConfirm": "Publish this period's assessments? The families concerned will be notified.",
+    "draftCount": "{count, plural, =0 {Everything is published.} one {# assessment waiting for publication} other {# assessments waiting for publication}}",
+    "publishedOn": "Published on {date}",
+    "remarks": "Period remarks",
+    "remark": "General remark",
+    "remarkPlaceholder": "A few words for the family…",
+    "comment": "Comment",
+    "pdf": "PDF report card",
+    "pdfHint": "The report card includes the published skills, the remark and the absences of the period.",
+    "students": "{count, plural, one {# student} other {# students}}",
+    "absences": {
+      "title": "Absences and lates",
+      "days": "{count, plural, one {# day absent} other {# days absent}}",
+      "lates": "{count, plural, one {# late arrival} other {# late arrivals}}"
+    },
+    "pdfLabels": {
+      "title": "Skills report card",
+      "period": "Period",
+      "born": "Born on {date}",
+      "class": "Class",
+      "teacher": "Teacher",
+      "legend": "Legend",
+      "remark": "Remark",
+      "absences": "Absences",
+      "none": "None",
+      "draft": "Draft — not published",
+      "noData": "No assessment for this period.",
+      "generatedOn": "Generated on {date} by {app}",
+      "confidentiality": "Confidential document for the student's family."
+    }
   }
 }

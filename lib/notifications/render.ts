@@ -26,6 +26,10 @@ export function hrefFor(kind: string, payload: Record<string, unknown>): string 
   if (kind === "note.new" && typeof payload.class_id === "string") {
     return `/classes/${payload.class_id}/mots`;
   }
+  if (kind.startsWith("assessment.") && typeof payload.class_id === "string") {
+    const period = typeof payload.period_id === "string" ? `?p=${payload.period_id}` : "";
+    return `/classes/${payload.class_id}/evaluations${period}`;
+  }
   if (kind.startsWith("message.") && typeof payload.thread_id === "string") {
     return `/messages/${payload.thread_id}`;
   }
@@ -68,6 +72,15 @@ export function renderNotification(
       };
     case "note.new":
       return { title: t("noteNew", { student: text(payload.student_name) }), body: null, href };
+    case "assessment.published":
+      return {
+        title: t("assessmentPublished", {
+          student: text(payload.student_name),
+          period: text(payload.period_label),
+        }),
+        body: null,
+        href,
+      };
     case "message.new":
       return {
         title: text(payload.thread_title)
