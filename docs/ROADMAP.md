@@ -151,7 +151,7 @@ sessions sont codées ; la validation sur une stack Supabase cloud reste à fair
 - [x] Fonctions SQL : `find_user_id_by_email` (service role uniquement), `set_current_school_year`
 - [ ] Chronométrer « 60 familles en < 2 min » sur une stack Supabase (import ≈ 130 créations de comptes +
       3 lots d'invitations)
-- [ ] Promotion de niveau / clôture d'année (session 15)
+- [x] Promotion de niveau / clôture d'année : assistant `/admin/annees/promotion` (session 15)
 
 ## Session 6 — détail
 
@@ -365,7 +365,7 @@ sessions sont codées ; la validation sur une stack Supabase cloud reste à fair
 - [x] Tests : 11 pgTAP (`008_rgpd.sql`), 3 unitaires (CSP)
 - [ ] Valider sur une stack Supabase : inscription TOTP réelle, suppression d'un compte de démo, exécution
       de la purge, absence d'erreur CSP dans la console sur les pages connectées
-- [ ] Balayage mensuel des objets de stockage orphelins (script d'exploitation) : session 15
+- [x] Balayage mensuel des objets de stockage orphelins : `pnpm ops:storage-sweep` (session 15)
 
 ## Session 15 — détail
 
