@@ -9,7 +9,7 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 | 2   | Identité visuelle : extraction palette logo, tokens, thème clair/sombre, page de style `/dev/ui`                             | Validation visuelle par le porteur                      | ✅ (validation visuelle du porteur en attente)                                        |
 | 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ✅ (validé sur PostgreSQL 16 local + CI ; à rejouer sur Supabase dès que disponible)  |
 | 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | 🟡 code complet, e2e « invitation → 1re connexion » à exécuter sur une stack Supabase |
-| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | ⬜                                                                                    |
+| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | 🟡 code complet, chronométrage de l'import à réaliser sur une stack Supabase          |
 | 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | ⬜                                                                                    |
 | 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | ⬜                                                                                    |
 | 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | ⬜                                                                                    |
@@ -126,6 +126,31 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 - [ ] **E2E « invitation → 1re connexion »** (`tests/e2e/auth-invitation.spec.ts`, activé par `SUPABASE_E2E=1`
       avec la boîte Mailpit de la stack locale) : à exécuter dès qu'une stack Supabase est disponible
 - [ ] OTP SMS (Twilio) : différé (question §15 n° 8, budget)
+
+## Session 5 — détail
+
+- [x] Espace `/admin` (secrétariat + direction ; certaines actions réservées à la direction) : Familles,
+      Classes, Utilisateurs, Années, Import CSV, Journal
+- [x] Années scolaires : création, année courante unique via `set_current_school_year()` (security definer)
+- [x] Classes : création / modification / archivage, affectation des enseignants (principal, assistant,
+      spécialiste + matière), effectif, liste des élèves
+- [x] Élèves et familles : recherche, fiche élève (état civil, allergies / PAI, statut), inscription et
+      changement de classe (clôture automatique de l'ancienne inscription), responsables avec droits
+      indépendants (évaluations, messagerie, notifications) et **restriction judiciaire** motivée et journalisée,
+      rattachement d'un responsable (compte existant ou créé)
+- [x] Utilisateurs : invitation de l'équipe (direction, secrétariat, enseignant), renvoi de lien de connexion
+      (« réinitialisation d'accès »), suspension / réactivation / retrait, parents en attente d'invitation
+- [x] **Import CSV** (`lib/import`, 11 tests unitaires) : parseur RFC 4180 (BOM, `;` `,` tabulation, guillemets),
+      alias de colonnes français, dates FR/ISO, téléphones E.164, liens de parenté ; aperçu avec problèmes par
+      ligne et contrôle des classes ; import idempotent (familles, élèves, inscriptions, comptes créés sans
+      e-mail via `auth.admin.createUser`, memberships `invited`, liens parent-enfant) ; modèle téléchargeable
+- [x] **Invitations en masse** par lots de 20 (`sendPendingInvitations`) pour rester sous les limites de
+      durée des fonctions serverless ; chaque lot horodate `invited_at`
+- [x] Journal d'audit alimenté par toutes les actions d'administration (`server/audit.ts`)
+- [x] Fonctions SQL : `find_user_id_by_email` (service role uniquement), `set_current_school_year`
+- [ ] Chronométrer « 60 familles en < 2 min » sur une stack Supabase (import ≈ 130 créations de comptes +
+      3 lots d'invitations)
+- [ ] Promotion de niveau / clôture d'année (session 15)
 
 ## Questions ouvertes (§15 du brief)
 

@@ -131,6 +131,11 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   memberships, `lib/auth` + `lib/permissions`, perspectives multi-rôle, coquille connectée (accueil par rôle,
   famille, profil, plus). Le flux e2e « invitation → 1re connexion » est écrit (`SUPABASE_E2E=1`) mais ne
   peut tourner qu'avec une stack Supabase.
-- **Prochaine session — 5** : administration (écoles, années, classes, affectations, import CSV des familles,
-  invitations en masse via `auth.admin.inviteUserByEmail`, réinitialisation d'accès), journal d'audit.
+- **Session 5 — code complet, chronométrage Supabase en attente** : espace `/admin` (familles, classes,
+  utilisateurs, années, import CSV, journal), import CSV testé unitairement, comptes créés sans e-mail puis
+  invitations par lots de 20, droits par responsable + restriction judiciaire journalisée, audit de toutes
+  les actions.
+- **Prochaine session — 6** : annonces officielles (éditeur Markdown, ciblage, planification, épinglage,
+  expiration), accusés de lecture avec relance des non-lecteurs et export CSV, bibliothèque de documents
+  avec signatures (droit à l'image, autorisations de sortie), tableau de bord des signatures manquantes.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

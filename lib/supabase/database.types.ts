@@ -2453,6 +2453,7 @@ export type Database = {
         Returns: boolean
       }
       class_school_id: { Args: { class_: string }; Returns: string }
+      find_user_id_by_email: { Args: { email: string }; Returns: string }
       guardian_class_ids: { Args: { uid?: string }; Returns: string[] }
       guardian_student_ids: { Args: { uid?: string }; Returns: string[] }
       has_school_role: {
@@ -2497,6 +2498,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      set_current_school_year: { Args: { year_id: string }; Returns: undefined }
       student_school_id: { Args: { student: string }; Returns: string }
       teacher_class_ids: { Args: { uid?: string }; Returns: string[] }
       teaches_student: {

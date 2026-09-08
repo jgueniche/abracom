@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CurrentUser } from "@/lib/auth/session";
 import { getSchoolClasses } from "@/server/queries/classes";
@@ -10,6 +12,7 @@ import { getSchoolStats } from "@/server/queries/school";
 export async function AdminHome({ user }: { user: CurrentUser }) {
   const t = await getTranslations("appHome");
   const tFamily = await getTranslations("family");
+  const tAdmin = await getTranslations("admin.nav");
   const schoolId = user.school?.id;
   if (!schoolId) return <PageHeader title={t("admin.title")} />;
 
@@ -25,7 +28,20 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
 
   return (
     <>
-      <PageHeader title={t("admin.title")} description={user.school?.name} />
+      <PageHeader
+        title={t("admin.title")}
+        description={user.school?.name}
+        actions={
+          <>
+            <Button asChild variant="outline" className="min-h-11">
+              <Link href="/admin/familles">{tAdmin("families")}</Link>
+            </Button>
+            <Button asChild variant="outline" className="min-h-11">
+              <Link href="/admin/import">{tAdmin("import")}</Link>
+            </Button>
+          </>
+        }
+      />
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {tiles.map((tile) => (
           <Card key={tile.label}>

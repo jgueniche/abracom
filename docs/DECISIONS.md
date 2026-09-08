@@ -167,3 +167,17 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 - **Conséquences** : l'OTP SMS (Twilio) reste optionnel (§15) ; les URL de redirection autorisées doivent
   inclure les previews Vercel (`https://*-jeremys-projects-472f663b.vercel.app/**`) dans la configuration
   Supabase ; le rate limiting applicatif (Upstash / table) arrive en session 14.
+
+## ADR-0016 — Import CSV en deux temps et invitations par lots
+
+- **Contexte** : la directrice doit importer 60 familles (≈ 130 comptes) en moins de deux minutes ; les
+  Server Actions Vercel ont une durée maximale courte et l'envoi d'e-mails est la partie lente.
+- **Décision** : l'import crée les données (familles, élèves, inscriptions, liens) et les comptes avec
+  `auth.admin.createUser({ email_confirm: true })` **sans e-mail**, memberships en statut `invited` ;
+  l'envoi des invitations est une action séparée qui traite 20 memberships par appel
+  (`signInWithOtp` → e-mail « magic link » en français, `invited_at` horodaté). L'import est idempotent
+  (élève identifié par prénom + nom + date de naissance, compte par e-mail, `upsert` des liens) et
+  re-jouable après correction du fichier. Les erreurs sont rapportées ligne par ligne, jamais bloquantes
+  pour les autres lignes.
+- **Conséquences** : la recherche d'un compte par e-mail passe par `find_user_id_by_email` (service role
+  uniquement) ; la suite naturelle est un envoi automatique par tâche planifiée (session 10).

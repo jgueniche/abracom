@@ -4,6 +4,7 @@ import {
   PaletteIcon,
   UserRoundIcon,
   UsersRoundIcon,
+  ShieldCheckIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -16,6 +17,7 @@ import { ThemeToggle } from "@/components/layouts/theme-toggle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { publicEnv } from "@/lib/env";
+import { isSchoolStaff } from "@/lib/permissions";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("more");
@@ -29,6 +31,7 @@ export default async function MorePage() {
   const user = await requireCurrentUser();
   const [t, tNav] = await Promise.all([getTranslations("more"), getTranslations("nav")]);
   const isParent = user.roles.some((r) => r.role === "parent" || r.role === "guardian");
+  const isStaff = user.school ? isSchoolStaff(user.roles, user.school.id) : false;
   const showStyleGuide =
     process.env.NODE_ENV !== "production" || process.env.VERCEL_ENV === "preview";
 
@@ -50,6 +53,13 @@ export default async function MorePage() {
               <Link href="/famille" className={linkClass}>
                 <UsersRoundIcon className="size-4" aria-hidden />
                 {tNav("family")}
+                <ChevronRightIcon className="ml-auto size-4" aria-hidden />
+              </Link>
+            )}
+            {isStaff && (
+              <Link href="/admin" className={linkClass}>
+                <ShieldCheckIcon className="size-4" aria-hidden />
+                {tNav("admin")}
                 <ChevronRightIcon className="ml-auto size-4" aria-hidden />
               </Link>
             )}

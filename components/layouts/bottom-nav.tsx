@@ -4,7 +4,7 @@ import {
   CalendarDaysIcon,
   HouseIcon,
   LayoutDashboardIcon,
-  MegaphoneIcon,
+  ShieldCheckIcon,
   MenuIcon,
   MessageCircleIcon,
   SchoolIcon,
@@ -18,7 +18,8 @@ import { cn } from "@/lib/utils";
 
 type Item = {
   href: string;
-  label: "home" | "classes" | "messages" | "agenda" | "more" | "dashboard" | "announcements";
+  label:
+    "home" | "classes" | "messages" | "agenda" | "more" | "dashboard" | "announcements" | "admin";
   icon: typeof HouseIcon;
 };
 
@@ -39,7 +40,7 @@ const ITEMS: Record<Perspective, Item[]> = {
   ],
   admin: [
     { href: "/accueil", label: "dashboard", icon: LayoutDashboardIcon },
-    { href: "/annonces", label: "announcements", icon: MegaphoneIcon },
+    { href: "/admin", label: "admin", icon: ShieldCheckIcon },
     { href: "/messages", label: "messages", icon: MessageCircleIcon },
     { href: "/agenda", label: "agenda", icon: CalendarDaysIcon },
     { href: "/plus", label: "more", icon: MenuIcon },
