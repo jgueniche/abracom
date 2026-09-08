@@ -217,8 +217,8 @@ begin
 
     -- directory opt-in for a third of the families (never for separated ones)
     if f % 3 = 0 and not is_separated then
-      insert into public.directory_optins (user_id, school_id, show_phone, show_email, show_children_names, show_address, address)
-      values (pg_temp.person_uid('c', f, 1), pg_temp.uid('0', 1), true, f % 2 = 0, true, false, null);
+      insert into public.directory_optins (user_id, school_id, show_phone, show_email, show_children_names, show_address, address, show_on_classifieds)
+      values (pg_temp.person_uid('c', f, 1), pg_temp.uid('0', 1), true, f % 2 = 0, true, false, null, true);
     end if;
   end loop;
 end

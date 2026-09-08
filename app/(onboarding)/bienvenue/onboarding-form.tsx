@@ -26,14 +26,18 @@ export type LegalItem = {
 
 const initialState: OnboardingState = { status: "idle" };
 
+export type InvitationItem = { schoolId: string; schoolName: string; role: string };
+
 export function OnboardingForm({
   firstName,
   lastName,
   legal,
+  invitations,
 }: {
   firstName: string;
   lastName: string;
   legal: LegalItem[];
+  invitations: InvitationItem[];
 }) {
   const t = useTranslations("auth.onboarding");
   const tCommon = useTranslations("common");
@@ -84,6 +88,25 @@ export function OnboardingForm({
           </SelectContent>
         </Select>
       </div>
+
+      {invitations.length > 0 && (
+        <fieldset className="flex flex-col gap-2">
+          <legend className="mb-1 font-medium">{t("joinTitle")}</legend>
+          <p className="text-sm text-muted-foreground">{t("joinHint")}</p>
+          {invitations.map((invitation) => (
+            <label key={invitation.schoolId} className="flex min-h-11 items-center gap-3 text-sm">
+              <input
+                type="checkbox"
+                name="join"
+                value={invitation.schoolId}
+                defaultChecked
+                className="size-5 accent-primary"
+              />
+              {t("join", { school: invitation.schoolName })}
+            </label>
+          ))}
+        </fieldset>
+      )}
 
       <fieldset className="flex flex-col gap-3">
         <legend className="mb-1 font-medium">{t("legalTitle")}</legend>

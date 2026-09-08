@@ -17,6 +17,7 @@ export type DirectorySettings = {
   show_address: boolean;
   address: string | null;
   show_birthday: boolean;
+  show_on_classifieds: boolean;
 };
 
 export function DirectorySettingsForm({ initial }: { initial: DirectorySettings | null }) {
@@ -28,6 +29,7 @@ export function DirectorySettingsForm({ initial }: { initial: DirectorySettings 
     ["showEmail", t("showEmail"), initial?.show_email ?? false],
     ["showChildren", t("showChildren"), initial?.show_children_names ?? false],
     ["showBirthday", t("showBirthday"), initial?.show_birthday ?? false],
+    ["showOnClassifieds", t("showOnClassifieds"), initial?.show_on_classifieds ?? false],
   ];
   return (
     <form action={action} className="flex flex-col gap-3">

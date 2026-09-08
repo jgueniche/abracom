@@ -36,9 +36,9 @@ end $$;
 -- directory --------------------------------------------------------------------------------
 select pg_temp.login(:parent1);
 select lives_ok(
-  format($$insert into public.directory_optins (user_id, school_id, show_phone, show_email, show_children_names, show_address, show_birthday)
-          values (%L, %L, true, false, true, false, true)
-          on conflict (user_id, school_id) do update set show_phone = true, show_email = false, show_children_names = true, show_address = false, show_birthday = true$$, :parent1, :school),
+  format($$insert into public.directory_optins (user_id, school_id, show_phone, show_email, show_children_names, show_address, show_birthday, show_on_classifieds)
+          values (%L, %L, true, false, true, false, true, true)
+          on conflict (user_id, school_id) do update set show_phone = true, show_email = false, show_children_names = true, show_address = false, show_birthday = true, show_on_classifieds = true$$, :parent1, :school),
   'a parent chooses what to share'
 );
 select ok(

@@ -423,8 +423,10 @@ migrations `20260908172400` et `20260908172500` (ADR-0029) et dans l'application
       de fils traduits, libellés de niveau selon la langue, badge de restriction lisible, mots chargés en
       une requête, recherche et plafond sur la liste des familles, attestation à l'envoi de photos,
       enregistrement / retrait du droit à l'image par la direction (`set_image_rights`)
-- [ ] Reste à décider : opt-in dédié pour le contact sur les petites annonces, activation ciblée d'une
-      seule invitation à l'onboarding (`activate_my_memberships`), limitation de débit du flux ICS
+- [x] Consentements : opt-in dédié pour afficher ses coordonnées sur une petite annonce
+      (`show_on_classifieds`), invitations acceptées une à une à l'onboarding
+      (`activate_my_memberships(schools)`)
+- [ ] Reste à décider : limitation de débit du flux ICS (jeton de 192 bits, cache 15 min)
 
 ## Questions ouvertes (§15 du brief)
 

@@ -917,6 +917,7 @@ export type Database = {
           show_birthday: boolean
           show_children_names: boolean
           show_email: boolean
+          show_on_classifieds: boolean
           show_phone: boolean
           updated_at: string
           user_id: string
@@ -929,6 +930,7 @@ export type Database = {
           show_birthday?: boolean
           show_children_names?: boolean
           show_email?: boolean
+          show_on_classifieds?: boolean
           show_phone?: boolean
           updated_at?: string
           user_id: string
@@ -941,6 +943,7 @@ export type Database = {
           show_birthday?: boolean
           show_children_names?: boolean
           show_email?: boolean
+          show_on_classifieds?: boolean
           show_phone?: boolean
           updated_at?: string
           user_id?: string
@@ -2662,10 +2665,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      activate_my_memberships: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      activate_my_memberships: { Args: { schools?: string[] }; Returns: number }
       announcement_recipients: {
         Args: { announcement: string }
         Returns: {

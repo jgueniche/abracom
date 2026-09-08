@@ -45,6 +45,7 @@ export async function saveDirectorySettings(
         show_address: formData.get("showAddress") === "on",
         address,
         show_birthday: formData.get("showBirthday") === "on",
+        show_on_classifieds: formData.get("showOnClassifieds") === "on",
       },
       { onConflict: "user_id,school_id" },
     );

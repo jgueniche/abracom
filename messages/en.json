@@ -189,7 +189,11 @@
       "submit": "Enter the app",
       "mustAccept": "Please accept every text.",
       "required": "Please enter your first and last name.",
-      "saveError": "Could not save right now. Please try again."
+      "saveError": "Could not save right now. Please try again.",
+      "joinTitle": "Schools",
+      "joinHint": "The schools below invited you. Untick the ones you do not wish to join.",
+      "join": "Join {school}",
+      "mustJoin": "Select at least one school to join."
     },
     "signOut": "Sign out"
   },
@@ -1431,7 +1435,8 @@
         "father": "Father",
         "guardian": "Guardian",
         "other": "Relative"
-      }
+      },
+      "showOnClassifieds": "Show my shared contact details on my classified ads"
     },
     "appointments": {
       "title": "Parent-teacher appointments",

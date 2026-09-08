@@ -19,7 +19,9 @@ export async function getMyDirectorySettings(userId: string, schoolId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("directory_optins")
-    .select("show_phone, show_email, show_children_names, show_address, address, show_birthday")
+    .select(
+      "show_phone, show_email, show_children_names, show_address, address, show_birthday, show_on_classifieds",
+    )
     .eq("user_id", userId)
     .eq("school_id", schoolId)
     .maybeSingle();

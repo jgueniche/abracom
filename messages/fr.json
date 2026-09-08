@@ -189,7 +189,11 @@
       "submit": "Accéder à l'application",
       "mustAccept": "Merci d'accepter l'ensemble des textes.",
       "required": "Merci de renseigner votre prénom et votre nom.",
-      "saveError": "Enregistrement impossible pour le moment. Réessayez."
+      "saveError": "Enregistrement impossible pour le moment. Réessayez.",
+      "joinTitle": "Établissements",
+      "joinHint": "Vous avez été invité·e par les établissements ci-dessous. Décochez ceux que vous ne souhaitez pas rejoindre.",
+      "join": "Rejoindre {school}",
+      "mustJoin": "Sélectionnez au moins un établissement à rejoindre."
     },
     "signOut": "Se déconnecter"
   },
@@ -1431,7 +1435,8 @@
         "father": "Père",
         "guardian": "Responsable",
         "other": "Proche"
-      }
+      },
+      "showOnClassifieds": "Afficher mes coordonnées partagées sur mes petites annonces"
     },
     "appointments": {
       "title": "Rendez-vous parents-enseignant",

@@ -22,6 +22,7 @@ const onboardingSchema = z.object({
   lastName: z.string().trim().min(1).max(80),
   locale: z.enum(locales),
   accepted: z.array(z.uuid()),
+  join: z.array(z.uuid()),
 });
 
 /** First login: name, language and timestamped acceptance of the current legal texts. */
@@ -37,6 +38,7 @@ export async function completeOnboarding(
     lastName: formData.get("lastName"),
     locale: formData.get("locale"),
     accepted: formData.getAll("accept").map(String),
+    join: formData.getAll("join").map(String),
   });
   if (!parsed.success) return { status: "error", message: t("required") };
 
@@ -65,7 +67,13 @@ export async function completeOnboarding(
     if (acceptError) return { status: "error", message: t("saveError") };
   }
 
-  const { error: activateError } = await supabase.rpc("activate_my_memberships");
+  // only the invitations ticked on the form become active memberships (explicit consent)
+  const invited = user.memberships.filter((m) => m.status === "invited").map((m) => m.school_id);
+  const schools = invited.filter((id) => parsed.data.join.includes(id));
+  if (invited.length > 0 && schools.length === 0) {
+    return { status: "error", message: t("mustJoin") };
+  }
+  const { error: activateError } = await supabase.rpc("activate_my_memberships", { schools });
   if (activateError) return { status: "error", message: t("saveError") };
 
   (await cookies()).set(LOCALE_COOKIE, parsed.data.locale, {
