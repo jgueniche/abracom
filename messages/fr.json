@@ -551,8 +551,22 @@
       "announcementReminder": "Rappel : merci de lire « {title} »",
       "eventNew": "Nouvel événement : {title}",
       "eventReminder": "{days, plural, =1 {Demain} other {Dans # jours}} : {title}",
-      "eventConfirmed": "Une place s'est libérée : vous êtes inscrit·e à « {title} »"
-    }
+      "eventConfirmed": "Une place s'est libérée : vous êtes inscrit·e à « {title} »",
+      "announcementNew": "Nouvelle annonce : {title}",
+      "documentNew": "Nouveau document : {title}",
+      "documentToSign": "Document à signer : {title}",
+      "homeworkNew": "Nouveau devoir en {className}",
+      "classPostNew": "Nouvelle publication en {className}",
+      "noteNew": "Un mot de l'enseignant pour {student}",
+      "messageNew": "Nouveau message de {author}",
+      "messageNewIn": "{author} dans « {thread} »",
+      "absenceNew": "Absence déclarée pour {student}",
+      "absenceJustified": "Absence de {student} : justifiée",
+      "absenceUnjustified": "Absence de {student} : non justifiée",
+      "reportNew": "Nouveau signalement à traiter",
+      "test": "Notification de test"
+    },
+    "preferences": "Préférences"
   },
   "adminAnnouncements": {
     "title": "Annonces",
@@ -1124,5 +1138,91 @@
       "waiting": "{count} en attente",
       "noRsvp": "Sans RSVP"
     }
+  },
+  "notificationPrefs": {
+    "title": "Préférences de notification",
+    "subtitle": "Choisissez comment vous êtes prévenu·e pour chaque type d'information.",
+    "group": "Type",
+    "channels": {
+      "push": "Push",
+      "email": "E-mail",
+      "digest": "Résumé 18 h"
+    },
+    "groups": {
+      "announcement": {
+        "label": "Annonces de la direction",
+        "hint": "Circulaires, rappels, accusés de lecture."
+      },
+      "document": {
+        "label": "Documents",
+        "hint": "Nouveaux documents et signatures demandées."
+      },
+      "class": {
+        "label": "Vie de classe",
+        "hint": "Devoirs, cahier de vie, mots individuels."
+      },
+      "message": {
+        "label": "Messages",
+        "hint": "Jamais d'e-mail par message : push et résumé uniquement."
+      },
+      "event": {
+        "label": "Agenda",
+        "hint": "Nouveaux événements, rappels J-7 / J-1, liste d'attente."
+      },
+      "absence": {
+        "label": "Absences",
+        "hint": "Déclarations et validations."
+      },
+      "moderation": {
+        "label": "Modération",
+        "hint": "Signalements (équipe uniquement)."
+      },
+      "community": {
+        "label": "Communauté",
+        "hint": "Petites annonces et anniversaires (bientôt)."
+      }
+    },
+    "quiet": {
+      "title": "Heures calmes",
+      "enabled": "Ne rien envoyer la nuit",
+      "start": "Début",
+      "end": "Fin",
+      "hint": "Les notifications sont mises en attente et envoyées à la fin de la plage. Les informations restent visibles dans l'application."
+    },
+    "shabbat": {
+      "title": "Mode Chabbat et fêtes",
+      "enabled": "Aucun envoi pendant Chabbat et les jours de fête",
+      "hint": "Du vendredi une heure avant l'allumage des bougies jusqu'à une heure après la havdalah, et pendant les yamim tovim (horaires de l'école). Les envois reprennent ensuite automatiquement."
+    },
+    "save": "Enregistrer",
+    "saved": "Préférences enregistrées.",
+    "invalid": "Préférences invalides.",
+    "saveError": "Enregistrement impossible pour le moment.",
+    "push": {
+      "title": "Notifications sur cet appareil",
+      "description": "Recevez les nouveautés directement sur ce téléphone ou cet ordinateur, même l'application fermée.",
+      "unsupported": "Ce navigateur ne prend pas en charge les notifications push. Sur iPhone, ajoutez d'abord l'application à l'écran d'accueil.",
+      "denied": "Les notifications sont bloquées dans les réglages du navigateur.",
+      "notConfigured": "Les notifications push ne sont pas encore configurées sur ce serveur.",
+      "enable": "Activer sur cet appareil",
+      "disable": "Désactiver sur cet appareil",
+      "enabled": "Notifications activées sur cet appareil.",
+      "enabledHint": "Les notifications sont activées sur cet appareil.",
+      "disabled": "Notifications désactivées sur cet appareil.",
+      "error": "Activation impossible pour le moment.",
+      "test": "Envoyer un test",
+      "testTitle": "Kesher fonctionne !",
+      "testBody": "Vous recevrez ici les annonces, devoirs et messages.",
+      "testSent": "Notification de test envoyée.",
+      "testError": "Aucun appareil n'a reçu la notification de test."
+    }
+  },
+  "emails": {
+    "greeting": "Bonjour {name},",
+    "singleIntro": "Une nouvelle information vous attend dans Kesher :",
+    "digestIntro": "{count, plural, one {Voici l'information non lue de la journée :} other {Voici les # informations non lues de la journée :}}",
+    "digestSubject": "{app} · {count, plural, one {# nouveauté} other {# nouveautés}} aujourd'hui",
+    "open": "Ouvrir dans l'application",
+    "footer": "Vous recevez cet e-mail car vous faites partie de la communauté de l'école. Gérer vos préférences : {url}"
   }
 }

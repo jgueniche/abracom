@@ -551,8 +551,22 @@
       "announcementReminder": "Reminder: please read “{title}”",
       "eventNew": "New event: {title}",
       "eventReminder": "{days, plural, =1 {Tomorrow} other {In # days}}: {title}",
-      "eventConfirmed": "A seat freed up: you are registered for “{title}”"
-    }
+      "eventConfirmed": "A seat freed up: you are registered for “{title}”",
+      "announcementNew": "New announcement: {title}",
+      "documentNew": "New document: {title}",
+      "documentToSign": "Document to sign: {title}",
+      "homeworkNew": "New homework in {className}",
+      "classPostNew": "New post in {className}",
+      "noteNew": "A note from the teacher about {student}",
+      "messageNew": "New message from {author}",
+      "messageNewIn": "{author} in “{thread}”",
+      "absenceNew": "Absence reported for {student}",
+      "absenceJustified": "{student}'s absence: justified",
+      "absenceUnjustified": "{student}'s absence: unjustified",
+      "reportNew": "New report to review",
+      "test": "Test notification"
+    },
+    "preferences": "Preferences"
   },
   "adminAnnouncements": {
     "title": "Announcements",
@@ -1124,5 +1138,91 @@
       "waiting": "{count} waiting",
       "noRsvp": "No RSVP"
     }
+  },
+  "notificationPrefs": {
+    "title": "Notification preferences",
+    "subtitle": "Choose how you are notified for each kind of information.",
+    "group": "Type",
+    "channels": {
+      "push": "Push",
+      "email": "E-mail",
+      "digest": "6 pm digest"
+    },
+    "groups": {
+      "announcement": {
+        "label": "School announcements",
+        "hint": "Circulars, reminders, acknowledgements."
+      },
+      "document": {
+        "label": "Documents",
+        "hint": "New documents and signature requests."
+      },
+      "class": {
+        "label": "Class life",
+        "hint": "Homework, class diary, individual notes."
+      },
+      "message": {
+        "label": "Messages",
+        "hint": "Never an e-mail per message: push and digest only."
+      },
+      "event": {
+        "label": "Calendar",
+        "hint": "New events, 7-day / 1-day reminders, waiting list."
+      },
+      "absence": {
+        "label": "Absences",
+        "hint": "Declarations and reviews."
+      },
+      "moderation": {
+        "label": "Moderation",
+        "hint": "Reports (staff only)."
+      },
+      "community": {
+        "label": "Community",
+        "hint": "Classifieds and birthdays (coming soon)."
+      }
+    },
+    "quiet": {
+      "title": "Quiet hours",
+      "enabled": "Send nothing at night",
+      "start": "From",
+      "end": "Until",
+      "hint": "Notifications are held and sent at the end of the window. Everything stays visible in the app."
+    },
+    "shabbat": {
+      "title": "Shabbat and holiday mode",
+      "enabled": "Nothing is sent on Shabbat and holidays",
+      "hint": "From one hour before candle lighting on Friday until one hour after havdalah, and on yamim tovim (school times). Sending resumes automatically."
+    },
+    "save": "Save",
+    "saved": "Preferences saved.",
+    "invalid": "Invalid preferences.",
+    "saveError": "Saving is not possible right now.",
+    "push": {
+      "title": "Notifications on this device",
+      "description": "Get the news directly on this phone or computer, even when the app is closed.",
+      "unsupported": "This browser does not support push notifications. On iPhone, add the app to the home screen first.",
+      "denied": "Notifications are blocked in the browser settings.",
+      "notConfigured": "Push notifications are not configured on this server yet.",
+      "enable": "Enable on this device",
+      "disable": "Disable on this device",
+      "enabled": "Notifications enabled on this device.",
+      "enabledHint": "Notifications are enabled on this device.",
+      "disabled": "Notifications disabled on this device.",
+      "error": "Enabling is not possible right now.",
+      "test": "Send a test",
+      "testTitle": "Kesher is working!",
+      "testBody": "Announcements, homework and messages will arrive here.",
+      "testSent": "Test notification sent.",
+      "testError": "No device received the test notification."
+    }
+  },
+  "emails": {
+    "greeting": "Hello {name},",
+    "singleIntro": "Something new is waiting for you in Kesher:",
+    "digestIntro": "{count, plural, one {Here is today's unread item:} other {Here are today's # unread items:}}",
+    "digestSubject": "{app} · {count, plural, one {# update} other {# updates}} today",
+    "open": "Open in the app",
+    "footer": "You receive this e-mail as a member of the school community. Manage your preferences: {url}"
   }
 }

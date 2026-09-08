@@ -119,16 +119,13 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 - **Session 2 — terminée (validation visuelle en attente)** : palette dérivée du logo (sarcelle `#01525e`,
   rouge brique `#852624`), tokens clair / sombre dans `app/globals.css`, contraste AA testé, Inter + Fraunces,
   page `/dev/ui`, icônes PWA et manifest, `scripts/brand/*`, `scripts/dev/screenshots.mjs`.
-- **Session 3 — terminée (à rejouer sur Supabase dès disponible)** : 10 migrations, 47 tables, 23 enums,
-  fonctions `can_access_*`, 132 politiques RLS (+ storage), triggers, seed fictif (137 comptes, 66 élèves),
-  pgTAP vert sur PostgreSQL 16 local et en CI (job `database`), types générés. Voir `supabase/tests/README.md`.
+- **Session 3 — terminée (à rejouer sur Supabase)** : 10 migrations, 47 tables, 23 enums, `can_access_*`,
+  132 politiques RLS (+ storage), seed fictif (137 comptes, 66 élèves), pgTAP en CI (job `database`).
 - **Session 4 — code complet, validation Supabase en attente** : middleware de session, magic link sans
-  inscription libre, callbacks PKCE / token hash, onboarding avec CGU versionnées et activation des
-  memberships, `lib/auth` + `lib/permissions`, perspectives multi-rôle, coquille connectée par rôle. Le flux
-  e2e « invitation → 1re connexion » (`SUPABASE_E2E=1`) ne peut tourner qu'avec une stack Supabase.
-- **Session 5 — code complet, chronométrage Supabase en attente** : espace `/admin` (familles, classes,
-  utilisateurs, années, import CSV testé, journal), comptes créés sans e-mail puis invitations par lots de 20,
-  droits par responsable + restriction judiciaire, audit de toutes les actions.
+  inscription libre, callbacks PKCE, onboarding avec CGU versionnées, `lib/auth` + `lib/permissions`,
+  perspectives multi-rôle, coquille par rôle. E2e « invitation → 1re connexion » réservé à une stack Supabase.
+- **Session 5 — code complet** : espace `/admin` (familles, classes, utilisateurs, années, import CSV testé,
+  journal), invitations par lots de 20, droits par responsable + restriction judiciaire, audit.
 - **Session 6 — code complet, validation Supabase en attente** : annonces (Markdown + modèles, ciblage,
   planification, accusés de lecture, relance, export CSV, pièces jointes), documents (dossiers, signatures
   par famille / enfant, droit à l'image → élève, signatures manquantes), notifications in-app.
@@ -143,6 +140,10 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   fêtes juives + Chabbat + parachah + fériés, vacances zone C en seed, événements avec RSVP / jauge / liste
   d'attente (`rsvp_event`), créneaux de bénévolat, flux ICS privé (`/api/calendar/[token]`), rappels J-7 / J-1
   à planifier. 90 tests unitaires, 123 assertions pgTAP.
-- **Prochaine session — 10** : notifications (Web Push, e-mail Resend, digest pg_cron, préférences par type,
-  **mode Chabbat / fêtes** via `quietWindows`, quiet hours), planification de `queue_event_reminders`.
+- **Session 10 — code complet, clés réelles à valider** : livraisons planifiées par trigger selon les
+  préférences, fan-out SQL (annonces, documents, posts, mots, messages, signalements, absences), worker
+  `/api/jobs/notifications` (push VAPID, e-mails Resend, digest 18 h, rappels), **mode Chabbat / heures
+  calmes** appliqués par le worker, page de préférences + activation push. 159 assertions pgTAP.
+- **Prochaine session — 11** : évaluations par compétences (grilles PS/MS/GS, saisie enseignant, livret PDF
+  par élève), vue absences par élève ; puis 12 communauté (annuaire opt-in, petites annonces, RDV, formulaires).
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

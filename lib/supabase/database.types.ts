@@ -168,6 +168,7 @@ export type Database = {
           expires_at: string | null
           id: string
           locale: string
+          notified_at: string | null
           pinned: boolean
           published_at: string | null
           requires_ack: boolean
@@ -190,6 +191,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           locale?: string
+          notified_at?: string | null
           pinned?: boolean
           published_at?: string | null
           requires_ack?: boolean
@@ -212,6 +214,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           locale?: string
+          notified_at?: string | null
           pinned?: boolean
           published_at?: string | null
           requires_ack?: boolean
@@ -604,6 +607,7 @@ export type Database = {
           deleted_at: string | null
           due_on: string | null
           id: string
+          notified_at: string | null
           published_at: string | null
           school_id: string
           search: unknown
@@ -621,6 +625,7 @@ export type Database = {
           deleted_at?: string | null
           due_on?: string | null
           id?: string
+          notified_at?: string | null
           published_at?: string | null
           school_id: string
           search?: never
@@ -638,6 +643,7 @@ export type Database = {
           deleted_at?: string | null
           due_on?: string | null
           id?: string
+          notified_at?: string | null
           published_at?: string | null
           school_id?: string
           search?: never
@@ -982,6 +988,7 @@ export type Database = {
           folder_id: string | null
           id: string
           mime: string
+          notified_at: string | null
           published_at: string | null
           purpose: Database["public"]["Enums"]["document_purpose"]
           requires_signature: boolean
@@ -1003,6 +1010,7 @@ export type Database = {
           folder_id?: string | null
           id?: string
           mime?: string
+          notified_at?: string | null
           published_at?: string | null
           purpose?: Database["public"]["Enums"]["document_purpose"]
           requires_signature?: boolean
@@ -1024,6 +1032,7 @@ export type Database = {
           folder_id?: string | null
           id?: string
           mime?: string
+          notified_at?: string | null
           published_at?: string | null
           purpose?: Database["public"]["Enums"]["document_purpose"]
           requires_signature?: boolean
@@ -1851,6 +1860,50 @@ export type Database = {
           },
         ]
       }
+      notification_deliveries: {
+        Row: {
+          attempts: number
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at: string
+          id: string
+          last_error: string | null
+          notification_id: string
+          scheduled_for: string
+          sent_at: string | null
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          notification_id: string
+          scheduled_for?: string
+          sent_at?: string | null
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          notification_id?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_deliveries_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           digest: boolean
@@ -1888,6 +1941,7 @@ export type Database = {
         Row: {
           channel: Database["public"]["Enums"]["notification_channel"]
           created_at: string
+          digested_at: string | null
           id: string
           kind: string
           payload: NonNullable<Json>
@@ -1900,6 +1954,7 @@ export type Database = {
         Insert: {
           channel?: Database["public"]["Enums"]["notification_channel"]
           created_at?: string
+          digested_at?: string | null
           id?: string
           kind: string
           payload?: NonNullable<Json>
@@ -1912,6 +1967,7 @@ export type Database = {
         Update: {
           channel?: Database["public"]["Enums"]["notification_channel"]
           created_at?: string
+          digested_at?: string | null
           id?: string
           kind?: string
           payload?: NonNullable<Json>
@@ -2545,7 +2601,52 @@ export type Database = {
         Args: { school: string; uid?: string }
         Returns: boolean
       }
+      claim_notification_deliveries: {
+        Args: { batch?: number }
+        Returns: {
+          attempts: number
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at: string
+          delivery_id: string
+          email: string
+          first_name: string
+          kind: string
+          latitude: number
+          locale: string
+          longitude: number
+          notification_id: string
+          payload: Json
+          quiet_hours: Json
+          school_id: string
+          shabbat_mode: boolean
+          timezone: string
+          user_id: string
+        }[]
+      }
+      class_notification_recipients: {
+        Args: { class_: string }
+        Returns: string[]
+      }
       class_school_id: { Args: { class_: string }; Returns: string }
+      digest_candidates: {
+        Args: { since: string }
+        Returns: {
+          created_at: string
+          email: string
+          first_name: string
+          kind: string
+          latitude: number
+          locale: string
+          longitude: number
+          notification_id: string
+          payload: Json
+          quiet_hours: Json
+          school_id: string
+          shabbat_mode: boolean
+          timezone: string
+          user_id: string
+        }[]
+      }
       dm_contacts: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -2564,6 +2665,16 @@ export type Database = {
           student_id: string
           student_name: string
           user_id: string
+        }[]
+      }
+      effective_preference: {
+        Args: { kind: string; uid: string }
+        Returns: {
+          digest: boolean
+          email: boolean
+          push: boolean
+          quiet_hours: Json
+          shabbat_mode: boolean
         }[]
       }
       ensure_class_threads: {
@@ -2625,6 +2736,7 @@ export type Database = {
         Args: { school: string; uid?: string }
         Returns: boolean
       }
+      is_service_role: { Args: Record<PropertyKey, never>; Returns: boolean }
       is_super_admin: { Args: { uid?: string }; Returns: boolean }
       is_thread_member: {
         Args: { thread: string; uid?: string }
@@ -2681,6 +2793,8 @@ export type Database = {
           unread_count: number
         }[]
       }
+      notification_group: { Args: { kind: string }; Returns: string }
+      notify_due_content: { Args: Record<PropertyKey, never>; Returns: number }
       notify_event: { Args: { event: string }; Returns: number }
       open_dm: { Args: { other: string }; Returns: string }
       promote_event_waitlist: { Args: { event: string }; Returns: number }
@@ -2715,6 +2829,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      school_staff_ids: { Args: { school: string }; Returns: string[] }
       set_current_school_year: { Args: { year_id: string }; Returns: undefined }
       student_school_id: { Args: { student: string }; Returns: string }
       teacher_class_ids: { Args: { uid?: string }; Returns: string[] }

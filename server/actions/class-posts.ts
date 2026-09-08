@@ -124,6 +124,7 @@ export async function saveClassPost(
       }
     }
 
+    if (parsed.data.publish) await supabase.rpc("notify_due_content");
     revalidatePath(`/classes/${parsed.data.classId}`, "layout");
     revalidatePath("/accueil");
     return {

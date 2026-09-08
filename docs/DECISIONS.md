@@ -253,3 +253,22 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
   horaires d'allumage utilisent la havdalah « nuit tombée » (8,5°) d'hebcal, réglable plus tard par école ;
   le flux ICS expose les événements à quiconque détient le jeton (d'où la régénération et l'absence de
   données d'autres familles dans le flux).
+
+## ADR-0022 — Notifications : file en base, worker Next.js, mode Chabbat côté worker
+
+- **Contexte** : le brief (§7.8) impose trois canaux (cloche, Web Push, e-mail), un digest à 18 h, des
+  préférences fines et un mode Chabbat / fêtes qui met les envois en file. Le plan Vercel Hobby limite
+  les crons à une exécution quotidienne et il n'y a pas de serveur de tâches.
+- **Décision** : chaque notification in-app est la source de vérité ; un trigger SQL planifie les
+  livraisons push / e-mail (`notification_deliveries`) d'après `effective_preference()`, si bien que la
+  règle « jamais d'e-mail par message » et les préférences sont appliquées en base, quel que soit le
+  producteur (Server Action, fonction SQL, futur import). Le fan-out du contenu publié est idempotent
+  (`notified_at`) et déclenché à la fois par l'action de publication et par le worker. Le worker est une
+  route Next.js protégée par `CRON_SECRET`, appelée par pg_cron + pg_net toutes les cinq minutes et par
+  Vercel Cron pour les tâches quotidiennes ; il applique le mode Chabbat et les heures calmes avec
+  `lib/hebcal` (coordonnées de l'école) en repoussant `scheduled_for`, envoie les push avec `web-push` et
+  les e-mails via l'API REST de Resend, et supprime les abonnements expirés. Sans clés configurées, les
+  livraisons restent en attente sans consommer de tentatives.
+- **Conséquences** : latence maximale de cinq minutes pour le push (acceptable pour une école) ; le
+  digest tourne deux fois (16 h et 17 h UTC) pour couvrir l'heure d'été et d'hiver ; les secrets du cron
+  vivent dans Supabase Vault ; une Edge Function pourra remplacer la route si l'on quitte Vercel.

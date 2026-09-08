@@ -11,6 +11,7 @@ const publicEnvSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.url().optional(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().trim().min(1).optional(),
   NEXT_PUBLIC_EDUCARTABLE_URL: z.url().default("https://www.edumoov.com/educartable"),
+  NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string().trim().min(1).optional(),
 });
 
 export type PublicEnv = z.infer<typeof publicEnvSchema>;
@@ -22,6 +23,7 @@ export function parsePublicEnv(source: Record<string, string | undefined>): Publ
     NEXT_PUBLIC_SUPABASE_URL: emptyToUndefined(source.NEXT_PUBLIC_SUPABASE_URL),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: emptyToUndefined(source.NEXT_PUBLIC_SUPABASE_ANON_KEY),
     NEXT_PUBLIC_EDUCARTABLE_URL: emptyToUndefined(source.NEXT_PUBLIC_EDUCARTABLE_URL),
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: emptyToUndefined(source.NEXT_PUBLIC_VAPID_PUBLIC_KEY),
   });
 }
 
@@ -35,6 +37,7 @@ export const publicEnv: PublicEnv = parsePublicEnv({
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   NEXT_PUBLIC_EDUCARTABLE_URL: process.env.NEXT_PUBLIC_EDUCARTABLE_URL,
+  NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
 });
 
 export const appName = publicEnv.NEXT_PUBLIC_APP_NAME;

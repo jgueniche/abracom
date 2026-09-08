@@ -474,3 +474,17 @@ values (pg_temp.uid('0', 1), pg_temp.uid('a', 1), 'student_guardian.block', 'stu
 drop function pg_temp.create_user(uuid, text, text, text, text, text);
 drop function pg_temp.person_uid(text, int, int);
 drop function pg_temp.uid(text, int);
+
+-- notifications (session 10): content seeded above counts as already notified; keep only the three
+-- most recent trigger-generated notifications unread per user and never deliver seed rows by e-mail.
+update public.announcements set notified_at = now() where published_at is not null and notified_at is null;
+update public.documents set notified_at = now() where published_at is not null and notified_at is null;
+update public.class_posts set notified_at = now() where published_at is not null and notified_at is null;
+update public.notifications n set read_at = n.created_at
+where n.id in (
+  select id from (
+    select id, row_number() over (partition by user_id order by created_at desc) as rn
+    from public.notifications
+  ) ranked where ranked.rn > 3
+);
+update public.notification_deliveries set sent_at = now(), last_error = 'seed' where sent_at is null;

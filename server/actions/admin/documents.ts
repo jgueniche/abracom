@@ -101,6 +101,7 @@ export async function createDocument(_prev: ActionState, formData: FormData): Pr
       entityId: documentId,
       diff: { title: parsed.data.title, purpose: parsed.data.purpose },
     });
+    if (parsed.data.publishNow) await supabase.rpc("notify_due_content");
     revalidatePath("/documents");
     revalidatePath("/admin/documents", "layout");
     return { status: "success", message: t("created") };
@@ -127,6 +128,7 @@ export async function publishDocument(formData: FormData): Promise<void> {
     entity: "documents",
     entityId: id,
   });
+  await supabase.rpc("notify_due_content");
   revalidatePath("/documents");
   revalidatePath("/admin/documents", "layout");
 }

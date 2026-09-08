@@ -114,6 +114,9 @@ export async function saveAnnouncement(
       entityId: id,
       diff: { intent, audience: parsed.data.audience, publishedAt },
     });
+    if (publishedAt && new Date(publishedAt).getTime() <= Date.now()) {
+      await supabase.rpc("notify_due_content");
+    }
     revalidatePath("/annonces");
     revalidatePath("/admin/annonces", "layout");
     if (!parsed.data.id) redirect(`/admin/annonces/${id}`);

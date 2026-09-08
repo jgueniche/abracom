@@ -1,4 +1,4 @@
-import { CheckCheckIcon } from "lucide-react";
+import { CheckCheckIcon, SettingsIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -6,6 +6,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
+import { renderNotification } from "@/lib/notifications/render";
 import { cn } from "@/lib/utils";
 import { markAllNotificationsRead } from "@/server/actions/notifications";
 import { getNotifications } from "@/server/queries/notifications";
@@ -15,20 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
-function linkFor(kind: string, payload: Record<string, unknown>): string | null {
-  if (kind.startsWith("announcement.") && typeof payload.announcement_id === "string") {
-    return `/annonces/${payload.announcement_id}`;
-  }
-  if (kind.startsWith("event.") && typeof payload.event_id === "string") {
-    return `/agenda/${payload.event_id}`;
-  }
-  return null;
-}
-
 export default async function NotificationsPage() {
   const user = await requireCurrentUser();
-  const [t, format, notifications] = await Promise.all([
+  const [t, tk, format, notifications] = await Promise.all([
     getTranslations("notifications"),
+    getTranslations("notifications.kinds"),
     getFormatter(),
     getNotifications(user.id),
   ]);
@@ -38,12 +30,20 @@ export default async function NotificationsPage() {
       <PageHeader
         title={t("title")}
         actions={
-          <form action={markAllNotificationsRead}>
-            <Button type="submit" variant="outline" className="min-h-11">
-              <CheckCheckIcon aria-hidden />
-              {t("markAllRead")}
+          <>
+            <Button asChild variant="ghost" className="min-h-11">
+              <Link href="/notifications/preferences">
+                <SettingsIcon aria-hidden />
+                {t("preferences")}
+              </Link>
             </Button>
-          </form>
+            <form action={markAllNotificationsRead}>
+              <Button type="submit" variant="outline" className="min-h-11">
+                <CheckCheckIcon aria-hidden />
+                {t("markAllRead")}
+              </Button>
+            </form>
+          </>
         }
       />
       {notifications.length === 0 ? (
@@ -52,18 +52,11 @@ export default async function NotificationsPage() {
         <ul className="flex flex-col gap-2">
           {notifications.map((n) => {
             const payload = (n.payload ?? {}) as Record<string, unknown>;
-            const title = String(payload.title ?? "");
-            const label =
-              n.kind === "announcement.reminder"
-                ? t("kinds.announcementReminder", { title })
-                : n.kind === "event.new"
-                  ? t("kinds.eventNew", { title })
-                  : n.kind === "event.reminder"
-                    ? t("kinds.eventReminder", { title, days: Number(payload.days ?? 1) })
-                    : n.kind === "event.confirmed"
-                      ? t("kinds.eventConfirmed", { title })
-                      : t("kinds.default");
-            const href = linkFor(n.kind, payload);
+            const rendered = renderNotification(n.kind, payload, (key, values) =>
+              tk(key as never, values as never),
+            );
+            const label = rendered.title;
+            const href = rendered.href;
             const body = (
               <div
                 className={cn(
@@ -72,6 +65,7 @@ export default async function NotificationsPage() {
                 )}
               >
                 <p className="font-medium">{label}</p>
+                {rendered.body && <p className="text-sm text-muted-foreground">{rendered.body}</p>}
                 <p className="text-xs text-muted-foreground">
                   {format.dateTime(new Date(n.created_at), {
                     dateStyle: "medium",
