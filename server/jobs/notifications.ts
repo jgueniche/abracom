@@ -52,9 +52,13 @@ export async function runNotificationJob(
   const site = publicEnv.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
 
   if (task === "reminders") {
-    const { data, error } = await admin.rpc("queue_event_reminders");
-    if (error) throw error;
-    report.processed = data ?? 0;
+    const [events, birthdays] = await Promise.all([
+      admin.rpc("queue_event_reminders"),
+      admin.rpc("queue_birthday_reminders"),
+    ]);
+    if (events.error) throw events.error;
+    if (birthdays.error) throw birthdays.error;
+    report.processed = (events.data ?? 0) + (birthdays.data ?? 0);
     return report;
   }
 
@@ -130,6 +134,9 @@ export async function runNotificationJob(
   // dispatch
   const { error: fanOutError } = await admin.rpc("notify_due_content");
   if (fanOutError) throw fanOutError;
+  const { error: formsError } = await admin.rpc("notify_due_forms");
+  if (formsError) throw formsError;
+  await admin.rpc("expire_community_posts");
   const { data: rows, error } = await admin.rpc("claim_notification_deliveries", { batch: 200 });
   if (error) throw error;
   const deliveries = rows ?? [];

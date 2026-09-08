@@ -470,6 +470,52 @@ insert into public.audit_log (school_id, actor_id, action, entity, entity_id, di
 values (pg_temp.uid('0', 1), pg_temp.uid('a', 1), 'student_guardian.block', 'student_guardians', pg_temp.person_uid('d', 44, 1),
         '{"user_id": "c0000000-0000-4000-8000-000000440002", "access_blocked": true, "reason": "Décision de justice (fictive)"}'::jsonb);
 
+-- community (session 12): birthdays shared by the first thirty families, a back-to-school form
+-- and a survey, parent-teacher appointment slots for the PS teacher ---------------------------
+update public.directory_optins set show_birthday = true
+where user_id = any (array(select pg_temp.person_uid('c', f, p) from generate_series(1, 30) as f, generate_series(1, 2) as p));
+
+insert into public.forms (id, school_id, title, description_md, schema, audience, target_ids, per_student, opens_at, closes_at, created_by) values
+  (pg_temp.uid('0', 3328 + 1), pg_temp.uid('0', 1), 'Fiche de rentrée 2026-2027',
+   'Merci de compléter une fiche par enfant avant le 30 septembre.',
+   '{"fields": [
+      {"id": "allergies", "type": "textarea", "label": "Allergies, PAI, traitements", "required": false},
+      {"id": "pickup", "type": "text", "label": "Personnes autorisées à récupérer l''enfant", "required": true},
+      {"id": "emergency", "type": "text", "label": "Téléphone en cas d''urgence", "required": true},
+      {"id": "lunch", "type": "choice", "label": "Déjeuner", "required": true, "options": ["Cantine", "Panier repas"]},
+      {"id": "consent", "type": "yesno", "label": "J''autorise les sorties de proximité à pied", "required": true}
+    ]}'::jsonb,
+   'school', '{}', true, now() - interval '15 days', '2026-09-30 23:59+02', pg_temp.uid('a', 1)),
+  (pg_temp.uid('0', 3328 + 2), pg_temp.uid('0', 1), 'Sondage : horaires de la garderie du soir',
+   'Pour adapter la garderie aux besoins des familles (une réponse par famille).',
+   '{"fields": [
+      {"id": "need", "type": "choice", "label": "Utiliseriez-vous la garderie du soir ?", "required": true, "options": ["Tous les jours", "Certains jours", "Jamais"]},
+      {"id": "until", "type": "choice", "label": "Jusqu''à quelle heure ?", "required": false, "options": ["17 h 30", "18 h", "18 h 30", "19 h"]},
+      {"id": "comment", "type": "textarea", "label": "Remarques", "required": false}
+    ]}'::jsonb,
+   'school', '{}', false, now() - interval '5 days', now() + interval '20 days', pg_temp.uid('a', 2));
+
+insert into public.form_responses (form_id, user_id, student_id, answers, submitted_at)
+select pg_temp.uid('0', 3328 + 1), sg.user_id, sg.student_id,
+       jsonb_build_object('allergies', '', 'pickup', 'Grands-parents', 'emergency', '+33600000000', 'lunch', 'Cantine', 'consent', true),
+       now() - interval '10 days'
+from public.student_guardians sg
+where sg.is_primary and sg.user_id = any (array(select pg_temp.person_uid('c', f, 1) from generate_series(1, 25) as f));
+
+insert into public.form_responses (form_id, user_id, answers, submitted_at)
+select pg_temp.uid('0', 3328 + 2), pg_temp.person_uid('c', f, 1),
+       jsonb_build_object('need', (array['Tous les jours', 'Certains jours', 'Jamais'])[1 + f % 3], 'until', '18 h', 'comment', ''),
+       now() - interval '3 days'
+from generate_series(1, 18) as f;
+
+insert into public.appointment_slots (id, school_id, class_id, teacher_id, starts_at, ends_at, location)
+select pg_temp.uid('0', 3584 + i), pg_temp.uid('0', 1), pg_temp.uid('0', 512 + 2), pg_temp.uid('b', 2),
+       '2026-10-05 16:30+02'::timestamptz + (i - 1) * interval '15 minutes',
+       '2026-10-05 16:45+02'::timestamptz + (i - 1) * interval '15 minutes', 'Salle 2'
+from generate_series(1, 8) as i;
+update public.appointment_slots set booked_by = pg_temp.person_uid('c', 1, 1), student_id = pg_temp.person_uid('d', 1, 1), booked_at = now() - interval '2 days'
+where id = pg_temp.uid('0', 3584 + 2);
+
 -- cleanup helpers
 drop function pg_temp.create_user(uuid, text, text, text, text, text);
 drop function pg_temp.person_uid(text, int, int);
@@ -480,6 +526,7 @@ drop function pg_temp.uid(text, int);
 update public.announcements set notified_at = now() where published_at is not null and notified_at is null;
 update public.documents set notified_at = now() where published_at is not null and notified_at is null;
 update public.class_posts set notified_at = now() where published_at is not null and notified_at is null;
+update public.forms set notified_at = now() where notified_at is null;
 update public.notifications n set read_at = n.created_at
 where n.id in (
   select id from (

@@ -129,14 +129,10 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   relance, export CSV, pièces jointes), documents et signatures électroniques, notifications in-app.
 - **Session 7 — code complet** : espace classe (fil typé, devoirs « vu », cahier de vie normalisé + droit à
   l'image, mots individuels avec accusé de lecture, absences justifiées), vue hebdo enseignant.
-- **Session 8 — code complet, validation Supabase en attente** : messagerie temps réel (Realtime
-  `postgres_changes`), DM selon `can_direct_message`, fils officiels et groupes de classe (`ensure_class_threads`),
-  réponses, réactions, mentions, pièces jointes, recherche, silencieux, signalement, modération, verrouillage,
-  archivage, `/admin/signalements`. 81 assertions pgTAP. **Fin du code du MVP** (sessions 1–8).
-- **Session 9 — code complet, validation Supabase en attente** : agenda (`lib/hebcal`, `lib/calendar`),
-  fêtes juives + Chabbat + parachah + fériés, vacances zone C en seed, événements avec RSVP / jauge / liste
-  d'attente (`rsvp_event`), créneaux de bénévolat, flux ICS privé (`/api/calendar/[token]`), rappels J-7 / J-1
-  à planifier. 90 tests unitaires, 123 assertions pgTAP.
+- **Session 8 — code complet** : messagerie temps réel (Realtime), DM selon `can_direct_message`, fils et
+  groupes de classe, réactions, pièces jointes, recherche, signalement, modération. **Fin du code du MVP.**
+- **Session 9 — code complet** : agenda (`lib/hebcal`, `lib/calendar`), fêtes juives + Chabbat + parachah +
+  fériés, vacances zone C, RSVP / jauge / liste d'attente, bénévolat, flux ICS privé, rappels J-7 / J-1.
 - **Session 10 — code complet, clés réelles à valider** : livraisons planifiées par trigger selon les
   préférences, fan-out SQL (annonces, documents, posts, mots, messages, signalements, absences), worker
   `/api/jobs/notifications` (push VAPID, e-mails Resend, digest 18 h, rappels), **mode Chabbat / heures
@@ -144,6 +140,9 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 - **Session 11 — code complet, validation Supabase en attente** : matrice de compétences par période,
   appréciations, publication différée notifiée (`publish_assessments`), livret PDF `/api/livret/[studentId]`
   (`@react-pdf/renderer`), notes /20 optionnelles (module `assessments.scores`). 176 assertions pgTAP.
-- **Prochaine session — 12** : communauté (annuaire opt-in, petites annonces modérées, anniversaires,
-  prise de RDV parents-enseignant, formulaires / sondages).
+- **Session 12 — code complet, validation Supabase en attente** : annuaire opt-in, anniversaires (rappel
+  J-3), petites annonces modérées a priori (trigger), RDV parents-enseignant (`book_appointment`, un par
+  famille), formulaires / sondages avec constructeur et export CSV. 200 assertions pgTAP.
+- **Prochaine session — 13** : PWA (manifest, offline, installation iOS / Android), recherche globale,
+  accessibilité et performance (Lighthouse ≥ 90 mobile), compression photo côté client.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

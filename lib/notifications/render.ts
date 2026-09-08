@@ -40,6 +40,19 @@ export function hrefFor(kind: string, payload: Record<string, unknown>): string 
     return `/classes/${payload.class_id}/absences`;
   }
   if (kind.startsWith("report.")) return "/admin/signalements";
+  if (kind === "community.pending") return "/admin/communaute";
+  if (kind === "community.moderated" && typeof payload.post_id === "string") {
+    return `/communaute/annonces/${payload.post_id}`;
+  }
+  if (kind === "community.birthday" && typeof payload.class_id === "string") {
+    return `/classes/${payload.class_id}`;
+  }
+  if (kind.startsWith("appointment.") && typeof payload.class_id === "string") {
+    return `/classes/${payload.class_id}/rdv`;
+  }
+  if (kind === "form.new" && typeof payload.form_id === "string") {
+    return `/communaute/formulaires/${payload.form_id}`;
+  }
   return "/notifications";
 }
 
@@ -114,6 +127,38 @@ export function renderNotification(
       };
     case "report.new":
       return { title: t("reportNew"), body: null, href };
+    case "community.pending":
+      return { title: t("communityPending", { title }), body: null, href };
+    case "community.moderated":
+      return {
+        title: t(payload.status === "published" ? "communityApproved" : "communityRejected", {
+          title,
+        }),
+        body: null,
+        href,
+      };
+    case "community.birthday":
+      return {
+        title: t("communityBirthday", {
+          student: text(payload.student_name),
+          className: text(payload.class_name),
+        }),
+        body: null,
+        href,
+      };
+    case "appointment.booked":
+      return {
+        title: t("appointmentBooked", {
+          parent: text(payload.parent_name),
+          student: text(payload.student_name),
+        }),
+        body: null,
+        href,
+      };
+    case "appointment.cancelled":
+      return { title: t("appointmentCancelled"), body: null, href };
+    case "form.new":
+      return { title: t("formNew", { title }), body: null, href };
     default:
       return { title: t("default"), body: null, href };
   }

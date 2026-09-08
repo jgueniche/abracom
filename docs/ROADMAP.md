@@ -3,23 +3,23 @@
 Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committée**.
 **MVP présentable à la direction = sessions 1–8.** Sessions 9–15 = V1 complète.
 
-| #   | Livrable                                                                                                                     | Definition of done                                      | État                                                                                              |
-| --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| 1   | Bootstrap : Next 15, Tailwind, shadcn, Supabase local, CI lint/test, Vercel preview, CLAUDE.md, ROADMAP                      | `pnpm dev` OK, déploiement preview vert                 | ✅                                                                                                |
-| 2   | Identité visuelle : extraction palette logo, tokens, thème clair/sombre, page de style `/dev/ui`                             | Validation visuelle par le porteur                      | ✅ (validation visuelle du porteur en attente)                                                    |
-| 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ✅ (validé sur PostgreSQL 16 local + CI ; à rejouer sur Supabase dès que disponible)              |
-| 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | 🟡 code complet, e2e « invitation → 1re connexion » à exécuter sur une stack Supabase             |
-| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | 🟡 code complet, chronométrage de l'import à réaliser sur une stack Supabase                      |
-| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | 🟡 code complet, parcours à valider sur une stack Supabase (upload Storage, e-mails)              |
-| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | 🟡 code complet, upload photos à valider sur une stack Supabase                                   |
-| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | 🟡 code complet, échange à 2 navigateurs (Realtime) à valider sur une stack Supabase              |
-| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | 🟡 code complet, abonnement ICS à vérifier dans Google Agenda sur une stack Supabase              |
-| 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | 🟡 code complet ; push réel et e-mails à valider avec clés VAPID + Resend sur une stack Supabase  |
-| 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | 🟡 code complet ; livret PDF généré en test unitaire, rendu réel à valider sur une stack Supabase |
-| 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | ⬜                                                                                                |
-| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | ⬜                                                                                                |
-| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | ⬜                                                                                                |
-| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | ⬜                                                                                                |
+| #   | Livrable                                                                                                                     | Definition of done                                      | État                                                                                                |
+| --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 1   | Bootstrap : Next 15, Tailwind, shadcn, Supabase local, CI lint/test, Vercel preview, CLAUDE.md, ROADMAP                      | `pnpm dev` OK, déploiement preview vert                 | ✅                                                                                                  |
+| 2   | Identité visuelle : extraction palette logo, tokens, thème clair/sombre, page de style `/dev/ui`                             | Validation visuelle par le porteur                      | ✅ (validation visuelle du porteur en attente)                                                      |
+| 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ✅ (validé sur PostgreSQL 16 local + CI ; à rejouer sur Supabase dès que disponible)                |
+| 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | 🟡 code complet, e2e « invitation → 1re connexion » à exécuter sur une stack Supabase               |
+| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | 🟡 code complet, chronométrage de l'import à réaliser sur une stack Supabase                        |
+| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | 🟡 code complet, parcours à valider sur une stack Supabase (upload Storage, e-mails)                |
+| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | 🟡 code complet, upload photos à valider sur une stack Supabase                                     |
+| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | 🟡 code complet, échange à 2 navigateurs (Realtime) à valider sur une stack Supabase                |
+| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | 🟡 code complet, abonnement ICS à vérifier dans Google Agenda sur une stack Supabase                |
+| 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | 🟡 code complet ; push réel et e-mails à valider avec clés VAPID + Resend sur une stack Supabase    |
+| 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | 🟡 code complet ; livret PDF généré en test unitaire, rendu réel à valider sur une stack Supabase   |
+| 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | 🟡 code complet, réservation de créneau testée en pgTAP ; parcours à valider sur une stack Supabase |
+| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | ⬜                                                                                                  |
+| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | ⬜                                                                                                  |
+| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | ⬜                                                                                                  |
 
 ## Session 1 — détail
 
@@ -294,6 +294,33 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 - [x] Tests : PDF généré pour un élève fictif (2 unitaires, environnement Node), 17 pgTAP (`005_assessments.sql`)
 - [ ] Valider sur une stack Supabase : rendu du livret avec les données réelles, temps de génération
 - [ ] Commentaire par compétence dans la matrice et import de grilles de compétences : plus tard
+
+## Session 12 — détail
+
+- [x] Migration `20260908172000_community` : annuaire opt-in par classe (`class_directory`, champs exposés
+      selon les choix de chaque famille, accès limité aux classes de l'appelant), anniversaires opt-in
+      (`class_birthdays`, rappel J-3 aux familles de la classe via `queue_birthday_reminders`), petites annonces
+      avec **modération a priori imposée par trigger** (statut `pending` forcé, auteur limité au retrait,
+      republication après modification, expiration 30 jours), notifications équipe / auteur, **RDV parents-
+      enseignant** (`book_appointment` : un seul rendez-vous à venir par famille et par classe, créneau libre,
+      enfant de la classe ; `cancel_appointment` ; `class_appointments` avec noms pour l'équipe seulement),
+      formulaires notifiés à leur audience (`notify_due_forms`), contact d'annonce selon l'annuaire
+- [x] `/communaute` : hub (annonces, annuaire, formulaires, RDV par classe, anniversaires à venir)
+- [x] `/communaute/annonces` : catégories (covoiturage, garde partagée, objets trouvés, don / prêt / vente,
+      recommandation), publication, mes annonces avec statut, détail avec coordonnées opt-in, retrait ;
+      `/admin/communaute` : file de modération (publier / refuser / archiver, journalisé)
+- [x] `/communaute/annuaire` : réglages « ce que je partage » (téléphone, e-mail, prénoms des enfants, adresse,
+      anniversaires) et annuaire par classe (familles, enseignants, direction)
+- [x] `/classes/[classId]/rdv` : l'enseignant·e ouvre des créneaux (date, plage, durée, lieu), les familles
+      réservent pour un enfant, annulation des deux côtés, autres réservations anonymes pour les familles
+- [x] Formulaires : `/communaute/formulaires` (statut, répondu / à remplir, une réponse par enfant) et saisie
+      typée (texte, texte long, choix unique / multiple, oui / non, nombre, date) ; `/admin/formulaires` :
+      constructeur de champs, audience, ouverture / clôture, réponses en tableau et **export CSV**
+- [x] Seed : fiche de rentrée et sondage garderie avec réponses, créneaux de RDV du PS, anniversaires partagés
+- [x] Tests : 24 pgTAP (`006_community.sql`)
+- [ ] Valider sur une stack Supabase : parcours complet annonce → modération → contact, rappel d'anniversaire
+- [ ] Coordination gâteau via `event_slots` (bouton « organiser un goûter » pré-rempli) et messagerie
+      parent ↔ parent sur réglage admin : plus tard
 
 ## Questions ouvertes (§15 du brief)
 

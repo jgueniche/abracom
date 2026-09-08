@@ -290,3 +290,22 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 - **Conséquences** : le PDF est généré à la demande (pas de stockage, donc pas de rétention à gérer) ; les
   scores restent limités à `/20` dans l'interface ; le commentaire par compétence existe en base mais n'est pas
   saisi dans la matrice pour l'instant.
+
+## ADR-0024 — Communauté : opt-in et modération garantis par la base, un RDV par famille
+
+- **Contexte** : l'annuaire et les petites annonces exposent des données de familles entre elles (§7.6,
+  §9) ; la modération a priori et le « un seul rendez-vous par famille » ne doivent pas dépendre du client.
+- **Décision** : rien n'est visible sans opt-in explicite (`directory_optins`, faux par défaut) et les
+  lectures passent par des fonctions `security definer` qui n'exposent que les champs cochés
+  (`class_directory`, `classified_contact`) aux personnes ayant accès à la classe ou à l'école. Le trigger
+  `guard_community_post` force le statut `pending` pour tout non-membre de l'équipe (réglage
+  `schools.modules.marketplace.moderation = "none"` pour publier directement), interdit à l'auteur de changer
+  le statut autrement que pour retirer son annonce, renvoie en modération toute modification d'une annonce
+  publiée et borne l'expiration à trente jours. Les réservations de rendez-vous passent exclusivement par
+  `book_appointment` (verrou de ligne, créneau libre et à venir, enfant inscrit dans la classe, une seule
+  réservation à venir par famille — via `students.family_id` — et par classe) ; les familles ne voient jamais
+  qui a réservé les autres créneaux, seule l'équipe obtient les noms (`class_appointments`).
+- **Conséquences** : la messagerie parent ↔ parent reste fermée par défaut (ADR-0020), le contact se fait
+  par les coordonnées partagées ; les rappels d'anniversaire ne partent que pour les enfants dont un
+  responsable a coché l'option ; les formulaires dynamiques restent volontairement simples (sept types de
+  champs, pas de logique conditionnelle).

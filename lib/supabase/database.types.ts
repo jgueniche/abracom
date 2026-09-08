@@ -914,6 +914,7 @@ export type Database = {
           created_at: string
           school_id: string
           show_address: boolean
+          show_birthday: boolean
           show_children_names: boolean
           show_email: boolean
           show_phone: boolean
@@ -925,6 +926,7 @@ export type Database = {
           created_at?: string
           school_id: string
           show_address?: boolean
+          show_birthday?: boolean
           show_children_names?: boolean
           show_email?: boolean
           show_phone?: boolean
@@ -936,6 +938,7 @@ export type Database = {
           created_at?: string
           school_id?: string
           show_address?: boolean
+          show_birthday?: boolean
           show_children_names?: boolean
           show_email?: boolean
           show_phone?: boolean
@@ -1479,6 +1482,7 @@ export type Database = {
           deleted_at: string | null
           description_md: string | null
           id: string
+          notified_at: string | null
           opens_at: string | null
           per_student: boolean
           schema: NonNullable<Json>
@@ -1495,6 +1499,7 @@ export type Database = {
           deleted_at?: string | null
           description_md?: string | null
           id?: string
+          notified_at?: string | null
           opens_at?: string | null
           per_student?: boolean
           schema?: NonNullable<Json>
@@ -1511,6 +1516,7 @@ export type Database = {
           deleted_at?: string | null
           description_md?: string | null
           id?: string
+          notified_at?: string | null
           opens_at?: string | null
           per_student?: boolean
           schema?: NonNullable<Json>
@@ -2607,6 +2613,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      book_appointment: {
+        Args: { slot: string; student: string }
+        Returns: undefined
+      }
       calendar_feed: {
         Args: { feed_token: string }
         Returns: {
@@ -2666,6 +2676,7 @@ export type Database = {
         Args: { school: string; uid?: string }
         Returns: boolean
       }
+      cancel_appointment: { Args: { slot: string }; Returns: undefined }
       claim_notification_deliveries: {
         Args: { batch?: number }
         Returns: {
@@ -2688,11 +2699,55 @@ export type Database = {
           user_id: string
         }[]
       }
+      class_appointments: {
+        Args: { class_: string }
+        Returns: {
+          booked_at: string
+          booked_by: string
+          ends_at: string
+          id: string
+          location: string
+          parent_name: string
+          starts_at: string
+          student_id: string
+          student_name: string
+        }[]
+      }
+      class_birthdays: {
+        Args: { class_: string }
+        Returns: {
+          birth_date: string
+          first_name: string
+          next_birthday: string
+          student_id: string
+          turning: number
+        }[]
+      }
+      class_directory: {
+        Args: { class_: string }
+        Returns: {
+          address: string
+          children: string[]
+          email: string
+          first_name: string
+          last_name: string
+          phone: string
+          relation: Database["public"]["Enums"]["guardian_relation"]
+          user_id: string
+        }[]
+      }
       class_notification_recipients: {
         Args: { class_: string }
         Returns: string[]
       }
       class_school_id: { Args: { class_: string }; Returns: string }
+      classified_contact: {
+        Args: { post: string }
+        Returns: {
+          email: string
+          phone: string
+        }[]
+      }
       digest_candidates: {
         Args: { since: string }
         Returns: {
@@ -2773,6 +2828,10 @@ export type Database = {
           user_id: string
           waitlisted: boolean
         }[]
+      }
+      expire_community_posts: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       find_user_id_by_email: { Args: { email: string }; Returns: string }
       guardian_class_ids: { Args: { uid?: string }; Returns: string[] }
@@ -2860,11 +2919,16 @@ export type Database = {
       }
       notification_group: { Args: { kind: string }; Returns: string }
       notify_due_content: { Args: Record<PropertyKey, never>; Returns: number }
+      notify_due_forms: { Args: Record<PropertyKey, never>; Returns: number }
       notify_event: { Args: { event: string }; Returns: number }
       open_dm: { Args: { other: string }; Returns: string }
       promote_event_waitlist: { Args: { event: string }; Returns: number }
       publish_assessments: {
         Args: { class_: string; period: string }
+        Returns: number
+      }
+      queue_birthday_reminders: {
+        Args: Record<PropertyKey, never>
         Returns: number
       }
       queue_event_reminders: {

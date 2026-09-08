@@ -13,6 +13,7 @@ const TABS = [
   { segment: "mots", key: "notes" },
   { segment: "evaluations", key: "assessments" },
   { segment: "absences", key: "absences" },
+  { segment: "rdv", key: "appointments" },
 ] as const;
 
 export function ClassTabs({ classId }: { classId: string }) {

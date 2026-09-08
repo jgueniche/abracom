@@ -16,6 +16,8 @@ const ITEMS = [
   { href: "/admin/annees", key: "years" },
   { href: "/admin/import", key: "import" },
   { href: "/admin/signalements", key: "reports" },
+  { href: "/admin/communaute", key: "community" },
+  { href: "/admin/formulaires", key: "forms" },
   { href: "/admin/journal", key: "audit" },
 ] as const;
 

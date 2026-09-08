@@ -8,6 +8,7 @@ import {
   ShieldCheckIcon,
   UserRoundIcon,
   UsersRoundIcon,
+  UsersIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -68,6 +69,10 @@ export default async function MorePage() {
               <FolderIcon className="size-4" aria-hidden />
               {tNav("documents")}
               <ChevronRightIcon className="ml-auto size-4" aria-hidden />
+            </Link>
+            <Link href="/communaute" className={linkClass}>
+              <UsersIcon className="size-5" aria-hidden />
+              {t("community")}
             </Link>
             <Link href="/notifications" className={linkClass}>
               <BellIcon className="size-4" aria-hidden />

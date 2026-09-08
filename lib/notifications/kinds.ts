@@ -21,6 +21,12 @@ export type NotificationKind =
   | "class_post.new"
   | "note.new"
   | "assessment.published"
+  | "community.pending"
+  | "community.moderated"
+  | "community.birthday"
+  | "appointment.booked"
+  | "appointment.cancelled"
+  | "form.new"
   | "message.new"
   | "event.new"
   | "event.reminder"
@@ -31,8 +37,13 @@ export type NotificationKind =
 
 export function groupOf(kind: string): NotificationGroup | "other" {
   if (kind.startsWith("announcement.")) return "announcement";
-  if (kind.startsWith("document.")) return "document";
-  if (kind.startsWith("class_post.") || kind.startsWith("note.") || kind.startsWith("assessment."))
+  if (kind.startsWith("document.") || kind.startsWith("form.")) return "document";
+  if (
+    kind.startsWith("class_post.") ||
+    kind.startsWith("note.") ||
+    kind.startsWith("assessment.") ||
+    kind.startsWith("appointment.")
+  )
     return "class";
   if (kind.startsWith("message.")) return "message";
   if (kind.startsWith("event.")) return "event";
