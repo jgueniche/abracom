@@ -26,7 +26,9 @@
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local --schema public > lib/supabase/database.types.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:test": "scripts/db/test-local.sh --seed",
+    "db:types:local": "scripts/db/gen-types-local.sh"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

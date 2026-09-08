@@ -3,23 +3,23 @@
 Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committée**.
 **MVP présentable à la direction = sessions 1–8.** Sessions 9–15 = V1 complète.
 
-| #   | Livrable                                                                                                                     | Definition of done                                      | État                                           |
-| --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------- |
-| 1   | Bootstrap : Next 15, Tailwind, shadcn, Supabase local, CI lint/test, Vercel preview, CLAUDE.md, ROADMAP                      | `pnpm dev` OK, déploiement preview vert                 | ✅                                             |
-| 2   | Identité visuelle : extraction palette logo, tokens, thème clair/sombre, page de style `/dev/ui`                             | Validation visuelle par le porteur                      | ✅ (validation visuelle du porteur en attente) |
-| 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ⬜                                             |
-| 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | ⬜                                             |
-| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | ⬜                                             |
-| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | ⬜                                             |
-| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | ⬜                                             |
-| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | ⬜                                             |
-| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | ⬜                                             |
-| 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | ⬜                                             |
-| 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | ⬜                                             |
-| 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | ⬜                                             |
-| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | ⬜                                             |
-| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | ⬜                                             |
-| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | ⬜                                             |
+| #   | Livrable                                                                                                                     | Definition of done                                      | État                                                                                 |
+| --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 1   | Bootstrap : Next 15, Tailwind, shadcn, Supabase local, CI lint/test, Vercel preview, CLAUDE.md, ROADMAP                      | `pnpm dev` OK, déploiement preview vert                 | ✅                                                                                   |
+| 2   | Identité visuelle : extraction palette logo, tokens, thème clair/sombre, page de style `/dev/ui`                             | Validation visuelle par le porteur                      | ✅ (validation visuelle du porteur en attente)                                       |
+| 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ✅ (validé sur PostgreSQL 16 local + CI ; à rejouer sur Supabase dès que disponible) |
+| 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | ⬜                                                                                   |
+| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | ⬜                                                                                   |
+| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | ⬜                                                                                   |
+| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | ⬜                                                                                   |
+| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | ⬜                                                                                   |
+| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | ⬜                                                                                   |
+| 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | ⬜                                                                                   |
+| 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | ⬜                                                                                   |
+| 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | ⬜                                                                                   |
+| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | ⬜                                                                                   |
+| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | ⬜                                                                                   |
+| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | ⬜                                                                                   |
 
 ## Session 1 — détail
 
@@ -68,6 +68,35 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 - [x] Tests : 44 unitaires, 12 e2e (dont manifest + icônes + `/dev/ui`)
 - [ ] **Validation visuelle par le porteur** : ouvrir `/dev/ui` sur la preview Vercel de la branche ou
       regarder les captures envoyées dans la session ; ajustements de teinte possibles sans toucher aux composants
+
+## Session 3 — détail
+
+- [x] 10 migrations SQL versionnées (`supabase/migrations/2026090817*`) : extensions + recherche plein texte
+      française sans accents, 23 enums, 47 tables avec `school_id`, index sur toutes les FK, `(class_id, published_at desc)`,
+      `(thread_id, created_at desc)`, `tsvector` générés sur annonces / posts / messages / petites annonces,
+      `deleted_at` (soft delete) là où un parent peut demander l'effacement
+- [x] Fonctions d'accès `security definer` : `can_access_class`, `can_access_student`, `can_view_student_grades`,
+      `can_view_profile`, `matches_audience`, `is_school_staff` / `is_school_admin` / `is_super_admin`,
+      `teaches_student`, `is_thread_member`… réutilisées par toutes les politiques
+- [x] RLS activée sur les 47 tables + `storage.objects` (132 politiques) ; `anon` ne voit rien ; rôle
+      `guardian` en lecture seule (ni évaluations, ni messagerie) ; `staff` sans accès aux évaluations ;
+      restriction judiciaire (`student_guardians.access_blocked`) masquant totalement l'enfant
+- [x] Déclencheurs : création automatique du profil, `updated_at`, `last_message_at`, **blocage du tag d'un
+      élève sans droit à l'image signé**, une seule année courante par école
+- [x] Buckets privés `avatars`, `class-media`, `documents`, `attachments`, `justifications` avec politiques
+      par convention de chemin
+- [x] Seed fictif (`supabase/seed/seed.sql`) : 1 école, année 2026-2027, 6 classes, 12 enseignants (dont
+      anglais et kodesh sur toutes les classes), 60 familles / 137 comptes / 66 élèves, 5 familles séparées,
+      3 anglophones, 2 guardians, 1 restriction judiciaire, 72 posts sur 3 semaines, 10 annonces, 8 événements
+      (Roch Hachana, Souccot, Hanouka, 2 sorties avec autorisations, réunion de rentrée avec RSVP), grille de
+      compétences PS/MS/GS (63 compétences, 693 évaluations période 1), fils de classe + DM, petites annonces
+- [x] Tests pgTAP (`supabase/tests/rls`) : 53 assertions vertes pour les 6 rôles + anonyme + cas limites
+- [x] Exécution sans Docker : `supabase/tests/local/auth-shim.sql` + `scripts/db/test-local.sh` (ADR-0013) ;
+      job CI `database` (PostgreSQL 16 + pgTAP sur le runner)
+- [x] Types TypeScript générés (`lib/supabase/database.types.ts`, 2 548 lignes) via `pnpm db:types:local`
+      (postgres-meta, sans Docker) ; clients Supabase typés
+- [ ] Rejouer `supabase db reset` + `supabase test db` sur la stack Supabase (poste avec Docker ou projet
+      cloud `kesher-staging`) pour confirmer l'équivalence avec le shim
 
 ## Questions ouvertes (§15 du brief)
 

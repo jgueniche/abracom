@@ -114,3 +114,36 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
   porteur valide l'identité depuis son téléphone sans installer le projet. Il renvoie 404 en production.
 - **Conséquences** : aucune donnée réelle n'y figure (contenus fictifs traduits) ; la CI teste le 404 en
   mode production.
+
+## ADR-0013 — Validation des migrations et des RLS sur PostgreSQL 16 local (shim Supabase)
+
+- **Contexte** : ni Docker ni projet Supabase cloud n'étaient disponibles pour la session 3 ; le brief
+  exige des tests RLS verts pour chaque rôle.
+- **Décision** : `supabase/tests/local/auth-shim.sql` reproduit le strict nécessaire de la plateforme
+  (schémas `auth` et `storage`, `auth.uid()` / `auth.jwt()` lisant `request.jwt.claims`, rôles `anon` /
+  `authenticated` / `service_role`, grants par défaut). `scripts/db/test-local.sh` enchaîne reset → shim →
+  migrations → seed → pgTAP (`pg_prove`). Le job CI `database` installe PostgreSQL 16 + pgTAP sur le runner.
+  Les migrations restent 100 % compatibles Supabase (elles ne référencent que `auth.users`, `auth.uid()`,
+  `storage.buckets` / `storage.objects` et le schéma `extensions`).
+- **Conséquences** : `supabase test db` sur la vraie stack reste la référence et doit être rejoué dès
+  qu'une stack existe ; toute divergence (par exemple une extension absente) se corrige dans la migration,
+  jamais dans le shim. PostgreSQL local = 16, Supabase = 17 : éviter les fonctionnalités propres à 17.
+
+## ADR-0014 — Patrons RLS
+
+- **Décision** :
+  - toutes les décisions d'accès passent par des fonctions `security definer` figées sur
+    `search_path = public` (jamais de sous-requête RLS récursive, en particulier entre `threads` et
+    `thread_members`) ;
+  - `(select auth.uid())` dans chaque politique pour bénéficier du cache d'initPlan ;
+  - audiences (`school` / `level` / `class` / `custom`) résolues par `matches_audience`, partagée par
+    annonces, documents, formulaires et événements ;
+  - visibilité d'un enfant = `student_guardians` non bloqué + `enrollments` actives ; le rôle de
+    membership (`parent` vs `guardian`) décide des droits d'écriture et des évaluations ;
+  - les coordonnées entre parents ne circulent que via `directory_optins` (les parents d'une famille
+    séparée ne se voient pas sans opt-in) ;
+  - notes confidentielles de la direction dans une table dédiée (`student_private_notes`) plutôt qu'une
+    colonne, car RLS ne filtre pas les colonnes ;
+  - `notifications` insérées uniquement côté serveur (pas de politique d'insertion utilisateur).
+- **Conséquences** : toute nouvelle table doit arriver avec `enable row level security`, ses politiques,
+  un index sur chaque FK et une assertion pgTAP (la CI échoue si une table publique reste sans RLS).

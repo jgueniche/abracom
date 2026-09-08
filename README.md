@@ -20,6 +20,14 @@ cp .env.example .env.local        # puis renseigner les clés Supabase (pnpm db:
 pnpm dev                          # http://localhost:3000
 ```
 
+## Base de données
+
+```bash
+pnpm db:start && pnpm db:reset   # stack Supabase locale (Docker) : migrations + seed
+pnpm db:test                     # sans Docker : PostgreSQL 16 local + pgTAP (voir supabase/tests/README.md)
+pnpm db:types:local              # régénère lib/supabase/database.types.ts depuis le PostgreSQL local
+```
+
 ## Qualité
 
 ```bash

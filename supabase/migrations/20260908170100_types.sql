@@ -1,0 +1,24 @@
+-- Enumerated types (brief §6). Adding a value = new migration with `alter type … add value`.
+create type public.membership_role as enum ('super_admin', 'school_admin', 'staff', 'teacher', 'parent', 'guardian');
+create type public.membership_status as enum ('active', 'invited', 'suspended');
+create type public.class_teacher_role as enum ('main', 'assistant', 'specialist');
+create type public.guardian_relation as enum ('mother', 'father', 'guardian', 'other');
+create type public.student_status as enum ('active', 'left', 'archived');
+create type public.level_code as enum ('TPS', 'PS', 'MS', 'GS', 'CP', 'CE1', 'CE2', 'CM1', 'CM2');
+create type public.audience_kind as enum ('school', 'level', 'class', 'custom');
+create type public.class_post_type as enum ('homework', 'journal', 'info', 'reminder');
+create type public.post_visibility as enum ('parents', 'staff');
+create type public.media_kind as enum ('image', 'video', 'pdf');
+create type public.assessment_level as enum ('not_yet', 'in_progress', 'acquired', 'mastered');
+create type public.note_kind as enum ('praise', 'concern', 'info');
+create type public.thread_kind as enum ('dm', 'class_group', 'class_official', 'event', 'custom');
+create type public.thread_member_role as enum ('member', 'moderator');
+create type public.report_status as enum ('open', 'resolved');
+create type public.event_scope as enum ('school', 'level', 'class');
+create type public.event_kind as enum ('celebration', 'outing', 'meeting', 'volunteer', 'holiday', 'other');
+create type public.rsvp_status as enum ('yes', 'no', 'maybe');
+create type public.community_category as enum ('carpool', 'childcare', 'lost_found', 'marketplace', 'recommendation', 'other');
+create type public.community_status as enum ('pending', 'published', 'archived', 'rejected');
+create type public.notification_channel as enum ('push', 'email', 'inapp');
+create type public.absence_kind as enum ('absence', 'late');
+create type public.absence_status as enum ('declared', 'justified', 'unjustified');

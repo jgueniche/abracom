@@ -37,19 +37,20 @@ Realtime, Edge Functions) avec **RLS obligatoire sur toutes les tables** · migr
 
 ## 4. Commandes
 
-| Commande                                  | Rôle                                                                      |
-| ----------------------------------------- | ------------------------------------------------------------------------- |
-| `pnpm dev`                                | Serveur de dev (Turbopack) sur http://localhost:3000                      |
-| `pnpm build` / `pnpm start`               | Build et serveur de production                                            |
-| `pnpm check`                              | lint + typecheck + format:check + tests unitaires (ce que fait la CI)     |
-| `pnpm lint` / `pnpm lint:fix`             | ESLint (config Next + TS + Prettier)                                      |
-| `pnpm typecheck`                          | `tsc --noEmit`                                                            |
-| `pnpm format` / `pnpm format:check`       | Prettier (plugin Tailwind)                                                |
-| `pnpm test` / `pnpm test:watch`           | Vitest (`tests/unit`)                                                     |
-| `pnpm test:e2e`                           | Playwright (`tests/e2e`, projets mobile + desktop). `CI=1` ⇒ `next start` |
-| `pnpm db:start` / `db:stop` / `db:status` | Stack Supabase locale (**Docker requis**)                                 |
-| `pnpm db:reset`                           | Rejoue migrations + `supabase/seed/*.sql`                                 |
-| `pnpm db:types`                           | Génère `lib/supabase/database.types.ts`                                   |
+| Commande                                  | Rôle                                                                        |
+| ----------------------------------------- | --------------------------------------------------------------------------- |
+| `pnpm dev`                                | Serveur de dev (Turbopack) sur http://localhost:3000                        |
+| `pnpm build` / `pnpm start`               | Build et serveur de production                                              |
+| `pnpm check`                              | lint + typecheck + format:check + tests unitaires (ce que fait la CI)       |
+| `pnpm lint` / `pnpm lint:fix`             | ESLint (config Next + TS + Prettier)                                        |
+| `pnpm typecheck`                          | `tsc --noEmit`                                                              |
+| `pnpm format` / `pnpm format:check`       | Prettier (plugin Tailwind)                                                  |
+| `pnpm test` / `pnpm test:watch`           | Vitest (`tests/unit`)                                                       |
+| `pnpm test:e2e`                           | Playwright (`tests/e2e`, projets mobile + desktop). `CI=1` ⇒ `next start`   |
+| `pnpm db:start` / `db:stop` / `db:status` | Stack Supabase locale (**Docker requis**)                                   |
+| `pnpm db:reset`                           | Rejoue migrations + `supabase/seed/*.sql`                                   |
+| `pnpm db:types` / `pnpm db:types:local`   | Génère `lib/supabase/database.types.ts` (stack Supabase / PostgreSQL local) |
+| `pnpm db:test`                            | Migrations + seed + tests pgTAP sur un PostgreSQL local (sans Docker)       |
 
 Variables d'environnement : copier `.env.example` vers `.env.local`. Sans Supabase configuré,
 l'app démarre quand même (session 1) ; les clients Supabase lèvent une erreur explicite à l'usage.
@@ -121,7 +122,11 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   rouge brique `#852624`, or doux, taupe), tokens clair (papier + sarcelle) / sombre (bleu nuit + sable) dans
   `app/globals.css`, contraste AA testé, Inter + Fraunces, page `/dev/ui` (dev + preview Vercel), icônes PWA
   et manifest, `scripts/brand/*` (extraction, contraste, icônes) et `scripts/dev/screenshots.mjs`.
-- **Prochaine session — 3** : schéma BDD complet + RLS + `can_access_*` + seed fictif + tests RLS (pgTAP).
-  Sans Docker ni projet cloud, les migrations sont validées sur un PostgreSQL 16 local (apt) avec un shim
-  du schéma `auth` (voir `supabase/tests/README.md` une fois créé).
+- **Session 3 — terminée (à rejouer sur Supabase dès disponible)** : 10 migrations, 47 tables, 23 enums,
+  fonctions `can_access_*`, 132 politiques RLS (+ storage), triggers (profil auto, droit à l'image), seed
+  fictif complet (137 comptes, 66 élèves), 53 tests pgTAP verts sur PostgreSQL 16 local et en CI (job
+  `database`), types générés (`pnpm db:types:local`). Voir `supabase/tests/README.md`.
+- **Prochaine session — 4** : auth (magic link, invitations par lien signé, onboarding parent / enseignant,
+  CGU versionnées, profil, multi-rôle), middleware de session, flux e2e « invitation → 1re connexion ».
+  Bloquant pour l'exécution de bout en bout : une stack Supabase (Docker local ou `kesher-staging`).
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».
