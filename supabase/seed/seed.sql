@@ -49,8 +49,12 @@ begin
     'email', id::text, now(), now(), now()
   );
   -- the on_auth_user_created trigger created the profile; make sure names are set
-  update public.profiles set first_name = create_user.first_name, last_name = create_user.last_name, locale = create_user.locale, phone = create_user.phone
+  update public.profiles set first_name = create_user.first_name, last_name = create_user.last_name, locale = create_user.locale
   where profiles.id = create_user.id;
+  if create_user.phone is not null then
+    insert into public.profile_contacts (user_id, phone) values (create_user.id, create_user.phone)
+    on conflict (user_id) do update set phone = excluded.phone;
+  end if;
 end
 $$;
 
@@ -198,9 +202,13 @@ begin
       insert into public.enrollments (student_id, class_id, school_year_id, joined_on)
       values (student_id, pg_temp.uid('0', 512 + class_i), pg_temp.uid('0', 16), '2026-09-01');
 
-      insert into public.student_guardians (student_id, user_id, relation, is_primary, can_view_grades, can_message, receives_notifications, access_blocked, access_blocked_reason) values
-        (student_id, pg_temp.person_uid('c', f, 1), 'mother', true, true, true, true, false, null),
-        (student_id, pg_temp.person_uid('c', f, 2), 'father', false, true, true, not is_separated or f <> 44, f = 44, case when f = 44 then 'Décision de justice du 2026-06-15 (fictive)' else null end);
+      insert into public.student_guardians (student_id, user_id, relation, is_primary, can_view_grades, can_message, receives_notifications, access_blocked) values
+        (student_id, pg_temp.person_uid('c', f, 1), 'mother', true, true, true, true, false),
+        (student_id, pg_temp.person_uid('c', f, 2), 'father', false, true, true, not is_separated or f <> 44, f = 44);
+      if f = 44 then
+        insert into public.guardian_restrictions (student_id, user_id, reason)
+        values (student_id, pg_temp.person_uid('c', f, 2), 'Décision de justice du 2026-06-15 (fictive)');
+      end if;
       if f in (5, 18) then
         insert into public.student_guardians (student_id, user_id, relation, is_primary, can_view_grades, can_message, receives_notifications)
         values (student_id, pg_temp.person_uid('c', f, 3), 'guardian', false, false, false, true);

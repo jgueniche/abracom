@@ -1616,5 +1616,14 @@
     },
     "languageNote": "Les guides sont rédigés en français ; la version anglaise arrivera avec les retours des premières familles.",
     "pdfFooter": "{app} · guide généré le {date}"
+  },
+  "forms": {
+    "export": {
+      "yes": "oui",
+      "no": "non",
+      "respondent": "repondant",
+      "child": "enfant",
+      "submittedAt": "envoye_le"
+    }
   }
 }

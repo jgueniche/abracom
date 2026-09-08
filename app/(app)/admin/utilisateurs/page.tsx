@@ -48,7 +48,7 @@ export default async function MembersPage() {
         </p>
         <p className="text-sm text-muted-foreground">
           {tRoles(m.role)}
-          {m.profile?.phone ? ` · ${m.profile.phone}` : ""}
+          {m.profile?.contact?.phone ? ` · ${m.profile.contact.phone}` : ""}
           {m.invited_at
             ? ` · ${t("lastLink", { date: format.dateTime(new Date(m.invited_at), { dateStyle: "medium" }) })}`
             : ""}

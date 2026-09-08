@@ -1,12 +1,12 @@
 -- pgTAP: role matrix from brief §5 against the demo seed. Run by scripts/db/test-local.sh
 -- (or `supabase test db` once the Supabase stack is available).
 begin;
-select plan(74);
+select plan(75);
 
 create or replace function pg_temp.login(uid uuid) returns void language plpgsql as $$
 begin
   perform set_config('role', 'authenticated', true);
-  perform set_config('request.jwt.claims', json_build_object('sub', uid::text, 'role', 'authenticated')::text, true);
+  perform set_config('request.jwt.claims', json_build_object('sub', uid::text, 'role', 'authenticated', 'aal', 'aal2')::text, true);
 end $$;
 
 create or replace function pg_temp.logout() returns void language plpgsql as $$
@@ -167,7 +167,8 @@ select throws_ok(format('select public.open_dm(%L)', :parent3_a), '42501', null,
 
 -- separated family (003): parents do not see each other's profile ---------------
 select pg_temp.login(:parent3_b);
-select ok(not exists (select 1 from public.profiles where id = :parent3_a), 'separated parent does not see the other parent''s profile');
+select ok(not exists (select 1 from public.profile_contacts where user_id = :parent3_a), 'separated parent does not see the other parent''s contact details');
+select ok(exists (select 1 from public.profiles where id = :parent3_a), 'the name of a fellow member of the class group stays visible');
 select is((select count(*) from public.student_guardians), 1::bigint, 'separated parent sees only their own guardian row');
 
 -- read-only guardian (family 018, child in MS Bleuets which has assessments) ------

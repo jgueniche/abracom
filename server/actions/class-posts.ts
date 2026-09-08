@@ -57,6 +57,19 @@ export async function saveClassPost(
       .maybeSingle();
     if (!cls) return { status: "error", message: t("saveError") };
 
+    let postId = parsed.data.id;
+    let publishedAt: string | null = parsed.data.publish ? new Date().toISOString() : null;
+    if (postId) {
+      // only the author (or the direction, through RLS) edits a post; media follow the same rule
+      const { data: existing } = await supabase
+        .from("class_posts")
+        .select("author_id, published_at")
+        .eq("id", postId)
+        .eq("class_id", parsed.data.classId)
+        .maybeSingle();
+      if (!existing) return { status: "error", message: t("saveError") };
+      if (parsed.data.publish && existing.published_at) publishedAt = existing.published_at;
+    }
     const values = {
       type: parsed.data.type,
       title: parsed.data.title,
@@ -64,12 +77,15 @@ export async function saveClassPost(
       subject: parsed.data.subject,
       due_on: parsed.data.dueOn,
       visibility: parsed.data.visibility,
-      published_at: parsed.data.publish ? new Date().toISOString() : null,
+      published_at: publishedAt,
     };
-    let postId = parsed.data.id;
     if (postId) {
-      const { error } = await supabase.from("class_posts").update(values).eq("id", postId);
-      if (error) return { status: "error", message: t("saveError") };
+      const { data: updated, error } = await supabase
+        .from("class_posts")
+        .update(values)
+        .eq("id", postId)
+        .select("id");
+      if (error || !updated?.length) return { status: "error", message: t("saveError") };
     } else {
       const { data, error } = await supabase
         .from("class_posts")
@@ -148,11 +164,13 @@ export async function deleteClassPost(formData: FormData): Promise<void> {
     .eq("id", postId)
     .maybeSingle();
   if (!post) return;
-  const { error } = await supabase
+  const { data: deleted, error } = await supabase
     .from("class_posts")
     .update({ deleted_at: new Date().toISOString() })
-    .eq("id", postId);
+    .eq("id", postId)
+    .select("id");
   if (error) throw new Error(error.message);
+  if (!deleted?.length) return;
   await logAudit(supabase, {
     schoolId: post.school_id,
     actorId: user.id,

@@ -218,10 +218,11 @@ export async function commitImport(
           counts.membershipsCreated++;
         if (guardian.phone) {
           await supabase
-            .from("profiles")
-            .update({ phone: guardian.phone })
-            .eq("id", userId)
-            .is("phone", null);
+            .from("profile_contacts")
+            .upsert(
+              { user_id: userId, phone: guardian.phone },
+              { onConflict: "user_id", ignoreDuplicates: true },
+            );
         }
         const { error } = await supabase.from("student_guardians").upsert(
           {

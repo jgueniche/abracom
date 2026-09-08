@@ -34,7 +34,9 @@ export async function ensureAccount(
   });
   if (error || !data.user) throw new Error(error?.message ?? "createUser failed");
   if (input.phone) {
-    await admin.from("profiles").update({ phone: input.phone }).eq("id", data.user.id);
+    await admin
+      .from("profile_contacts")
+      .upsert({ user_id: data.user.id, phone: input.phone }, { onConflict: "user_id" });
   }
   return { userId: data.user.id, created: true };
 }

@@ -51,12 +51,18 @@ export async function updateProfile(
     .update({
       first_name: parsed.data.firstName,
       last_name: parsed.data.lastName,
-      phone: parsed.data.phone === "" ? null : parsed.data.phone,
       locale: parsed.data.locale,
       show_hebrew_date: parsed.data.showHebrewDate,
     })
     .eq("id", user.id);
   if (error) return { status: "error", message: t("saveError") };
+  const { error: contactError } = await supabase
+    .from("profile_contacts")
+    .upsert(
+      { user_id: user.id, phone: parsed.data.phone === "" ? null : parsed.data.phone },
+      { onConflict: "user_id" },
+    );
+  if (contactError) return { status: "error", message: t("saveError") };
 
   (await cookies()).set(LOCALE_COOKIE, parsed.data.locale, {
     path: "/",

@@ -1616,5 +1616,14 @@
     },
     "languageNote": "Guides are written in French; the English version will follow the first families' feedback.",
     "pdfFooter": "{app} · guide generated on {date}"
+  },
+  "forms": {
+    "export": {
+      "yes": "yes",
+      "no": "no",
+      "respondent": "respondent",
+      "child": "child",
+      "submittedAt": "submitted_at"
+    }
   }
 }

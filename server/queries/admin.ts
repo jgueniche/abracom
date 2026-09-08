@@ -117,8 +117,9 @@ export async function getStudentDetail(schoolId: string, studentId: string) {
       `id, first_name, last_name, birth_date, allergies_note, status, image_rights_signed_at,
        family:families ( id, name ),
        enrollments ( id, joined_on, left_on, class:classes ( id, name, school_year:school_years ( label, is_current ) ) ),
-       student_guardians ( user_id, relation, is_primary, can_view_grades, can_message, receives_notifications, access_blocked, access_blocked_reason,
-         profile:profiles ( id, first_name, last_name, phone, locale ) )`,
+       student_guardians ( user_id, relation, is_primary, can_view_grades, can_message, receives_notifications, access_blocked,
+         restriction:guardian_restrictions ( reason ),
+         profile:profiles ( id, first_name, last_name, locale, contact:profile_contacts ( phone ) ) )`,
     )
     .eq("school_id", schoolId)
     .eq("id", studentId)
@@ -152,7 +153,7 @@ export async function getMembers(schoolId: string) {
   const { data, error } = await supabase
     .from("memberships")
     .select(
-      "id, user_id, role, status, invited_at, accepted_at, created_at, profile:profiles ( id, first_name, last_name, phone )",
+      "id, user_id, role, status, invited_at, accepted_at, created_at, profile:profiles ( id, first_name, last_name, contact:profile_contacts ( phone ) )",
     )
     .eq("school_id", schoolId)
     .order("created_at");

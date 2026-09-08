@@ -24,6 +24,8 @@ export type CurrentUser = {
   id: string;
   email: string | null;
   profile: Tables<"profiles">;
+  /** Contact details live apart from the shared profile (profile_contacts). */
+  phone: string | null;
   memberships: Array<Tables<"memberships"> & { school: SchoolSummary | null }>;
   /** Normalised memberships for `lib/permissions`. */
   roles: MembershipLike[];
@@ -48,8 +50,9 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const [{ data: profile }, { data: memberships }] = await Promise.all([
+  const [{ data: profile }, { data: contact }, { data: memberships }] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+    supabase.from("profile_contacts").select("phone").eq("user_id", user.id).maybeSingle(),
     supabase
       .from("memberships")
       .select(
@@ -71,6 +74,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     id: user.id,
     email: user.email ?? null,
     profile: profile ?? emptyProfile(user.id),
+    phone: contact?.phone ?? null,
     memberships: rows,
     roles,
     perspectives: perspectivesFor(roles),
@@ -92,7 +96,6 @@ function emptyProfile(id: string): Tables<"profiles"> {
     id,
     first_name: "",
     last_name: "",
-    phone: null,
     avatar_path: null,
     locale: "fr",
     show_hebrew_date: false,

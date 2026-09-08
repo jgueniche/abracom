@@ -168,12 +168,14 @@ export async function removeTeacher(formData: FormData): Promise<void> {
   const userId = field(formData, "userId");
   if (!uuid.test(classId) || !uuid.test(userId)) return;
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data: removed, error } = await supabase
     .from("class_teachers")
     .delete()
     .eq("class_id", classId)
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .select("class_id");
   if (error) throw new Error(error.message);
+  if (!removed?.length) return;
   await logAudit(supabase, {
     schoolId,
     actorId: user.id,

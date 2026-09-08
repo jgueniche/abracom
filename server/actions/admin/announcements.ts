@@ -199,7 +199,10 @@ export async function uploadAttachment(
       size_bytes: file.size,
       mime: file.type,
     });
-    if (error) return { status: "error", message: t("saveError") };
+    if (error) {
+      await supabase.storage.from(BUCKETS.attachments).remove([path]);
+      return { status: "error", message: t("saveError") };
+    }
 
     await logAudit(supabase, {
       schoolId,

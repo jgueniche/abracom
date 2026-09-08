@@ -5,7 +5,7 @@ select plan(11);
 create or replace function pg_temp.login(uid uuid) returns void language plpgsql as $$
 begin
   perform set_config('role', 'authenticated', true);
-  perform set_config('request.jwt.claims', json_build_object('sub', uid::text, 'role', 'authenticated')::text, true);
+  perform set_config('request.jwt.claims', json_build_object('sub', uid::text, 'role', 'authenticated', 'aal', 'aal2')::text, true);
 end $$;
 
 create or replace function pg_temp.service() returns void language plpgsql as $$

@@ -1535,6 +1535,41 @@ export type Database = {
           },
         ]
       }
+      guardian_restrictions: {
+        Row: {
+          created_at: string
+          decided_by: string | null
+          reason: string
+          student_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          decided_by?: string | null
+          reason: string
+          student_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          decided_by?: string | null
+          reason?: string
+          student_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guardian_restrictions_student_id_user_id_fkey"
+            columns: ["student_id", "user_id"]
+            isOneToOne: true
+            referencedRelation: "student_guardians"
+            referencedColumns: ["student_id", "user_id"]
+          },
+        ]
+      }
       homework_completions: {
         Row: {
           done_at: string
@@ -1935,6 +1970,7 @@ export type Database = {
         Row: {
           attempts: number
           channel: Database["public"]["Enums"]["notification_channel"]
+          claimed_at: string | null
           created_at: string
           id: string
           last_error: string | null
@@ -1946,6 +1982,7 @@ export type Database = {
         Insert: {
           attempts?: number
           channel: Database["public"]["Enums"]["notification_channel"]
+          claimed_at?: string | null
           created_at?: string
           id?: string
           last_error?: string | null
@@ -1957,6 +1994,7 @@ export type Database = {
         Update: {
           attempts?: number
           channel?: Database["public"]["Enums"]["notification_channel"]
+          claimed_at?: string | null
           created_at?: string
           id?: string
           last_error?: string | null
@@ -2058,6 +2096,32 @@ export type Database = {
           },
         ]
       }
+      profile_contacts: {
+        Row: {
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_contacts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           anonymized_at: string | null
@@ -2069,7 +2133,6 @@ export type Database = {
           last_name: string
           last_seen_at: string | null
           locale: string
-          phone: string | null
           show_hebrew_date: boolean
           updated_at: string
         }
@@ -2083,7 +2146,6 @@ export type Database = {
           last_name?: string
           last_seen_at?: string | null
           locale?: string
-          phone?: string | null
           show_hebrew_date?: boolean
           updated_at?: string
         }
@@ -2097,7 +2159,6 @@ export type Database = {
           last_name?: string
           last_seen_at?: string | null
           locale?: string
-          phone?: string | null
           show_hebrew_date?: boolean
           updated_at?: string
         }
@@ -2137,7 +2198,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          message_id: string
+          message_id: string | null
           reason: string
           reporter_id: string | null
           resolution_note: string | null
@@ -2149,7 +2210,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          message_id: string
+          message_id?: string | null
           reason: string
           reporter_id?: string | null
           resolution_note?: string | null
@@ -2161,7 +2222,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          message_id?: string
+          message_id?: string | null
           reason?: string
           reporter_id?: string | null
           resolution_note?: string | null
@@ -2328,7 +2389,6 @@ export type Database = {
       student_guardians: {
         Row: {
           access_blocked: boolean
-          access_blocked_reason: string | null
           can_message: boolean
           can_view_grades: boolean
           created_at: string
@@ -2341,7 +2401,6 @@ export type Database = {
         }
         Insert: {
           access_blocked?: boolean
-          access_blocked_reason?: string | null
           can_message?: boolean
           can_view_grades?: boolean
           created_at?: string
@@ -2354,7 +2413,6 @@ export type Database = {
         }
         Update: {
           access_blocked?: boolean
-          access_blocked_reason?: string | null
           can_message?: boolean
           can_view_grades?: boolean
           created_at?: string
@@ -2666,6 +2724,10 @@ export type Database = {
         Args: { target: string; uid?: string }
         Returns: boolean
       }
+      can_post_in_thread: {
+        Args: { thread: string; uid?: string }
+        Returns: boolean
+      }
       can_view_event: {
         Args: { event: string; uid?: string }
         Returns: boolean
@@ -2839,6 +2901,15 @@ export type Database = {
           waitlisted: boolean
         }[]
       }
+      event_targets_valid: {
+        Args: {
+          school: string
+          scope: Database["public"]["Enums"]["event_scope"]
+          targets: string[]
+          uid?: string
+        }
+        Returns: boolean
+      }
       expire_community_posts: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -2867,8 +2938,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_strong_auth: { Args: { uid?: string }; Returns: boolean }
       is_class_teacher: {
         Args: { class_: string; uid?: string }
+        Returns: boolean
+      }
+      is_enrolled: {
+        Args: { class_: string; student: string }
+        Returns: boolean
+      }
+      is_privileged_context: {
+        Args: Record<PropertyKey, never>
         Returns: boolean
       }
       is_school_admin: {
@@ -2893,6 +2973,16 @@ export type Database = {
         Args: { thread: string; uid?: string }
         Returns: boolean
       }
+      log_audit: {
+        Args: {
+          action: string
+          diff?: Json
+          entity: string
+          entity_id?: string
+          school: string
+        }
+        Returns: undefined
+      }
       matches_audience: {
         Args: {
           audience: Database["public"]["Enums"]["audience_kind"]
@@ -2902,6 +2992,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      may_inspect: { Args: { uid: string }; Returns: boolean }
       my_calendar_feed: {
         Args: { with_holidays?: boolean }
         Returns: {
@@ -2946,11 +3037,16 @@ export type Database = {
       notify_due_forms: { Args: Record<PropertyKey, never>; Returns: number }
       notify_event: { Args: { event: string }; Returns: number }
       open_dm: { Args: { other: string }; Returns: string }
+      parent_can_message: {
+        Args: { class_?: string; uid: string }
+        Returns: boolean
+      }
       promote_event_waitlist: { Args: { event: string }; Returns: number }
       promote_school_year: {
         Args: { current_year: string; mapping: Json; next_year: string }
         Returns: Json
       }
+      prune_class_thread_members: { Args: { class_: string }; Returns: number }
       publish_assessments: {
         Args: { class_: string; period: string }
         Returns: number

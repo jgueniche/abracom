@@ -397,6 +397,31 @@ côté porteur : partager le projet Supabase avec le connecteur, renseigner les 
 (Resend, VAPID, `CRON_SECRET`, Sentry), rejouer les validations « à valider sur une stack Supabase » listées
 dans chaque session, puis dérouler `docs/DEMO.md`.
 
+## Revue de sécurité (2026-09-08)
+
+Quatre lectures croisées (SQL / RLS, actions serveur, notifications et PWA, pages) ; corrections dans les
+migrations `20260908172400` et `20260908172500` (ADR-0029) et dans l'application.
+
+- [x] SQL / RLS : 2FA exigée pour les droits de direction, fonctions d'aide fermées à `anon` et aux
+      tiers, modérateurs explicites, messages directs fermés, appartenance aux fils dérivée de l'accès,
+      droit `can_message` appliqué, colonnes figées, audiences bornées à l'école, événements et
+      évaluations revalidés, responsables en lecture seule sans signature ni réservation, absences
+      déclarées non « justifiées » par le parent, journal d'audit par fonction, téléphone et motif de
+      restriction séparés, bail sur les livraisons, digest sans doublon d'e-mail, mots réservés aux
+      responsables autorisés, tags photo limités à la classe, médias lisibles selon la publication
+- [x] Application : contrôle du nombre de lignes avant audit, propriété d'un billet avant les photos,
+      réinvitation limitée aux membres, élève vérifié avant création de compte, nettoyage des envois
+      refusés, neutralisation des formules CSV, exports traduits et gardés, livret réservé aux ayants
+      droit, chemins de retour sans caractères de contrôle, 2FA évaluée sur tous les rôles
+- [ ] Notifications : repli exponentiel et gestion des 429, budget de temps du worker, digest horaire
+      hors Chabbat, planificateur unique (pg_cron), en-tête `List-Unsubscribe`, étiquette push par
+      notification
+- [ ] PWA : nonce du script de thème, réabonnement push (`pushsubscriptionchange`), désinscription à la
+      déconnexion, navigation vérifiée dans le service worker, cache versionné par build
+- [ ] Interface : cibles tactiles ≥ 44 px partout, titres de fils traduits, libellés de niveau selon la
+      langue, badge de restriction lisible, requêtes groupées (mots, anniversaires), pagination des
+      membres, attestation à l'envoi de photos et révocation du droit à l'image
+
 ## Questions ouvertes (§15 du brief)
 
 Bloquantes pour la session 2 :

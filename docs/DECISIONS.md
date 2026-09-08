@@ -375,3 +375,28 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
   passe distinct de celui du seed ; la politique de mot de passe est celle de Supabase Auth (longueur
   minimale à relever dans le tableau de bord) ; une réinitialisation par e-mail pourra être ajoutée
   quand l'expéditeur transactionnel sera en place.
+
+## ADR-0029 — Durcissement après revue : 2FA exigée par les politiques, fils fermés, contacts séparés
+
+- **Contexte** : revue de sécurité croisée du 2026-09-08 (SQL / RLS, actions serveur, notifications et
+  PWA, pages) avant la mise en service sur une base réelle. Elle a relevé des auto-promotions possibles
+  dans la messagerie, des fonctions d'aide appelables sans session, un droit `can_message` jamais
+  appliqué, des colonnes de modération et de rattachement modifiables par le client, un journal d'audit
+  ouvert en écriture à tout membre et des données de contact lisibles par des tiers.
+- **Décision** : (1) `has_school_role` n'accorde les droits de direction et de super administration qu'à
+  une session en validation en deux étapes (`aal2`) ; les autres rôles ne sont pas concernés et les
+  droits évalués pour un autre utilisateur (diffusion, déclencheurs) ne le sont pas non plus. (2) Les
+  fonctions qui listent les identifiants d'un utilisateur ne répondent que sur l'appelant, sur les
+  membres de son école pour l'équipe, dans les déclencheurs et pour le service ; plus aucune fonction du
+  schéma `public` n'est exécutable anonymement, hormis le flux ICS. (3) Un modérateur est un membre
+  explicitement désigné ou l'équipe de l'école ; un message direct reste à deux ; l'appartenance à un fil
+  de classe suit l'accès courant à la classe (restriction judiciaire, départ) et le droit `can_message`
+  de chaque responsable ; colonnes de modération, auteurs, écoles et rattachements sont figés par
+  déclencheurs ; les événements et évaluations sont revalidés à la modification. (4) Le journal d'audit
+  n'est alimenté que par `log_audit`, qui impose l'acteur et le rôle. (5) Le téléphone vit dans
+  `profile_contacts` (soi-même, équipe, enseignants de l'enfant) et le motif d'une restriction dans
+  `guardian_restrictions` (direction seule). (6) Les membres d'un même fil voient leurs noms.
+- **Conséquences** : un administrateur doit activer la validation en deux étapes avant toute action, y
+  compris par l'API ; les tests pgTAP se connectent avec la revendication `aal2` ; une inscription
+  ouverte par élève et par année est garantie par index ; la messagerie parent ↔ parent reste
+  désactivée par défaut ; 302 assertions pgTAP couvrent ces règles (`011_hardening.sql`).

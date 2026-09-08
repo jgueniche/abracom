@@ -49,7 +49,7 @@ export default async function ProfilePage() {
               email={user.email ?? ""}
               firstName={user.profile.first_name}
               lastName={user.profile.last_name}
-              phone={user.profile.phone ?? ""}
+              phone={user.phone ?? ""}
               locale={user.profile.locale}
               showHebrewDate={user.profile.show_hebrew_date}
             />

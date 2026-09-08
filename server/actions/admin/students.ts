@@ -87,7 +87,7 @@ export async function updateStudent(_prev: ActionState, formData: FormData): Pro
     if (!parsed.success) return { status: "error", message: t("invalid") };
 
     const supabase = await createClient();
-    const { error } = await supabase
+    const { data: updated, error } = await supabase
       .from("students")
       .update({
         first_name: parsed.data.firstName,
@@ -97,8 +97,9 @@ export async function updateStudent(_prev: ActionState, formData: FormData): Pro
         status: parsed.data.status,
       })
       .eq("id", parsed.data.studentId)
-      .eq("school_id", schoolId);
-    if (error) return { status: "error", message: t("saveError") };
+      .eq("school_id", schoolId)
+      .select("id");
+    if (error || !updated?.length) return { status: "error", message: t("saveError") };
 
     await logAudit(supabase, {
       schoolId,
@@ -124,11 +125,11 @@ export async function enroll(
 ): Promise<boolean> {
   const { data: cls } = await supabase
     .from("classes")
-    .select("id, school_year_id")
+    .select("id, school_year_id, archived")
     .eq("id", classId)
     .eq("school_id", schoolId)
     .maybeSingle();
-  if (!cls) return false;
+  if (!cls || cls.archived) return false;
 
   const today = new Date().toISOString().slice(0, 10);
   await supabase
@@ -198,6 +199,14 @@ export async function linkGuardian(_prev: ActionState, formData: FormData): Prom
     if (!parsed.success) return { status: "error", message: t("invalid") };
 
     const supabase = await createClient();
+    const { data: student } = await supabase
+      .from("students")
+      .select("id")
+      .eq("id", parsed.data.studentId)
+      .eq("school_id", schoolId)
+      .maybeSingle();
+    if (!student) return { status: "error", message: t("invalid") };
+
     const admin = createAdminClient();
     const account = await ensureAccount(admin, {
       email: parsed.data.email,
@@ -269,18 +278,36 @@ export async function updateGuardianFlags(
     }
 
     const supabase = await createClient();
-    const { error } = await supabase
+    const { data: updated, error } = await supabase
       .from("student_guardians")
       .update({
         can_view_grades: parsed.data.canViewGrades,
         can_message: parsed.data.canMessage,
         receives_notifications: parsed.data.receivesNotifications,
         access_blocked: parsed.data.accessBlocked,
-        access_blocked_reason: parsed.data.accessBlocked ? parsed.data.accessBlockedReason : null,
       })
       .eq("student_id", parsed.data.studentId)
-      .eq("user_id", parsed.data.userId);
-    if (error) return { status: "error", message: t("saveError") };
+      .eq("user_id", parsed.data.userId)
+      .select("student_id");
+    if (error || !updated?.length) return { status: "error", message: t("saveError") };
+
+    // the reason of a court restriction is stored apart, readable by the direction only
+    const restriction = parsed.data.accessBlocked
+      ? await supabase.from("guardian_restrictions").upsert(
+          {
+            student_id: parsed.data.studentId,
+            user_id: parsed.data.userId,
+            reason: parsed.data.accessBlockedReason ?? "",
+            decided_by: user.id,
+          },
+          { onConflict: "student_id,user_id" },
+        )
+      : await supabase
+          .from("guardian_restrictions")
+          .delete()
+          .eq("student_id", parsed.data.studentId)
+          .eq("user_id", parsed.data.userId);
+    if (restriction.error) return { status: "error", message: t("saveError") };
 
     await logAudit(supabase, {
       schoolId,
@@ -310,12 +337,14 @@ export async function unlinkGuardian(formData: FormData): Promise<void> {
   const userId = field(formData, "userId");
   if (!uuid.test(studentId) || !uuid.test(userId)) return;
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data: removed, error } = await supabase
     .from("student_guardians")
     .delete()
     .eq("student_id", studentId)
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .select("student_id");
   if (error) throw new Error(error.message);
+  if (!removed?.length) return;
   await logAudit(supabase, {
     schoolId,
     actorId: user.id,

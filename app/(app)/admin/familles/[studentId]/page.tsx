@@ -121,7 +121,7 @@ export default async function StudentDetailPage({
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {tFamily(`relation.${g.relation}`)}
-                      {g.profile?.phone ? ` · ${g.profile.phone}` : ""}
+                      {g.profile?.contact?.phone ? ` · ${g.profile.contact.phone}` : ""}
                       {g.membership
                         ? ` · ${t(`guardianRole.${g.membership.role === "guardian" ? "guardian" : "parent"}`)} · ${tMembers(`status.${g.membership.status}`)}`
                         : ""}
@@ -148,7 +148,7 @@ export default async function StudentDetailPage({
                   canMessage={g.can_message}
                   receivesNotifications={g.receives_notifications}
                   accessBlocked={g.access_blocked}
-                  accessBlockedReason={g.access_blocked_reason}
+                  accessBlockedReason={g.restriction?.reason ?? null}
                   isAdmin={admin}
                 />
               </div>

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
+import { assertSchoolContext } from "@/lib/auth/guards";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { BUCKETS, DOCUMENT_MIME_TYPES, MAX_UPLOAD_BYTES, safeFileName } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
@@ -67,7 +68,11 @@ export async function declareAbsence(_prev: ActionState, formData: FormData): Pr
       justification_path: justificationPath,
       status: "declared",
     });
-    if (error) return { status: "error", message: t("saveError") };
+    if (error) {
+      if (justificationPath)
+        await supabase.storage.from(BUCKETS.justifications).remove([justificationPath]);
+      return { status: "error", message: t("saveError") };
+    }
 
     revalidatePath("/famille", "layout");
     return { status: "success", message: t("declared") };
@@ -78,12 +83,12 @@ export async function declareAbsence(_prev: ActionState, formData: FormData): Pr
 
 /** Staff decides whether a declared absence is justified. */
 export async function reviewAbsence(formData: FormData): Promise<void> {
-  const user = await requireCurrentUser();
+  const { user, schoolId } = await assertSchoolContext(["school_admin", "staff"]);
   const absenceId = field(formData, "absenceId");
   const status = field(formData, "status");
   if (!uuid.test(absenceId) || !["justified", "unjustified", "declared"].includes(status)) return;
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("absences")
     .update({
       status: status as "justified" | "unjustified" | "declared",
@@ -91,8 +96,10 @@ export async function reviewAbsence(formData: FormData): Promise<void> {
       reviewed_at: new Date().toISOString(),
     })
     .eq("id", absenceId)
+    .eq("school_id", schoolId)
     .select("school_id")
     .maybeSingle();
+  if (error) throw new Error(error.message);
   if (data)
     await logAudit(supabase, {
       schoolId: data.school_id,

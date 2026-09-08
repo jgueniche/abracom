@@ -1,11 +1,16 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+import { requireSchoolStaff } from "@/lib/auth/guards";
 import { toCsv } from "@/lib/import/csv";
 import { createClient } from "@/lib/supabase/server";
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** CSV of recipients with read / acknowledgement timestamps (staff only, enforced in SQL). */
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (!UUID.test(id)) return new NextResponse(null, { status: 404 });
+  await requireSchoolStaff();
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("announcement_recipients", { announcement: id });
   if (error) return new NextResponse(null, { status: 403 });

@@ -81,11 +81,14 @@ export async function sendMessage(_prev: SendState, formData: FormData): Promise
       })
       .select("id, thread_id, author_id, body, attachments, reply_to, created_at")
       .single();
-    if (error)
+    if (error) {
+      if (attachments.length > 0)
+        await supabase.storage.from("messages").remove(attachments.map((a) => a.path));
       return {
         status: "error",
         message: error.code === "42501" ? t("notAllowed") : t("sendError"),
       };
+    }
 
     await supabase
       .from("thread_members")

@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { canWriteInSchool, isSchoolAdmin } from "@/lib/permissions";
+import { canWriteInSchool, isSchoolStaff } from "@/lib/permissions";
 import { setThreadState, toggleMute } from "@/server/actions/messaging";
 import { getMessages, getThread, searchMessages } from "@/server/queries/messaging";
 
@@ -35,8 +35,7 @@ export default async function ThreadPage({
   if (!thread) notFound();
 
   const me = thread.members.find((m) => m.user_id === user.id) ?? null;
-  const admin = isSchoolAdmin(user.roles, thread.school_id);
-  const isModerator = me?.role === "moderator" || thread.created_by === user.id || admin;
+  const isModerator = me?.role === "moderator" || isSchoolStaff(user.roles, thread.school_id);
   const query = q.trim();
   const messages = query ? await searchMessages(threadId, query) : await getMessages(threadId);
 

@@ -24,8 +24,32 @@ export function isPublicPath(pathname: string): boolean {
 export function safeNextPath(value: unknown, fallback: string = APP_HOME_PATH): string {
   if (typeof value !== "string") return fallback;
   if (!value.startsWith("/") || value.startsWith("//") || value.includes("\\")) return fallback;
+  let decoded = value;
+  try {
+    decoded = decodeURIComponent(value);
+  } catch {
+    return fallback;
+  }
+  // control characters and spaces (raw or percent-encoded) are stripped by URL parsers and can
+  // turn a relative path into an absolute one
+  if (hasControlCharacter(value) || hasControlCharacter(decoded)) return fallback;
+  let parsed: URL;
+  try {
+    parsed = new URL(value, "http://n");
+  } catch {
+    return fallback;
+  }
+  if (parsed.host !== "n" || parsed.protocol !== "http:") return fallback;
   if (value.startsWith("/auth/") || value.startsWith(LOGIN_PATH)) return fallback;
   return value;
+}
+
+function hasControlCharacter(value: string): boolean {
+  for (const char of value) {
+    const code = char.charCodeAt(0);
+    if (code <= 0x20 || code === 0x7f) return true;
+  }
+  return false;
 }
 
 export const PERSPECTIVE_COOKIE = "kesher-perspective";

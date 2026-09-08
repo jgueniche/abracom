@@ -212,12 +212,13 @@ export async function saveEvent(
     const supabase = await createClient();
     let id = input.id;
     if (id) {
-      const { error } = await supabase
+      const { data: updated, error } = await supabase
         .from("events")
         .update(values)
         .eq("id", id)
-        .eq("school_id", schoolId);
-      if (error) return { status: "error", message: t("saveError") };
+        .eq("school_id", schoolId)
+        .select("id");
+      if (error || !updated?.length) return { status: "error", message: t("saveError") };
     } else {
       const { data, error } = await supabase
         .from("events")
@@ -252,12 +253,14 @@ export async function deleteEvent(formData: FormData): Promise<void> {
   const id = field(formData, "id");
   if (!uuid.test(id)) return;
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data: deleted, error } = await supabase
     .from("events")
     .update({ deleted_at: new Date().toISOString() })
     .eq("id", id)
-    .eq("school_id", schoolId);
+    .eq("school_id", schoolId)
+    .select("id");
   if (error) throw new Error(error.message);
+  if (!deleted?.length) return;
   await logAudit(supabase, {
     schoolId,
     actorId: user.id,

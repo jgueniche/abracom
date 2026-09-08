@@ -1,6 +1,6 @@
 -- pgTAP: integrity rules that must hold regardless of role.
 begin;
-select plan(7);
+select plan(8);
 
 select throws_ok(
   $$insert into public.school_years (school_id, label, starts_on, ends_on, is_current)
@@ -10,18 +10,30 @@ select throws_ok(
   'only one current school year per school'
 );
 
--- tagging a student without signed image rights is refused (family 004: no signature)
+-- tagging a student without signed image rights is refused (post 1549 = PS Tournesols journal)
+select s.id as ps_without_rights
+from public.students s
+join public.enrollments e on e.student_id = s.id and e.class_id = '00000000-0000-4000-8000-000000000514' and e.left_on is null
+where s.image_rights_signed_at is null
+limit 1 \gset
 select throws_like(
-  $$insert into public.class_post_media (post_id, storage_path, tagged_student_ids)
-    values ('00000000-0000-4000-8000-000000001537', 'x/y/z.jpg', array['d0000000-0000-4000-8000-000000040001'::uuid])$$,
+  format($$insert into public.class_post_media (post_id, storage_path, tagged_student_ids)
+    values ('00000000-0000-4000-8000-000000001549', 'x/y/z.jpg', array[%L::uuid])$$, :'ps_without_rights'),
   '%Droit à l''image non signé%',
   'students without image rights cannot be tagged on photos'
 );
 
 select lives_ok(
   $$insert into public.class_post_media (post_id, storage_path, tagged_student_ids)
-    values ('00000000-0000-4000-8000-000000001537', 'x/y/z.jpg', array['d0000000-0000-4000-8000-000000010001'::uuid])$$,
+    values ('00000000-0000-4000-8000-000000001549', 'x/y/z.jpg', array['d0000000-0000-4000-8000-000000010001'::uuid])$$,
   'students with signed image rights can be tagged'
+);
+
+select throws_like(
+  $$insert into public.class_post_media (post_id, storage_path, tagged_student_ids)
+    values ('00000000-0000-4000-8000-000000001549', 'x/y/w.jpg', array['d0000000-0000-4000-8000-000000010002'::uuid])$$,
+  '%élèves de la classe%',
+  'a pupil of another class cannot be tagged on a class photo'
 );
 
 select is(
@@ -41,7 +53,7 @@ select isnt(
 
 -- class threads are created once and members kept in sync
 select set_config('role', 'authenticated', true);
-select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}', true);
 select lives_ok($$select * from public.ensure_class_threads('00000000-0000-4000-8000-000000000514')$$, 'ensure_class_threads runs for the direction');
 select is(
   (select count(*) from public.threads where class_id = '00000000-0000-4000-8000-000000000514' and not archived),

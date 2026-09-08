@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import { assertSchoolContext } from "@/lib/auth/guards";
 import { publicEnv } from "@/lib/env";
+import { ForbiddenError } from "@/lib/permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { logAudit } from "@/server/audit";
@@ -86,11 +87,20 @@ export async function resendInvitation(formData: FormData): Promise<void> {
   const userId = field(formData, "userId");
   if (!uuid.test(userId)) return;
 
+  const supabase = await createClient();
+  const { data: member } = await supabase
+    .from("memberships")
+    .select("id")
+    .eq("school_id", schoolId)
+    .eq("user_id", userId)
+    .limit(1)
+    .maybeSingle();
+  if (!member) throw new ForbiddenError();
+
   const admin = createAdminClient();
   const { data, error } = await admin.auth.admin.getUserById(userId);
   if (error || !data.user?.email) throw new Error(error?.message ?? "user not found");
 
-  const supabase = await createClient();
   const sent = await sendMagicLink(data.user.email);
   if (sent) {
     await supabase
@@ -123,13 +133,15 @@ export async function setMembershipStatus(formData: FormData): Promise<void> {
   });
   if (!parsed.success) return;
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("memberships")
     .update({ status: parsed.data.status })
     .eq("id", parsed.data.membershipId)
     .eq("school_id", schoolId)
-    .neq("role", "super_admin");
+    .neq("role", "super_admin")
+    .select("id");
   if (error) throw new Error(error.message);
+  if (!updated?.length) return;
   await logAudit(supabase, {
     schoolId,
     actorId: user.id,
@@ -145,13 +157,15 @@ export async function removeMembership(formData: FormData): Promise<void> {
   const membershipId = field(formData, "membershipId");
   if (!uuid.test(membershipId)) return;
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data: removed, error } = await supabase
     .from("memberships")
     .delete()
     .eq("id", membershipId)
     .eq("school_id", schoolId)
-    .neq("role", "super_admin");
+    .neq("role", "super_admin")
+    .select("id");
   if (error) throw new Error(error.message);
+  if (!removed?.length) return;
   await logAudit(supabase, {
     schoolId,
     actorId: user.id,

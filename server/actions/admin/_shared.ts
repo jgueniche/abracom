@@ -14,7 +14,10 @@ export async function toActionError(error: unknown): Promise<ActionState> {
   const t = await getTranslations("errors");
   if (error instanceof ForbiddenError)
     return { status: "error", message: t("forbidden.description") };
-  console.error("[action]", error);
+  console.error(
+    "[action]",
+    error instanceof Error ? `${error.name}: ${error.message}` : String(error),
+  );
   return { status: "error", message: t("unexpected.description") };
 }
 

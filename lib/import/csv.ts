@@ -87,9 +87,16 @@ export function parseCsv(input: string): CsvTable {
   return { headers, rows, delimiter };
 }
 
+/** A cell that a spreadsheet would evaluate as a formula gets a leading apostrophe. */
+export function neutraliseCell(value: string): string {
+  return /^[=@\t\r]|^[+-](?!\d)/.test(value) ? `'${value}` : value;
+}
+
 /** Serialises rows back to CSV (used for the template download and error reports). */
 export function toCsv(headers: string[], rows: string[][], delimiter = ";"): string {
-  const escape = (value: string) =>
-    /[";,\t\r\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
+  const escape = (raw: string) => {
+    const value = neutraliseCell(raw);
+    return /[";,\t\r\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
+  };
   return [headers, ...rows].map((r) => r.map(escape).join(delimiter)).join("\r\n") + "\r\n";
 }

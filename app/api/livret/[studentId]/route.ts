@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { requireCurrentUser } from "@/lib/auth/session";
+import { createClient } from "@/lib/supabase/server";
 import { diffDays } from "@/lib/calendar/dates";
 import { appName } from "@/lib/env";
 import { type ReportLevel, type ReportPeriod, renderReportCard } from "@/lib/pdf/report-card";
@@ -29,6 +30,9 @@ export async function GET(
   const { studentId } = await params;
   if (!UUID.test(studentId)) return new NextResponse(null, { status: 404 });
   await requireCurrentUser();
+  const supabase = await createClient();
+  const { data: allowed } = await supabase.rpc("can_view_student_grades", { student: studentId });
+  if (!allowed) return new NextResponse(null, { status: 404 });
   const periodFilter = request.nextUrl.searchParams.get("period");
   const [report, locale, t, format] = await Promise.all([
     getStudentReport(studentId),

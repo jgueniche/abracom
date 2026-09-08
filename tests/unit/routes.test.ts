@@ -51,5 +51,8 @@ describe("safeNextPath", () => {
     ]) {
       expect(safeNextPath(bad), String(bad)).toBe(APP_HOME_PATH);
     }
+    for (const bad of ["/%09/evil", "/\t/evil.com", "/famille\n", "/a b"]) {
+      expect(safeNextPath(bad), JSON.stringify(bad)).toBe(APP_HOME_PATH);
+    }
   });
 });
