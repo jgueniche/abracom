@@ -1,0 +1,60 @@
+{
+  "common": {
+    "appName": "Kesher",
+    "tagline": "The link between school and families",
+    "language": "Language",
+    "locale": {
+      "fr": "Français",
+      "en": "English"
+    },
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "loading": "Loading…",
+    "back": "Back",
+    "backHome": "Back to home"
+  },
+  "nav": {
+    "home": "Home",
+    "classes": "Class(es)",
+    "messages": "Messages",
+    "agenda": "Calendar",
+    "more": "More"
+  },
+  "home": {
+    "eyebrow": "Session 1 · technical foundation",
+    "title": "Welcome to {appName}",
+    "subtitle": "The school's community platform: official announcements, class space, messaging, calendar and mutual aid, all in one place.",
+    "stack": {
+      "title": "What is in place",
+      "description": "Every building block below is installed, configured and verified by CI.",
+      "items": {
+        "next": "Next.js 15 · App Router · strict TypeScript",
+        "ui": "Tailwind CSS v4 · shadcn/ui · lucide",
+        "i18n": "next-intl · French by default, English",
+        "theme": "Light / dark mode (next-themes)",
+        "supabase": "Local Supabase (config.toml) · browser / server / admin clients",
+        "quality": "ESLint · Prettier · Vitest · Playwright · Husky · Conventional Commits"
+      }
+    },
+    "next": {
+      "title": "Next step",
+      "description": "Session 2: visual identity (palette derived from the logo, typography, /dev/ui style page)."
+    },
+    "roadmap": "View the roadmap"
+  },
+  "errors": {
+    "notFound": {
+      "title": "Page not found",
+      "description": "The requested page does not exist or is no longer available."
+    },
+    "unexpected": {
+      "title": "Something went wrong",
+      "description": "We could not display this page. Please try again in a moment.",
+      "retry": "Try again"
+    }
+  }
+}
