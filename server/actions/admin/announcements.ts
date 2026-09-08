@@ -42,7 +42,7 @@ export async function saveAnnouncement(
   formData: FormData,
 ): Promise<AnnouncementFormState> {
   try {
-    const t = await getTranslations("admin.announcements");
+    const t = await getTranslations("adminAnnouncements");
     const { user, schoolId } = await assertSchoolContext(["school_admin", "staff"]);
     const intent = field(formData, "intent") || "save";
     const parsed = announcementSchema.safeParse({
@@ -154,7 +154,7 @@ export async function remindNonReaders(
   formData: FormData,
 ): Promise<RemindState> {
   try {
-    const t = await getTranslations("admin.announcements");
+    const t = await getTranslations("adminAnnouncements");
     await assertSchoolContext(["school_admin", "staff"]);
     const id = field(formData, "id");
     if (!uuid.test(id)) return { status: "error", message: t("invalid") };
@@ -173,7 +173,7 @@ export async function uploadAttachment(
   formData: FormData,
 ): Promise<ActionState> {
   try {
-    const t = await getTranslations("admin.announcements");
+    const t = await getTranslations("adminAnnouncements");
     const { user, schoolId } = await assertSchoolContext(["school_admin", "staff"]);
     const id = field(formData, "id");
     const file = formData.get("file");

@@ -28,7 +28,7 @@ const documentSchema = z.object({
 /** Upload + metadata in one step (file first, then the row pointing at it). */
 export async function createDocument(_prev: ActionState, formData: FormData): Promise<ActionState> {
   try {
-    const t = await getTranslations("admin.documents");
+    const t = await getTranslations("adminDocuments");
     const { user, schoolId } = await assertSchoolContext(["school_admin", "staff"]);
     const parsed = documentSchema.safeParse({
       title: field(formData, "title"),
