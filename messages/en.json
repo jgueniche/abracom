@@ -659,5 +659,129 @@
     "allSigned": "Everyone has signed.",
     "back": "All documents",
     "signedCount": "{count} signature(s)"
+  },
+  "classSpace": {
+    "title": "Class(es)",
+    "subtitle": "Each class feed: homework, class diary, information.",
+    "empty": "No class available.",
+    "tabs": {
+      "feed": "Feed",
+      "homework": "Homework",
+      "journal": "Class diary",
+      "notes": "Notes",
+      "absences": "Absences",
+      "team": "Team"
+    },
+    "type": {
+      "homework": "To prepare",
+      "journal": "Class diary",
+      "info": "Info",
+      "reminder": "Reminder"
+    },
+    "visibility": {
+      "parents": "Parents",
+      "staff": "Team only"
+    },
+    "draft": "Draft",
+    "by": "{name}",
+    "dueOn": "Due {date}",
+    "subject": "Subject",
+    "noPosts": "Nothing published yet.",
+    "seen": "Seen",
+    "markSeen": "Mark as seen for {name}",
+    "seenBy": "{count, plural, =0 {Nobody has seen it yet} one {# family has seen it} other {# families have seen it}}",
+    "week": {
+      "title": "This week",
+      "thisWeek": "This week",
+      "nextWeek": "Next week",
+      "later": "Later",
+      "noHomework": "No upcoming homework.",
+      "overdue": "Overdue",
+      "summary": "{posts, plural, =0 {No post} one {# post} other {# posts}} this week · {homework, plural, =0 {no homework} one {# homework} other {# homework items}} due"
+    },
+    "post": {
+      "new": "New post",
+      "edit": "Edit",
+      "type": "Type",
+      "title": "Title",
+      "body": "Body",
+      "subject": "Subject (optional)",
+      "dueOn": "To prepare for",
+      "visibility": "Visibility",
+      "media": "Photos (up to 20, compressed, metadata removed)",
+      "tag": "Students on the photos (signed image rights only)",
+      "noRights": "image rights not signed",
+      "publish": "Publish",
+      "draft": "Save draft",
+      "saved": "Draft saved.",
+      "published": "Post sent to the families.",
+      "invalid": "Check the title and the body.",
+      "dueRequired": "Give a date for homework.",
+      "saveError": "Could not save.",
+      "uploadError": "Could not upload a photo.",
+      "imageRightsBlocked": "A tagged student has no signed image rights.",
+      "delete": "Delete",
+      "deleteMedia": "Remove photo"
+    },
+    "journal": {
+      "empty": "No photo yet.",
+      "month": "{month}",
+      "download": "Download disabled by the school",
+      "photos": "{count, plural, one {# photo} other {# photos}}"
+    },
+    "notes": {
+      "title": "Individual notes",
+      "empty": "No note yet.",
+      "new": "Write a note",
+      "student": "Student",
+      "body": "Message",
+      "kind": "Kind",
+      "kinds": {
+        "praise": "Praise",
+        "concern": "Point of attention",
+        "info": "Information"
+      },
+      "visibility": "Visibility",
+      "send": "Send to the parents",
+      "sent": "Note sent.",
+      "invalid": "Write a message.",
+      "saveError": "Could not send.",
+      "read": "Mark as read",
+      "readOn": "Read on {date}",
+      "readBy": "{count, plural, =0 {Unread} one {Read by # guardian} other {Read by # guardians}}",
+      "from": "From {name}",
+      "for": "For {name}"
+    },
+    "absences": {
+      "title": "Absences and late arrivals",
+      "empty": "No absence declared.",
+      "declare": "Declare an absence or a late arrival",
+      "student": "Child",
+      "kind": "Type",
+      "kinds": {
+        "absence": "Absence",
+        "late": "Late arrival"
+      },
+      "startsOn": "From",
+      "endsOn": "To",
+      "reason": "Reason",
+      "justification": "Supporting document (PDF or photo, optional)",
+      "submit": "Declare",
+      "declared": "Declaration saved.",
+      "invalid": "Check the dates.",
+      "saveError": "Could not save.",
+      "fileType": "Document: PDF or image up to 25 MB.",
+      "uploadError": "Could not upload the document.",
+      "status": {
+        "declared": "Declared",
+        "justified": "Justified",
+        "unjustified": "Unjustified"
+      },
+      "justify": "Justify",
+      "unjustify": "Unjustified",
+      "withFile": "Document attached",
+      "period": "{from} → {to}",
+      "readOnly": "Declarations are reserved for parents."
+    }
   }
 }

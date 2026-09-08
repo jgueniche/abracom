@@ -1,7 +1,7 @@
 -- pgTAP: role matrix from brief §5 against the demo seed. Run by scripts/db/test-local.sh
 -- (or `supabase test db` once the Supabase stack is available).
 begin;
-select plan(58);
+select plan(66);
 
 create or replace function pg_temp.login(uid uuid) returns void language plpgsql as $$
 begin
@@ -124,6 +124,32 @@ select throws_ok(
   'parent cannot impersonate another author'
 );
 
+-- class space: homework "vu", absences, individual notes ---------------------------
+\set homework_ps '''00000000-0000-4000-8000-000000001550'''
+select lives_ok(
+  format('insert into public.homework_completions (post_id, student_id, marked_by_user_id) values (%L, %L, %L)', :homework_ps, :parent1_child_ps, :parent1),
+  'parent marks homework as seen for their child'
+);
+select throws_ok(
+  format('insert into public.homework_completions (post_id, student_id, marked_by_user_id) values (%L, %L, %L)', :homework_ps, :student18, :parent1),
+  '42501', null,
+  'parent cannot mark homework for another child'
+);
+select lives_ok(
+  format('insert into public.absences (school_id, student_id, declared_by, kind, starts_on, ends_on, reason) values (%L, %L, %L, ''absence'', current_date, current_date, ''Fièvre'')', :school, :parent1_child_ps, :parent1),
+  'parent declares an absence for their child'
+);
+select throws_ok(
+  format('insert into public.individual_notes (school_id, student_id, author_id, body_md) values (%L, %L, %L, ''x'')', :school, :parent1_child_ps, :parent1),
+  '42501', null,
+  'parent cannot write individual notes'
+);
+select throws_ok(
+  format('insert into public.class_posts (school_id, class_id, author_id, type, title, published_at) values (%L, %L, %L, ''info'', ''Test'', now())', :school, :class_ps, :parent1),
+  '42501', null,
+  'parent cannot publish in the class feed'
+);
+
 -- separated family (003): parents do not see each other's profile ---------------
 select pg_temp.login(:parent3_b);
 select ok(not exists (select 1 from public.profiles where id = :parent3_a), 'separated parent does not see the other parent''s profile');
@@ -134,6 +160,11 @@ select pg_temp.login(:guardian18);
 select ok(exists (select 1 from public.students where id = :student18), 'guardian sees the child');
 select ok((select count(*) from public.class_posts) > 0, 'guardian sees the class feed');
 select is((select count(*) from public.assessments), 0::bigint, 'guardian never sees assessments');
+select throws_ok(
+  format('insert into public.absences (school_id, student_id, declared_by, kind, starts_on, ends_on) values (%L, %L, %L, ''late'', current_date, current_date)', :school, :student18, :guardian18),
+  '42501', null,
+  'read-only guardian cannot declare absences'
+);
 select throws_ok(
   format('insert into public.messages (thread_id, author_id, body) values (%L, %L, ''Bonjour'')', :group_ms, :guardian18),
   '42501',
@@ -174,6 +205,11 @@ select throws_ok(
   'teacher cannot post in another class'
 );
 select is((select count(*) from public.student_private_notes), 0::bigint, 'teacher cannot see admin-only notes');
+select lives_ok(
+  format('insert into public.individual_notes (school_id, student_id, author_id, body_md, kind) values (%L, %L, %L, ''Très bien.'', ''praise'')', :school, :parent1_child_ps, :teacher_ps),
+  'teacher writes an individual note to a student of their class'
+);
+select ok((select count(*) from public.absences where student_id = :parent1_child_ps) > 0, 'teacher sees the absences of their students');
 select ok(exists (select 1 from public.profiles where id = :parent1), 'teacher sees the guardians of their students');
 select is(
   (select count(*) from public.student_guardians where student_id = :student44),

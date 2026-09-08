@@ -11,7 +11,7 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 | 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | 🟡 code complet, e2e « invitation → 1re connexion » à exécuter sur une stack Supabase |
 | 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | 🟡 code complet, chronométrage de l'import à réaliser sur une stack Supabase          |
 | 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | 🟡 code complet, parcours à valider sur une stack Supabase (upload Storage, e-mails)  |
-| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | ⬜                                                                                    |
+| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | 🟡 code complet, upload photos à valider sur une stack Supabase                       |
 | 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | ⬜                                                                                    |
 | 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | ⬜                                                                                    |
 | 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | ⬜                                                                                    |
@@ -174,6 +174,28 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 - [ ] Valider sur une stack Supabase : upload / URL signées Storage, e-mails de relance (session 10),
       captures pour la direction
 - [ ] Traduction automatique via LLM (bouton désactivé par défaut) : non implémentée, à décider (§15)
+
+## Session 7 — détail
+
+- [x] `/classes` : classes des enfants (parents), classes enseignées (enseignants), toutes les classes (direction) ;
+      accès contrôlé par `requireClassAccess` (enseignant de la classe, personnel, responsable d'un élève inscrit)
+- [x] Fil de classe typé (`homework` / `journal` / `info` / `reminder`), Markdown assaini, brouillons et
+      publications, visibilité « équipe uniquement », suppression (soft delete, journalisée)
+- [x] Devoirs / « à préparer » : date, matière, **case « vu » par enfant** côté parent (`homework_completions`),
+      compteur de familles côté enseignant, vue hebdomadaire (en retard / cette semaine / semaine prochaine / plus tard)
+- [x] Cahier de vie : upload multi-photos, **normalisation serveur** (rotation, 1600 px max, WebP, EXIF supprimé,
+      blurhash), bucket privé `class-media`, URL signées par lot (10 min), galerie par mois, **tag des élèves
+      limité aux droits à l'image signés** (contrôle UI + trigger SQL), suppression photo
+- [x] Mots individuels : rédaction par l'enseignant (encouragement / point d'attention / information,
+      visibilité parents ou équipe), lecture par les parents avec **accusé de lecture**, compteur côté enseignant
+- [x] Absences / retards : déclaration par le parent (dates, motif, justificatif dans le bucket privé
+      `justifications`), liste par classe pour l'équipe, validation justifiée / non justifiée par le secrétariat
+      (journalisée) ; les guardians en lecture seule ne peuvent pas déclarer (migration `20260908171500`)
+- [x] Vue hebdo enseignant sur l'accueil : publications de la semaine et devoirs à venir par classe
+- [x] `Ma famille` : raccourcis par enfant vers fil, devoirs, cahier, mots, absences
+- [x] pgTAP : 71 assertions (vu, absences, mots, interdictions parent / guardian)
+- [ ] Valider sur une stack Supabase : upload et affichage des photos (Storage), captures mobile
+- [ ] Pointage du matin (optionnel) et compression côté client avant envoi : plus tard
 
 ## Questions ouvertes (§15 du brief)
 

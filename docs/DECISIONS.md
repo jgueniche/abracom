@@ -203,3 +203,16 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
   plus tard, les envois push / e-mail.
 - **Conséquences** : les notifications restent insérées côté serveur uniquement ; la livraison push / e-mail
   et le digest (session 10) consomment la table `notifications` sans nouveau calcul de cible.
+
+## ADR-0019 — Photos du cahier de vie normalisées côté serveur
+
+- **Contexte** : les photos d'enfants sont des données sensibles (§9) ; les téléphones ajoutent des métadonnées
+  EXIF (GPS, appareil) et des fichiers de plusieurs Mo.
+- **Décision** : chaque image passe par `lib/media.ts` (sharp) dans la Server Action : rotation automatique,
+  1600 px maximum, ré-encodage WebP (qui supprime toutes les métadonnées), blurhash pour l'affichage
+  progressif. Le bucket `class-media` est privé, les URL sont signées par lot pour 10 minutes, et le tag d'un
+  élève est refusé par le trigger SQL tant que le droit à l'image n'est pas signé. La compression côté client
+  (canvas) pourra s'ajouter en session 13 pour économiser la bande passante mobile ; elle ne remplacera pas
+  la normalisation serveur.
+- **Conséquences** : `sharp` est une dépendance de production (déjà utilisée par `next/image`) ; les vidéos
+  et PDF du cahier de vie restent à traiter (limite 25 Mo, pas de transcodage).

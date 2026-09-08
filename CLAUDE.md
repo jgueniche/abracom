@@ -139,7 +139,10 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   ciblage, planification, accusés de lecture, relance en un clic, export CSV, pièces jointes), documents
   (dossiers, signatures électroniques par famille / enfant, droit à l'image → élève, signatures manquantes),
   notifications in-app (cloche). 63 assertions pgTAP.
-- **Prochaine session — 7** : espace classe (fil typé, devoirs avec « vu », cahier de vie avec upload photos
-  compressées / EXIF / blurhash et tag soumis au droit à l'image, mots individuels avec accusé de lecture,
-  vue hebdo enseignant, absences côté parent).
+- **Session 7 — code complet, validation Supabase en attente** : espace classe (fil typé, devoirs avec « vu »,
+  cahier de vie avec photos normalisées côté serveur et tag soumis au droit à l'image, mots individuels avec
+  accusé de lecture, absences avec justificatif et validation), vue hebdo enseignant. 71 assertions pgTAP.
+- **Prochaine session — 8** : messagerie temps réel (DM parent ↔ enseignant / direction, fils officiels de
+  classe, groupes de classe, réponses en fil, réactions, pièces jointes, mentions, recherche, mode silencieux,
+  signalement, modération, verrouillage, archivage, bandeau des horaires de réponse). Fin du MVP.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

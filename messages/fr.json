@@ -659,5 +659,129 @@
     "allSigned": "Tout le monde a signé.",
     "back": "Tous les documents",
     "signedCount": "{count} signature(s)"
+  },
+  "classSpace": {
+    "title": "Classe(s)",
+    "subtitle": "Le fil de chaque classe : devoirs, cahier de vie, informations.",
+    "empty": "Aucune classe accessible.",
+    "tabs": {
+      "feed": "Fil",
+      "homework": "Devoirs",
+      "journal": "Cahier de vie",
+      "notes": "Mots",
+      "absences": "Absences",
+      "team": "Équipe"
+    },
+    "type": {
+      "homework": "À préparer",
+      "journal": "Cahier de vie",
+      "info": "Info",
+      "reminder": "Rappel"
+    },
+    "visibility": {
+      "parents": "Parents",
+      "staff": "Équipe uniquement"
+    },
+    "draft": "Brouillon",
+    "by": "{name}",
+    "dueOn": "Pour le {date}",
+    "subject": "Matière",
+    "noPosts": "Rien de publié pour l'instant.",
+    "seen": "Vu",
+    "markSeen": "Marquer « vu » pour {name}",
+    "seenBy": "{count, plural, =0 {Personne n'a encore vu} one {# famille a vu} other {# familles ont vu}}",
+    "week": {
+      "title": "Cette semaine",
+      "thisWeek": "Cette semaine",
+      "nextWeek": "Semaine prochaine",
+      "later": "Plus tard",
+      "noHomework": "Aucun devoir à venir.",
+      "overdue": "En retard",
+      "summary": "{posts, plural, =0 {Aucune publication} one {# publication} other {# publications}} cette semaine · {homework, plural, =0 {aucun devoir} one {# devoir} other {# devoirs}} à venir"
+    },
+    "post": {
+      "new": "Nouvelle publication",
+      "edit": "Modifier",
+      "type": "Type",
+      "title": "Titre",
+      "body": "Contenu",
+      "subject": "Matière (facultatif)",
+      "dueOn": "À préparer pour le",
+      "visibility": "Visibilité",
+      "media": "Photos (jusqu'à 20, compressées et sans métadonnées)",
+      "tag": "Élèves sur les photos (droit à l'image signé uniquement)",
+      "noRights": "droit à l'image non signé",
+      "publish": "Publier",
+      "draft": "Enregistrer le brouillon",
+      "saved": "Brouillon enregistré.",
+      "published": "Publication envoyée aux familles.",
+      "invalid": "Vérifiez le titre et le contenu.",
+      "dueRequired": "Indiquez la date pour un devoir.",
+      "saveError": "Enregistrement impossible.",
+      "uploadError": "Envoi d'une photo impossible.",
+      "imageRightsBlocked": "Un élève tagué n'a pas de droit à l'image signé.",
+      "delete": "Supprimer",
+      "deleteMedia": "Retirer la photo"
+    },
+    "journal": {
+      "empty": "Pas encore de photos.",
+      "month": "{month}",
+      "download": "Téléchargement désactivé par l'école",
+      "photos": "{count, plural, one {# photo} other {# photos}}"
+    },
+    "notes": {
+      "title": "Mots individuels",
+      "empty": "Aucun mot pour l'instant.",
+      "new": "Écrire un mot",
+      "student": "Élève",
+      "body": "Message",
+      "kind": "Nature",
+      "kinds": {
+        "praise": "Encouragement",
+        "concern": "Point d'attention",
+        "info": "Information"
+      },
+      "visibility": "Visibilité",
+      "send": "Envoyer aux parents",
+      "sent": "Mot envoyé.",
+      "invalid": "Écrivez un message.",
+      "saveError": "Envoi impossible.",
+      "read": "J'ai lu",
+      "readOn": "Lu le {date}",
+      "readBy": "{count, plural, =0 {Non lu} one {Lu par # responsable} other {Lu par # responsables}}",
+      "from": "De {name}",
+      "for": "Pour {name}"
+    },
+    "absences": {
+      "title": "Absences et retards",
+      "empty": "Aucune absence déclarée.",
+      "declare": "Déclarer une absence ou un retard",
+      "student": "Enfant",
+      "kind": "Type",
+      "kinds": {
+        "absence": "Absence",
+        "late": "Retard"
+      },
+      "startsOn": "Du",
+      "endsOn": "Au",
+      "reason": "Motif",
+      "justification": "Justificatif (PDF ou photo, facultatif)",
+      "submit": "Déclarer",
+      "declared": "Déclaration enregistrée.",
+      "invalid": "Vérifiez les dates.",
+      "saveError": "Enregistrement impossible.",
+      "fileType": "Justificatif : PDF ou image de 25 Mo maximum.",
+      "uploadError": "Envoi du justificatif impossible.",
+      "status": {
+        "declared": "Déclarée",
+        "justified": "Justifiée",
+        "unjustified": "Non justifiée"
+      },
+      "justify": "Justifier",
+      "unjustify": "Non justifiée",
+      "withFile": "Justificatif joint",
+      "period": "{from} → {to}",
+      "readOnly": "Les déclarations sont réservées aux parents."
+    }
   }
 }
