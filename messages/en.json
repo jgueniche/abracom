@@ -34,7 +34,9 @@
     "family": "My family",
     "profile": "My profile",
     "styleGuide": "Style guide",
-    "admin": "Administration"
+    "admin": "Administration",
+    "documents": "Documents",
+    "notifications": "Notifications"
   },
   "errors": {
     "notFound": {
@@ -192,7 +194,7 @@
       "title": "Today",
       "children": "My children",
       "pendingAcks": "{count, plural, =0 {No announcement to confirm} one {# announcement to confirm} other {# announcements to confirm}}",
-      "pendingHint": "Read receipts arrive with announcements (session 6).",
+      "pendingHint": "Open the announcements to confirm.",
       "seeFamily": "See my family"
     },
     "teacher": {
@@ -294,7 +296,9 @@
       "members": "Users",
       "years": "Years",
       "import": "CSV import",
-      "audit": "Audit log"
+      "audit": "Audit log",
+      "announcements": "Announcements",
+      "documents": "Documents"
     },
     "years": {
       "title": "School years",
@@ -474,5 +478,186 @@
       "details": "Details",
       "empty": "No entry."
     }
+  },
+  "editor": {
+    "bold": "Bold",
+    "italic": "Italic",
+    "list": "List",
+    "link": "Link",
+    "preview": "Preview",
+    "edit": "Edit",
+    "empty": "_Nothing to preview._",
+    "hint": "Markdown formatting: **bold**, _italic_, - list, [link](https://…).",
+    "boldPlaceholder": "bold text",
+    "italicPlaceholder": "italic text",
+    "linkPlaceholder": "link text"
+  },
+  "announcements": {
+    "title": "Announcements",
+    "subtitle": "Official information from the school office and the team.",
+    "empty": "No announcement yet.",
+    "pinned": "Pinned",
+    "requiresAck": "Confirmation requested",
+    "acked": "Confirmed",
+    "ackedOn": "Confirmed on {date}",
+    "unread": "Unread",
+    "ack": "Mark as read",
+    "ackHint": "The school office asks you to confirm you have read this announcement.",
+    "attachments": "Attachments",
+    "attachedDocument": "Document to sign: {title}",
+    "by": "By {name}",
+    "publishedOn": "Published on {date}",
+    "expiresOn": "Until {date}",
+    "back": "All announcements",
+    "notFound": "Announcement not found."
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Rules, circulars, menus, supply lists and authorisations.",
+    "empty": "No document available.",
+    "download": "Download",
+    "open": "Open",
+    "toSign": "To sign",
+    "signedOn": "Signed on {date}",
+    "signedFor": "Signed for {name} on {date}",
+    "signFor": "Sign for {name}",
+    "sign": "Sign",
+    "signing": "Signing…",
+    "consent": "I have read this document and sign it electronically (timestamp and IP address are kept).",
+    "consentRequired": "Tick the box to sign.",
+    "signed": "Document signed.",
+    "signError": "Could not sign right now.",
+    "requiresSignature": "Signature required",
+    "perStudent": "One signature per child",
+    "noFolder": "Other documents",
+    "version": "version {version}",
+    "purpose": {
+      "generic": "Document",
+      "image_rights": "Image rights",
+      "outing_authorization": "Outing authorisation",
+      "charter": "Charter"
+    },
+    "readOnlyGuardian": "Signatures are reserved for parents."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notification.",
+    "markAllRead": "Mark all as read",
+    "bell": "Notifications ({count})",
+    "kinds": {
+      "default": "Notification",
+      "announcementReminder": "Reminder: please read “{title}”"
+    }
+  },
+  "adminAnnouncements": {
+    "title": "Announcements",
+    "subtitle": "Writing, targeting, scheduling and read-receipt tracking.",
+    "new": "New announcement",
+    "edit": "Edit announcement",
+    "status": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "published": "Published",
+      "expired": "Expired"
+    },
+    "template": "Template",
+    "templates": {
+      "none": "None",
+      "circular": "Circular",
+      "reminder": "Reminder",
+      "holiday": "Holiday",
+      "outing": "School outing"
+    },
+    "templateBodies": {
+      "circular": "## Subject\n\nDear parents,\n\n…\n\nThank you for your attention.\n\nThe school office",
+      "reminder": "**Reminder**: …\n\nThank you for your understanding.",
+      "holiday": "The school will be closed on … for ….\n\nClasses resume on ….",
+      "outing": "## School outing\n\n- **Date**: …\n- **Place**: …\n- **Departure / return**: …\n- **Bring**: …\n\nThe outing authorisation must be signed in the Documents area."
+    },
+    "fields": {
+      "title": "Title",
+      "body": "Body",
+      "titleEn": "Title (English)",
+      "bodyEn": "Body (English)",
+      "translation": "English translation (optional)",
+      "audience": "Recipients",
+      "audienceSchool": "Whole school",
+      "audienceLevel": "Levels",
+      "audienceClass": "Classes",
+      "audienceCustom": "People",
+      "targets": "Selection",
+      "requiresAck": "Request a read receipt",
+      "pinned": "Pin to the top of the list",
+      "publishedAt": "Scheduled publication",
+      "publishedAtHint": "Leave empty for a draft; use “Publish now” for an immediate publication.",
+      "expiresAt": "Expiry",
+      "document": "Linked document to sign",
+      "noDocument": "None"
+    },
+    "save": "Save",
+    "publish": "Publish now",
+    "unpublish": "Back to draft",
+    "delete": "Delete",
+    "saved": "Announcement saved.",
+    "published": "Announcement published.",
+    "invalid": "Check the title and the body.",
+    "targetsRequired": "Select at least one recipient.",
+    "saveError": "Could not save.",
+    "reads": "Read receipts",
+    "recipients": "Recipients",
+    "read": "Read",
+    "ackedCount": "Confirmed",
+    "nonReaders": "Non-readers",
+    "allRead": "Everyone has read it.",
+    "remind": "Remind non-readers",
+    "reminded": "{count, plural, =0 {Nobody to remind} one {# reminder sent} other {# reminders sent}}",
+    "remindError": "Could not send reminders.",
+    "export": "Export as CSV",
+    "attachments": "Attachments",
+    "attach": "Add an attachment",
+    "attached": "Attachment added.",
+    "detach": "Remove",
+    "fileRequired": "Choose a file.",
+    "fileTooLarge": "File too large (25 MB max).",
+    "fileType": "File type not allowed.",
+    "uploadError": "Could not upload the file.",
+    "back": "All announcements",
+    "readRatio": "{read} / {total} read"
+  },
+  "adminDocuments": {
+    "title": "Documents",
+    "subtitle": "Library by folder, audience, electronic signatures.",
+    "new": "Add a document",
+    "fields": {
+      "file": "File (PDF, image, Word, Excel — 25 MB max.)",
+      "title": "Title",
+      "description": "Description (optional)",
+      "folder": "Folder",
+      "newFolder": "Or new folder",
+      "audience": "Recipients",
+      "requiresSignature": "Signature required",
+      "signaturePerStudent": "One signature per child (image rights, outing)",
+      "purpose": "Purpose",
+      "publishNow": "Publish immediately"
+    },
+    "created": "Document added.",
+    "invalid": "Check the fields.",
+    "targetsRequired": "Select at least one recipient.",
+    "saveError": "Could not save.",
+    "fileRequired": "Choose a file.",
+    "fileTooLarge": "File too large (25 MB max).",
+    "fileType": "File type not allowed.",
+    "uploadError": "Could not upload the file.",
+    "publish": "Publish",
+    "delete": "Delete",
+    "draft": "Draft",
+    "signatures": "Signatures",
+    "missing": "{count, plural, =0 {No missing signature} one {# missing signature} other {# missing signatures}}",
+    "missingTitle": "Missing signatures",
+    "student": "Child",
+    "guardian": "Guardian",
+    "allSigned": "Everyone has signed.",
+    "back": "All documents",
+    "signedCount": "{count} signature(s)"
   }
 }

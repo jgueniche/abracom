@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { BottomNav, TopNav } from "@/components/layouts/bottom-nav";
 import { LocaleSwitcher } from "@/components/layouts/locale-switcher";
+import { NotificationBell } from "@/components/layouts/notification-bell";
 import { PerspectiveSwitcher } from "@/components/layouts/perspective-switcher";
 import { ThemeToggle } from "@/components/layouts/theme-toggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -30,6 +31,7 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
           <TopNav perspective={perspective} />
           <div className="flex items-center gap-1">
             <PerspectiveSwitcher current={perspective} available={user.perspectives} />
+            <NotificationBell userId={user.id} />
             <LocaleSwitcher />
             <ThemeToggle />
             <Link href="/profil" aria-label={t("profile")} className="ml-1">

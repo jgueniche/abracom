@@ -34,7 +34,9 @@
     "family": "Ma famille",
     "profile": "Mon profil",
     "styleGuide": "Guide de style",
-    "admin": "Administration"
+    "admin": "Administration",
+    "documents": "Documents",
+    "notifications": "Notifications"
   },
   "errors": {
     "notFound": {
@@ -192,7 +194,7 @@
       "title": "Aujourd'hui",
       "children": "Mes enfants",
       "pendingAcks": "{count, plural, =0 {Aucune annonce à confirmer} one {# annonce à confirmer} other {# annonces à confirmer}}",
-      "pendingHint": "Les accusés de lecture arrivent avec les annonces (session 6).",
+      "pendingHint": "Ouvrir les annonces à confirmer.",
       "seeFamily": "Voir ma famille"
     },
     "teacher": {
@@ -294,7 +296,9 @@
       "members": "Utilisateurs",
       "years": "Années",
       "import": "Import CSV",
-      "audit": "Journal"
+      "audit": "Journal",
+      "announcements": "Annonces",
+      "documents": "Documents"
     },
     "years": {
       "title": "Années scolaires",
@@ -474,5 +478,186 @@
       "details": "Détails",
       "empty": "Aucune entrée."
     }
+  },
+  "editor": {
+    "bold": "Gras",
+    "italic": "Italique",
+    "list": "Liste",
+    "link": "Lien",
+    "preview": "Aperçu",
+    "edit": "Modifier",
+    "empty": "_Rien à prévisualiser._",
+    "hint": "Mise en forme Markdown : **gras**, _italique_, - liste, [lien](https://…).",
+    "boldPlaceholder": "texte en gras",
+    "italicPlaceholder": "texte en italique",
+    "linkPlaceholder": "texte du lien"
+  },
+  "announcements": {
+    "title": "Annonces",
+    "subtitle": "Informations officielles de la direction et de l'équipe.",
+    "empty": "Aucune annonce pour le moment.",
+    "pinned": "Épinglée",
+    "requiresAck": "Confirmation demandée",
+    "acked": "Confirmée",
+    "ackedOn": "Confirmée le {date}",
+    "unread": "Non lue",
+    "ack": "J'ai lu",
+    "ackHint": "La direction vous demande de confirmer la lecture de cette annonce.",
+    "attachments": "Pièces jointes",
+    "attachedDocument": "Document à signer : {title}",
+    "by": "Par {name}",
+    "publishedOn": "Publiée le {date}",
+    "expiresOn": "Jusqu'au {date}",
+    "back": "Toutes les annonces",
+    "notFound": "Annonce introuvable."
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Règlement, circulaires, menus, listes de fournitures et autorisations.",
+    "empty": "Aucun document disponible.",
+    "download": "Télécharger",
+    "open": "Ouvrir",
+    "toSign": "À signer",
+    "signedOn": "Signé le {date}",
+    "signedFor": "Signé pour {name} le {date}",
+    "signFor": "Signer pour {name}",
+    "sign": "Je signe",
+    "signing": "Signature…",
+    "consent": "J'ai lu ce document et je le signe électroniquement (horodatage et adresse IP conservés).",
+    "consentRequired": "Cochez la case pour signer.",
+    "signed": "Document signé.",
+    "signError": "Signature impossible pour le moment.",
+    "requiresSignature": "Signature requise",
+    "perStudent": "Une signature par enfant",
+    "noFolder": "Autres documents",
+    "version": "version {version}",
+    "purpose": {
+      "generic": "Document",
+      "image_rights": "Droit à l'image",
+      "outing_authorization": "Autorisation de sortie",
+      "charter": "Charte"
+    },
+    "readOnlyGuardian": "Les signatures sont réservées aux parents."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "Aucune notification.",
+    "markAllRead": "Tout marquer comme lu",
+    "bell": "Notifications ({count})",
+    "kinds": {
+      "default": "Notification",
+      "announcementReminder": "Rappel : merci de lire « {title} »"
+    }
+  },
+  "adminAnnouncements": {
+    "title": "Annonces",
+    "subtitle": "Rédaction, ciblage, planification et suivi des accusés de lecture.",
+    "new": "Nouvelle annonce",
+    "edit": "Modifier l'annonce",
+    "status": {
+      "draft": "Brouillon",
+      "scheduled": "Programmée",
+      "published": "Publiée",
+      "expired": "Expirée"
+    },
+    "template": "Modèle",
+    "templates": {
+      "none": "Aucun",
+      "circular": "Circulaire",
+      "reminder": "Rappel",
+      "holiday": "Jour férié / fête",
+      "outing": "Sortie scolaire"
+    },
+    "templateBodies": {
+      "circular": "## Objet\n\nMadame, Monsieur,\n\n…\n\nNous vous remercions de votre attention.\n\nLa direction",
+      "reminder": "**Rappel** : …\n\nMerci de votre compréhension.",
+      "holiday": "L'école sera fermée le … à l'occasion de ….\n\nReprise des cours le ….",
+      "outing": "## Sortie scolaire\n\n- **Date** : …\n- **Lieu** : …\n- **Départ / retour** : …\n- **Prévoir** : …\n\nL'autorisation de sortie est à signer dans l'espace Documents."
+    },
+    "fields": {
+      "title": "Titre",
+      "body": "Contenu",
+      "titleEn": "Titre (anglais)",
+      "bodyEn": "Contenu (anglais)",
+      "translation": "Traduction anglaise (facultative)",
+      "audience": "Destinataires",
+      "audienceSchool": "Toute l'école",
+      "audienceLevel": "Niveaux",
+      "audienceClass": "Classes",
+      "audienceCustom": "Personnes",
+      "targets": "Sélection",
+      "requiresAck": "Demander un accusé de lecture",
+      "pinned": "Épingler en haut de la liste",
+      "publishedAt": "Publication programmée",
+      "publishedAtHint": "Laisser vide pour un brouillon ; utiliser « Publier maintenant » pour une publication immédiate.",
+      "expiresAt": "Expiration",
+      "document": "Document à signer lié",
+      "noDocument": "Aucun"
+    },
+    "save": "Enregistrer",
+    "publish": "Publier maintenant",
+    "unpublish": "Repasser en brouillon",
+    "delete": "Supprimer",
+    "saved": "Annonce enregistrée.",
+    "published": "Annonce publiée.",
+    "invalid": "Vérifiez le titre et le contenu.",
+    "targetsRequired": "Sélectionnez au moins un destinataire.",
+    "saveError": "Enregistrement impossible.",
+    "reads": "Accusés de lecture",
+    "recipients": "Destinataires",
+    "read": "Lus",
+    "ackedCount": "Confirmés",
+    "nonReaders": "Non-lecteurs",
+    "allRead": "Tout le monde a lu.",
+    "remind": "Relancer les non-lecteurs",
+    "reminded": "{count, plural, =0 {Personne à relancer} one {# rappel envoyé} other {# rappels envoyés}}",
+    "remindError": "Relance impossible.",
+    "export": "Exporter en CSV",
+    "attachments": "Pièces jointes",
+    "attach": "Ajouter une pièce jointe",
+    "attached": "Pièce jointe ajoutée.",
+    "detach": "Retirer",
+    "fileRequired": "Choisissez un fichier.",
+    "fileTooLarge": "Fichier trop volumineux (25 Mo maximum).",
+    "fileType": "Type de fichier non autorisé.",
+    "uploadError": "Envoi du fichier impossible.",
+    "back": "Toutes les annonces",
+    "readRatio": "{read} / {total} lus"
+  },
+  "adminDocuments": {
+    "title": "Documents",
+    "subtitle": "Bibliothèque par dossier, audience, signatures électroniques.",
+    "new": "Ajouter un document",
+    "fields": {
+      "file": "Fichier (PDF, image, Word, Excel — 25 Mo max.)",
+      "title": "Titre",
+      "description": "Description (facultative)",
+      "folder": "Dossier",
+      "newFolder": "Ou nouveau dossier",
+      "audience": "Destinataires",
+      "requiresSignature": "Signature requise",
+      "signaturePerStudent": "Une signature par enfant (droit à l'image, sortie)",
+      "purpose": "Nature",
+      "publishNow": "Publier immédiatement"
+    },
+    "created": "Document ajouté.",
+    "invalid": "Vérifiez les champs.",
+    "targetsRequired": "Sélectionnez au moins un destinataire.",
+    "saveError": "Enregistrement impossible.",
+    "fileRequired": "Choisissez un fichier.",
+    "fileTooLarge": "Fichier trop volumineux (25 Mo maximum).",
+    "fileType": "Type de fichier non autorisé.",
+    "uploadError": "Envoi du fichier impossible.",
+    "publish": "Publier",
+    "delete": "Supprimer",
+    "draft": "Brouillon",
+    "signatures": "Signatures",
+    "missing": "{count, plural, =0 {Aucune signature manquante} one {# signature manquante} other {# signatures manquantes}}",
+    "missingTitle": "Signatures manquantes",
+    "student": "Enfant",
+    "guardian": "Responsable",
+    "allSigned": "Tout le monde a signé.",
+    "back": "Tous les documents",
+    "signedCount": "{count} signature(s)"
   }
 }

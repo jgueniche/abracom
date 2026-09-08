@@ -10,7 +10,7 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 | 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ✅ (validé sur PostgreSQL 16 local + CI ; à rejouer sur Supabase dès que disponible)  |
 | 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | 🟡 code complet, e2e « invitation → 1re connexion » à exécuter sur une stack Supabase |
 | 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | 🟡 code complet, chronométrage de l'import à réaliser sur une stack Supabase          |
-| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | ⬜                                                                                    |
+| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | 🟡 code complet, parcours à valider sur une stack Supabase (upload Storage, e-mails)  |
 | 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | ⬜                                                                                    |
 | 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | ⬜                                                                                    |
 | 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | ⬜                                                                                    |
@@ -151,6 +151,29 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 - [ ] Chronométrer « 60 familles en < 2 min » sur une stack Supabase (import ≈ 130 créations de comptes +
       3 lots d'invitations)
 - [ ] Promotion de niveau / clôture d'année (session 15)
+
+## Session 6 — détail
+
+- [x] Annonces côté parents / enseignants : liste (épinglées, non lues, confirmation demandée), détail Markdown
+      assaini, accusé de lecture automatique à l'affichage + bouton « J'ai lu », pièces jointes en URL signées
+      10 min, document à signer lié, version anglaise affichée aux familles anglophones
+- [x] Éditeur Markdown avec barre d'outils et aperçu (tiptap différé, ADR-0017), modèles (circulaire, rappel,
+      jour férié / fête, sortie scolaire), traduction anglaise manuelle, ciblage école / niveaux / classes /
+      personnes (`AudiencePicker`), planification, épinglage, expiration, brouillon / publication immédiate
+- [x] Tableau des accusés de lecture par annonce : destinataires calculés en SQL (`announcement_recipients`),
+      lus / confirmés, liste des non-lecteurs, **relance en un clic** (`remind_announcement` → notifications
+      in-app, journalisée), **export CSV**
+- [x] Pièces jointes : upload dans le bucket privé `attachments` (25 Mo, types contrôlés), suppression
+- [x] Documents : bibliothèque par dossier, audience, versions, téléchargement via redirection signée
+      (`/documents/[id]/fichier`), **signature électronique** (case + horodatage + IP + user agent) par famille ou
+      par enfant ; signer le droit à l'image renseigne `students.image_rights_signed_at` (trigger)
+- [x] Administration des documents : dépôt (fichier + métadonnées + nouveau dossier), nature (`purpose`),
+      publication, suppression, **tableau des signatures manquantes** (`document_missing_signatures`)
+- [x] Notifications in-app : cloche avec compteur dans l'en-tête, page `/notifications`, tout marquer lu
+- [x] Migration `20260908171400`, pgTAP : 63 assertions (destinataires, relance, signatures, trigger droit à l'image)
+- [ ] Valider sur une stack Supabase : upload / URL signées Storage, e-mails de relance (session 10),
+      captures pour la direction
+- [ ] Traduction automatique via LLM (bouton désactivé par défaut) : non implémentée, à décider (§15)
 
 ## Questions ouvertes (§15 du brief)
 

@@ -1,7 +1,7 @@
 -- pgTAP: role matrix from brief §5 against the demo seed. Run by scripts/db/test-local.sh
 -- (or `supabase test db` once the Supabase stack is available).
 begin;
-select plan(52);
+select plan(58);
 
 create or replace function pg_temp.login(uid uuid) returns void language plpgsql as $$
 begin
@@ -47,6 +47,11 @@ end $$;
 select pg_temp.logout();
 select is((select count(*) from public.schools), 0::bigint, 'anon sees no school');
 select is((select count(*) from public.students), 0::bigint, 'anon sees no student');
+
+-- helper functions are staff-only
+select pg_temp.login('c0000000-0000-4000-8000-000000010001'::uuid);
+select is((select count(*) from public.announcement_recipients(:ann_school)), 0::bigint, 'parents cannot list announcement recipients');
+select throws_ok(format('select public.remind_announcement(%L)', :ann_school), '42501', null, 'parents cannot send reminders');
 
 -- parent-1 (family 001: PS Tournesols + CP Oliviers) ---------------------------
 select pg_temp.login(:parent1);
@@ -207,6 +212,22 @@ select lives_ok(
 );
 select ok((select count(*) from public.assessments) > 0, 'admin sees assessments');
 select ok((select count(*) from public.audit_log) > 0, 'admin reads the audit log');
+
+select ok((select count(*) from public.announcement_recipients(:ann_school)) > 100, 'admin lists the recipients of a school-wide announcement');
+select is(
+  (select count(*) from public.announcement_recipients(:ann_class_ps)),
+  (select count(distinct sg.user_id) from public.enrollments e
+     join public.student_guardians sg on sg.student_id = e.student_id and not sg.access_blocked
+     join public.memberships m on m.user_id = sg.user_id and m.status = 'active' and m.role in ('parent', 'guardian')
+     where e.class_id = :class_ps)
+    + (select count(*) from public.class_teachers ct where ct.class_id = :class_ps),
+  'class announcement recipients = active guardians of the class + its teachers'
+);
+select ok(public.remind_announcement(:ann_class_ps) > 0, 'reminder creates in-app notifications for non-acknowledgers');
+select ok(
+  (select count(*) from public.document_missing_signatures('00000000-0000-4000-8000-000000002818')) > 0,
+  'missing image-rights signatures are listed per student'
+);
 
 -- super admin ----------------------------------------------------------------------
 select pg_temp.login(:superadmin);

@@ -135,7 +135,11 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   utilisateurs, années, import CSV, journal), import CSV testé unitairement, comptes créés sans e-mail puis
   invitations par lots de 20, droits par responsable + restriction judiciaire journalisée, audit de toutes
   les actions.
-- **Prochaine session — 6** : annonces officielles (éditeur Markdown, ciblage, planification, épinglage,
-  expiration), accusés de lecture avec relance des non-lecteurs et export CSV, bibliothèque de documents
-  avec signatures (droit à l'image, autorisations de sortie), tableau de bord des signatures manquantes.
+- **Session 6 — code complet, validation Supabase en attente** : annonces (éditeur Markdown + modèles,
+  ciblage, planification, accusés de lecture, relance en un clic, export CSV, pièces jointes), documents
+  (dossiers, signatures électroniques par famille / enfant, droit à l'image → élève, signatures manquantes),
+  notifications in-app (cloche). 63 assertions pgTAP.
+- **Prochaine session — 7** : espace classe (fil typé, devoirs avec « vu », cahier de vie avec upload photos
+  compressées / EXIF / blurhash et tag soumis au droit à l'image, mots individuels avec accusé de lecture,
+  vue hebdo enseignant, absences côté parent).
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

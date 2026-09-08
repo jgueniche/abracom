@@ -7,6 +7,8 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
+  { href: "/admin/annonces", key: "announcements" },
+  { href: "/admin/documents", key: "documents" },
   { href: "/admin/familles", key: "families" },
   { href: "/admin/classes", key: "classes" },
   { href: "/admin/utilisateurs", key: "members" },

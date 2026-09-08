@@ -1,6 +1,6 @@
 -- pgTAP: integrity rules that must hold regardless of role.
 begin;
-select plan(4);
+select plan(5);
 
 select throws_ok(
   $$insert into public.school_years (school_id, label, starts_on, ends_on, is_current)
@@ -28,6 +28,15 @@ select is(
   (select count(*) from pg_tables where schemaname = 'public' and not rowsecurity),
   0::bigint,
   'every public table has row level security enabled'
+);
+
+-- signing the image-rights document for a child stamps the student record (family 004 had none)
+insert into public.document_signatures (document_id, user_id, student_id)
+values ('00000000-0000-4000-8000-000000002818', 'c0000000-0000-4000-8000-000000040001', 'd0000000-0000-4000-8000-000000040001');
+select isnt(
+  (select image_rights_signed_at from public.students where id = 'd0000000-0000-4000-8000-000000040001'),
+  null,
+  'image-rights signature stamps students.image_rights_signed_at'
 );
 
 select * from finish();

@@ -1,10 +1,13 @@
 import {
+  BellIcon,
   ChevronRightIcon,
   ExternalLinkIcon,
+  FolderIcon,
+  MegaphoneIcon,
   PaletteIcon,
+  ShieldCheckIcon,
   UserRoundIcon,
   UsersRoundIcon,
-  ShieldCheckIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -56,6 +59,21 @@ export default async function MorePage() {
                 <ChevronRightIcon className="ml-auto size-4" aria-hidden />
               </Link>
             )}
+            <Link href="/annonces" className={linkClass}>
+              <MegaphoneIcon className="size-4" aria-hidden />
+              {tNav("announcements")}
+              <ChevronRightIcon className="ml-auto size-4" aria-hidden />
+            </Link>
+            <Link href="/documents" className={linkClass}>
+              <FolderIcon className="size-4" aria-hidden />
+              {tNav("documents")}
+              <ChevronRightIcon className="ml-auto size-4" aria-hidden />
+            </Link>
+            <Link href="/notifications" className={linkClass}>
+              <BellIcon className="size-4" aria-hidden />
+              {tNav("notifications")}
+              <ChevronRightIcon className="ml-auto size-4" aria-hidden />
+            </Link>
             {isStaff && (
               <Link href="/admin" className={linkClass}>
                 <ShieldCheckIcon className="size-4" aria-hidden />

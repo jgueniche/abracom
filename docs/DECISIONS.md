@@ -181,3 +181,25 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
   pour les autres lignes.
 - **Conséquences** : la recherche d'un compte par e-mail passe par `find_user_id_by_email` (service role
   uniquement) ; la suite naturelle est un envoi automatique par tâche planifiée (session 10).
+
+## ADR-0017 — Éditeur Markdown léger d'abord, tiptap différé
+
+- **Contexte** : le brief prévoit tiptap. Tiptap est un éditeur HTML/ProseMirror ; produire et relire du
+  Markdown fidèle demande une couche de sérialisation supplémentaire et une dizaine de paquets.
+- **Décision** : les annonces, posts et mots sont stockés en Markdown (`body_md`) et rendus par
+  `react-markdown` + `remark-gfm` + `rehype-sanitize` (jamais de HTML brut, liens sûrs). L'éditeur est un
+  `textarea` Markdown avec barre d'outils (gras, italique, liste, lien) et aperçu instantané. Le passage à
+  tiptap (avec export Markdown) est prévu en session 13 (ergonomie) si la direction le souhaite ; le
+  stockage ne change pas.
+- **Conséquences** : rendu identique côté e-mail (session 10) et PDF (session 11) à partir du même Markdown.
+
+## ADR-0018 — Destinataires, relances et signatures calculés en SQL
+
+- **Décision** : `announcement_recipients(id)` (membres actifs qui correspondent à l'audience, avec leurs
+  horodatages de lecture / confirmation), `remind_announcement(id)` (notifications in-app pour les
+  non-lecteurs + entrée d'audit) et `document_missing_signatures(id)` sont des fonctions `security definer`
+  réservées au personnel de l'école (contrôle `is_school_staff` à l'intérieur). L'application n'a ainsi
+  qu'une seule définition de « destinataire », partagée par les compteurs, la relance, l'export CSV et,
+  plus tard, les envois push / e-mail.
+- **Conséquences** : les notifications restent insérées côté serveur uniquement ; la livraison push / e-mail
+  et le digest (session 10) consomment la table `notifications` sans nouveau calcul de cible.

@@ -164,6 +164,7 @@ export type Database = {
           body_md_en: string | null
           created_at: string
           deleted_at: string | null
+          document_id: string | null
           expires_at: string | null
           id: string
           locale: string
@@ -185,6 +186,7 @@ export type Database = {
           body_md_en?: string | null
           created_at?: string
           deleted_at?: string | null
+          document_id?: string | null
           expires_at?: string | null
           id?: string
           locale?: string
@@ -206,6 +208,7 @@ export type Database = {
           body_md_en?: string | null
           created_at?: string
           deleted_at?: string | null
+          document_id?: string | null
           expires_at?: string | null
           id?: string
           locale?: string
@@ -226,6 +229,13 @@ export type Database = {
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "announcements_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
             referencedColumns: ["id"]
           },
           {
@@ -949,6 +959,7 @@ export type Database = {
           id: string
           mime: string
           published_at: string | null
+          purpose: Database["public"]["Enums"]["document_purpose"]
           requires_signature: boolean
           school_id: string
           signature_per_student: boolean
@@ -969,6 +980,7 @@ export type Database = {
           id?: string
           mime?: string
           published_at?: string | null
+          purpose?: Database["public"]["Enums"]["document_purpose"]
           requires_signature?: boolean
           school_id: string
           signature_per_student?: boolean
@@ -989,6 +1001,7 @@ export type Database = {
           id?: string
           mime?: string
           published_at?: string | null
+          purpose?: Database["public"]["Enums"]["document_purpose"]
           requires_signature?: boolean
           school_id?: string
           signature_per_student?: boolean
@@ -2432,6 +2445,17 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      announcement_recipients: {
+        Args: { announcement: string }
+        Returns: {
+          acked_at: string
+          first_name: string
+          last_name: string
+          read_at: string
+          role: Database["public"]["Enums"]["membership_role"]
+          user_id: string
+        }[]
+      }
       can_access_class: {
         Args: { class_: string; uid?: string }
         Returns: boolean
@@ -2453,6 +2477,16 @@ export type Database = {
         Returns: boolean
       }
       class_school_id: { Args: { class_: string }; Returns: string }
+      document_missing_signatures: {
+        Args: { document: string }
+        Returns: {
+          first_name: string
+          last_name: string
+          student_id: string
+          student_name: string
+          user_id: string
+        }[]
+      }
       find_user_id_by_email: { Args: { email: string }; Returns: string }
       guardian_class_ids: { Args: { uid?: string }; Returns: string[] }
       guardian_student_ids: { Args: { uid?: string }; Returns: string[] }
@@ -2498,6 +2532,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      remind_announcement: { Args: { announcement: string }; Returns: number }
       set_current_school_year: { Args: { year_id: string }; Returns: undefined }
       student_school_id: { Args: { student: string }; Returns: string }
       teacher_class_ids: { Args: { uid?: string }; Returns: string[] }
@@ -2523,6 +2558,11 @@ export type Database = {
         | "recommendation"
         | "other"
       community_status: "pending" | "published" | "archived" | "rejected"
+      document_purpose:
+        | "generic"
+        | "image_rights"
+        | "outing_authorization"
+        | "charter"
       event_kind:
         | "celebration"
         | "outing"
@@ -2701,6 +2741,12 @@ export const Constants = {
         "other",
       ],
       community_status: ["pending", "published", "archived", "rejected"],
+      document_purpose: [
+        "generic",
+        "image_rights",
+        "outing_authorization",
+        "charter",
+      ],
       event_kind: [
         "celebration",
         "outing",
