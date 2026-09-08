@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+build
+coverage
+playwright-report
+test-results
+pnpm-lock.yaml
+.vercel
+supabase/.temp
+supabase/.branches
+lib/supabase/database.types.ts
+public/
+*.min.*
