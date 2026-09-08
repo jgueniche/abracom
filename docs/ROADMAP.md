@@ -18,7 +18,7 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 | 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | 🟡 code complet ; livret PDF généré en test unitaire, rendu réel à valider sur une stack Supabase   |
 | 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | 🟡 code complet, réservation de créneau testée en pgTAP ; parcours à valider sur une stack Supabase |
 | 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | 🟡 code complet ; installation à valider sur iOS / Android, Lighthouse mesuré sur le déploiement    |
-| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | ⬜                                                                                                  |
+| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | 🟡 code complet ; 2FA et suppression de compte à valider sur une stack Supabase                     |
 | 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | ⬜                                                                                                  |
 
 ## Session 1 — détail
@@ -341,6 +341,30 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 - [ ] Valider sur le déploiement : installation iOS / Android, notification push après installation,
       score Lighthouse ≥ 90 sur les pages connectées (mesure sur Vercel avec `pnpm perf <url>`)
 - [ ] Mode hors ligne en lecture (dernières annonces mises en cache) : plus tard, si besoin exprimé
+
+## Session 14 — détail
+
+- [x] `docs/RGPD.md` : registre des traitements, sous-traitants UE, durées de conservation, exercice des
+      droits, mesures de sécurité, procédure de violation
+- [x] Migration `20260908172200_rgpd` : `export_my_data()` (JSON complet sous RLS), `delete_my_account()`
+      (anonymisation immédiate, liens et abonnements supprimés, dernier administrateur protégé, journalisé),
+      `purge_expired_data()` (messages 2 ans, notifications 6 mois, livraisons 30 jours, journal 3 ans,
+      annonces retirées 90 jours, photos des élèves partis, anonymisation des élèves un an après leur départ)
+      exécutée chaque nuit (tâche `reminders` du worker + `cron.sql`)
+- [x] `/profil/donnees` : export (`/api/export/donnees`) et suppression de compte avec mot de confirmation
+- [x] **2FA (TOTP)** : `/profil/securite` (inscription par QR code, confirmation, désactivation avec code),
+      `/verification` à la connexion pour les personnes inscrites, **obligatoire pour la direction**
+      (redirection vers l'inscription avant l'administration, actions refusées sans AAL2), journalisé ;
+      `config.toml` : TOTP activé
+- [x] **CSP stricte à nonce** générée par le middleware (`lib/security/csp.ts`, `strict-dynamic`,
+      `frame-ancestors 'none'`, Supabase et Sentry seuls hôtes autorisés), HSTS conservé, test unitaire
+      et e2e des en-têtes
+- [x] **Sentry** (`@sentry/nextjs`, région UE, `sendDefaultPii: false`, actif seulement avec un DSN),
+      `app/global-error.tsx`
+- [x] Tests : 11 pgTAP (`008_rgpd.sql`), 3 unitaires (CSP)
+- [ ] Valider sur une stack Supabase : inscription TOTP réelle, suppression d'un compte de démo, exécution
+      de la purge, absence d'erreur CSP dans la console sur les pages connectées
+- [ ] Balayage mensuel des objets de stockage orphelins (script d'exploitation) : session 15
 
 ## Questions ouvertes (§15 du brief)
 

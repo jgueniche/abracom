@@ -112,10 +112,9 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 
 ## 10. État d'avancement
 
-- **Session 1 — terminée** : bootstrap Next 15.5 + Tailwind v4 + shadcn (preset Nova/Radix) + next-intl
-  - next-themes + zod, clients Supabase, `supabase/config.toml`, CI GitHub Actions (lint, types, format,
-    unit, build, e2e, database), Husky + commitlint, `vercel.json` (`cdg1`), projet Vercel `abracom`
-    (https://abracom.vercel.app). **Reste** : créer le projet Supabase cloud `kesher-staging` (UE).
+- **Session 1 — terminée** : bootstrap Next 15.5 + Tailwind v4 + shadcn + next-intl + next-themes + zod,
+  clients Supabase, CI GitHub Actions (lint, types, format, unit, build, e2e, database), Husky + commitlint,
+  Vercel `abracom` (`cdg1`, https://abracom.vercel.app). **Reste** : projet Supabase cloud `kesher-staging`.
 - **Session 2 — terminée (validation visuelle en attente)** : palette dérivée du logo (sarcelle `#01525e`,
   rouge brique `#852624`), tokens clair / sombre, contraste AA testé, Inter + Fraunces, `/dev/ui`, icônes PWA.
 - **Session 3 — terminée (à rejouer sur Supabase)** : 10 migrations, 47 tables, 23 enums, `can_access_*`,
@@ -138,12 +137,13 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   Chabbat / heures calmes** appliqués par le worker, préférences + activation push.
 - **Session 11 — code complet** : matrice de compétences par période, appréciations, publication différée
   notifiée, livret PDF `/api/livret/[studentId]` (`@react-pdf/renderer`), notes /20 optionnelles.
-- **Session 12 — code complet, validation Supabase en attente** : annuaire opt-in, anniversaires (rappel
-  J-3), petites annonces modérées a priori (trigger), RDV parents-enseignant (`book_appointment`, un par
-  famille), formulaires / sondages avec constructeur et export CSV. 200 assertions pgTAP.
-- **Session 13 — code complet** : PWA (service worker hors ligne + assets, bannière d'installation),
-  recherche globale `/recherche` (`global_search` sous RLS), lien d'évitement + tests axe, script
-  `pnpm perf` (Lighthouse mobile), compression photo côté client. 205 assertions pgTAP.
-- **Prochaine session — 14** : RGPD (export et suppression de compte, `docs/RGPD.md`, durées de
-  conservation, 2FA admin, CSP stricte + HSTS, Sentry) ; puis 15 : guides, démo, bascule staging → prod.
+- **Session 12 — code complet** : annuaire opt-in, anniversaires (J-3), petites annonces modérées a priori
+  (trigger), RDV parents-enseignant (`book_appointment`), formulaires / sondages avec export CSV.
+- **Session 13 — code complet** : PWA (service worker hors ligne, bannière d'installation), recherche globale
+  (`global_search` sous RLS), lien d'évitement + tests axe, `pnpm perf` (Lighthouse 95 / 100 / 100).
+- **Session 14 — code complet, validation Supabase en attente** : `docs/RGPD.md`, export JSON et
+  suppression de compte (anonymisation), purge de rétention nocturne, 2FA TOTP (obligatoire direction),
+  CSP stricte à nonce, Sentry optionnel. 216 assertions pgTAP.
+- **Prochaine session — 15** : guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule
+  staging → prod, promotion de niveau, balayage du stockage.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

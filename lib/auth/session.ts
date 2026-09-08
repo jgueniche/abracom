@@ -97,6 +97,8 @@ function emptyProfile(id: string): Tables<"profiles"> {
     locale: "fr",
     show_hebrew_date: false,
     last_seen_at: null,
+    anonymized_at: null,
+    deletion_requested_at: null,
     created_at: now,
     updated_at: now,
   };

@@ -259,7 +259,10 @@
     "roles": "My roles",
     "legal": "Accepted texts",
     "acceptedOn": "accepted on {date}",
-    "notAccepted": "not accepted"
+    "notAccepted": "not accepted",
+    "account": "My account",
+    "security": "Security",
+    "data": "My data"
   },
   "more": {
     "title": "More",
@@ -1518,5 +1521,49 @@
     "title": "You are offline",
     "description": "Kesher needs a connection to show the school's information. Try again as soon as the network is back.",
     "retry": "Try again"
+  },
+  "security": {
+    "title": "Account security",
+    "subtitle": "Two-step verification with an authenticator app (TOTP).",
+    "status": {
+      "on": "Two-step verification is on",
+      "off": "Two-step verification is off."
+    },
+    "requiredNotice": "Two-step verification is mandatory for the head of school: enable it to reach the administration.",
+    "start": "Enable two-step verification",
+    "scanHint": "Scan this code with Google Authenticator, Authy, 1Password… then type the six-digit code.",
+    "qrAlt": "Enrolment QR code",
+    "secret": "Key to type manually",
+    "code": "Six-digit code",
+    "confirm": "Confirm",
+    "enabled": "Two-step verification enabled.",
+    "invalidCode": "Invalid or expired code.",
+    "disable": "Disable",
+    "disableHint": "Type a current code to disable two-step verification.",
+    "disabled": "Two-step verification disabled.",
+    "adminCannotDisable": "The head of school cannot disable two-step verification.",
+    "error": "The operation is not possible right now."
+  },
+  "verification": {
+    "title": "Verification",
+    "description": "Type the code from your authenticator app to continue.",
+    "code": "Six-digit code",
+    "submit": "Verify",
+    "invalid": "Invalid or expired code.",
+    "help": "Lost your phone? Contact the school office."
+  },
+  "dataRights": {
+    "title": "My data",
+    "subtitle": "Your rights of access, portability and erasure (GDPR).",
+    "export": "Export my data",
+    "exportHint": "A JSON file with your profile, children, messages, answers and notifications.",
+    "exportButton": "Download the export",
+    "deleteTitle": "Delete my account",
+    "deleteHint": "Your personal data is anonymised immediately and your access is closed. Your children's school records remain managed by the school.",
+    "confirmWord": "DELETE",
+    "confirmLabel": "Type {word} to confirm",
+    "confirmMismatch": "The confirmation word does not match.",
+    "delete": "Delete permanently",
+    "error": "Deletion is not possible right now."
   }
 }

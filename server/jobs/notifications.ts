@@ -52,12 +52,14 @@ export async function runNotificationJob(
   const site = publicEnv.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
 
   if (task === "reminders") {
-    const [events, birthdays] = await Promise.all([
+    const [events, birthdays, purge] = await Promise.all([
       admin.rpc("queue_event_reminders"),
       admin.rpc("queue_birthday_reminders"),
+      admin.rpc("purge_expired_data"),
     ]);
     if (events.error) throw events.error;
     if (birthdays.error) throw birthdays.error;
+    if (purge.error) throw purge.error;
     report.processed = (events.data ?? 0) + (birthdays.data ?? 0);
     return report;
   }

@@ -2060,8 +2060,10 @@ export type Database = {
       }
       profiles: {
         Row: {
+          anonymized_at: string | null
           avatar_path: string | null
           created_at: string
+          deletion_requested_at: string | null
           first_name: string
           id: string
           last_name: string
@@ -2072,8 +2074,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          anonymized_at?: string | null
           avatar_path?: string | null
           created_at?: string
+          deletion_requested_at?: string | null
           first_name?: string
           id: string
           last_name?: string
@@ -2084,8 +2088,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          anonymized_at?: string | null
           avatar_path?: string | null
           created_at?: string
+          deletion_requested_at?: string | null
           first_name?: string
           id?: string
           last_name?: string
@@ -2748,6 +2754,10 @@ export type Database = {
           phone: string
         }[]
       }
+      delete_my_account: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       digest_candidates: {
         Args: { since: string }
         Returns: {
@@ -2833,6 +2843,7 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      export_my_data: { Args: Record<PropertyKey, never>; Returns: Json }
       find_user_id_by_email: { Args: { email: string }; Returns: string }
       global_search: {
         Args: { max_results?: number; q: string }
@@ -2939,6 +2950,7 @@ export type Database = {
         Args: { class_: string; period: string }
         Returns: number
       }
+      purge_expired_data: { Args: Record<PropertyKey, never>; Returns: Json }
       queue_birthday_reminders: {
         Args: Record<PropertyKey, never>
         Returns: number

@@ -53,6 +53,13 @@ select cron.schedule(
   $$ select public.queue_event_reminders(); $$
 );
 
+-- 5. Purge de rétention (docs/RGPD.md), chaque nuit à 3 h UTC.
+select cron.schedule(
+  'kesher-retention-purge',
+  '0 3 * * *',
+  $$ select public.purge_expired_data(); $$
+);
+
 -- Vérification / suppression :
 --   select jobid, jobname, schedule, active from cron.job;
 --   select * from cron.job_run_details order by start_time desc limit 20;

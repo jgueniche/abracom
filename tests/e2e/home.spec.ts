@@ -52,5 +52,8 @@ test.describe("entry points", () => {
     expect(response.headers()["x-content-type-options"]).toBe("nosniff");
     expect(response.headers()["x-frame-options"]).toBe("DENY");
     expect(response.headers()["x-powered-by"]).toBeUndefined();
+    const csp = response.headers()["content-security-policy"] ?? "";
+    expect(csp).toContain("frame-ancestors 'none'");
+    expect(csp).toMatch(/script-src 'self' 'nonce-[A-Za-z0-9+/=]+' 'strict-dynamic'/);
   });
 });

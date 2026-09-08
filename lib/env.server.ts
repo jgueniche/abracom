@@ -27,5 +27,6 @@ export function getServerEnv(): ServerEnv {
     EMAIL_FROM: process.env.EMAIL_FROM,
     VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
     VAPID_SUBJECT: process.env.VAPID_SUBJECT,
+    SENTRY_DSN: process.env.SENTRY_DSN,
   });
 }

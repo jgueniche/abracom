@@ -1,7 +1,9 @@
 import "server-only";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { getMfaStatus } from "@/lib/auth/mfa";
 import { APP_HOME_PATH } from "@/lib/auth/routes";
 import { type CurrentUser, requireCurrentUser } from "@/lib/auth/session";
 import { ForbiddenError, hasSchoolRole, STAFF_ROLES } from "@/lib/permissions";
@@ -14,7 +16,25 @@ export async function requireSchoolRole(roles: readonly MembershipRole[]): Promi
   const user = await requireCurrentUser();
   const schoolId = user.school?.id;
   if (!schoolId || !hasSchoolRole(user.roles, schoolId, roles)) redirect(APP_HOME_PATH);
+  await enforceStaffMfa(user, schoolId, "page");
   return { user, schoolId };
+}
+
+/**
+ * Two-factor policy (brief §9): an enrolled person must have verified their code in this session
+ * before reaching staff screens; school administrators must enrol before using the admin area.
+ */
+async function enforceStaffMfa(user: CurrentUser, schoolId: string, mode: "page" | "action") {
+  const mfa = await getMfaStatus();
+  if (mfa.enrolled && !mfa.verified) {
+    if (mode === "action") throw new ForbiddenError();
+    const pathname = (await headers()).get("x-pathname") ?? APP_HOME_PATH;
+    redirect(`/verification?next=${encodeURIComponent(pathname)}`);
+  }
+  if (!mfa.enrolled && hasSchoolRole(user.roles, schoolId, ["school_admin"])) {
+    if (mode === "action") throw new ForbiddenError();
+    redirect("/profil/securite?requis=1");
+  }
 }
 
 export const requireSchoolStaff = () => requireSchoolRole(STAFF_ROLES);
@@ -27,5 +47,6 @@ export async function assertSchoolContext(
   const user = await requireCurrentUser();
   const schoolId = user.school?.id;
   if (!schoolId || !hasSchoolRole(user.roles, schoolId, roles)) throw new ForbiddenError();
+  await enforceStaffMfa(user, schoolId, "action");
   return { user, schoolId };
 }

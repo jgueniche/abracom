@@ -16,18 +16,25 @@ export type SessionResult = {
  * Refreshes the Supabase auth cookies on every request (the @supabase/ssr pattern):
  * `getUser()` validates the JWT with the auth server and rotates expired tokens.
  */
-export async function updateSession(request: NextRequest): Promise<SessionResult> {
+export async function updateSession(
+  request: NextRequest,
+  requestHeaders: Headers = request.headers,
+): Promise<SessionResult> {
   let config: { url: string; anonKey: string };
   try {
     config = getSupabasePublicConfig();
   } catch (error) {
     if (error instanceof MissingSupabaseConfigError) {
-      return { response: NextResponse.next({ request }), user: null, configured: false };
+      return {
+        response: NextResponse.next({ request: { headers: requestHeaders } }),
+        user: null,
+        configured: false,
+      };
     }
     throw error;
   }
 
-  let response = NextResponse.next({ request });
+  let response = NextResponse.next({ request: { headers: requestHeaders } });
   const supabase = createServerClient<Database>(config.url, config.anonKey, {
     cookies: {
       getAll() {
@@ -35,7 +42,7 @@ export async function updateSession(request: NextRequest): Promise<SessionResult
       },
       setAll(cookiesToSet) {
         for (const { name, value } of cookiesToSet) request.cookies.set(name, value);
-        response = NextResponse.next({ request });
+        response = NextResponse.next({ request: { headers: requestHeaders } });
         for (const { name, value, options } of cookiesToSet)
           response.cookies.set(name, value, options);
       },

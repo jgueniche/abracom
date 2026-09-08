@@ -325,3 +325,21 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 - **Conséquences** : pas de lecture hors ligne des contenus (à ajouter plus tard avec un cache borné et
   chiffré si le besoin est confirmé) ; la recherche ignore les pièces jointes et le contenu des PDF ; les
   scores Lighthouse des pages connectées se mesurent sur le déploiement, pas en CI.
+
+## ADR-0026 — Suppression par anonymisation, rétention en SQL, 2FA imposée à la direction
+
+- **Contexte** : l'école reste responsable des dossiers scolaires même après le départ d'un parent de la
+  plateforme ; les durées de conservation doivent s'appliquer sans intervention humaine ; la direction
+  accède à des données sensibles depuis des appareils personnels.
+- **Décision** : la suppression de compte anonymise le profil, retire liens, abonnements, réponses et
+  coordonnées, vide les messages et suspend les rattachements, puis supprime le compte d'authentification ;
+  les traces d'audit sont conservées sans données personnelles. Les durées de conservation vivent dans
+  une seule fonction `purge_expired_data()` réservée au service role et planifiée chaque nuit, avec la règle
+  scolaire « année en cours + 1 an » calculée sur la date de départ. La validation en deux étapes utilise
+  le TOTP de Supabase Auth : facultative pour tous, obligatoire pour `school_admin` (redirection vers
+  l'inscription, actions administratives refusées sans AAL2), non désactivable par la direction elle-même.
+  La CSP est construite à chaque requête avec un nonce et `strict-dynamic`, ce qui interdit tout script
+  tiers non déclaré. Sentry ne reçoit aucune donnée personnelle et reste inactif sans DSN.
+- **Conséquences** : un parent supprimé peut être réinvité (nouveau compte) ; les objets du stockage
+  orphelins nécessitent un balayage séparé ; le mode développement relâche la CSP (`unsafe-eval`,
+  WebSocket HMR) mais jamais la production.

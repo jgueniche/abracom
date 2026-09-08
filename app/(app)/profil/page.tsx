@@ -4,6 +4,9 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SignOutButton } from "@/components/layouts/sign-out-button";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getLegalStatus } from "@/lib/auth/legal";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -53,6 +56,19 @@ export default async function ProfilePage() {
           </CardContent>
         </Card>
         <div className="flex flex-col gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("account")}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-2">
+              <Button asChild variant="outline" className="min-h-11">
+                <Link href="/profil/securite">{t("security")}</Link>
+              </Button>
+              <Button asChild variant="outline" className="min-h-11">
+                <Link href="/profil/donnees">{t("data")}</Link>
+              </Button>
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle>{t("roles")}</CardTitle>

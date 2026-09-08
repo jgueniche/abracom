@@ -259,7 +259,10 @@
     "roles": "Mes rôles",
     "legal": "Textes acceptés",
     "acceptedOn": "acceptée le {date}",
-    "notAccepted": "non acceptée"
+    "notAccepted": "non acceptée",
+    "account": "Mon compte",
+    "security": "Sécurité",
+    "data": "Mes données"
   },
   "more": {
     "title": "Plus",
@@ -1518,5 +1521,49 @@
     "title": "Vous êtes hors ligne",
     "description": "Kesher a besoin d'une connexion pour afficher les informations de l'école. Réessayez dès que le réseau revient.",
     "retry": "Réessayer"
+  },
+  "security": {
+    "title": "Sécurité du compte",
+    "subtitle": "Validation en deux étapes avec une application d'authentification (TOTP).",
+    "status": {
+      "on": "Validation en deux étapes activée",
+      "off": "La validation en deux étapes n'est pas activée."
+    },
+    "requiredNotice": "La validation en deux étapes est obligatoire pour la direction : activez-la pour accéder à l'administration.",
+    "start": "Activer la validation en deux étapes",
+    "scanHint": "Scannez ce code avec Google Authenticator, Authy, 1Password… puis saisissez le code à six chiffres.",
+    "qrAlt": "QR code d'inscription",
+    "secret": "Clé à saisir manuellement",
+    "code": "Code à six chiffres",
+    "confirm": "Confirmer",
+    "enabled": "Validation en deux étapes activée.",
+    "invalidCode": "Code invalide ou expiré.",
+    "disable": "Désactiver",
+    "disableHint": "Saisissez un code actuel pour désactiver la validation en deux étapes.",
+    "disabled": "Validation en deux étapes désactivée.",
+    "adminCannotDisable": "La direction ne peut pas désactiver la validation en deux étapes.",
+    "error": "Opération impossible pour le moment."
+  },
+  "verification": {
+    "title": "Vérification",
+    "description": "Saisissez le code de votre application d'authentification pour continuer.",
+    "code": "Code à six chiffres",
+    "submit": "Vérifier",
+    "invalid": "Code invalide ou expiré.",
+    "help": "Téléphone perdu ? Contactez le secrétariat de l'école."
+  },
+  "dataRights": {
+    "title": "Mes données",
+    "subtitle": "Vos droits d'accès, de portabilité et d'effacement (RGPD).",
+    "export": "Exporter mes données",
+    "exportHint": "Un fichier JSON avec votre profil, vos enfants, vos messages, réponses et notifications.",
+    "exportButton": "Télécharger l'export",
+    "deleteTitle": "Supprimer mon compte",
+    "deleteHint": "Vos données personnelles sont anonymisées immédiatement et votre accès est fermé. Les informations scolaires de vos enfants restent gérées par l'école.",
+    "confirmWord": "SUPPRIMER",
+    "confirmLabel": "Tapez {word} pour confirmer",
+    "confirmMismatch": "Le mot de confirmation ne correspond pas.",
+    "delete": "Supprimer définitivement",
+    "error": "Suppression impossible pour le moment."
   }
 }
