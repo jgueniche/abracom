@@ -38,8 +38,9 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 - **Décision** : `supabase` (CLI) en devDependency (`pnpm db:*`), `supabase/config.toml` versionné
   (projet `kesher`, seeds `supabase/seed/*.sql`). `supabase start` s'exécute sur le poste du développeur
   (Docker Desktop / OrbStack). La CI ne démarre pas Supabase avant la session 3 (tests RLS).
-- **Conséquences** : les clés locales (`pnpm db:status`) vont dans `.env.local` ; le projet cloud
-  `kesher-staging` (UE) est à créer explicitement (coût), voir questions ouvertes.
+- **Conséquences** : les clés locales (`pnpm db:status`) vont dans `.env.local`. Le projet cloud
+  `kesher-staging` sera créé dans une organisation Supabase gratuite dédiée (l'organisation existante
+  facturerait 10 $/mois), en région `eu-west-3` (Paris), décision du porteur du 2026-09-08.
 
 ## ADR-0005 — Variables d'environnement validées par zod, Supabase optionnel au démarrage
 

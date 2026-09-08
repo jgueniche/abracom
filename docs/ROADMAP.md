@@ -41,6 +41,14 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
       production sur https://abracom.vercel.app (build vert, en-têtes de sécurité présents), previews par branche
       protégées par Vercel Authentication (visibles une fois connecté à Vercel). Variables d'environnement à
       ajouter dans Vercel : `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_SITE_URL`, puis `NEXT_PUBLIC_SUPABASE_*` (session 3).
+- [x] Branche `main` créée sur GitHub (commit `07ea95f`) pour servir de branche de production Vercel.
+      **À faire par le porteur** : GitHub → Settings → General → Default branch → `main`.
+- [ ] Projet Supabase cloud `kesher-staging` : à créer dans une **nouvelle organisation gratuite** dédiée
+      (l'org ShiftX facturerait 10 $/mois), région `eu-west-3` (Paris), une fois l'organisation partagée
+      avec le connecteur Claude. Puis renseigner `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+      dans Vercel et `.env.local`.
+- [ ] `supabase start` vérifié localement (Docker indisponible dans l'environnement de la session 1 ; à faire
+      sur le poste du porteur).
 
 ## Session 2 — à faire
 
@@ -67,4 +75,4 @@ Non bloquantes avant la session 3 (à trancher pour les sessions 3–10) :
 8. SMS (Twilio) pour urgences : budget accepté ?
 9. Fournisseur e-mail : Resend (UE) ou domaine e-mail de l'école (SPF/DKIM) ?
 10. Levallois : échéance d'activation ?
-11. **Supabase cloud** : créer `kesher-staging` (région UE, coût mensuel selon plan) — nécessaire à partir de la session 3–4 pour les previews connectées.
+11. **Supabase cloud** : `kesher-staging` dans une organisation gratuite dédiée, région `eu-west-3` (décidé le 2026-09-08, voir Session 1 — détail).
