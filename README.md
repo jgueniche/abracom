@@ -45,7 +45,24 @@ node scripts/brand/generate-icons.ts          # icônes PWA / favicon / apple-ic
 node scripts/dev/screenshots.mjs http://127.0.0.1:3000 ./screenshots /dev/ui /   # captures mobile + desktop
 ```
 
+```bash
+pnpm perf [url]                               # audit Lighthouse mobile (seuil 90 avec STRICT=1)
+pnpm ops:check-env --prod                     # variables d'environnement requises en production
+pnpm ops:storage-sweep [--delete]             # objets de stockage orphelins (RGPD)
+scripts/ops/promote.sh <ref>                  # migrations vers un projet Supabase cloud
+```
+
 Le guide de style est disponible sur `/dev/ui` (développement et previews Vercel).
+
+## Documentation
+
+- [`docs/ROADMAP.md`](./docs/ROADMAP.md) — sessions, état, questions ouvertes
+- [`docs/DECISIONS.md`](./docs/DECISIONS.md) — décisions d'architecture (ADR)
+- [`docs/RGPD.md`](./docs/RGPD.md) — registre, durées de conservation, exercice des droits
+- [`docs/DEPLOIEMENT.md`](./docs/DEPLOIEMENT.md) — staging → production, exploitation
+- [`docs/DEMO.md`](./docs/DEMO.md) — démo scénarisée de 15 minutes
+- [`supabase/jobs/README.md`](./supabase/jobs/README.md) — notifications, cron
+- Guides utilisateurs : `content/guides/*.md`, servis dans l'application (`/aide`) et en PDF
 
 ## Stack
 

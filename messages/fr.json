@@ -273,7 +273,8 @@
     "preferences": "Préférences",
     "language": "Langue",
     "theme": "Thème",
-    "community": "Communauté"
+    "community": "Communauté",
+    "help": "Aide"
   },
   "roles": {
     "super_admin": "Super administrateur",
@@ -324,7 +325,8 @@
       "invalid": "Vérifiez le libellé (AAAA-AAAA) et les dates.",
       "duplicate": "Cette année existe déjà.",
       "saveError": "Enregistrement impossible.",
-      "none": "Aucune année scolaire : créez la première."
+      "none": "Aucune année scolaire : créez la première.",
+      "promotion": "Promotion de niveau"
     },
     "classes": {
       "title": "Classes",
@@ -487,6 +489,26 @@
       "entity": "Objet",
       "details": "Détails",
       "empty": "Aucune entrée."
+    },
+    "promotion": {
+      "title": "Promotion de niveau",
+      "subtitle": "Clôture l'année en cours et inscrit chaque élève dans la classe du niveau suivant.",
+      "noCurrent": "Aucune année scolaire courante.",
+      "noNext": "Créez d'abord l'année qui suit {year} dans la liste des années.",
+      "fromTo": "De {from} vers {to}",
+      "currentClass": "Classe actuelle",
+      "students": "Élèves",
+      "targetLevel": "Niveau cible",
+      "newName": "Nom de la nouvelle classe",
+      "leave": "Quitte l'école (fin de cursus)",
+      "hint": "Les enseignants ne sont pas recopiés : affectez-les ensuite dans « Classes ». Les classes de l'année passée restent consultables en lecture seule.",
+      "confirm": "J'ai vérifié la correspondance des classes et je confirme la bascule d'année.",
+      "confirmRequired": "Cochez la case de confirmation.",
+      "submit": "Lancer la promotion",
+      "done": "Promotion terminée : {classes} classes créées, {students} élèves inscrits, {left} élèves sortis.",
+      "invalid": "Correspondance invalide.",
+      "forbidden": "Réservé à la direction.",
+      "error": "La promotion a échoué ; aucune modification n'a été appliquée."
     }
   },
   "editor": {
@@ -1565,5 +1587,26 @@
     "confirmMismatch": "Le mot de confirmation ne correspond pas.",
     "delete": "Supprimer définitivement",
     "error": "Suppression impossible pour le moment."
+  },
+  "help": {
+    "title": "Aide",
+    "subtitle": "Guides pas à pas pour chaque rôle, consultables ici ou en PDF.",
+    "pdf": "Version PDF",
+    "guides": {
+      "parents": {
+        "title": "Guide des parents",
+        "hint": "Connexion, annonces, classe, messages, agenda, communauté, données."
+      },
+      "enseignants": {
+        "title": "Guide des enseignants",
+        "hint": "Publier, devoirs, évaluations, groupe de classe, rendez-vous."
+      },
+      "direction": {
+        "title": "Guide de la direction",
+        "hint": "Années, familles, annonces, modération, données personnelles."
+      }
+    },
+    "languageNote": "Les guides sont rédigés en français ; la version anglaise arrivera avec les retours des premières familles.",
+    "pdfFooter": "{app} · guide généré le {date}"
   }
 }

@@ -343,3 +343,19 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 - **Conséquences** : un parent supprimé peut être réinvité (nouveau compte) ; les objets du stockage
   orphelins nécessitent un balayage séparé ; le mode développement relâche la CSP (`unsafe-eval`,
   WebSocket HMR) mais jamais la production.
+
+## ADR-0027 — Promotion de niveau en une transaction SQL, guides versionnés en Markdown
+
+- **Contexte** : la bascule d'année touche toutes les classes, inscriptions et élèves à la fois ; une
+  panne à mi-chemin laisserait l'école dans un état incohérent. Les guides doivent être lisibles dans
+  l'application, imprimables et faciles à corriger par une personne non technique.
+- **Décision** : la promotion est une fonction `security definer` réservée à la direction qui applique la
+  correspondance classe → niveau cible fournie par l'assistant (nom de classe modifiable, « quitte
+  l'école » pour la fin de cursus), inscrit les élèves actifs à la date de rentrée, clôture les
+  inscriptions passées, archive les classes et bascule l'année courante dans une seule transaction
+  journalisée ; les enseignants ne sont volontairement pas recopiés. Les guides sont des fichiers Markdown
+  du dépôt (`content/guides`), rendus par le même composant que les annonces et convertis en PDF à la
+  demande à partir de leur plan (titres, paragraphes, puces), sans dépendance supplémentaire.
+- **Conséquences** : la promotion ne se rejoue pas (les classes de l'année cible existantes sont
+  réutilisées par nom) ; les guides n'existent qu'en français pour l'instant et n'embarquent pas de
+  captures d'écran.

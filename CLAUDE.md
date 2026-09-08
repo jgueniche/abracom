@@ -122,14 +122,11 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 - **Session 4 — code complet, validation Supabase en attente** : middleware de session, magic link sans
   inscription libre, callbacks PKCE, onboarding avec CGU versionnées, `lib/auth` + `lib/permissions`,
   perspectives multi-rôle, coquille par rôle. E2e « invitation → 1re connexion » réservé à une stack Supabase.
-- **Session 5 — code complet** : espace `/admin` (familles, classes, utilisateurs, années, import CSV testé,
-  journal), invitations par lots de 20, droits par responsable + restriction judiciaire, audit.
-- **Session 6 — code complet** : annonces (Markdown + modèles, ciblage, planification, accusés de lecture,
-  relance, export CSV, pièces jointes), documents et signatures électroniques, notifications in-app.
-- **Session 7 — code complet** : espace classe (fil typé, devoirs « vu », cahier de vie normalisé + droit à
-  l'image, mots individuels avec accusé de lecture, absences justifiées), vue hebdo enseignant.
-- **Session 8 — code complet** : messagerie temps réel (Realtime), DM selon `can_direct_message`, fils et
-  groupes de classe, réactions, pièces jointes, recherche, signalement, modération. **Fin du code du MVP.**
+- **Sessions 5–8 — code complet (MVP)** : espace `/admin` (familles, classes, utilisateurs, années, import
+  CSV, journal, invitations par lots, restriction judiciaire) · annonces (Markdown, ciblage, planification,
+  accusés de lecture, relance, export CSV), documents et signatures · espace classe (fil, devoirs « vu »,
+  cahier de vie + droit à l'image, mots individuels, absences) · messagerie temps réel (DM, groupes de
+  classe, réactions, pièces jointes, recherche, signalement, modération).
 - **Session 9 — code complet** : agenda (`lib/hebcal`, `lib/calendar`), fêtes juives + Chabbat + parachah +
   fériés, vacances zone C, RSVP / jauge / liste d'attente, bénévolat, flux ICS privé, rappels J-7 / J-1.
 - **Session 10 — code complet, clés réelles à valider** : livraisons planifiées par trigger selon les
@@ -144,6 +141,9 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 - **Session 14 — code complet, validation Supabase en attente** : `docs/RGPD.md`, export JSON et
   suppression de compte (anonymisation), purge de rétention nocturne, 2FA TOTP (obligatoire direction),
   CSP stricte à nonce, Sentry optionnel. 216 assertions pgTAP.
-- **Prochaine session — 15** : guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule
-  staging → prod, promotion de niveau, balayage du stockage.
+- **Session 15 — code et documents complets** : guides utilisateurs (`content/guides`, `/aide`, PDF),
+  assistant de promotion de niveau (`promote_school_year`), `docs/DEMO.md`, `docs/DEPLOIEMENT.md`, scripts
+  `ops:check-env`, `ops:storage-sweep`, `promote.sh`. 225 assertions pgTAP. **V1 codée en intégralité.**
+- **Suite** : créer `kesher-staging` (org Supabase gratuite, `eu-west-3`), renseigner les clés, rejouer les
+  validations listées par session dans `docs/ROADMAP.md`, dérouler la démo avec la direction.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

@@ -2940,12 +2940,17 @@ export type Database = {
           unread_count: number
         }[]
       }
+      next_level_id: { Args: { level: string }; Returns: string }
       notification_group: { Args: { kind: string }; Returns: string }
       notify_due_content: { Args: Record<PropertyKey, never>; Returns: number }
       notify_due_forms: { Args: Record<PropertyKey, never>; Returns: number }
       notify_event: { Args: { event: string }; Returns: number }
       open_dm: { Args: { other: string }; Returns: string }
       promote_event_waitlist: { Args: { event: string }; Returns: number }
+      promote_school_year: {
+        Args: { current_year: string; mapping: Json; next_year: string }
+        Returns: Json
+      }
       publish_assessments: {
         Args: { class_: string; period: string }
         Returns: number

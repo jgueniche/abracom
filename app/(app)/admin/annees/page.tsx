@@ -1,4 +1,5 @@
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, GraduationCapIcon } from "lucide-react";
+import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/components/layouts/page-header";
@@ -26,7 +27,20 @@ export default async function YearsPage() {
 
   return (
     <>
-      <PageHeader title={t("title")} description={t("subtitle")} />
+      <PageHeader
+        title={t("title")}
+        description={t("subtitle")}
+        actions={
+          admin ? (
+            <Button asChild variant="outline" className="min-h-11">
+              <Link href="/admin/annees/promotion">
+                <GraduationCapIcon aria-hidden />
+                {t("promotion")}
+              </Link>
+            </Button>
+          ) : undefined
+        }
+      />
       <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
         <Card>
           <CardContent>

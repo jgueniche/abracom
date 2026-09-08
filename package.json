@@ -2,7 +2,7 @@
   "name": "kesher",
   "version": "0.1.0",
   "private": true,
-  "description": "Kesher — plateforme communautaire de l'École Abravanel (Neuilly-sur-Seine)",
+  "description": "Kesher \u2014 plateforme communautaire de l'\u00c9cole Abravanel (Neuilly-sur-Seine)",
   "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=22.0.0",
@@ -29,7 +29,9 @@
     "prepare": "husky",
     "db:test": "scripts/db/test-local.sh --seed",
     "db:types:local": "scripts/db/gen-types-local.sh",
-    "perf": "node scripts/perf/lighthouse.mjs"
+    "perf": "node scripts/perf/lighthouse.mjs",
+    "ops:check-env": "node scripts/ops/check-env.mjs",
+    "ops:storage-sweep": "node scripts/ops/storage-sweep.mjs"
   },
   "dependencies": {
     "@hebcal/core": "^6.9.2",

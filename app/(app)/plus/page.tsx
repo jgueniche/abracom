@@ -1,5 +1,6 @@
 import {
   BellIcon,
+  BookOpenIcon,
   ChevronRightIcon,
   ExternalLinkIcon,
   FolderIcon,
@@ -68,6 +69,11 @@ export default async function MorePage() {
             <Link href="/documents" className={linkClass}>
               <FolderIcon className="size-4" aria-hidden />
               {tNav("documents")}
+              <ChevronRightIcon className="ml-auto size-4" aria-hidden />
+            </Link>
+            <Link href="/aide" className={linkClass}>
+              <BookOpenIcon className="size-4" aria-hidden />
+              {t("help")}
               <ChevronRightIcon className="ml-auto size-4" aria-hidden />
             </Link>
             <Link href="/communaute" className={linkClass}>

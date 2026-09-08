@@ -273,7 +273,8 @@
     "preferences": "Preferences",
     "language": "Language",
     "theme": "Theme",
-    "community": "Community"
+    "community": "Community",
+    "help": "Help"
   },
   "roles": {
     "super_admin": "Super administrator",
@@ -324,7 +325,8 @@
       "invalid": "Check the label (YYYY-YYYY) and the dates.",
       "duplicate": "This year already exists.",
       "saveError": "Could not save.",
-      "none": "No school year yet: create the first one."
+      "none": "No school year yet: create the first one.",
+      "promotion": "Level promotion"
     },
     "classes": {
       "title": "Classes",
@@ -487,6 +489,26 @@
       "entity": "Object",
       "details": "Details",
       "empty": "No entry."
+    },
+    "promotion": {
+      "title": "Level promotion",
+      "subtitle": "Closes the current year and enrols every student in the next level's class.",
+      "noCurrent": "No current school year.",
+      "noNext": "First create the year following {year} in the years list.",
+      "fromTo": "From {from} to {to}",
+      "currentClass": "Current class",
+      "students": "Students",
+      "targetLevel": "Target level",
+      "newName": "New class name",
+      "leave": "Leaves the school (end of the curriculum)",
+      "hint": "Teachers are not copied: assign them afterwards in “Classes”. Last year's classes remain readable.",
+      "confirm": "I checked the class mapping and confirm the year switch.",
+      "confirmRequired": "Tick the confirmation box.",
+      "submit": "Run the promotion",
+      "done": "Promotion done: {classes} classes created, {students} students enrolled, {left} students left.",
+      "invalid": "Invalid mapping.",
+      "forbidden": "Head of school only.",
+      "error": "The promotion failed; nothing was changed."
     }
   },
   "editor": {
@@ -1565,5 +1587,26 @@
     "confirmMismatch": "The confirmation word does not match.",
     "delete": "Delete permanently",
     "error": "Deletion is not possible right now."
+  },
+  "help": {
+    "title": "Help",
+    "subtitle": "Step-by-step guides for each role, readable here or as PDF.",
+    "pdf": "PDF version",
+    "guides": {
+      "parents": {
+        "title": "Parents' guide",
+        "hint": "Sign-in, announcements, class, messages, calendar, community, data."
+      },
+      "enseignants": {
+        "title": "Teachers' guide",
+        "hint": "Publishing, homework, assessments, class group, appointments."
+      },
+      "direction": {
+        "title": "Head of school guide",
+        "hint": "Years, families, announcements, moderation, personal data."
+      }
+    },
+    "languageNote": "Guides are written in French; the English version will follow the first families' feedback.",
+    "pdfFooter": "{app} · guide generated on {date}"
   }
 }

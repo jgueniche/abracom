@@ -1,7 +1,8 @@
 # Feuille de route — Kesher
 
 Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committée**.
-**MVP présentable à la direction = sessions 1–8.** Sessions 9–15 = V1 complète.
+**MVP présentable à la direction = sessions 1–8.** Sessions 9–15 = V1 complète. État au 2026-09-08 : les quinze
+sessions sont codées ; la validation sur une stack Supabase cloud reste à faire (voir « Bilan V1 »).
 
 | #   | Livrable                                                                                                                     | Definition of done                                      | État                                                                                                |
 | --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -19,7 +20,7 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 | 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | 🟡 code complet, réservation de créneau testée en pgTAP ; parcours à valider sur une stack Supabase |
 | 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | 🟡 code complet ; installation à valider sur iOS / Android, Lighthouse mesuré sur le déploiement    |
 | 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | 🟡 code complet ; 2FA et suppression de compte à valider sur une stack Supabase                     |
-| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | ⬜                                                                                                  |
+| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | 🟡 code et documents complets ; démo à jouer sur une stack Supabase avant la présentation           |
 
 ## Session 1 — détail
 
@@ -365,6 +366,30 @@ Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committ�
 - [ ] Valider sur une stack Supabase : inscription TOTP réelle, suppression d'un compte de démo, exécution
       de la purge, absence d'erreur CSP dans la console sur les pages connectées
 - [ ] Balayage mensuel des objets de stockage orphelins (script d'exploitation) : session 15
+
+## Session 15 — détail
+
+- [x] **Guides utilisateurs** (`content/guides/*.md`, français) : parents, enseignants, direction ; pages
+      in-app `/aide` et `/aide/[slug]` (Markdown assaini), **export PDF** `/api/guides/[slug]`
+      (`@react-pdf/renderer`, pagination) ; lien « Aide » dans le menu Plus
+- [x] **Promotion de niveau** : fonction SQL `promote_school_year` (admin, transactionnelle, journalisée) —
+      classes recréées au niveau suivant (nom proposé), élèves inscrits à la date de rentrée, fin de cursus
+      → élèves sortis, année passée archivée (lecture seule), année suivante courante ; assistant
+      `/admin/annees/promotion` avec correspondance modifiable et confirmation
+- [x] `docs/DEMO.md` (déroulé de 15 minutes, comptes fictifs, points à souligner) et `docs/DEPLOIEMENT.md`
+      (première mise en production, mises à jour, sauvegardes, exploitation récurrente)
+- [x] Scripts d'exploitation : `scripts/ops/promote.sh` (link + `db push` + checklist),
+      `pnpm ops:check-env --prod` (variables requises), `pnpm ops:storage-sweep [--delete]` (orphelins, RGPD §3)
+- [x] Tests : 9 pgTAP (`009_promotion.sql`) ; README et scripts documentés
+- [ ] Jouer la démo sur `kesher-staging` avec la direction ; traduire les guides en anglais après les
+      premiers retours ; captures d'écran pour les guides PDF
+
+## Bilan V1
+
+Les quinze sessions sont codées et testées localement (unitaires, e2e, pgTAP, build). Restent, côté
+porteur : créer l'organisation Supabase gratuite et le projet `kesher-staging`, renseigner les clés
+(Resend, VAPID, `CRON_SECRET`, Sentry), rejouer les validations « à valider sur une stack Supabase »
+listées dans chaque session, puis dérouler `docs/DEMO.md`.
 
 ## Questions ouvertes (§15 du brief)
 
