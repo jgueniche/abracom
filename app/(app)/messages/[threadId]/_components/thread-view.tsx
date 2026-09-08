@@ -364,7 +364,7 @@ function MessageItem({
                 <input type="hidden" name="emoji" value={emoji} />
                 <button
                   type="submit"
-                  className="rounded-full border bg-background px-2 py-0.5 text-xs"
+                  className="min-h-11 rounded-full border bg-background px-2 py-0.5 text-xs md:min-h-0"
                   disabled={!canWrite}
                 >
                   {emoji} {entry.count}
@@ -374,7 +374,7 @@ function MessageItem({
             {canWrite && (
               <details className="relative">
                 <summary
-                  className="cursor-pointer list-none px-1 text-xs text-muted-foreground"
+                  className="flex min-h-11 cursor-pointer list-none items-center px-2 text-xs text-muted-foreground md:min-h-0"
                   aria-label={t("message.react")}
                 >
                   ＋
@@ -386,7 +386,7 @@ function MessageItem({
                       <input type="hidden" name="emoji" value={emoji} />
                       <button
                         type="submit"
-                        className="rounded-full px-1.5 py-0.5 text-base hover:bg-accent"
+                        className="min-h-11 min-w-11 rounded-full px-1.5 py-0.5 text-base hover:bg-accent md:min-h-0 md:min-w-0"
                       >
                         {emoji}
                       </button>
@@ -552,7 +552,7 @@ function Composer({
         }}
       />
       <div className="flex items-center justify-between gap-2">
-        <label className="flex min-h-10 cursor-pointer items-center gap-2 text-xs text-muted-foreground">
+        <label className="flex min-h-11 cursor-pointer items-center gap-2 text-xs text-muted-foreground">
           <PaperclipIcon className="size-4" aria-hidden />
           <span className="sr-only sm:not-sr-only">{t("composer.attach")}</span>
           <input
@@ -567,7 +567,7 @@ function Composer({
           {state.status === "error" && (
             <span className="text-xs text-destructive">{state.message}</span>
           )}
-          <Button type="submit" size="sm" className="min-h-10" disabled={pending}>
+          <Button type="submit" size="sm" className="min-h-11" disabled={pending}>
             <SendIcon aria-hidden />
             {t("composer.send")}
           </Button>

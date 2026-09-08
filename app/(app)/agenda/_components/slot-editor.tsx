@@ -39,7 +39,7 @@ export function SlotEditor({
               <form action={removeSlot}>
                 <input type="hidden" name="slotId" value={slot.id} />
                 <input type="hidden" name="eventId" value={eventId} />
-                <Button type="submit" variant="ghost" size="sm" className="min-h-9">
+                <Button type="submit" variant="ghost" size="sm" className="min-h-11">
                   <XIcon aria-hidden />
                   {t("removeSlot")}
                 </Button>

@@ -101,7 +101,7 @@ export default async function FormPage({
                     href={`/communaute/formulaires/${form.id}?s=${kid.id}`}
                     aria-current={kid.id === studentId ? "page" : undefined}
                     className={cn(
-                      "flex min-h-10 items-center gap-2 rounded-full border px-4 text-sm font-medium",
+                      "flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-medium",
                       kid.id === studentId
                         ? "border-primary bg-primary text-primary-foreground"
                         : "hover:bg-accent",

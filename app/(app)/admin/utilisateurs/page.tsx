@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { requireSchoolStaff } from "@/lib/auth/guards";
 import { isSchoolAdmin } from "@/lib/permissions";
 import {
@@ -11,20 +12,25 @@ import {
   resendInvitation,
   setMembershipStatus,
 } from "@/server/actions/admin/members";
-import { getMembers } from "@/server/queries/admin";
+import { getMembers, MEMBERS_PAGE_SIZE } from "@/server/queries/admin";
 
 import { InviteForm } from "./invite-form";
 import { SendInvitations } from "./send-invitations";
 
 type Member = Awaited<ReturnType<typeof getMembers>>["team"][number];
 
-export default async function MembersPage() {
+export default async function MembersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q = "" } = await searchParams;
   const { user, schoolId } = await requireSchoolStaff();
   const [t, tRoles, format, members] = await Promise.all([
     getTranslations("admin.members"),
     getTranslations("roles"),
     getFormatter(),
-    getMembers(schoolId),
+    getMembers(schoolId, q),
   ]);
   const admin = isSchoolAdmin(user.roles, schoolId);
 
@@ -58,7 +64,7 @@ export default async function MembersPage() {
         <div className="flex flex-wrap gap-2">
           <form action={resendInvitation}>
             <input type="hidden" name="userId" value={m.user_id} />
-            <Button type="submit" variant="outline" size="sm" className="min-h-10">
+            <Button type="submit" variant="outline" size="sm" className="min-h-11">
               {t("resend")}
             </Button>
           </form>
@@ -71,7 +77,7 @@ export default async function MembersPage() {
                   name="status"
                   value={m.status === "suspended" ? "active" : "suspended"}
                 />
-                <Button type="submit" variant="ghost" size="sm" className="min-h-10">
+                <Button type="submit" variant="ghost" size="sm" className="min-h-11">
                   {m.status === "suspended" ? t("reactivate") : t("suspend")}
                 </Button>
               </form>
@@ -81,7 +87,7 @@ export default async function MembersPage() {
                   type="submit"
                   variant="ghost"
                   size="sm"
-                  className="min-h-10 text-destructive"
+                  className="min-h-11 text-destructive"
                 >
                   {t("remove")}
                 </Button>
@@ -112,9 +118,31 @@ export default async function MembersPage() {
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               {admin && <SendInvitations pending={members.pending} />}
-              <details>
-                <summary className="cursor-pointer text-sm font-medium text-primary">
-                  {t("showParents", { count: members.parents.length })}
+              <form method="get" className="flex flex-wrap items-end gap-2">
+                <div className="flex min-w-48 flex-1 flex-col gap-1">
+                  <label htmlFor="member-search" className="text-sm font-medium">
+                    {t("search")}
+                  </label>
+                  <Input
+                    id="member-search"
+                    name="q"
+                    defaultValue={q}
+                    placeholder={t("searchPlaceholder")}
+                    className="min-h-11"
+                  />
+                </div>
+                <Button type="submit" variant="outline" className="min-h-11">
+                  {t("search")}
+                </Button>
+              </form>
+              {members.parentsTotal > members.parents.length && (
+                <p className="text-sm text-muted-foreground">
+                  {t("truncated", { count: MEMBERS_PAGE_SIZE })}
+                </p>
+              )}
+              <details open={q.trim() !== ""}>
+                <summary className="flex min-h-11 cursor-pointer items-center text-sm font-medium text-primary">
+                  {t("showParents", { count: members.parentsTotal })}
                 </summary>
                 <ul className="divide-y">{members.parents.map(row)}</ul>
               </details>

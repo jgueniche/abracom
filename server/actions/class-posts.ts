@@ -109,6 +109,8 @@ export async function saveClassPost(
       .getAll("taggedStudentIds")
       .map(String)
       .filter((id) => uuid.test(id));
+    const consent = formData.get("consent") === "on";
+    if (files.length > 0 && !consent) return { status: "error", message: t("consentRequired") };
     let index = 0;
     for (const file of files.slice(0, 20)) {
       if (file.size > MAX_UPLOAD_BYTES || !IMAGE_MIME_TYPES.has(file.type)) continue;
@@ -125,7 +127,7 @@ export async function saveClassPost(
         width: image.width,
         height: image.height,
         blurhash: image.blurhash,
-        consent_checked: tagged.length > 0,
+        consent_checked: consent,
         tagged_student_ids: tagged,
         sort_order: index++,
       });

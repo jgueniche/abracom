@@ -1,9 +1,10 @@
 import { ShieldAlertIcon, ShieldCheckIcon } from "lucide-react";
-import { getFormatter, getTranslations } from "next-intl/server";
+import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { levelLabel } from "@/lib/levels";
 import type { ChildWithClass } from "@/server/queries/family";
 
 export async function StudentCard({
@@ -14,6 +15,7 @@ export async function StudentCard({
   compact?: boolean;
 }) {
   const t = await getTranslations("family");
+  const locale = await getLocale();
   const format = await getFormatter();
   const { student } = child;
   const enrollment = student.enrollments[0];
@@ -35,7 +37,9 @@ export async function StudentCard({
               {student.first_name} {student.last_name}
             </CardTitle>
             <CardDescription>
-              {cls ? `${cls.name}${cls.level ? ` · ${cls.level.label_fr}` : ""}` : t("noClass")}
+              {cls
+                ? `${cls.name}${cls.level ? ` · ${levelLabel(cls.level, locale)}` : ""}`
+                : t("noClass")}
             </CardDescription>
           </div>
         </div>

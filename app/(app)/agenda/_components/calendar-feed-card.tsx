@@ -96,7 +96,7 @@ export function CalendarFeedCard({
                 })}
               </span>
               <form action={rotateCalendarFeed} className="flex items-center gap-2">
-                <Button type="submit" variant="ghost" size="sm" className="min-h-9">
+                <Button type="submit" variant="ghost" size="sm" className="min-h-11">
                   <RefreshCwIcon aria-hidden />
                   {t("rotate")}
                 </Button>

@@ -45,7 +45,7 @@ export default async function FamilyPage() {
                           asChild
                           variant="outline"
                           size="sm"
-                          className="min-h-10"
+                          className="min-h-11"
                         >
                           <Link
                             href={

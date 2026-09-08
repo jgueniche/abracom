@@ -26,9 +26,9 @@ export function ModerateForm({
         defaultValue={defaultReason}
         required
         maxLength={300}
-        className="min-h-10 max-w-xs"
+        className="min-h-11 max-w-xs"
       />
-      <SubmitButton variant="destructive" size="sm" className="min-h-10">
+      <SubmitButton variant="destructive" size="sm" className="min-h-11">
         {t("remove")}
       </SubmitButton>
       <ActionMessage status={state.status} message={state.message} />

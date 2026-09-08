@@ -27,7 +27,7 @@ export function BookForm({
         <select
           name="studentId"
           aria-label={t("child")}
-          className="min-h-10 rounded-lg border border-input bg-background px-2 text-sm"
+          className="min-h-11 rounded-lg border border-input bg-background px-2 text-sm"
         >
           {students.map((s) => (
             <option key={s.id} value={s.id}>
@@ -38,7 +38,7 @@ export function BookForm({
       ) : (
         <input type="hidden" name="studentId" value={students[0]?.id ?? ""} />
       )}
-      <SubmitButton size="sm" className="min-h-10">
+      <SubmitButton size="sm" className="min-h-11">
         {t("book")}
       </SubmitButton>
       <ActionMessage status={state.status} message={state.message} />

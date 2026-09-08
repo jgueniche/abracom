@@ -86,14 +86,14 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
                   <form action={reviewAbsence}>
                     <input type="hidden" name="absenceId" value={a.id} />
                     <input type="hidden" name="status" value="justified" />
-                    <Button type="submit" variant="outline" size="sm" className="min-h-10">
+                    <Button type="submit" variant="outline" size="sm" className="min-h-11">
                       {t("justify")}
                     </Button>
                   </form>
                   <form action={reviewAbsence}>
                     <input type="hidden" name="absenceId" value={a.id} />
                     <input type="hidden" name="status" value="unjustified" />
-                    <Button type="submit" variant="ghost" size="sm" className="min-h-10">
+                    <Button type="submit" variant="ghost" size="sm" className="min-h-11">
                       {t("unjustify")}
                     </Button>
                   </form>

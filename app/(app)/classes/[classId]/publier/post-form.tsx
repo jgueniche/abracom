@@ -25,6 +25,7 @@ export function PostForm({
   const [state, action] = useActionState(saveClassPost, initial);
   const [type, setType] = useState<(typeof TYPES)[number]>("journal");
   const [compressing, setCompressing] = useState(false);
+  const [hasMedia, setHasMedia] = useState(false);
 
   return (
     <form action={action} className="flex flex-col gap-5">
@@ -86,6 +87,7 @@ export function PostForm({
           multiple
           className="min-h-11"
           onChange={async (event) => {
+            setHasMedia((event.currentTarget.files?.length ?? 0) > 0);
             setCompressing(true);
             try {
               await compressFileInput(event.currentTarget);
@@ -95,6 +97,12 @@ export function PostForm({
           }}
         />
         {compressing && <p className="text-xs text-muted-foreground">{t("post.compressing")}</p>}
+        {hasMedia && (
+          <label className="flex min-h-11 items-start gap-2 text-sm">
+            <input type="checkbox" name="consent" required className="mt-1 size-5 accent-primary" />
+            <span>{t("post.consent")}</span>
+          </label>
+        )}
       </div>
       <fieldset className="flex flex-col gap-2">
         <legend className="text-sm font-medium">{t("post.tag")}</legend>
@@ -102,7 +110,7 @@ export function PostForm({
           {students.map((s) => (
             <label
               key={s.id}
-              className={`flex min-h-10 items-center gap-2 text-sm ${s.imageRights ? "" : "text-muted-foreground"}`}
+              className={`flex min-h-11 items-center gap-2 text-sm ${s.imageRights ? "" : "text-muted-foreground"}`}
             >
               <input
                 type="checkbox"

@@ -88,7 +88,7 @@ export async function PostCard({
                     type="submit"
                     variant={done ? "secondary" : "outline"}
                     size="sm"
-                    className="min-h-10"
+                    className="min-h-11"
                     aria-pressed={done}
                   >
                     <CheckIcon aria-hidden />

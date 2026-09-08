@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireClassAccess } from "@/lib/auth/class-access";
 import { markNoteRead } from "@/server/actions/individual-notes";
-import { getIndividualNotes } from "@/server/queries/class-space";
+import { getIndividualNotesForStudents } from "@/server/queries/class-space";
 
 import { NoteForm } from "./note-form";
 
@@ -20,9 +20,8 @@ export default async function NotesPage({ params }: { params: Promise<{ classId:
   ]);
   const canWrite = isTeacher || isStaff;
   const targets = canWrite ? cls.students : cls.students.filter((s) => myStudentIds.includes(s.id));
-  const notesByStudent = await Promise.all(
-    targets.map(async (s) => ({ student: s, notes: await getIndividualNotes(s.id) })),
-  );
+  const notes = await getIndividualNotesForStudents(targets.map((s) => s.id));
+  const notesByStudent = targets.map((s) => ({ student: s, notes: notes.get(s.id) ?? [] }));
   const total = notesByStudent.reduce((n, s) => n + s.notes.length, 0);
 
   return (
@@ -95,7 +94,7 @@ export default async function NotesPage({ params }: { params: Promise<{ classId:
                         <form action={markNoteRead}>
                           <input type="hidden" name="noteId" value={note.id} />
                           <input type="hidden" name="classId" value={classId} />
-                          <Button type="submit" size="sm" className="min-h-10">
+                          <Button type="submit" size="sm" className="min-h-11">
                             <CheckIcon aria-hidden />
                             {t("read")}
                           </Button>

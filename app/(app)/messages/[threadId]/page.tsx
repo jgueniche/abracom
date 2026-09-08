@@ -52,7 +52,11 @@ export default async function ThreadPage({
   const title =
     thread.kind === "dm"
       ? (other?.name ?? t("kinds.dm"))
-      : `${thread.class?.name ? `${thread.class.name} · ` : ""}${thread.title ?? t(`kinds.${thread.kind}`)}`;
+      : `${thread.class?.name ? `${thread.class.name} · ` : ""}${
+          thread.kind === "class_group" || thread.kind === "class_official"
+            ? t(`kinds.${thread.kind}`)
+            : (thread.title ?? t(`kinds.${thread.kind}`))
+        }`;
 
   const writer = canWriteInSchool(user.roles, thread.school_id);
   let closedReason: string | null = null;
@@ -80,7 +84,7 @@ export default async function ThreadPage({
             {me && (
               <form action={toggleMute}>
                 <input type="hidden" name="threadId" value={thread.id} />
-                <Button type="submit" variant="outline" size="sm" className="min-h-10">
+                <Button type="submit" variant="outline" size="sm" className="min-h-11">
                   {me.muted ? <BellIcon aria-hidden /> : <BellOffIcon aria-hidden />}
                   {me.muted ? t("unmute") : t("mute")}
                 </Button>
@@ -91,7 +95,7 @@ export default async function ThreadPage({
                 <form action={setThreadState}>
                   <input type="hidden" name="threadId" value={thread.id} />
                   <input type="hidden" name="locked" value={String(!thread.locked)} />
-                  <Button type="submit" variant="outline" size="sm" className="min-h-10">
+                  <Button type="submit" variant="outline" size="sm" className="min-h-11">
                     {thread.locked ? <LockOpenIcon aria-hidden /> : <LockIcon aria-hidden />}
                     {thread.locked ? t("unlock") : t("lock")}
                   </Button>
@@ -99,7 +103,7 @@ export default async function ThreadPage({
                 <form action={setThreadState}>
                   <input type="hidden" name="threadId" value={thread.id} />
                   <input type="hidden" name="archived" value={String(!thread.archived)} />
-                  <Button type="submit" variant="ghost" size="sm" className="min-h-10">
+                  <Button type="submit" variant="ghost" size="sm" className="min-h-11">
                     <ArchiveIcon aria-hidden />
                     {thread.archived ? t("unarchive") : t("archive")}
                   </Button>
@@ -125,14 +129,14 @@ export default async function ThreadPage({
           defaultValue={query}
           placeholder={t("searchPlaceholder")}
           aria-label={t("search")}
-          className="min-h-10"
+          className="min-h-11"
         />
-        <Button type="submit" variant="outline" className="min-h-10">
+        <Button type="submit" variant="outline" className="min-h-11">
           <SearchIcon aria-hidden />
           {t("search")}
         </Button>
         {query && (
-          <Button asChild variant="ghost" className="min-h-10">
+          <Button asChild variant="ghost" className="min-h-11">
             <Link href={`/messages/${thread.id}`}>{t("clearSearch")}</Link>
           </Button>
         )}

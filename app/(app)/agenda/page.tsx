@@ -172,7 +172,7 @@ export default async function AgendaPage({
               href={link({ f: key })}
               aria-current={filter === key ? "page" : undefined}
               className={cn(
-                "flex min-h-10 items-center rounded-full border px-4 text-sm font-medium",
+                "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
                 filter === key
                   ? "border-primary bg-primary text-primary-foreground"
                   : "hover:bg-accent",

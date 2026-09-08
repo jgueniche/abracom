@@ -30,7 +30,7 @@ export async function getAdminClasses(schoolId: string) {
     .from("classes")
     .select(
       `id, name, room, capacity, archived,
-       level:levels ( id, code, label_fr, sort_order ),
+       level:levels ( id, code, label_fr, label_en, sort_order ),
        school_year:school_years!inner ( id, label, is_current ),
        enrollments ( count ),
        class_teachers ( role, subject, profile:profiles ( id, first_name, last_name ) )`,
@@ -50,7 +50,7 @@ export async function getClassDetail(schoolId: string, classId: string) {
     .from("classes")
     .select(
       `id, name, room, capacity, archived, level_id,
-       level:levels ( code, label_fr ),
+       level:levels ( code, label_fr, label_en ),
        class_teachers ( role, subject, user_id, profile:profiles ( id, first_name, last_name ) ),
        enrollments ( id, joined_on, left_on, student:students ( id, first_name, last_name, birth_date, status ) )`,
     )
@@ -148,22 +148,49 @@ export async function getStudentDetail(schoolId: string, studentId: string) {
   };
 }
 
-export async function getMembers(schoolId: string) {
+export const MEMBERS_PAGE_SIZE = 200;
+
+/** Team and families of the school; families are searchable and capped (large schools). */
+export async function getMembers(schoolId: string, query = "") {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const select =
+    "id, user_id, role, status, invited_at, accepted_at, created_at, profile:profiles!inner ( id, first_name, last_name, contact:profile_contacts ( phone ) )";
+  const teamRequest = supabase
     .from("memberships")
-    .select(
-      "id, user_id, role, status, invited_at, accepted_at, created_at, profile:profiles ( id, first_name, last_name, contact:profile_contacts ( phone ) )",
-    )
+    .select(select)
     .eq("school_id", schoolId)
+    .in("role", ["super_admin", "school_admin", "staff", "teacher"])
     .order("created_at");
-  if (error) throw error;
-  const team = data.filter((m) =>
-    ["super_admin", "school_admin", "staff", "teacher"].includes(m.role),
-  );
-  const parents = data.filter((m) => m.role === "parent" || m.role === "guardian");
-  const pending = parents.filter((m) => m.status === "invited" && m.invited_at === null).length;
-  return { team, parents, pending };
+  let parentsRequest = supabase
+    .from("memberships")
+    .select(select, { count: "exact" })
+    .eq("school_id", schoolId)
+    .in("role", ["parent", "guardian"]);
+  const needle = escapeLike(query.trim());
+  if (needle) {
+    parentsRequest = parentsRequest.or(`first_name.ilike.%${needle}%,last_name.ilike.%${needle}%`, {
+      referencedTable: "profiles",
+    });
+  }
+  const [team, parents, pendingCount] = await Promise.all([
+    teamRequest,
+    parentsRequest.order("created_at").range(0, MEMBERS_PAGE_SIZE - 1),
+    supabase
+      .from("memberships")
+      .select("id", { count: "exact", head: true })
+      .eq("school_id", schoolId)
+      .in("role", ["parent", "guardian"])
+      .eq("status", "invited")
+      .is("invited_at", null),
+  ]);
+  if (team.error) throw team.error;
+  if (parents.error) throw parents.error;
+  return {
+    team: team.data,
+    parents: parents.data,
+    parentsTotal: parents.count ?? parents.data.length,
+    pending: pendingCount.count ?? 0,
+  };
 }
 
 export async function getAuditLog(schoolId: string, limit = 100) {

@@ -14,7 +14,11 @@ import { localDateKey } from "@/lib/calendar/dates";
 import { TIME_ZONE } from "@/lib/i18n/config";
 import { canWriteInSchool, isSchoolStaff } from "@/lib/permissions";
 import { cancelSlotSignup } from "@/server/actions/agenda";
+import { cache } from "react";
+
 import { getEvent, getEventRecipients } from "@/server/queries/agenda";
+
+const loadEvent = cache((userId: string, id: string) => getEvent(userId, id));
 
 import { RsvpBadge } from "../_components/rsvp-badge";
 import { RsvpForm } from "../_components/rsvp-form";
@@ -27,7 +31,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const user = await requireCurrentUser();
-  const event = await getEvent(user.id, id);
+  const event = await loadEvent(user.id, id);
   return { title: event?.title ?? "" };
 }
 
@@ -37,7 +41,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
   const [t, format, event] = await Promise.all([
     getTranslations("agenda"),
     getFormatter(),
-    getEvent(user.id, id),
+    loadEvent(user.id, id),
   ]);
   if (!event) notFound();
 

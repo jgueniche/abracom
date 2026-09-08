@@ -22,7 +22,8 @@
     "save": "Enregistrer",
     "cancel": "Annuler",
     "close": "Fermer",
-    "skipToContent": "Aller au contenu"
+    "skipToContent": "Aller au contenu",
+    "preferences": "Préférences"
   },
   "nav": {
     "home": "Accueil",
@@ -419,7 +420,15 @@
       "guardianRole": {
         "parent": "Parent",
         "guardian": "Lecture seule"
-      }
+      },
+      "blockedShort": "accès restreint",
+      "imageRights": "Droit à l'image",
+      "imageRightsSigned": "Autorisation signée le {date}",
+      "imageRightsMissing": "Aucune autorisation signée : l'élève ne peut pas être identifié sur les photos.",
+      "imageRightsRevoke": "Retirer l'autorisation",
+      "imageRightsMark": "Enregistrer une autorisation papier",
+      "imageRightsRevoked": "Autorisation retirée ; l'élève n'apparaît plus sur aucune photo identifiée.",
+      "imageRightsMarked": "Autorisation enregistrée."
     },
     "members": {
       "title": "Utilisateurs",
@@ -454,7 +463,10 @@
       "batchRemaining": "Restantes : {count}",
       "batchFailed": "Échecs : {count}",
       "showParents": "Afficher les parents ({count})",
-      "lastLink": "Dernier lien : {date}"
+      "lastLink": "Dernier lien : {date}",
+      "search": "Rechercher un membre",
+      "searchPlaceholder": "Nom, prénom",
+      "truncated": "Seuls les {count} premiers résultats sont affichés : affinez la recherche."
     },
     "import": {
       "title": "Import CSV des familles",
@@ -789,7 +801,9 @@
       "imageRightsBlocked": "Un élève tagué n'a pas de droit à l'image signé.",
       "delete": "Supprimer",
       "deleteMedia": "Retirer la photo",
-      "compressing": "Compression des photos…"
+      "compressing": "Compression des photos…",
+      "consent": "J'atteste qu'aucun enfant sans autorisation de droit à l'image n'apparaît sur ces photos.",
+      "consentRequired": "Merci de confirmer que les photos ne montrent aucun enfant sans autorisation."
     },
     "journal": {
       "empty": "Pas encore de photos.",

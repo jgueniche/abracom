@@ -65,7 +65,7 @@ export async function MediaGrid({
                   type="submit"
                   size="icon"
                   variant="secondary"
-                  className="size-8"
+                  className="size-11 md:size-8"
                   aria-label={t("deleteMedia")}
                 >
                   <XIcon className="size-4" />

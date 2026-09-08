@@ -67,7 +67,7 @@ export default async function StudentsPage({
                         .filter((g) => g.profile)
                         .map(
                           (g) =>
-                            `${g.profile!.first_name} ${g.profile!.last_name}${g.access_blocked ? " ⛔" : ""}`,
+                            `${g.profile!.first_name} ${g.profile!.last_name}${g.access_blocked ? ` (${t("blockedShort")})` : ""}`,
                         )
                         .join(", ") || t("noGuardians")}
                     </p>

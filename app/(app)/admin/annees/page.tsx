@@ -66,7 +66,7 @@ export default async function YearsPage() {
                     {admin && !year.is_current && (
                       <form action={setCurrentSchoolYear}>
                         <input type="hidden" name="yearId" value={year.id} />
-                        <Button type="submit" variant="outline" size="sm" className="min-h-10">
+                        <Button type="submit" variant="outline" size="sm" className="min-h-11">
                           <CheckIcon aria-hidden />
                           {t("setCurrent")}
                         </Button>

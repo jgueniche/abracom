@@ -419,9 +419,12 @@ migrations `20260908172400` et `20260908172500` (ADR-0029) et dans l'application
 - [x] PWA : nonce du script de thème, réabonnement push (`pushsubscriptionchange` + `/api/push/subscription`),
       désinscription à la déconnexion et à la reprise d'un appareil partagé, navigation vérifiée dans le
       service worker, cache versionné par build (`/sw.js` servi par une route)
-- [ ] Interface : cibles tactiles ≥ 44 px partout, titres de fils traduits, libellés de niveau selon la
-      langue, badge de restriction lisible, requêtes groupées (mots, anniversaires), pagination des
-      membres, attestation à l'envoi de photos et révocation du droit à l'image
+- [x] Interface : cibles tactiles ≥ 44 px sur écran tactile (boutons compacts à partir de `md`), titres
+      de fils traduits, libellés de niveau selon la langue, badge de restriction lisible, mots chargés en
+      une requête, recherche et plafond sur la liste des familles, attestation à l'envoi de photos,
+      enregistrement / retrait du droit à l'image par la direction (`set_image_rights`)
+- [ ] Reste à décider : opt-in dédié pour le contact sur les petites annonces, activation ciblée d'une
+      seule invitation à l'onboarding (`activate_my_memberships`), limitation de débit du flux ICS
 
 ## Questions ouvertes (§15 du brief)
 

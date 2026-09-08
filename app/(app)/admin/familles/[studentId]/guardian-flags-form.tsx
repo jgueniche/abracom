@@ -42,7 +42,7 @@ export function GuardianFlagsForm({
     label: string;
     defaultChecked: boolean;
   }) => (
-    <label className="flex min-h-10 items-center gap-2 text-sm">
+    <label className="flex min-h-11 items-center gap-2 text-sm">
       <input
         type="checkbox"
         name={name}
@@ -66,7 +66,7 @@ export function GuardianFlagsForm({
         label={t("receivesNotifications")}
         defaultChecked={receivesNotifications}
       />
-      <label className="flex min-h-10 items-center gap-2 text-sm font-medium text-destructive">
+      <label className="flex min-h-11 items-center gap-2 text-sm font-medium text-destructive">
         <input
           type="checkbox"
           name="accessBlocked"
@@ -93,7 +93,7 @@ export function GuardianFlagsForm({
       )}
       {isAdmin && (
         <div className="flex items-center gap-3">
-          <SubmitButton variant="outline" size="sm" className="min-h-10">
+          <SubmitButton variant="outline" size="sm" className="min-h-11">
             {t("save")}
           </SubmitButton>
           <ActionMessage status={state.status} message={state.message} />

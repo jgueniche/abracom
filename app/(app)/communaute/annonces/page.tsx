@@ -73,7 +73,7 @@ export default async function ClassifiedsPage({
             href={key ? `/communaute/annonces?c=${key}` : "/communaute/annonces"}
             aria-current={category === key ? "page" : undefined}
             className={cn(
-              "flex min-h-10 items-center rounded-full border px-4 text-sm font-medium",
+              "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
               category === key
                 ? "border-primary bg-primary text-primary-foreground"
                 : "hover:bg-accent",

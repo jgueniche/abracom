@@ -1,21 +1,23 @@
 import { BookOpenIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CurrentUser } from "@/lib/auth/session";
+import { levelLabel } from "@/lib/levels";
 
 import { UpcomingEvents } from "@/app/(app)/agenda/_components/upcoming-events";
 import { getWeeklySummary } from "@/server/queries/class-space";
 import { getMyTeachingClasses } from "@/server/queries/classes";
 
 export async function TeacherHome({ user }: { user: CurrentUser }) {
-  const [t, tFamily, tWeek, classes] = await Promise.all([
+  const [t, tFamily, tWeek, locale, classes] = await Promise.all([
     getTranslations("appHome"),
     getTranslations("family"),
     getTranslations("classSpace.week"),
+    getLocale(),
     getMyTeachingClasses(user.id),
   ]);
   const summaries = await getWeeklySummary(classes.map((row) => row.class!.id));
@@ -46,7 +48,9 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
                     </div>
                     <CardTitle>{cls.name}</CardTitle>
                     <CardDescription>
-                      {cls.room ? t("teacher.room", { room: cls.room }) : cls.level?.label_fr}
+                      {cls.room
+                        ? t("teacher.room", { room: cls.room })
+                        : levelLabel(cls.level, locale)}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-1 text-sm text-muted-foreground">

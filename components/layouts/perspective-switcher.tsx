@@ -39,7 +39,7 @@ export function PerspectiveSwitcher({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="min-h-9" disabled={isPending}>
+        <Button variant="outline" size="sm" className="min-h-11" disabled={isPending}>
           {t(current)}
           <ChevronsUpDownIcon aria-hidden />
         </Button>

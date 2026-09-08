@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, UserMinusIcon } from "lucide-react";
+import { ArrowLeftIcon, CameraIcon, UserMinusIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireSchoolStaff } from "@/lib/auth/guards";
 import { isSchoolAdmin } from "@/lib/permissions";
-import { enrollStudent, unlinkGuardian } from "@/server/actions/admin/students";
+import { enrollStudent, setImageRights, unlinkGuardian } from "@/server/actions/admin/students";
 import { getAdminClasses, getStudentDetail } from "@/server/queries/admin";
 
 import { StudentForm } from "../student-form";
@@ -115,7 +115,7 @@ export default async function StudentDetailPage({
                       )}
                       {g.access_blocked && (
                         <Badge variant="destructive" className="ml-2">
-                          ⛔
+                          {t("blockedShort")}
                         </Badge>
                       )}
                     </p>
@@ -134,7 +134,7 @@ export default async function StudentDetailPage({
                     <form action={unlinkGuardian}>
                       <input type="hidden" name="studentId" value={student.id} />
                       <input type="hidden" name="userId" value={g.user_id} />
-                      <Button type="submit" variant="ghost" size="sm" className="min-h-10">
+                      <Button type="submit" variant="ghost" size="sm" className="min-h-11">
                         <UserMinusIcon aria-hidden />
                         {t("unlink")}
                       </Button>
@@ -158,6 +158,42 @@ export default async function StudentDetailPage({
                 <p className="mb-3 font-medium">{t("linkGuardian")}</p>
                 <LinkGuardianForm studentId={student.id} />
               </div>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CameraIcon className="size-4" aria-hidden />
+              {t("imageRights")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <p className="text-sm">
+              {student.image_rights_signed_at
+                ? t("imageRightsSigned", {
+                    date: format.dateTime(new Date(student.image_rights_signed_at), {
+                      dateStyle: "long",
+                    }),
+                  })
+                : t("imageRightsMissing")}
+            </p>
+            {admin && (
+              <form action={setImageRights}>
+                <input type="hidden" name="studentId" value={student.id} />
+                <input
+                  type="hidden"
+                  name="signed"
+                  value={student.image_rights_signed_at ? "false" : "true"}
+                />
+                <Button
+                  type="submit"
+                  variant={student.image_rights_signed_at ? "destructive" : "outline"}
+                  className="min-h-11"
+                >
+                  {student.image_rights_signed_at ? t("imageRightsRevoke") : t("imageRightsMark")}
+                </Button>
+              </form>
             )}
           </CardContent>
         </Card>

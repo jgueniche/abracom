@@ -88,6 +88,28 @@ export async function getIndividualNotes(studentId: string) {
   return data;
 }
 
+/** Notes of several pupils in one query, grouped by pupil (teacher and staff views). */
+export async function getIndividualNotesForStudents(studentIds: string[]) {
+  const grouped = new Map<string, Awaited<ReturnType<typeof getIndividualNotes>>>();
+  if (studentIds.length === 0) return grouped;
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("individual_notes")
+    .select(
+      "id, student_id, body_md, visibility, kind, created_at, author:profiles ( first_name, last_name ), reads:individual_note_reads ( user_id, read_at )",
+    )
+    .in("student_id", studentIds)
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  for (const row of data) {
+    const list = grouped.get(row.student_id) ?? [];
+    list.push(row);
+    grouped.set(row.student_id, list);
+  }
+  return grouped;
+}
+
 export async function getAbsences(studentIds: string[]) {
   if (studentIds.length === 0) return [];
   const supabase = await createClient();

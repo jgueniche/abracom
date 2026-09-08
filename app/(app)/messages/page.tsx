@@ -15,13 +15,18 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
-function threadTitle(thread: ThreadSummary, dmFallback: string): string {
+function threadTitle(thread: ThreadSummary, kindLabel: (kind: string) => string): string {
   if (thread.kind === "dm")
     return (
-      [thread.other_first_name, thread.other_last_name].filter(Boolean).join(" ") || dmFallback
+      [thread.other_first_name, thread.other_last_name].filter(Boolean).join(" ") || kindLabel("dm")
     );
-  if (thread.class_name) return `${thread.class_name} · ${thread.title ?? ""}`.replace(/ · $/, "");
-  return thread.title ?? dmFallback;
+  // class threads keep a generic title in the database: the label follows the user's language
+  const title =
+    thread.kind === "class_group" || thread.kind === "class_official"
+      ? kindLabel(thread.kind)
+      : (thread.title ?? kindLabel(thread.kind));
+  if (thread.class_name) return `${thread.class_name} · ${title}`;
+  return title;
 }
 
 export default async function MessagesPage() {
@@ -48,7 +53,7 @@ export default async function MessagesPage() {
             <p
               className={cn("truncate", thread.unread_count > 0 ? "font-semibold" : "font-medium")}
             >
-              {threadTitle(thread, t("kinds.dm"))}
+              {threadTitle(thread, (kind) => t(`kinds.${kind}`))}
             </p>
             <Badge variant="outline">{t(`kinds.${thread.kind}`)}</Badge>
             {thread.muted && (

@@ -3090,6 +3090,10 @@ export type Database = {
       }
       school_staff_ids: { Args: { school: string }; Returns: string[] }
       set_current_school_year: { Args: { year_id: string }; Returns: undefined }
+      set_image_rights: {
+        Args: { signed: boolean; student: string }
+        Returns: number
+      }
       student_school_id: { Args: { student: string }; Returns: string }
       teacher_class_ids: { Args: { uid?: string }; Returns: string[] }
       teaches_student: {

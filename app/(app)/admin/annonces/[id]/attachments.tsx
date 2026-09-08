@@ -45,7 +45,7 @@ export function Attachments({
         <input type="hidden" name="id" value={announcementId} />
         <Input name="file" type="file" required className="min-h-11" />
         <div className="flex items-center gap-3">
-          <SubmitButton variant="outline" size="sm" className="min-h-10">
+          <SubmitButton variant="outline" size="sm" className="min-h-11">
             {t("attach")}
           </SubmitButton>
           <ActionMessage status={state.status} message={state.message} />

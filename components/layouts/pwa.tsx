@@ -85,7 +85,7 @@ export function InstallPrompt() {
         <p className="text-muted-foreground">{mode === "ios" ? t("iosHint") : t("installHint")}</p>
       </div>
       {mode === "native" ? (
-        <Button type="button" size="sm" className="min-h-10" onClick={install}>
+        <Button type="button" size="sm" className="min-h-11" onClick={install}>
           <DownloadIcon aria-hidden />
           {t("installButton")}
         </Button>
@@ -96,7 +96,7 @@ export function InstallPrompt() {
         type="button"
         variant="ghost"
         size="icon"
-        className="size-10"
+        className="size-11"
         onClick={dismiss}
         aria-label={t("dismiss")}
       >

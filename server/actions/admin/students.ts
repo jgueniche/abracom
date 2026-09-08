@@ -331,6 +331,27 @@ export async function updateGuardianFlags(
   }
 }
 
+/** The direction records a paper consent or withdraws it (tags are removed at once, audited). */
+export async function setImageRights(formData: FormData): Promise<void> {
+  const { user, schoolId } = await assertSchoolContext(["school_admin"]);
+  const studentId = field(formData, "studentId");
+  const signed = field(formData, "signed") === "true";
+  if (!uuid.test(studentId)) return;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("set_image_rights", { student: studentId, signed });
+  if (error) throw new Error(error.message);
+  await logAudit(supabase, {
+    schoolId,
+    actorId: user.id,
+    action: signed ? "student.image_rights_recorded" : "student.image_rights_revoked",
+    entity: "students",
+    entityId: studentId,
+    diff: { untagged: data ?? 0 },
+  });
+  revalidatePath("/admin", "layout");
+  revalidatePath("/classes", "layout");
+}
+
 export async function unlinkGuardian(formData: FormData): Promise<void> {
   const { user, schoolId } = await assertSchoolContext(["school_admin"]);
   const studentId = field(formData, "studentId");

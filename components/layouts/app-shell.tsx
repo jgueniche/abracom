@@ -44,7 +44,11 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
             <NotificationBell userId={user.id} />
             <LocaleSwitcher />
             <ThemeToggle />
-            <Link href="/profil" aria-label={t("profile")} className="ml-1">
+            <Link
+              href="/profil"
+              aria-label={t("profile")}
+              className="ml-1 flex min-h-11 min-w-11 items-center justify-center rounded-full"
+            >
               <Avatar className="size-9">
                 <AvatarFallback className="bg-accent text-xs text-accent-foreground">
                   {initials(user.profile)}

@@ -72,7 +72,7 @@ export default async function DirectoryPage({
                     href={`/communaute/annuaire?c=${id}`}
                     aria-current={id === selected ? "page" : undefined}
                     className={cn(
-                      "flex min-h-10 items-center rounded-full border px-4 text-sm font-medium",
+                      "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
                       id === selected
                         ? "border-primary bg-primary text-primary-foreground"
                         : "hover:bg-accent",
@@ -107,7 +107,7 @@ export default async function DirectoryPage({
                       {entry.phone && (
                         <a
                           href={`tel:${entry.phone}`}
-                          className="flex min-h-9 items-center gap-2 text-primary underline"
+                          className="flex min-h-11 items-center gap-2 text-primary underline"
                         >
                           <PhoneIcon className="size-4" aria-hidden />
                           {entry.phone}
@@ -116,7 +116,7 @@ export default async function DirectoryPage({
                       {entry.email && (
                         <a
                           href={`mailto:${entry.email}`}
-                          className="flex min-h-9 items-center gap-2 text-primary underline"
+                          className="flex min-h-11 items-center gap-2 text-primary underline"
                         >
                           <MailIcon className="size-4" aria-hidden />
                           {entry.email}

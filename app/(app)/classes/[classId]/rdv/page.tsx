@@ -131,7 +131,7 @@ export default async function AppointmentsPage({
                         <form action={cancelAppointment}>
                           <input type="hidden" name="slotId" value={slot.id} />
                           <input type="hidden" name="classId" value={classId} />
-                          <Button type="submit" variant="outline" size="sm" className="min-h-10">
+                          <Button type="submit" variant="outline" size="sm" className="min-h-11">
                             {t("cancel")}
                           </Button>
                         </form>
@@ -140,7 +140,7 @@ export default async function AppointmentsPage({
                         <form action={deleteAppointmentSlot}>
                           <input type="hidden" name="id" value={slot.id} />
                           <input type="hidden" name="classId" value={classId} />
-                          <Button type="submit" variant="ghost" size="sm" className="min-h-10">
+                          <Button type="submit" variant="ghost" size="sm" className="min-h-11">
                             {t("delete")}
                           </Button>
                         </form>

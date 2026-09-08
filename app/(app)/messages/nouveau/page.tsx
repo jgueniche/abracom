@@ -45,7 +45,7 @@ export default async function NewMessagePage() {
           </div>
           <form action={openDm}>
             <input type="hidden" name="userId" value={c.user_id} />
-            <Button type="submit" size="sm" className="min-h-10">
+            <Button type="submit" size="sm" className="min-h-11">
               <MessageSquarePlusIcon aria-hidden />
               {t("contacts.write")}
             </Button>

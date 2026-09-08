@@ -55,7 +55,7 @@ export default async function DocumentsPage() {
                           </p>
                         </div>
                       </div>
-                      <Button asChild variant="outline" size="sm" className="min-h-10">
+                      <Button asChild variant="outline" size="sm" className="min-h-11">
                         <a href={`/documents/${doc.id}/fichier`}>
                           <DownloadIcon aria-hidden />
                           {t("download")}

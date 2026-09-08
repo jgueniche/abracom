@@ -77,7 +77,7 @@ export default async function AssessmentsPage({
           href={`/classes/${classId}/evaluations?p=${x.id}`}
           aria-current={x.id === period.id ? "page" : undefined}
           className={cn(
-            "flex min-h-10 items-center rounded-full border px-4 text-sm font-medium",
+            "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
             x.id === period.id
               ? "border-primary bg-primary text-primary-foreground"
               : "hover:bg-accent",
@@ -144,7 +144,7 @@ export default async function AssessmentsPage({
               <ul className="flex flex-wrap gap-2">
                 {students.map((s) => (
                   <li key={s.id}>
-                    <Button asChild variant="outline" size="sm" className="min-h-10">
+                    <Button asChild variant="outline" size="sm" className="min-h-11">
                       <a
                         href={`/api/livret/${s.id}?period=${period.id}`}
                         target="_blank"
@@ -179,7 +179,7 @@ export default async function AssessmentsPage({
                 {child.first_name} {child.last_name}
               </CardTitle>
               {mine.length > 0 && (
-                <Button asChild variant="outline" size="sm" className="min-h-10">
+                <Button asChild variant="outline" size="sm" className="min-h-11">
                   <a
                     href={`/api/livret/${child.id}?period=${period.id}`}
                     target="_blank"

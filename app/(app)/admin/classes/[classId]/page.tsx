@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireSchoolStaff } from "@/lib/auth/guards";
+import { levelLabel } from "@/lib/levels";
 import { isSchoolAdmin } from "@/lib/permissions";
 import { removeTeacher } from "@/server/actions/admin/classes";
 import { getClassDetail, getLevels, getTeachers } from "@/server/queries/admin";
@@ -44,7 +45,7 @@ export default async function ClassDetailPage({
       </Button>
       <PageHeader
         title={cls.name}
-        description={`${cls.level?.code ?? ""} · ${cls.level?.label_fr ?? ""}`}
+        description={`${cls.level?.code ?? ""} · ${levelLabel(cls.level, locale)}`}
       />
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>

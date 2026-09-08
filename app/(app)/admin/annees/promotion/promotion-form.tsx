@@ -67,7 +67,7 @@ export function PromotionForm({
                       name={`target:${row.classId}`}
                       defaultValue={row.proposedLevelId ?? "leave"}
                       aria-label={`${t("targetLevel")} · ${row.name}`}
-                      className="min-h-10 rounded-lg border border-input bg-background px-2 text-sm"
+                      className="min-h-11 rounded-lg border border-input bg-background px-2 text-sm"
                     >
                       {levels.map((level) => (
                         <option key={level.id} value={level.id}>
@@ -84,7 +84,7 @@ export function PromotionForm({
                     defaultValue={row.proposedName}
                     maxLength={80}
                     aria-label={`${t("newName")} · ${row.name}`}
-                    className="min-h-10"
+                    className="min-h-11"
                   />
                 </td>
               </tr>

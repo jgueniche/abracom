@@ -1,11 +1,12 @@
 import { MessageCircleIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireClassAccess } from "@/lib/auth/class-access";
+import { levelLabel } from "@/lib/levels";
 import { openClassGroup } from "@/server/actions/messaging";
 
 import { ClassTabs } from "./_components/class-tabs";
@@ -23,7 +24,7 @@ export default async function ClassLayout({
     getTranslations("classSpace"),
     getTranslations("family"),
   ]);
-  const tMessaging = await getTranslations("messaging");
+  const [tMessaging, locale] = await Promise.all([getTranslations("messaging"), getLocale()]);
   const team = cls.class_teachers
     .filter((ct) => ct.profile)
     .map(
@@ -36,7 +37,7 @@ export default async function ClassLayout({
     <>
       <PageHeader
         title={cls.name}
-        description={`${cls.level?.label_fr ?? ""}${cls.room ? ` · ${cls.room}` : ""}${team ? ` · ${team}` : ""}`}
+        description={`${levelLabel(cls.level, locale)}${cls.room ? ` · ${cls.room}` : ""}${team ? ` · ${team}` : ""}`}
         actions={
           <>
             {isTeacher || isStaff ? (

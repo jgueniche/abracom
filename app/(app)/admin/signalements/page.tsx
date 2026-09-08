@@ -55,7 +55,7 @@ export default async function ReportsPage() {
         )}
         <div className="flex flex-wrap items-center gap-2">
           {report.message && (
-            <Button asChild variant="outline" size="sm" className="min-h-10">
+            <Button asChild variant="outline" size="sm" className="min-h-11">
               <Link href={`/messages/${report.message.thread_id}`}>{t("openThread")}</Link>
             </Button>
           )}
@@ -68,7 +68,7 @@ export default async function ReportsPage() {
           {report.status === "open" && (
             <form action={resolveReport} className="flex items-center gap-2">
               <input type="hidden" name="reportId" value={report.id} />
-              <Button type="submit" variant="ghost" size="sm" className="min-h-10">
+              <Button type="submit" variant="ghost" size="sm" className="min-h-11">
                 {t("resolve")}
               </Button>
             </form>

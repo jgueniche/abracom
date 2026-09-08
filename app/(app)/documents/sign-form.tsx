@@ -36,7 +36,7 @@ export function SignForm({
         {t("consent")}
       </label>
       <div className="flex items-center gap-3">
-        <SubmitButton size="sm" className="min-h-10" pendingLabel={t("signing")}>
+        <SubmitButton size="sm" className="min-h-11" pendingLabel={t("signing")}>
           <PenLineIcon aria-hidden />
           {label}
         </SubmitButton>

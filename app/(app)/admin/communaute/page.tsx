@@ -81,7 +81,7 @@ export default async function AdminCommunityPage() {
                               ? "destructive"
                               : "outline"
                         }
-                        className="min-h-10"
+                        className="min-h-11"
                       >
                         {t(
                           decision === "published"

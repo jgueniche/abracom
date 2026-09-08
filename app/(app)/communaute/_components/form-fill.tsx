@@ -59,7 +59,7 @@ export function FormFill({
             <fieldset key={field.id} className="flex flex-col gap-1">
               <legend className="text-sm font-medium">{label}</legend>
               {field.options?.map((option) => (
-                <label key={option} className="flex min-h-10 items-center gap-2 text-sm">
+                <label key={option} className="flex min-h-11 items-center gap-2 text-sm">
                   <input
                     type="radio"
                     name={name}
@@ -81,7 +81,7 @@ export function FormFill({
             <fieldset key={field.id} className="flex flex-col gap-1">
               <legend className="text-sm font-medium">{label}</legend>
               {field.options?.map((option) => (
-                <label key={option} className="flex min-h-10 items-center gap-2 text-sm">
+                <label key={option} className="flex min-h-11 items-center gap-2 text-sm">
                   <input
                     type="checkbox"
                     name={name}
@@ -103,7 +103,7 @@ export function FormFill({
               <legend className="text-sm font-medium">{label}</legend>
               <div className="flex gap-4">
                 {(["yes", "no"] as const).map((option) => (
-                  <label key={option} className="flex min-h-10 items-center gap-2 text-sm">
+                  <label key={option} className="flex min-h-11 items-center gap-2 text-sm">
                     <input
                       type="radio"
                       name={name}

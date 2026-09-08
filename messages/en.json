@@ -22,7 +22,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "close": "Close",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "preferences": "Preferences"
   },
   "nav": {
     "home": "Home",
@@ -419,7 +420,15 @@
       "guardianRole": {
         "parent": "Parent",
         "guardian": "Read-only"
-      }
+      },
+      "blockedShort": "access restricted",
+      "imageRights": "Image rights",
+      "imageRightsSigned": "Consent signed on {date}",
+      "imageRightsMissing": "No signed consent: the pupil cannot be tagged on photos.",
+      "imageRightsRevoke": "Withdraw the consent",
+      "imageRightsMark": "Record a paper consent",
+      "imageRightsRevoked": "Consent withdrawn; the pupil no longer appears on any tagged photo.",
+      "imageRightsMarked": "Consent recorded."
     },
     "members": {
       "title": "Users",
@@ -454,7 +463,10 @@
       "batchRemaining": "Remaining: {count}",
       "batchFailed": "Failures: {count}",
       "showParents": "Show parents ({count})",
-      "lastLink": "Last link: {date}"
+      "lastLink": "Last link: {date}",
+      "search": "Search a member",
+      "searchPlaceholder": "Last name, first name",
+      "truncated": "Only the first {count} results are shown: narrow the search."
     },
     "import": {
       "title": "Families CSV import",
@@ -789,7 +801,9 @@
       "imageRightsBlocked": "A tagged student has no signed image rights.",
       "delete": "Delete",
       "deleteMedia": "Remove photo",
-      "compressing": "Compressing photos…"
+      "compressing": "Compressing photos…",
+      "consent": "I confirm that no child without a signed image-rights consent appears on these photos.",
+      "consentRequired": "Please confirm that the photos show no child without consent."
     },
     "journal": {
       "empty": "No photo yet.",
