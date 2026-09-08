@@ -13,13 +13,24 @@ read -r -p "Apply migrations to $ref? [y/N] " answer
 [[ "$answer" == "y" || "$answer" == "Y" ]] || { echo "aborted"; exit 1; }
 supabase db push
 
+echo "▸ auth configuration and e-mail templates (supabase/config.toml)"
+if grep -q '^\[remotes\.' supabase/config.toml; then
+  supabase config diff || true
+  read -r -p "Push the auth configuration (Site URL, redirects, templates) to $ref? [y/N] " answer
+  if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
+    supabase config push
+  fi
+else
+  echo "  skipped: add a [remotes.<name>] block with project_id = \"$ref\" first (docs/DEPLOIEMENT.md)"
+fi
+
 cat <<'EOF'
 
 Done. Remaining manual steps (see docs/DEPLOIEMENT.md):
   1. SQL editor: run supabase/jobs/cron.sql after storing the two Vault secrets.
   2. Storage: create the private buckets if the migration did not (attachments, documents,
      class-media, avatars, justifications, messages).
-  3. Auth: set the Site URL and redirect URLs, enable TOTP MFA, configure the SMTP / Resend sender.
+  3. Auth: SMTP / Resend sender (Site URL, redirects, TOTP and templates come from config.toml).
   4. Vercel: pnpm ops:check-env --prod, then promote the deployment.
   5. Smoke test with the demo accounts (docs/DEMO.md), then invite the real staff.
 EOF

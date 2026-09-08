@@ -12,14 +12,39 @@
 
 1. **Supabase** : créer le projet (région Paris), noter l'URL et les clés. `scripts/ops/promote.sh <ref>`
    applique les migrations ; vérifier `supabase migration list`.
-2. **Auth** : Site URL = URL publique, redirections `https://…/auth/callback` et `/auth/confirm`,
-   inscription libre désactivée, TOTP MFA activé, expéditeur e-mail (SMTP Resend) et modèles en français.
+2. **Auth** : tout vit dans `supabase/config.toml` (inscription libre désactivée, TOTP, mot de passe ≥ 10
+   caractères, modèles d'e-mails français de `supabase/templates/`). Pour l'appliquer au projet hébergé,
+   ajouter un bloc de surcharge avec l'URL publique, puis `supabase config push` (proposé par
+   `promote.sh`, ou par le workflow « Deploy database » si la variable `SUPABASE_CONFIG_PUSH` vaut `true`) :
+
+   ```toml
+   [remotes.staging]
+   project_id = "<ref du projet, 20 caractères>"
+
+   [remotes.staging.auth]
+   site_url = "https://abracom.vercel.app"
+   additional_redirect_urls = ["https://abracom.vercel.app/**", "https://abracom-*.vercel.app/**"]
+
+   [remotes.staging.auth.email.smtp] # expéditeur Resend (facultatif tant que le SMTP par défaut suffit)
+   enabled = true
+   host = "smtp.resend.com"
+   port = 465
+   user = "resend"
+   pass = "env(RESEND_API_KEY)"
+   admin_email = "no-reply@example.org"
+   sender_name = "Kesher"
+   ```
+
+   Sans ce bloc, régler à la main Site URL, redirections (`/auth/callback`, `/auth/confirm`) et modèles.
+
 3. **Storage** : buckets privés `attachments`, `documents`, `class-media`, `avatars`, `justifications`,
    `messages` (créés par les migrations ; vérifier les politiques).
 4. **Secrets Vault + pg_cron** : `supabase/jobs/cron.sql` (dispatch toutes les 5 minutes, digest, rappels,
    purge de rétention).
-5. **Vercel** : variables (`pnpm ops:check-env --prod` après `vercel env pull`), branche de production
-   `main`, région `cdg1`, crons de `vercel.json` actifs (plan Hobby : quotidiens).
+5. **Vercel** : variables `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+   `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SITE_URL`, puis `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`,
+   clés VAPID, Sentry (`pnpm ops:check-env --prod` après `vercel env pull`) ; branche de production `main`,
+   région `cdg1`, crons de `vercel.json` actifs (plan Hobby : quotidiens).
 6. **Premier compte de direction** : `scripts/ops/create-account.sql` (psql ou éditeur SQL, mot de passe
    jamais committé — ADR-0028) ; la validation en deux étapes est demandée à la première connexion.
 7. **Données réelles** : import CSV des familles depuis l'administration, puis invitations par lots.
@@ -30,8 +55,10 @@
 ## Mise à jour
 
 1. PR vers `main` avec CI verte (lint, types, build, e2e, base de données).
-2. `supabase db push` (via `scripts/ops/promote.sh <ref>`) **avant** le déploiement Vercel si la version
-   ajoute des migrations ; les migrations sont additives.
+2. `supabase db push` **avant** le déploiement Vercel si la version ajoute des migrations ; les migrations
+   sont additives. Le workflow `.github/workflows/deploy-db.yml` le fait à chaque push sur `main` touchant
+   `supabase/` dès que les secrets `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF` et
+   `SUPABASE_DB_PASSWORD` existent (sinon `scripts/ops/promote.sh <ref>`).
 3. Déploiement Vercel automatique sur `main` ; surveiller Sentry pendant une heure.
 
 ## Sauvegardes et retour arrière

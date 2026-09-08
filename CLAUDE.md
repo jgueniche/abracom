@@ -143,7 +143,7 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   CSP stricte à nonce, Sentry optionnel. 216 assertions pgTAP.
 - **Session 15 — code et documents complets** : guides utilisateurs (`content/guides`, `/aide`, PDF),
   assistant de promotion de niveau (`promote_school_year`), `docs/DEMO.md`, `docs/DEPLOIEMENT.md`, scripts
-  `ops:check-env`, `ops:storage-sweep`, `promote.sh`. 225 assertions pgTAP. **V1 codée en intégralité.**
+  `ops:check-env`, `ops:storage-sweep`, `promote.sh`. 264 assertions pgTAP. **V1 codée en intégralité.**
 - **Suite** : créer `kesher-staging` (org Supabase gratuite, `eu-west-3`), renseigner les clés, rejouer les
   validations listées par session dans `docs/ROADMAP.md`, dérouler la démo avec la direction.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

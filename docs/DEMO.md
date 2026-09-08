@@ -33,6 +33,6 @@ zéro avant chaque démo : `pnpm db:reset` (Docker) ou `pnpm db:test` (PostgreSQ
 
 ## Points à souligner
 
-- Hébergement UE, RLS sur toutes les tables (216 assertions pgTAP), aucun traceur.
+- Hébergement UE, RLS sur toutes les tables (264 assertions pgTAP, dont l'isolation multi-établissement), aucun traceur.
 - Familles séparées : droits indépendants par responsable, restriction judiciaire.
 - Tout est notifié mais rien ne part pendant Chabbat et les fêtes.

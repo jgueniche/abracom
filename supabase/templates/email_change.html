@@ -27,15 +27,15 @@
             Kesher · École Abravanel
           </p>
           <h1 style="margin: 0 0 12px 0; font-size: 22px; line-height: 1.3">
-            Bienvenue sur Kesher
+            Confirmer votre nouvelle adresse
           </h1>
           <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5">
-            L'école vous ouvre un accès à sa plateforme de communication : annonces, vie de classe,
-            agenda et messagerie. Ce lien crée votre accès et vous connecte directement.
+            Vous avez demandé à changer l'adresse e-mail de votre compte Kesher ({{ .Email }} → {{
+            .NewEmail }}). Confirmez ce changement en cliquant ci-dessous.
           </p>
           <p style="margin: 0 0 24px 0">
             <a
-              href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=%2Fbienvenue"
+              href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email_change&next=%2Fprofil"
               style="
                 display: inline-block;
                 min-height: 44px;
@@ -47,21 +47,20 @@
                 border-radius: 12px;
                 font-weight: 600;
               "
-              >Activer mon accès</a
+              >Confirmer la nouvelle adresse</a
             >
           </p>
           <p style="margin: 0 0 24px 0; font-size: 13px; line-height: 1.5; color: #5c6b70">
-            Le lien est valable 24 heures et ne peut être utilisé qu'une fois. Vous n'avez pas de
-            mot de passe à retenir : vous recevrez un nouveau lien à chaque connexion.
+            Sans confirmation, l'adresse actuelle reste en place.
           </p>
           <hr style="border: 0; border-top: 1px solid #e6e4de; margin: 0 0 20px 0" />
           <p style="margin: 0 0 12px 0; font-size: 14px; line-height: 1.5; color: #5c6b70">
-            The school has opened your access to its communication platform.
+            You asked to change the e-mail address of your account.
             <a
-              href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=%2Fbienvenue"
+              href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email_change&next=%2Fprofil"
               style="color: #01525e"
-              >Activate my access</a
-            >. The link is valid for 24 hours and can be used once.
+              >Confirm the new address</a
+            >. Without confirmation, the current address stays in place.
           </p>
         </td>
       </tr>
@@ -70,7 +69,7 @@
           Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br />
           <span style="word-break: break-all"
             >{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash
-            }}&type=invite&next=%2Fbienvenue</span
+            }}&type=email_change&next=%2Fprofil</span
           >
         </td>
       </tr>

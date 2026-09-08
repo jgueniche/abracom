@@ -63,6 +63,8 @@ Le guide de style est disponible sur `/dev/ui` (développement et previews Verce
 - [`docs/DEPLOIEMENT.md`](./docs/DEPLOIEMENT.md) — staging → production, exploitation
 - [`docs/DEMO.md`](./docs/DEMO.md) — démo scénarisée de 15 minutes
 - [`supabase/jobs/README.md`](./supabase/jobs/README.md) — notifications, cron
+- `supabase/templates/` — modèles d'e-mails Auth en français, appliqués par `supabase config push`
+- `.github/workflows/deploy-db.yml` — migrations et configuration Auth vers le projet Supabase
 - Guides utilisateurs : `content/guides/*.md`, servis dans l'application (`/aide`) et en PDF
 
 ## Stack

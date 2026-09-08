@@ -383,15 +383,19 @@ sessions sont codées ; la validation sur une stack Supabase cloud reste à fair
 - [x] Scripts d'exploitation : `scripts/ops/promote.sh` (link + `db push` + checklist),
       `pnpm ops:check-env --prod` (variables requises), `pnpm ops:storage-sweep [--delete]` (orphelins, RGPD §3)
 - [x] Tests : 9 pgTAP (`009_promotion.sql`) ; README et scripts documentés
+- [x] Isolation multi-établissement : `010_multi_school.sql` (39 assertions, seconde école fictive créée dans
+      la transaction : lecture, écriture, fonctions, recherche, flux ICS) — 264 assertions pgTAP au total
+- [x] Modèles d'e-mails Auth en français (`supabase/templates/`, câblés dans `config.toml`), workflow
+      « Deploy database » (`supabase db push` + `config push` sur `main`), libellés « Fermer » traduits
 - [ ] Jouer la démo sur `kesher-staging` avec la direction ; traduire les guides en anglais après les
       premiers retours ; captures d'écran pour les guides PDF
 
 ## Bilan V1
 
-Les quinze sessions sont codées et testées localement (unitaires, e2e, pgTAP, build). Restent, côté
-porteur : créer l'organisation Supabase gratuite et le projet `kesher-staging`, renseigner les clés
-(Resend, VAPID, `CRON_SECRET`, Sentry), rejouer les validations « à valider sur une stack Supabase »
-listées dans chaque session, puis dérouler `docs/DEMO.md`.
+Les quinze sessions sont codées et testées localement (106 unitaires, 22 e2e, 264 pgTAP, build). Restent,
+côté porteur : partager le projet Supabase avec le connecteur, renseigner les variables Vercel et les clés
+(Resend, VAPID, `CRON_SECRET`, Sentry), rejouer les validations « à valider sur une stack Supabase » listées
+dans chaque session, puis dérouler `docs/DEMO.md`.
 
 ## Questions ouvertes (§15 du brief)
 
