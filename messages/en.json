@@ -159,7 +159,15 @@
       "notConfigured": "Sign-in is not available on this environment yet.",
       "rateLimited": "Too many requests. Try again in a few minutes.",
       "linkError": "This link is invalid or has expired. Request a new one.",
-      "noAccount": "No access yet? The school will send you an invitation by e-mail."
+      "noAccount": "No access yet? The school will send you an invitation by e-mail.",
+      "usePassword": "Sign in with a password",
+      "useLink": "Get a link by e-mail",
+      "passwordHint": "Only for accounts the school has given a password to.",
+      "password": "Password",
+      "signIn": "Sign in",
+      "signingIn": "Signing in…",
+      "invalidCredentials": "Incorrect e-mail address or password.",
+      "unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment."
     },
     "onboarding": {
       "title": "Welcome, let's get acquainted",

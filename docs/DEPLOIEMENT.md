@@ -20,9 +20,11 @@
    purge de rétention).
 5. **Vercel** : variables (`pnpm ops:check-env --prod` après `vercel env pull`), branche de production
    `main`, région `cdg1`, crons de `vercel.json` actifs (plan Hobby : quotidiens).
-6. **Données réelles** : import CSV des familles depuis l'administration, puis invitations par lots.
+6. **Premier compte de direction** : `scripts/ops/create-account.sql` (psql ou éditeur SQL, mot de passe
+   jamais committé — ADR-0028) ; la validation en deux étapes est demandée à la première connexion.
+7. **Données réelles** : import CSV des familles depuis l'administration, puis invitations par lots.
    Ne jamais rejouer `seed.sql` en production.
-7. **Vérifications** : `pnpm perf https://…/connexion`, push de test depuis Notifications → Préférences,
+8. **Vérifications** : `pnpm perf https://…/connexion`, push de test depuis Notifications → Préférences,
    e-mail de test, un cycle complet annonce → accusé de lecture.
 
 ## Mise à jour

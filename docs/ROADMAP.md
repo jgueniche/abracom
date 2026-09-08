@@ -126,6 +126,8 @@ sessions sont codées ; la validation sur une stack Supabase cloud reste à fair
 - [x] Tests : 56 unitaires, 14 e2e (page de connexion, i18n, thème, en-têtes), 56 assertions pgTAP
 - [ ] **E2E « invitation → 1re connexion »** (`tests/e2e/auth-invitation.spec.ts`, activé par `SUPABASE_E2E=1`
       avec la boîte Mailpit de la stack locale) : à exécuter dès qu'une stack Supabase est disponible
+- [x] Connexion par mot de passe en complément du lien magique (comptes de démonstration, premier
+      administrateur ; `scripts/ops/create-account.sql`, ADR-0028)
 - [ ] OTP SMS (Twilio) : différé (question §15 n° 8, budget)
 
 ## Session 5 — détail

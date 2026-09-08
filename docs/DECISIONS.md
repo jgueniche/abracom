@@ -359,3 +359,19 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 - **Conséquences** : la promotion ne se rejoue pas (les classes de l'année cible existantes sont
   réutilisées par nom) ; les guides n'existent qu'en français pour l'instant et n'embarquent pas de
   captures d'écran.
+
+## ADR-0028 — Connexion par mot de passe en complément du lien magique
+
+- **Contexte** : les comptes de démonstration (`*@demo.local`) n'ont pas de boîte mail ; l'expéditeur
+  par défaut de Supabase ne livre qu'aux membres de l'organisation et à un rythme limité ; le porteur
+  doit pouvoir tester depuis un téléphone avant qu'un SMTP soit configuré. Le dépôt est public : le mot
+  de passe du seed local est donc connu de tous.
+- **Décision** : la page de connexion propose, derrière un bouton secondaire, une connexion par mot de
+  passe (`signInWithPassword`). Le lien magique reste la voie par défaut et la seule proposée aux familles
+  invitées. Aucune inscription libre ni réinitialisation en libre-service : un mot de passe n'existe que
+  s'il a été attribué (seed local, `scripts/ops/create-account.sql`) et le lien magique sert de secours.
+  La validation en deux étapes de la direction s'applique de la même manière après un mot de passe.
+- **Conséquences** : sur tout environnement public, les comptes de démonstration reçoivent un mot de
+  passe distinct de celui du seed ; la politique de mot de passe est celle de Supabase Auth (longueur
+  minimale à relever dans le tableau de bord) ; une réinitialisation par e-mail pourra être ajoutée
+  quand l'expéditeur transactionnel sera en place.

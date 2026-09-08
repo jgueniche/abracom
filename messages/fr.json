@@ -159,7 +159,15 @@
       "notConfigured": "La connexion n'est pas encore disponible sur cet environnement.",
       "rateLimited": "Trop de demandes. Réessayez dans quelques minutes.",
       "linkError": "Ce lien est invalide ou a expiré. Demandez-en un nouveau.",
-      "noAccount": "Pas encore d'accès ? L'école vous enverra une invitation par e-mail."
+      "noAccount": "Pas encore d'accès ? L'école vous enverra une invitation par e-mail.",
+      "usePassword": "Se connecter avec un mot de passe",
+      "useLink": "Recevoir un lien par e-mail",
+      "passwordHint": "Réservé aux comptes auxquels l'école a attribué un mot de passe.",
+      "password": "Mot de passe",
+      "signIn": "Se connecter",
+      "signingIn": "Connexion…",
+      "invalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
+      "unavailable": "Le service de connexion est momentanément indisponible. Réessayez dans un instant."
     },
     "onboarding": {
       "title": "Bienvenue, faisons connaissance",

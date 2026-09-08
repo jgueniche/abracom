@@ -46,6 +46,22 @@ test.describe("entry points", () => {
     await expect(page.getByLabel("Adresse e-mail")).toBeFocused();
   });
 
+  test("offers password sign-in and reports an unreachable backend", async ({ page }) => {
+    await page.goto("/connexion");
+
+    await page.getByRole("button", { name: "Se connecter avec un mot de passe" }).click();
+    await page.getByLabel("Adresse e-mail").fill("admin@demo.local");
+    await page.getByLabel("Mot de passe").fill("not-the-password");
+    await page.getByRole("button", { name: "Se connecter", exact: true }).click();
+
+    // no Supabase behind the test server: unconfigured locally, unreachable in CI
+    await expect(page.locator("#login-error")).toContainText(/disponible/);
+    await expect(page).toHaveURL(/\/connexion$/);
+
+    await page.getByRole("button", { name: "Recevoir un lien par e-mail" }).click();
+    await expect(page.getByRole("button", { name: "Recevoir mon lien" })).toBeVisible();
+  });
+
   test("sends baseline security headers", async ({ request }) => {
     const response = await request.get("/connexion");
 

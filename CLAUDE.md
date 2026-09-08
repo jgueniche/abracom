@@ -119,8 +119,8 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   rouge brique `#852624`), tokens clair / sombre, contraste AA testé, Inter + Fraunces, `/dev/ui`, icônes PWA.
 - **Session 3 — terminée (à rejouer sur Supabase)** : 10 migrations, 47 tables, 23 enums, `can_access_*`,
   132 politiques RLS (+ storage), seed fictif (137 comptes, 66 élèves), pgTAP en CI (job `database`).
-- **Session 4 — code complet, validation Supabase en attente** : middleware de session, magic link sans
-  inscription libre, callbacks PKCE, onboarding avec CGU versionnées, `lib/auth` + `lib/permissions`,
+- **Session 4 — code complet, validation Supabase en attente** : middleware de session, magic link (+ mot
+  de passe pour la démo, ADR-0028), callbacks PKCE, onboarding avec CGU, `lib/auth` + `lib/permissions`,
   perspectives multi-rôle, coquille par rôle. E2e « invitation → 1re connexion » réservé à une stack Supabase.
 - **Sessions 5–8 — code complet (MVP)** : espace `/admin` (familles, classes, utilisateurs, années, import
   CSV, journal, invitations par lots, restriction judiciaire) · annonces (Markdown, ciblage, planification,

@@ -1,8 +1,9 @@
 # Démo scénarisée (15 minutes)
 
-Données 100 % fictives (`supabase/seed/seed.sql`, comptes `*@demo.local`, mot de passe `demo-password`
-sur la stack locale ; en staging, lien magique). Remettre la base à zéro avant chaque démo :
-`pnpm db:reset` (Docker) ou `pnpm db:test` (PostgreSQL local).
+Données 100 % fictives (`supabase/seed/seed.sql`, comptes `*@demo.local`). Connexion par le bouton
+« Se connecter avec un mot de passe » : `demo-password` sur la stack locale, mot de passe propre au
+staging (attribué avec `scripts/ops/create-account.sql`, jamais committé — ADR-0028). Remettre la base à
+zéro avant chaque démo : `pnpm db:reset` (Docker) ou `pnpm db:test` (PostgreSQL local).
 
 | Compte                  | Rôle                             | À montrer                                       |
 | ----------------------- | -------------------------------- | ----------------------------------------------- |

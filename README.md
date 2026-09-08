@@ -50,6 +50,7 @@ pnpm perf [url]                               # audit Lighthouse mobile (seuil 9
 pnpm ops:check-env --prod                     # variables d'environnement requises en production
 pnpm ops:storage-sweep [--delete]             # objets de stockage orphelins (RGPD)
 scripts/ops/promote.sh <ref>                  # migrations vers un projet Supabase cloud
+psql "$DATABASE_URL" -v email=… -f scripts/ops/create-account.sql   # compte avec mot de passe et rôles (ADR-0028)
 ```
 
 Le guide de style est disponible sur `/dev/ui` (développement et previews Vercel).
