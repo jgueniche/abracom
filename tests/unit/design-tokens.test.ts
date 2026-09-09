@@ -29,9 +29,24 @@ const TEXT_PAIRS: Array<[string, string]> = [
   ["muted", "muted-foreground"],
   ["accent", "accent-foreground"],
   ["background", "muted-foreground"],
-  ["sidebar", "sidebar-foreground"],
-  ["sidebar-primary", "sidebar-primary-foreground"],
-  ["sidebar-accent", "sidebar-accent-foreground"],
+  ["card", "muted-foreground"],
+  ["brick", "brick-foreground"],
+  ["background", "brick"],
+  ["card", "brick"],
+  ["success", "success-foreground"],
+  ["warning", "warning-foreground"],
+];
+
+/**
+ * The old palette passed every contrast test and still looked flat: card on
+ * background was 1.04:1. Planes only read as planes when they are separated,
+ * so the separation itself is a test now.
+ */
+const SURFACE_PAIRS: Array<[string, string, number]> = [
+  ["background", "card", 1.15],
+  ["background", "surface", 1.12],
+  ["card", "border", 1.4],
+  ["background", "border", 1.35],
 ];
 
 describe.each([
@@ -44,12 +59,23 @@ describe.each([
     expect(contrastRatio(vars[bg]!, vars[fg]!)).toBeGreaterThanOrEqual(WCAG_AA_TEXT);
   });
 
+  it.each(SURFACE_PAIRS)("--%s and --%s stay %f:1 apart", (a, b, min) => {
+    expect(contrastRatio(vars[a]!, vars[b]!)).toBeGreaterThanOrEqual(min);
+  });
+
   it("keeps white text readable on destructive", () => {
-    expect(contrastRatio(vars["destructive"]!, "#ffffff")).toBeGreaterThanOrEqual(WCAG_AA_TEXT);
+    const onDestructive = _name === "dark" ? vars["background"]! : "#ffffff";
+    expect(contrastRatio(vars["destructive"]!, onDestructive)).toBeGreaterThanOrEqual(WCAG_AA_TEXT);
   });
 
   it("keeps the focus ring visible against the page (3:1)", () => {
     expect(contrastRatio(vars["ring"]!, vars["background"]!)).toBeGreaterThanOrEqual(3);
+  });
+
+  // WCAG SC 1.4.11: the border of a form control is a non-text contrast target.
+  it("keeps field borders at 3:1 against page and card", () => {
+    expect(contrastRatio(vars["input"]!, vars["background"]!)).toBeGreaterThanOrEqual(3);
+    expect(contrastRatio(vars["input"]!, vars["card"]!)).toBeGreaterThanOrEqual(3);
   });
 });
 
@@ -77,5 +103,14 @@ describe("token parity between CSS and TypeScript", () => {
         ).toBeLessThanOrEqual(2);
       }
     }
+  });
+
+  it("declares every colour token in both themes", () => {
+    const colours = Object.keys(light).filter(
+      (name) => !name.startsWith("brand-") && light[name]!.startsWith("oklch"),
+    );
+    const overridden = tokens(".dark");
+    for (const name of colours)
+      expect(overridden[name], `--${name} missing in .dark`).toBeDefined();
   });
 });
