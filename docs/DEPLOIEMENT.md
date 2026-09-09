@@ -14,7 +14,7 @@
    migrations : `scripts/ops/promote.sh <ref>` (CLI, mot de passe de base requis) ou
    `SUPABASE_ACCESS_TOKEN=… scripts/ops/apply-migrations.sh <ref> [--seed]` (API de gestion, jeton
    d'accès personnel seulement ; enregistre l'historique pour `supabase migration list`).
-2. **Auth** : tout vit dans `supabase/config.toml` (inscription libre désactivée, TOTP, mot de passe ≥ 8
+2. **Auth** : tout vit dans `supabase/config.toml` (inscription libre désactivée, TOTP, mot de passe ≥ 6
    caractères, modèles d'e-mails français de `supabase/templates/`). Pour l'appliquer au projet hébergé,
    ajouter un bloc de surcharge avec l'URL publique, puis `supabase config push` (proposé par
    `promote.sh`, ou par le workflow « Deploy database » si la variable `SUPABASE_CONFIG_PUSH` vaut `true`) :

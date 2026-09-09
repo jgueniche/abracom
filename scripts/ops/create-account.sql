@@ -29,8 +29,8 @@ declare
   v_user uuid;
   v_role text;
 begin
-  if length(v_password) < 8 then
-    raise exception 'password policy: 8 characters minimum (supabase/config.toml)';
+  if length(v_password) < 6 then
+    raise exception 'password policy: 6 characters minimum (supabase/config.toml)';
   end if;
   select id into v_school from public.schools where slug = current_setting('ops.school');
   if v_school is null then
