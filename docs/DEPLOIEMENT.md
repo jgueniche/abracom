@@ -12,7 +12,7 @@
 
 1. **Supabase** : créer le projet (région Paris), noter l'URL et les clés. `scripts/ops/promote.sh <ref>`
    applique les migrations ; vérifier `supabase migration list`.
-2. **Auth** : tout vit dans `supabase/config.toml` (inscription libre désactivée, TOTP, mot de passe ≥ 10
+2. **Auth** : tout vit dans `supabase/config.toml` (inscription libre désactivée, TOTP, mot de passe ≥ 8
    caractères, modèles d'e-mails français de `supabase/templates/`). Pour l'appliquer au projet hébergé,
    ajouter un bloc de surcharge avec l'URL publique, puis `supabase config push` (proposé par
    `promote.sh`, ou par le workflow « Deploy database » si la variable `SUPABASE_CONFIG_PUSH` vaut `true`) :
