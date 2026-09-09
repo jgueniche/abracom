@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
+import { EmptyState } from "@/components/domain/empty-state";
 import { PostCard } from "@/components/domain/post-card";
 import { requireClassAccess } from "@/lib/auth/class-access";
 import { canWriteInSchool } from "@/lib/permissions";
@@ -47,7 +48,7 @@ export default async function HomeworkPage({ params }: { params: Promise<{ class
     { key: "later", items: posts.filter((p) => p.due_on && p.due_on >= iso(afterNext)) },
   ] as const;
 
-  if (posts.length === 0) return <p className="text-muted-foreground">{t("noHomework")}</p>;
+  if (posts.length === 0) return <EmptyState title={t("noHomework")} />;
 
   return (
     <div className="flex flex-col gap-8">
@@ -55,18 +56,20 @@ export default async function HomeworkPage({ params }: { params: Promise<{ class
         .filter((g) => g.items.length > 0)
         .map((group) => (
           <section key={group.key} className="flex flex-col gap-3">
-            <h2 className="text-xl font-semibold">{t(group.key)}</h2>
-            {[...group.items]
-              .sort((a, b) => (a.due_on ?? "").localeCompare(b.due_on ?? ""))
-              .map((post) => (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  students={myStudents}
-                  canManage={isTeacher || isStaff}
-                  totalFamilies={cls.students.length}
-                />
-              ))}
+            <h2>{t(group.key)}</h2>
+            <div className="grid gap-4 2xl:grid-cols-2">
+              {[...group.items]
+                .sort((a, b) => (a.due_on ?? "").localeCompare(b.due_on ?? ""))
+                .map((post) => (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    students={myStudents}
+                    canManage={isTeacher || isStaff}
+                    totalFamilies={cls.students.length}
+                  />
+                ))}
+            </div>
           </section>
         ))}
     </div>

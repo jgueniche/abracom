@@ -1,6 +1,7 @@
 import { CheckIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { EmptyState } from "@/components/domain/empty-state";
 import { Markdown } from "@/components/domain/markdown";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ export default async function NotesPage({ params }: { params: Promise<{ classId:
           </CardContent>
         </Card>
       )}
-      {total === 0 && <p className="text-muted-foreground">{t("empty")}</p>}
+      {total === 0 && <EmptyState title={t("empty")} />}
       {notesByStudent
         .filter((s) => s.notes.length > 0)
         .map(({ student, notes }) => (

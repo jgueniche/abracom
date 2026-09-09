@@ -1,6 +1,7 @@
 import { PaperclipIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { EmptyState } from "@/components/domain/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,7 +52,7 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
       )}
       <h2 className="text-lg font-semibold">{t("title")}</h2>
       {absences.length === 0 ? (
-        <p className="text-muted-foreground">{t("empty")}</p>
+        <EmptyState title={t("empty")} />
       ) : (
         <ul className="flex flex-col gap-2">
           {absences.map((a) => (

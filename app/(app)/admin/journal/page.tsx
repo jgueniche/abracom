@@ -1,5 +1,6 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
 import { requireSchoolAdmin } from "@/lib/auth/guards";
 import { getAuditLog } from "@/server/queries/admin";
@@ -16,7 +17,7 @@ export default async function AuditPage() {
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {entries.length === 0 ? (
-        <p className="text-muted-foreground">{t("empty")}</p>
+        <EmptyState title={t("empty")} />
       ) : (
         <div className="overflow-x-auto rounded-2xl border">
           <table className="w-full text-sm">
