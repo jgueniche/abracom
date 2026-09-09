@@ -142,7 +142,7 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   CSP stricte à nonce, Sentry optionnel. 216 assertions pgTAP.
 - **Session 15 — code et documents complets** : guides utilisateurs (`content/guides`, `/aide`, PDF),
   assistant de promotion de niveau (`promote_school_year`), `docs/DEMO.md`, `docs/DEPLOIEMENT.md`, scripts
-  `ops:check-env`, `ops:storage-sweep`, `promote.sh`. 302 assertions pgTAP (revue de sécurité, ADR-0029). **V1 codée en intégralité.**
+  `ops:check-env`, `ops:storage-sweep`, `promote.sh`. 305 assertions pgTAP (revue de sécurité, ADR-0029). **V1 codée en intégralité.**
 - **Suite** : partager le projet Supabase « Kesher » avec le connecteur, appliquer les 28 migrations et
   le seed, variables Vercel, `supabase config push` (Auth, modèles), pg_cron (`supabase/jobs/cron.sql`),
   puis rejouer les validations « à valider sur une stack Supabase » de `docs/ROADMAP.md` et la démo.

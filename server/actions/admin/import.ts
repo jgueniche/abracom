@@ -217,12 +217,16 @@ export async function commitImport(
         if (await ensureMembership(supabase, schoolId, userId, "parent"))
           counts.membershipsCreated++;
         if (guardian.phone) {
-          await supabase
+          const { data: contact } = await supabase
             .from("profile_contacts")
-            .upsert(
-              { user_id: userId, phone: guardian.phone },
-              { onConflict: "user_id", ignoreDuplicates: true },
-            );
+            .select("phone")
+            .eq("user_id", userId)
+            .maybeSingle();
+          if (!contact?.phone) {
+            await supabase
+              .from("profile_contacts")
+              .upsert({ user_id: userId, phone: guardian.phone }, { onConflict: "user_id" });
+          }
         }
         const { error } = await supabase.from("student_guardians").upsert(
           {

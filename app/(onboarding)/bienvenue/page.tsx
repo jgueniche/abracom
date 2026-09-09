@@ -31,8 +31,12 @@ export default async function OnboardingPage() {
         firstName={user.profile.first_name}
         lastName={user.profile.last_name}
         invitations={user.memberships
-          .filter((m) => m.status === "invited" && m.school)
-          .map((m) => ({ schoolId: m.school_id, schoolName: m.school!.name, role: m.role }))
+          .filter((m) => m.status === "invited")
+          .map((m) => ({
+            schoolId: m.school_id,
+            schoolName: m.school?.name ?? t("unknownSchool"),
+            role: m.role,
+          }))
           .filter((m, index, all) => all.findIndex((x) => x.schoolId === m.schoolId) === index)}
         legal={legal.documents.map((d) => ({
           id: d.id,

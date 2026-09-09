@@ -193,7 +193,8 @@
       "joinTitle": "Schools",
       "joinHint": "The schools below invited you. Untick the ones you do not wish to join.",
       "join": "Join {school}",
-      "mustJoin": "Select at least one school to join."
+      "mustJoin": "Select at least one school to join.",
+      "unknownSchool": "the school that invited you"
     },
     "signOut": "Sign out"
   },

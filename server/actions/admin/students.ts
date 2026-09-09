@@ -132,13 +132,21 @@ export async function enroll(
   if (!cls || cls.archived) return false;
 
   const today = new Date().toISOString().slice(0, 10);
-  await supabase
+  // one open enrollment per year: close the others (or drop those that never started)
+  const { data: open } = await supabase
     .from("enrollments")
-    .update({ left_on: today })
+    .select("id, joined_on")
     .eq("student_id", studentId)
     .eq("school_year_id", cls.school_year_id)
     .neq("class_id", classId)
     .is("left_on", null);
+  for (const row of open ?? []) {
+    const { error } =
+      row.joined_on > today
+        ? await supabase.from("enrollments").delete().eq("id", row.id)
+        : await supabase.from("enrollments").update({ left_on: today }).eq("id", row.id);
+    if (error) return false;
+  }
 
   const { error } = await supabase.from("enrollments").upsert(
     {

@@ -126,7 +126,25 @@ export async function runNotificationJob(
         translator(locale, "notifications.kinds"),
         translator(locale, "emails"),
       ]);
-      const items: EmailItem[] = rows.map((row) => {
+      // claimed before sending so that an overlapping run never sends the same digest twice;
+      // the e-mail only lists what this run claimed
+      const stamp = now.toISOString();
+      const { data: claimed } = await admin
+        .from("notifications")
+        .update({ digested_at: stamp })
+        .in(
+          "id",
+          rows.map((r) => r.notification_id),
+        )
+        .is("digested_at", null)
+        .select("id");
+      const claimedIds = new Set((claimed ?? []).map((c) => c.id));
+      const mine = rows.filter((r) => claimedIds.has(r.notification_id));
+      if (mine.length === 0) {
+        report.skipped += rows.length;
+        continue;
+      }
+      const items: EmailItem[] = mine.map((row) => {
         const rendered = renderNotification(
           row.kind,
           (row.payload ?? {}) as Record<string, unknown>,
@@ -136,36 +154,28 @@ export async function runNotificationJob(
       });
       const { html, text } = renderEmail({
         greeting: te("greeting", { name: first.first_name }),
-        intro: te("digestIntro", { count: rows.length }),
+        intro: te("digestIntro", { count: mine.length }),
         items,
         cta: { label: te("open"), href: `${site}/notifications` },
         footer: te("footer", { app: appName, url: preferencesUrl }),
       });
-      const ids = rows.map((r) => r.notification_id);
-      // claimed before sending so that an overlapping run never sends the same digest twice
-      const { data: claimed } = await admin
-        .from("notifications")
-        .update({ digested_at: now.toISOString() })
-        .in("id", ids)
-        .is("digested_at", null)
-        .select("id");
-      if (!claimed?.length) {
-        report.skipped += rows.length;
-        continue;
-      }
       try {
         await sendEmail({
           to: first.email,
-          subject: te("digestSubject", { app: appName, count: rows.length }),
+          subject: te("digestSubject", { app: appName, count: mine.length }),
           html,
           text,
           unsubscribeUrl: preferencesUrl,
         });
-        report.sent += rows.length;
+        report.sent += mine.length;
       } catch (error) {
         console.error("[digest]", error instanceof Error ? error.message : String(error));
-        await admin.from("notifications").update({ digested_at: null }).in("id", ids);
-        report.failed += rows.length;
+        await admin
+          .from("notifications")
+          .update({ digested_at: null })
+          .in("id", [...claimedIds])
+          .eq("digested_at", stamp);
+        report.failed += mine.length;
       }
     }
     return report;
@@ -313,10 +323,18 @@ export async function runNotificationJob(
       .eq("id", id);
   }
 
-  /** Exponential backoff: 5, 10, 20, 40 minutes; the fifth failure is final and logged. */
+  /**
+   * Exponential backoff: 5, 10, 20, 40 minutes. The fifth failure is final: the row is closed
+   * (sent_at set, error kept) so that the retention purge removes it after 30 days.
+   */
   async function markFailed(id: string, attempts: number, note: string) {
     if (attempts >= MAX_ATTEMPTS) {
       console.error(`[notifications] delivery ${id} abandoned after ${attempts} attempts: ${note}`);
+      await admin
+        .from("notification_deliveries")
+        .update({ sent_at: now.toISOString(), claimed_at: null, last_error: `abandoned: ${note}` })
+        .eq("id", id);
+      return;
     }
     const delay = 5 * 60_000 * 2 ** Math.max(0, attempts - 1);
     await admin

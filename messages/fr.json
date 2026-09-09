@@ -193,7 +193,8 @@
       "joinTitle": "Établissements",
       "joinHint": "Vous avez été invité·e par les établissements ci-dessous. Décochez ceux que vous ne souhaitez pas rejoindre.",
       "join": "Rejoindre {school}",
-      "mustJoin": "Sélectionnez au moins un établissement à rejoindre."
+      "mustJoin": "Sélectionnez au moins un établissement à rejoindre.",
+      "unknownSchool": "l'établissement qui vous a invité·e"
     },
     "signOut": "Se déconnecter"
   },

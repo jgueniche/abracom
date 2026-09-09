@@ -120,6 +120,26 @@ export async function resendInvitation(formData: FormData): Promise<void> {
   revalidatePath("/admin", "layout");
 }
 
+/** Classes taught by the person or attended by their children (current enrollments). */
+async function classesOfUser(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+): Promise<string[]> {
+  const [{ data: taught }, { data: guarded }] = await Promise.all([
+    supabase.from("class_teachers").select("class_id").eq("user_id", userId),
+    supabase.from("student_guardians").select("student_id").eq("user_id", userId),
+  ]);
+  const studentIds = (guarded ?? []).map((g) => g.student_id);
+  const { data: enrollments } = studentIds.length
+    ? await supabase
+        .from("enrollments")
+        .select("class_id")
+        .in("student_id", studentIds)
+        .is("left_on", null)
+    : { data: [] as Array<{ class_id: string }> };
+  return [...new Set([...(taught ?? []), ...(enrollments ?? [])].map((r) => r.class_id))];
+}
+
 const statusSchema = z.object({
   membershipId: z.string().regex(uuid),
   status: z.enum(["active", "suspended"]),
@@ -139,9 +159,15 @@ export async function setMembershipStatus(formData: FormData): Promise<void> {
     .eq("id", parsed.data.membershipId)
     .eq("school_id", schoolId)
     .neq("role", "super_admin")
-    .select("id");
+    .select("id, user_id");
   if (error) throw new Error(error.message);
   if (!updated?.length) return;
+  if (parsed.data.status === "active") {
+    // suspension removed the person from the class threads: put them back
+    for (const classId of await classesOfUser(supabase, updated[0]!.user_id)) {
+      await supabase.rpc("ensure_class_threads", { class_: classId });
+    }
+  }
   await logAudit(supabase, {
     schoolId,
     actorId: user.id,

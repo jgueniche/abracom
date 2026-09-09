@@ -7,7 +7,11 @@ import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/server/actions/auth";
 
-/** Signs out after releasing this browser's push subscription (shared devices, brief §8). */
+/**
+ * Signs out and forgets this browser's push subscription on the server (shared devices,
+ * brief §8). The browser subscription itself is kept: the next person who signs in on this
+ * device re-registers it under their own account (see ServiceWorkerRegistration).
+ */
 export function SignOutButton({ className }: { className?: string }) {
   const t = useTranslations("auth");
   const [pending, startTransition] = useTransition();
@@ -19,13 +23,10 @@ export function SignOutButton({ className }: { className?: string }) {
         if ("serviceWorker" in navigator) {
           const registration = await navigator.serviceWorker.getRegistration();
           const subscription = await registration?.pushManager.getSubscription();
-          if (subscription) {
-            endpoint = subscription.endpoint;
-            await subscription.unsubscribe();
-          }
+          if (subscription) endpoint = subscription.endpoint;
         }
       } catch {
-        // best effort: the server row is removed anyway when the endpoint is known
+        // best effort
       }
       await signOut(endpoint);
     });

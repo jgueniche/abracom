@@ -130,7 +130,7 @@ export async function getClassAppointments(classId: string) {
 
 export { FORM_FIELD_TYPES, type FormField, type FormFieldType, parseFormSchema } from "@/lib/forms";
 
-const FORM_SELECT = `
+const FORM_SELECT = `school_id, 
   id, title, description_md, schema, audience, target_ids, per_student, opens_at, closes_at,
   created_at, created_by, notified_at,
   responses:form_responses ( id, user_id, student_id, submitted_at )

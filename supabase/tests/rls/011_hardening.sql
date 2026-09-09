@@ -1,6 +1,6 @@
 -- pgTAP: rules added by the hardening migrations (20260908172400 / 172500).
 begin;
-select plan(36);
+select plan(39);
 
 create or replace function pg_temp.login(uid uuid, aal text default 'aal2') returns void language plpgsql as $$
 begin
@@ -31,6 +31,7 @@ end $$;
 \set group_ps '''00000000-0000-4000-8000-000000003090'''
 \set official_ps '''00000000-0000-4000-8000-000000003074'''
 \set event_school '''00000000-0000-4000-8000-000000002049'''
+\set invited51 '''c0000000-0000-4000-8000-000000510002'''
 
 -- ── two-factor sessions ────────────────────────────────────────────────────────
 select pg_temp.login(:admin, 'aal1');
@@ -58,7 +59,8 @@ select lives_ok(
   'a member can still mute a conversation');
 select is(public.is_thread_moderator(:group_ps, :parent1), false, 'a parent is not a moderator of the class group');
 select ok(public.is_thread_moderator(:group_ps, :teacher_ps), 'the class teacher moderates the class group');
-select ok(public.is_thread_moderator(:group_ps, :staff), 'the secretariat moderates every thread of the school');
+select is(public.is_thread_moderator(:group_ps, :staff), false, 'the secretariat does not moderate threads it is not part of');
+select ok(public.is_thread_moderator(:group_ps, :admin), 'the direction moderates every thread of the school');
 select public.open_dm(:teacher_ps) as dm \gset
 select throws_ok(
   format($$insert into public.thread_members (thread_id, user_id) values (%L, %L)$$, :'dm', :parent1_b),
@@ -129,6 +131,11 @@ select throws_ok(
   '42501', null, 'a parent cannot log an administrative action');
 select lives_ok(format($$select public.log_audit(%L, 'security.mfa_enabled', 'profiles')$$, :school), 'anyone logs their own security events');
 select is((select count(*) from public.profile_contacts where user_id = :parent7), 0::bigint, 'phone numbers of other families are not readable');
+
+-- ── invitations ─────────────────────────────────────────────────────────────
+select pg_temp.login(:invited51);
+select is((select count(*) from public.schools), 1::bigint, 'an invited person sees the school that invited them');
+select is((select count(*) from public.students), 0::bigint, 'but nothing else before accepting');
 
 -- ── staff cannot flip the court restriction ───────────────────────────────────
 select pg_temp.login(:staff);

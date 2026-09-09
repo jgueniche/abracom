@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
+import { canWriteInSchool } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 import { formStatus, getForm, getMyFormResponses } from "@/server/queries/community";
 import { getMyChildren } from "@/server/queries/family";
@@ -127,7 +128,7 @@ export default async function FormPage({
               studentId={studentId}
               fields={form.fields}
               answers={(existing?.answers as Record<string, unknown> | null) ?? {}}
-              disabled={status !== "open"}
+              disabled={status !== "open" || !canWriteInSchool(user.roles, form.school_id)}
             />
           </CardContent>
         </Card>

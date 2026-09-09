@@ -399,4 +399,8 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 - **Conséquences** : un administrateur doit activer la validation en deux étapes avant toute action, y
   compris par l'API ; les tests pgTAP se connectent avec la revendication `aal2` ; une inscription
   ouverte par élève et par année est garantie par index ; la messagerie parent ↔ parent reste
-  désactivée par défaut ; 302 assertions pgTAP couvrent ces règles (`011_hardening.sql`).
+  désactivée par défaut ; les privilèges par défaut du schéma `public` n'accordent plus rien à `anon`
+  ni à `PUBLIC`, donc **toute nouvelle fonction doit recevoir explicitement `grant execute … to
+authenticated, service_role`** ; les invités voient le nom de l'école qui les invite ; les enseignants
+  peuvent être affectés avant d'avoir accepté leur invitation ; 305 assertions pgTAP couvrent ces
+  règles (`011_hardening.sql`).

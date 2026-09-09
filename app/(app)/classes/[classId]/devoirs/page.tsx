@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import { PostCard } from "@/components/domain/post-card";
 import { requireClassAccess } from "@/lib/auth/class-access";
+import { canWriteInSchool } from "@/lib/permissions";
 import { getClassFeed } from "@/server/queries/class-space";
 
 function startOfWeek(date: Date): Date {
@@ -14,12 +15,15 @@ function startOfWeek(date: Date): Date {
 
 export default async function HomeworkPage({ params }: { params: Promise<{ classId: string }> }) {
   const { classId } = await params;
-  const [{ cls, isTeacher, isStaff, myStudentIds }, t, posts] = await Promise.all([
+  const [{ user, cls, isTeacher, isStaff, myStudentIds }, t, posts] = await Promise.all([
     requireClassAccess(classId),
     getTranslations("classSpace.week"),
     getClassFeed(classId, "homework"),
   ]);
-  const myStudents = cls.students.filter((s) => myStudentIds.includes(s.id));
+  // read-only guardians see the homework but cannot tick it
+  const myStudents = canWriteInSchool(user.roles, cls.school_id)
+    ? cls.students.filter((s) => myStudentIds.includes(s.id))
+    : [];
   const today = new Date();
   const week = startOfWeek(today);
   const nextWeek = new Date(week);

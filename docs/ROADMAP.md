@@ -384,7 +384,7 @@ sessions sont codées ; la validation sur une stack Supabase cloud reste à fair
       `pnpm ops:check-env --prod` (variables requises), `pnpm ops:storage-sweep [--delete]` (orphelins, RGPD §3)
 - [x] Tests : 9 pgTAP (`009_promotion.sql`) ; README et scripts documentés
 - [x] Isolation multi-établissement : `010_multi_school.sql` (39 assertions, seconde école fictive créée dans
-      la transaction : lecture, écriture, fonctions, recherche, flux ICS) — 264 assertions pgTAP au total
+      la transaction : lecture, écriture, fonctions, recherche, flux ICS) — 305 assertions pgTAP au total
 - [x] Modèles d'e-mails Auth en français (`supabase/templates/`, câblés dans `config.toml`), workflow
       « Deploy database » (`supabase db push` + `config push` sur `main`), libellés « Fermer » traduits
 - [ ] Jouer la démo sur `kesher-staging` avec la direction ; traduire les guides en anglais après les
@@ -392,7 +392,7 @@ sessions sont codées ; la validation sur une stack Supabase cloud reste à fair
 
 ## Bilan V1
 
-Les quinze sessions sont codées et testées localement (106 unitaires, 22 e2e, 264 pgTAP, build). Restent,
+Les quinze sessions sont codées et testées localement (106 unitaires, 22 e2e, 305 pgTAP, build). Restent,
 côté porteur : partager le projet Supabase avec le connecteur, renseigner les variables Vercel et les clés
 (Resend, VAPID, `CRON_SECRET`, Sentry), rejouer les validations « à valider sur une stack Supabase » listées
 dans chaque session, puis dérouler `docs/DEMO.md`.
@@ -426,6 +426,13 @@ migrations `20260908172400` et `20260908172500` (ADR-0029) et dans l'application
 - [x] Consentements : opt-in dédié pour afficher ses coordonnées sur une petite annonce
       (`show_on_classifieds`), invitations acceptées une à une à l'onboarding
       (`activate_my_memberships(schools)`)
+- [x] Revue de non-régression du durcissement : les invités voient l'école qui les invite (onboarding),
+      affectation d'enseignants encore invités, changement de classe après promotion, modération
+      réservée à la direction (cohérente avec la lecture des fils), colonnes figées compatibles avec les
+      suppressions en cascade et les changements de classe, digest limité aux notifications réclamées,
+      réactivation d'un membre resynchronisant ses fils, livraisons abandonnées purgées, abonnement push
+      conservé à la déconnexion et ré-attaché à la connexion suivante, 2FA exigée dès l'entrée dans
+      l'application pour la direction, responsables en lecture seule sans cases « vu » ni formulaires
 - [ ] Reste à décider : limitation de débit du flux ICS (jeton de 192 bits, cache 15 min)
 
 ## Questions ouvertes (§15 du brief)

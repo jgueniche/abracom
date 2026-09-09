@@ -13,13 +13,29 @@ type BeforeInstallPromptEvent = Event & {
 
 const DISMISS_KEY = "kesher-install-dismissed";
 
-/** Registers the service worker in production builds (offline fallback, asset cache, push). */
+/**
+ * Registers the service worker in production builds (offline fallback, asset cache, push) and
+ * re-attaches an existing push subscription to the signed-in person (sign-out only forgets the
+ * server row, so a shared device never keeps delivering to the previous account).
+ */
 export function ServiceWorkerRegistration() {
   useEffect(() => {
     if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register("/sw.js").catch(() => {
-      /* registration is best effort */
-    });
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((registration) => registration.pushManager?.getSubscription())
+      .then((subscription) => {
+        if (!subscription) return;
+        return fetch("/api/push/subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify(subscription.toJSON()),
+        });
+      })
+      .catch(() => {
+        /* registration is best effort */
+      });
   }, []);
   return null;
 }

@@ -2,16 +2,20 @@ import { getTranslations } from "next-intl/server";
 
 import { PostCard } from "@/components/domain/post-card";
 import { requireClassAccess } from "@/lib/auth/class-access";
+import { canWriteInSchool } from "@/lib/permissions";
 import { getClassFeed } from "@/server/queries/class-space";
 
 export default async function ClassFeedPage({ params }: { params: Promise<{ classId: string }> }) {
   const { classId } = await params;
-  const [{ cls, isTeacher, isStaff, myStudentIds }, t, posts] = await Promise.all([
+  const [{ user, cls, isTeacher, isStaff, myStudentIds }, t, posts] = await Promise.all([
     requireClassAccess(classId),
     getTranslations("classSpace"),
     getClassFeed(classId),
   ]);
-  const myStudents = cls.students.filter((s) => myStudentIds.includes(s.id));
+  // read-only guardians see the homework but cannot tick it
+  const myStudents = canWriteInSchool(user.roles, cls.school_id)
+    ? cls.students.filter((s) => myStudentIds.includes(s.id))
+    : [];
 
   return posts.length === 0 ? (
     <p className="text-muted-foreground">{t("noPosts")}</p>
