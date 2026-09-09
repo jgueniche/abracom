@@ -1,5 +1,7 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { ContentCard, EyebrowDot } from "@/components/domain/content-card";
+import { EmptyState } from "@/components/domain/empty-state";
 import { MediaGrid } from "@/components/domain/media-grid";
 import { requireClassAccess } from "@/lib/auth/class-access";
 import { getClassFeed } from "@/server/queries/class-space";
@@ -18,24 +20,38 @@ export default async function JournalPage({ params }: { params: Promise<{ classI
     const key = post.published_at!.slice(0, 7);
     months.set(key, [...(months.get(key) ?? []), post]);
   }
-  if (withMedia.length === 0) return <p className="text-muted-foreground">{t("empty")}</p>;
+  if (withMedia.length === 0) return <EmptyState title={t("empty")} />;
 
   return (
     <div className="flex flex-col gap-8">
       {[...months.entries()].map(([month, items]) => (
         <section key={month} className="flex flex-col gap-4">
-          <h2 className="text-xl font-semibold capitalize">
+          <h2 className="capitalize">
             {format.dateTime(new Date(`${month}-01T12:00:00`), { month: "long", year: "numeric" })}
-            <span className="ml-2 text-sm font-normal text-muted-foreground">
+            <span className="ml-2 font-sans text-sm font-normal text-muted-foreground">
               {t("photos", { count: items.reduce((n, p) => n + p.media.length, 0) })}
             </span>
           </h2>
-          {items.map((post) => (
-            <div key={post.id} className="flex flex-col gap-2">
-              <p className="font-medium">{post.title}</p>
-              <MediaGrid items={post.media} canDelete={isTeacher || isStaff} />
-            </div>
-          ))}
+          <div className="grid gap-4 2xl:grid-cols-2">
+            {items.map((post) => (
+              /* The journal used to render a bare <p> and a grid: the third
+                 rendering of the very same post. One anatomy, everywhere. */
+              <ContentCard
+                key={post.id}
+                title={post.title}
+                eyebrow={
+                  post.published_at ? (
+                    <>
+                      {format.dateTime(new Date(post.published_at), { dateStyle: "long" })}
+                      <EyebrowDot />
+                      {t("photos", { count: post.media.length })}
+                    </>
+                  ) : undefined
+                }
+                media={<MediaGrid items={post.media} canDelete={isTeacher || isStaff} />}
+              />
+            ))}
+          </div>
         </section>
       ))}
     </div>

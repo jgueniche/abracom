@@ -12,14 +12,14 @@ export function SearchBox({ compact = false }: { compact?: boolean }) {
       <Link
         href="/recherche"
         aria-label={t("title")}
-        className="inline-flex size-11 items-center justify-center rounded-lg hover:bg-accent hover:text-accent-foreground md:hidden"
+        className="inline-flex size-11 items-center justify-center rounded-lg hover:bg-accent hover:text-accent-foreground xl:hidden"
       >
         <SearchIcon className="size-5" aria-hidden />
       </Link>
     );
   }
   return (
-    <form action="/recherche" role="search" className="hidden items-center md:flex">
+    <form action="/recherche" role="search" className="hidden items-center xl:flex">
       <label className="relative">
         <span className="sr-only">{t("title")}</span>
         <SearchIcon

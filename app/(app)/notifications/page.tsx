@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -47,7 +48,7 @@ export default async function NotificationsPage() {
         }
       />
       {notifications.length === 0 ? (
-        <p className="text-muted-foreground">{t("empty")}</p>
+        <EmptyState title={t("empty")} />
       ) : (
         <ul className="flex flex-col gap-2">
           {notifications.map((n) => {

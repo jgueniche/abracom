@@ -3,13 +3,9 @@ import {
   BookOpenIcon,
   ChevronRightIcon,
   ExternalLinkIcon,
-  FolderIcon,
-  MegaphoneIcon,
   PaletteIcon,
-  ShieldCheckIcon,
   UserRoundIcon,
   UsersRoundIcon,
-  UsersIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -22,7 +18,6 @@ import { ThemeToggle } from "@/components/layouts/theme-toggle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { publicEnv } from "@/lib/env";
-import { isSchoolStaff } from "@/lib/permissions";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("more");
@@ -30,20 +25,27 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const linkClass =
-  "hover:bg-accent hover:text-accent-foreground flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium";
+  "flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground";
 
+/**
+ * Account and preferences only.
+ *
+ * This page used to hold Announcements, Documents and Community inside a card
+ * titled "My account" — the three main institutional contents, with no other
+ * entry point in the navigation. They now live under the "École" tab, and
+ * language and theme (which were duplicated in the header) live only here.
+ */
 export default async function MorePage() {
   const user = await requireCurrentUser();
   const [t, tNav] = await Promise.all([getTranslations("more"), getTranslations("nav")]);
   const isParent = user.roles.some((r) => r.role === "parent" || r.role === "guardian");
-  const isStaff = user.school ? isSchoolStaff(user.roles, user.school.id) : false;
   const showStyleGuide =
     process.env.NODE_ENV !== "production" || process.env.VERCEL_ENV === "preview";
 
   return (
     <>
       <PageHeader title={t("title")} />
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Card>
           <CardHeader>
             <CardTitle>{t("account")}</CardTitle>
@@ -61,14 +63,9 @@ export default async function MorePage() {
                 <ChevronRightIcon className="ml-auto size-4" aria-hidden />
               </Link>
             )}
-            <Link href="/annonces" className={linkClass}>
-              <MegaphoneIcon className="size-4" aria-hidden />
-              {tNav("announcements")}
-              <ChevronRightIcon className="ml-auto size-4" aria-hidden />
-            </Link>
-            <Link href="/documents" className={linkClass}>
-              <FolderIcon className="size-4" aria-hidden />
-              {tNav("documents")}
+            <Link href="/notifications" className={linkClass}>
+              <BellIcon className="size-4" aria-hidden />
+              {tNav("notifications")}
               <ChevronRightIcon className="ml-auto size-4" aria-hidden />
             </Link>
             <Link href="/aide" className={linkClass}>
@@ -76,22 +73,6 @@ export default async function MorePage() {
               {t("help")}
               <ChevronRightIcon className="ml-auto size-4" aria-hidden />
             </Link>
-            <Link href="/communaute" className={linkClass}>
-              <UsersIcon className="size-5" aria-hidden />
-              {t("community")}
-            </Link>
-            <Link href="/notifications" className={linkClass}>
-              <BellIcon className="size-4" aria-hidden />
-              {tNav("notifications")}
-              <ChevronRightIcon className="ml-auto size-4" aria-hidden />
-            </Link>
-            {isStaff && (
-              <Link href="/admin" className={linkClass}>
-                <ShieldCheckIcon className="size-4" aria-hidden />
-                {tNav("admin")}
-                <ChevronRightIcon className="ml-auto size-4" aria-hidden />
-              </Link>
-            )}
             {showStyleGuide && (
               <Link href="/dev/ui" className={linkClass}>
                 <PaletteIcon className="size-4" aria-hidden />
@@ -104,42 +85,42 @@ export default async function MorePage() {
             </div>
           </CardContent>
         </Card>
-        <div className="flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("school")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <a
-                href={publicEnv.NEXT_PUBLIC_EDUCARTABLE_URL}
-                target="_blank"
-                rel="noreferrer"
-                className={linkClass}
-              >
-                <ExternalLinkIcon className="size-4" aria-hidden />
-                <span className="flex flex-col">
-                  {t("educartable")}
-                  <span className="text-xs font-normal text-muted-foreground">
-                    {t("educartableHint")}
-                  </span>
+
+        <Card className="h-fit">
+          <CardHeader>
+            <CardTitle>{t("school")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <a
+              href={publicEnv.NEXT_PUBLIC_EDUCARTABLE_URL}
+              target="_blank"
+              rel="noreferrer"
+              className={linkClass}
+            >
+              <ExternalLinkIcon className="size-4 shrink-0" aria-hidden />
+              <span className="flex flex-col">
+                {t("educartable")}
+                <span className="text-xs font-normal text-muted-foreground">
+                  {t("educartableHint")}
                 </span>
-              </a>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("preferences")}</CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center gap-6">
-              <div className="flex items-center gap-2 text-sm">
-                {t("language")} <LocaleSwitcher />
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                {t("theme")} <ThemeToggle />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </span>
+            </a>
+          </CardContent>
+        </Card>
+
+        <Card className="h-fit">
+          <CardHeader>
+            <CardTitle>{t("preferences")}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-wrap items-center gap-6">
+            <div className="flex items-center gap-2 text-sm">
+              {t("language")} <LocaleSwitcher />
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              {t("theme")} <ThemeToggle />
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </>
   );

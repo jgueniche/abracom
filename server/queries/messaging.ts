@@ -11,6 +11,21 @@ export async function getMyThreads() {
 
 export type ThreadSummary = Awaited<ReturnType<typeof getMyThreads>>[number];
 
+/**
+ * Unread messages across every live conversation, for the tab badge. The bell
+ * carried a count and the Messages tab did not, so a parent had no way of
+ * knowing a teacher had written without opening the list.
+ * Never throws: a badge is not worth a 500 on every signed-in page.
+ */
+export async function getUnreadMessageCount(): Promise<number> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("my_threads");
+  if (error) return 0;
+  return (data ?? [])
+    .filter((thread) => !thread.archived)
+    .reduce((total, thread) => total + Number(thread.unread_count ?? 0), 0);
+}
+
 export async function getThread(threadId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -46,6 +61,25 @@ export async function getMessages(threadId: string, limit = 60) {
 }
 
 export type MessageRow = Awaited<ReturnType<typeof getMessages>>[number];
+
+/**
+ * The page before `before`, oldest first. The thread used to load exactly sixty
+ * messages and stop: past that, history was unreachable and a quoted reply to an
+ * older message rendered empty, because the quote is resolved among the
+ * messages already loaded.
+ */
+export async function getMessagesBefore(threadId: string, before: string, limit = 40) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("messages")
+    .select(MESSAGE_SELECT)
+    .eq("thread_id", threadId)
+    .lt("created_at", before)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []).reverse();
+}
 
 export async function searchMessages(threadId: string, query: string) {
   const supabase = await createClient();

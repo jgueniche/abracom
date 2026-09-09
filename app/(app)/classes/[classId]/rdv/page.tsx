@@ -1,5 +1,6 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { EmptyState } from "@/components/domain/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -84,7 +85,7 @@ export default async function AppointmentsPage({
         </p>
       )}
       {slots.length === 0 ? (
-        <p className="text-muted-foreground">{t("empty")}</p>
+        <EmptyState title={t("empty")} />
       ) : (
         [...days.entries()].map(([day, list]) => (
           <section key={day}>

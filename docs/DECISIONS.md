@@ -418,3 +418,58 @@ authenticated, service_role`** ; les invités voient le nom de l'école qui les 
 - **Conséquences** : avant la mise en production réelle, activer l'option pour l'école (`update
 public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) ; la direction devra
   alors s'inscrire avant tout accès administrateur.
+
+## ADR-0031 — Refonte de l'interface : charte « Papier & Grenat », navigation par rôle, anatomie unique
+
+- **Contexte** : audit UI/UX du 2026-09-09 sur la version déployée (164 fichiers d'interface, 26 captures
+  des trois rôles en 390 px et 1440 px). Quatre constats chiffrés : un unique `max-w-5xl` plafonnait
+  toutes les pages connectées à 1 024 px et le dépôt ne contenait aucune règle `xl:`/`2xl:` (48 % d'un
+  écran 1 920 px sans rien) ; l'en-tête empilait ~1 200 px de contenu dans 992 px, ce qui comprimait la
+  cloche et l'avatar sous les 44 px tactiles ; 43 % des jetons de couleur ne peignaient aucun pixel et
+  carte sur fond valait 1,04:1 ; une conversation montrait 24 % de messages pour 404 px de chrome, avec
+  cinq boutons libellés sous chacun d'eux. Les annonces — objectif produit n° 1, porteur de l'accusé de
+  lecture — n'étaient un onglet pour personne : elles vivaient dans une carte « Mon compte », sous « Plus ».
+- **Décision** : (1) **Charte** — thème clair « Papier & Grenat » (papier chaud, sarcelle du logo en
+  primaire, brique du logo en accent) et thème sombre « Nuit Sarcelle » (nuit sarcelle, or du mandala en
+  primaire) ; les jetons morts `chart-*` et `sidebar-*` sont supprimés, `--brick`, `--success` et
+  `--warning` sont ajoutés, Fraunces charge enfin ses axes `SOFT`/`WONK` et Source Serif 4 porte les
+  textes institutionnels longs. (2) **Largeur** — plafond fluide `max-w-[110rem]` avec paliers
+  `xl:`/`2xl:`, colonne latérale d'administration et messagerie en deux volets ; une variable
+  `--nav-h` unique remplace `pb-24`, `bottom-16` et `bottom-20`. (3) **Navigation** — une barre par
+  rôle, un onglet « École » qui réunit annonces, documents, agenda et formulaires, un pôle « Publier »
+  pour les enseignants et la direction, un tableau de bord qui liste la file d'attente réelle, douze
+  pastilles d'administration regroupées en quatre familles, « Plus » réduit au compte. (4) **Messagerie**
+  — barre de conversation unique, groupage par auteur, actions au menu, séparateur « Nouveaux messages »,
+  pagination remontante, recherche en surcouche. (5) **Contenus** — un `ContentCard` unique, un
+  `EmptyState`, un `HubCard`, des monogrammes teintés déterministes.
+- **Conséquences** : `tests/unit/design-tokens.test.ts` vérifie désormais aussi la séparation des plans
+  (fond/carte ≥ 1,15:1) et le seuil non textuel de 3:1 des bordures de champ — le test précédent
+  garantissait la lisibilité, jamais la hiérarchie, ce qui explique qu'une charte parfaitement conforme
+  soit restée parfaitement fade. L'onglet « Fil » d'une classe disparaît (il rejouait Devoirs et Cahier),
+  `/classes/[classId]` mène aux devoirs, `/classes` redirige quand il n'y a qu'une classe, et deux
+  nouvelles routes existent : `/ecole` et `/publier`. Six bugs avérés sont corrigés au passage : composeur
+  masqué par la barre d'onglets sur iPhone, bannière d'installation superposée, réactions dont on ne
+  voyait jamais les siennes, recherche qui faisait disparaître le champ de saisie, « Vu par n » sans
+  dénominateur, fil marqué lu sans être visible.
+
+## ADR-0032 — Charte « Blanc & Techelet » : bleus et blanc plutôt que papier chaud
+
+- **Contexte** : à la revue de la refonte (ADR-0031), le porteur a écarté le fond beige. Il veut une
+  interface nettement plus pâle et une identité construite sur les couleurs d'Israël — des nuances de
+  bleu et du blanc — plutôt que sur le papier chaud de la direction « Papier & Grenat ».
+- **Décision** : le thème clair devient **« Blanc & Techelet »** — page quasi blanche
+  `oklch(0.977 0.01 252.8)` (#f3f8fe), cartes **blanc pur**, primaire au bleu du drapeau
+  `oklch(0.412 0.206 262.9)` (#0038b8). Le thème sombre devient **« Nuit Techelet »** — nuit marine
+  #0a1524, plans #152740 et #203756, primaire bleu clair #8ab4ff. Le rouge brique du logo est conservé
+  mais **uniquement pour ce qui attend le lecteur** (accusé de lecture dû, signalement) : il n'a plus
+  aucun rôle décoratif. Le vert et l'ambre restent les couleurs fonctionnelles de succès et
+  d'avertissement. Les icônes PWA sont régénérées sur le nouveau fond (`scripts/brand/generate-icons.ts`),
+  et les teintes d'avatar sont recentrées sur les bleus.
+- **Conséquences** : sur une page quasi blanche, un plan ne peut plus être dessiné par son fond — la
+  séparation fond / carte tombe à 1,07:1. Les seuils de `tests/unit/design-tokens.test.ts` basculent donc
+  du **fond vers la bordure** : le filet doit atteindre **1,55:1 vu de la carte** et **1,5:1 vu de la
+  page** (il est à 1,65 et 1,55), et l'ombre porte le reste du relief. C'est le contraire du défaut
+  d'origine, où la carte était à 1,04:1 **et** son filet à 1,35:1 : aucun des deux ne dessinait le plan.
+  Le reste est inchangé : bordure de champ à 3,9:1, blanc sur primaire à 9,3:1, texte à 15,7:1. Les jetons de marque `--brand-*` restent les couleurs extraites du logo et ne changent pas ;
+  seule leur mise en œuvre change. Les planches d'audit publiées (directions A / B / C) documentent la
+  décision précédente et ne sont pas réécrites : cette ADR est la trace de l'arbitrage suivant.

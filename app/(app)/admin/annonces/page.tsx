@@ -41,7 +41,7 @@ export default async function AdminAnnouncementsPage() {
           <li key={a.id}>
             <Link
               href={`/admin/annonces/${a.id}`}
-              className="flex items-center gap-3 rounded-xl border p-3 hover:bg-accent/60"
+              className="flex min-h-16 items-center gap-3 rounded-xl border border-border bg-card p-3 shadow-soft transition-colors hover:bg-accent/40"
             >
               <Badge variant={variant[a.status]}>{t(`status.${a.status}`)}</Badge>
               <div className="min-w-0 flex-1">
@@ -54,8 +54,12 @@ export default async function AdminAnnouncementsPage() {
                       })
                     : "—"}
                   {a.requires_ack ? ` · ${t("fields.requiresAck")}` : ""}
-                  {a.reads.length
-                    ? ` · ${t("readRatio", { read: a.reads.length, total: "?" })}`
+                  {/* The total is only known per announcement (RLS-scoped
+                      recipients), and printing "80 / ?" told nobody anything.
+                      The real ratio lives on the announcement's own page. */}
+                  {` · ${t("readsCount", { count: a.reads.length })}`}
+                  {a.requires_ack
+                    ? ` · ${t("ackedShort", { count: a.reads.filter((r) => r.acked_at).length })}`
                     : ""}
                 </p>
               </div>

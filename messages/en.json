@@ -39,7 +39,13 @@
     "admin": "Administration",
     "documents": "Documents",
     "notifications": "Notifications",
-    "search": "Search"
+    "search": "Search",
+    "myChild": "My child",
+    "myClass": "My class",
+    "school": "School",
+    "publish": "Publish",
+    "manage": "Manage",
+    "unreadMessages": "Messages: {count, plural, one {# unread} other {# unread}}"
   },
   "errors": {
     "notFound": {
@@ -534,6 +540,23 @@
       "invalid": "Invalid mapping.",
       "forbidden": "Head of school only.",
       "error": "The promotion failed; nothing was changed."
+    },
+    "groups": {
+      "publications": "Publications",
+      "people": "People",
+      "moderation": "Moderation",
+      "year": "Year and log"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "What needs a decision today.",
+      "queue": "To handle",
+      "nothing": "Nothing is waiting on a decision. Have a good day.",
+      "openReports": "{count, plural, one {# open report} other {# open reports}}",
+      "scheduled": "{count, plural, one {# scheduled announcement} other {# scheduled announcements}}",
+      "pendingClassifieds": "{count, plural, one {# classified to approve} other {# classifieds to approve}}",
+      "lateAcks": "{count, plural, one {# announcement with late receipts} other {# announcements with late receipts}}",
+      "shortcuts": "Shortcuts"
     }
   },
   "editor": {
@@ -566,7 +589,8 @@
     "publishedOn": "Published on {date}",
     "expiresOn": "Until {date}",
     "back": "All announcements",
-    "notFound": "Announcement not found."
+    "notFound": "Announcement not found.",
+    "morePhotos": "+{count}"
   },
   "documents": {
     "title": "Documents",
@@ -704,7 +728,9 @@
     "fileType": "File type not allowed.",
     "uploadError": "Could not upload the file.",
     "back": "All announcements",
-    "readRatio": "{read} / {total} read"
+    "readRatio": "{read} / {total} read",
+    "readsCount": "{count, plural, =0 {no reads} one {# read} other {# reads}}",
+    "ackedShort": "{count, plural, =0 {no receipts} one {# receipt} other {# receipts}}"
   },
   "adminDocuments": {
     "title": "Documents",
@@ -808,7 +834,9 @@
       "deleteMedia": "Remove photo",
       "compressing": "Compressing photos…",
       "consent": "I confirm that no child without a signed image-rights consent appears on these photos.",
-      "consentRequired": "Please confirm that the photos show no child without consent."
+      "consentRequired": "Please confirm that the photos show no child without consent.",
+      "deleteConfirm": "This post and its photos will be removed for every family.",
+      "cancel": "Cancel"
     },
     "journal": {
       "empty": "No photo yet.",
@@ -869,7 +897,10 @@
       "withFile": "Document attached",
       "period": "{from} → {to}",
       "readOnly": "Declarations are reserved for parents."
-    }
+    },
+    "seenByTotal": "Seen by {count} / {total}",
+    "readMore": "Read more",
+    "actions": "Post actions"
   },
   "messaging": {
     "title": "Messages",
@@ -910,7 +941,10 @@
       "reason": "Reason",
       "attachments": "Attachments",
       "you": "You",
-      "unknown": "Member"
+      "unknown": "Member",
+      "actions": "Message actions",
+      "staff": "School",
+      "deleteConfirm": "This message will be removed from the conversation for everyone. This cannot be undone."
     },
     "report": {
       "title": "Report this message",
@@ -948,7 +982,15 @@
     "classDiscussion": "Class discussion",
     "today": "Today",
     "yesterday": "Yesterday",
-    "loadOlder": "Older messages"
+    "loadOlder": "Older messages",
+    "newMessages": "New messages",
+    "newBelow": "{count, plural, one {# new message} other {# new messages}}",
+    "conversation": "Conversation",
+    "backToList": "Back to messages",
+    "officialPinned": "Official channel",
+    "directMessages": "Direct messages",
+    "classThreads": "Classes",
+    "emptyHint": "Write to a teacher or to the head teacher: the conversation will show up here."
   },
   "adminReports": {
     "title": "Reports",
@@ -1645,5 +1687,36 @@
       "child": "child",
       "submittedAt": "submitted_at"
     }
+  },
+  "schoolHub": {
+    "title": "School",
+    "subtitle": "Everything the school sends you or asks of you.",
+    "announcements": "Announcements and circulars",
+    "announcementsHint": "Official messages from the head teacher, with read receipts.",
+    "documents": "Documents",
+    "documentsHint": "Rules, permission slips and papers to sign.",
+    "agenda": "Agenda",
+    "agendaHint": "School calendar, Jewish holidays, events and sign-ups.",
+    "forms": "Forms and surveys",
+    "formsHint": "Requests from the school that need your answer.",
+    "community": "Community",
+    "communityHint": "Classifieds, directory and mutual help between families.",
+    "pendingAck": "{count, plural, one {# read receipt pending} other {# read receipts pending}}"
+  },
+  "publish": {
+    "title": "Publish",
+    "subtitle": "What would you like to publish?",
+    "chooseClass": "Pick a class",
+    "classSpace": "In a class",
+    "classSpaceHint": "Homework, a journal entry or a private note.",
+    "announcement": "Announcement",
+    "announcementHint": "Official message to selected classes or the whole school.",
+    "document": "Document",
+    "documentHint": "Circular, policy or paper to sign.",
+    "event": "Event",
+    "eventHint": "Meeting, outing or celebration, with sign-up.",
+    "form": "Form",
+    "formHint": "Survey or permission to collect.",
+    "noClass": "No class is assigned to you yet."
   }
 }

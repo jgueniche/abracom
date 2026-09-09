@@ -143,6 +143,12 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 - **Session 15 — code et documents complets** : guides utilisateurs (`content/guides`, `/aide`, PDF),
   assistant de promotion de niveau (`promote_school_year`), `docs/DEMO.md`, `docs/DEPLOIEMENT.md`, scripts
   `ops:check-env`, `ops:storage-sweep`, `promote.sh`. 305 assertions pgTAP (revue de sécurité, ADR-0029). **V1 codée en intégralité.**
+- **Session 16 — code complet, validation visuelle en attente** : refonte d'interface (ADR-0031) —
+  charte « Blanc & Techelet » en clair (page quasi blanche, bleus du drapeau) et « Nuit Techelet » en sombre (ADR-0032), plafond de largeur fluide avec
+  paliers `xl:`/`2xl:`, navigation par rôle (onglet **École**, pôle **Publier**, tableau de bord de
+  direction, administration en quatre familles), messagerie refondue (barre de conversation, groupage,
+  actions au menu, deux volets), `ContentCard` / `EmptyState` / `HubCard` uniques, six bugs d'affichage
+  corrigés.
 - **Suite** : projet Supabase « Kesher » (`hhmqtavmfgjeacsweasz`, Paris) migré, seedé et configuré (Auth,
   pg_cron) ; renseigner les variables Vercel, brancher Resend puis décommenter les modèles d'e-mails de
   `config.toml`, rejouer les validations « stack Supabase » de `docs/ROADMAP.md`, dérouler la démo.

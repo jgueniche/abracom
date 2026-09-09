@@ -1,20 +1,48 @@
 "use client";
 
 import {
+  ChevronDownIcon,
+  ChevronUpIcon,
   CornerDownRightIcon,
   FlagIcon,
+  MoreHorizontalIcon,
   PaperclipIcon,
   ReplyIcon,
   SendIcon,
   ShieldXIcon,
+  SmilePlusIcon,
   Trash2Icon,
   XIcon,
 } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
-import { useActionState, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type Ref,
+  useActionState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/domain/user-avatar";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import {
   dayKey,
@@ -27,6 +55,7 @@ import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import {
   deleteOwnMessage,
+  fetchOlderMessages,
   markThreadRead,
   moderateMessage,
   reportMessage,
@@ -52,6 +81,15 @@ export type Message = {
 };
 
 const initialSend: SendState = { status: "idle" };
+/** Messages from the same author inside this window share one header. */
+const GROUP_WINDOW_MS = 5 * 60 * 1000;
+/** How close to the bottom counts as "following the conversation". */
+const STICK_TO_BOTTOM_PX = 120;
+
+type Row =
+  | { kind: "day"; key: string; day: string }
+  | { kind: "unread"; key: string }
+  | { kind: "message"; key: string; message: Message; startsGroup: boolean };
 
 export function ThreadView({
   threadId,
@@ -62,6 +100,8 @@ export function ThreadView({
   canModerate,
   closedReason,
   searchMode,
+  lastReadAt,
+  hint,
 }: {
   threadId: string;
   initialMessages: Message[];
@@ -71,20 +111,54 @@ export function ThreadView({
   canModerate: boolean;
   closedReason: string | null;
   searchMode: boolean;
+  /** Where the reader stopped last time — draws the "new messages" line. */
+  lastReadAt: string | null;
+  /** Response-hours line, shown as the composer's help text instead of a banner. */
+  hint?: string;
 }) {
   const t = useTranslations("messaging");
   const format = useFormatter();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [replyTo, setReplyTo] = useState<Message | null>(null);
-  const [reportFor, setReportFor] = useState<string | null>(null);
-  const [moderateFor, setModerateFor] = useState<string | null>(null);
+  const [reason, setReason] = useState<{ id: string; mode: "report" | "moderate" } | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [hasOlder, setHasOlder] = useState(!searchMode && initialMessages.length >= 60);
+  const [loadingOlder, startLoadOlder] = useTransition();
+  const [unseen, setUnseen] = useState(0);
+
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const atBottomRef = useRef(true);
+  const composerRef = useRef<{ focus: () => void }>(null);
+
   const memberMap = useMemo(() => new Map(members.map((m) => [m.id, m])), [members]);
   const memberNames = useMemo(() => members.map((m) => m.name), [members]);
 
   useEffect(() => {
     setMessages(initialMessages);
   }, [initialMessages]);
+
+  /** True while the reader is parked at the end of the conversation. */
+  const isAtBottom = useCallback(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return true;
+    // On phones the conversation is not its own scroll container: the page is.
+    if (scroller.scrollHeight <= scroller.clientHeight + 1) {
+      return window.innerHeight + window.scrollY >= document.body.scrollHeight - STICK_TO_BOTTOM_PX;
+    }
+    return scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight < STICK_TO_BOTTOM_PX;
+  }, []);
+
+  /**
+   * Only report the thread as read when it is actually being looked at.
+   * It used to be marked read on mount, so a notification tapped and dismissed
+   * from a pocket cleared the whole conversation.
+   */
+  const markReadIfVisible = useCallback(() => {
+    if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
+    if (!isAtBottom()) return;
+    void markThreadRead(threadId);
+  }, [isAtBottom, threadId]);
 
   // Realtime: new / edited / deleted messages and reactions (RLS filters what we may receive).
   useEffect(() => {
@@ -110,7 +184,8 @@ export function ThreadView({
               );
             return [...current, { ...row, reactions: [] }];
           });
-          void markThreadRead(threadId);
+          if (row.author_id !== meId && !isAtBottom()) setUnseen((n) => n + 1);
+          markReadIfVisible();
         },
       )
       .on(
@@ -141,75 +216,187 @@ export function ThreadView({
         },
       )
       .subscribe();
-    void markThreadRead(threadId);
+    markReadIfVisible();
+    document.addEventListener("visibilitychange", markReadIfVisible);
     return () => {
+      document.removeEventListener("visibilitychange", markReadIfVisible);
       void supabase.removeChannel(channel);
     };
-  }, [threadId, searchMode]);
+  }, [threadId, searchMode, meId, isAtBottom, markReadIfVisible]);
 
+  // Follow the conversation only when the reader is already at the end of it.
   useEffect(() => {
+    if (searchMode) return;
+    if (!atBottomRef.current) return;
     bottomRef.current?.scrollIntoView({ block: "end" });
-  }, [messages.length]);
+  }, [messages.length, searchMode]);
 
-  const days = useMemo(() => {
-    const groups: Array<{ day: string; items: Message[] }> = [];
-    for (const message of messages) {
-      const day = dayKey(message.created_at);
-      const last = groups[groups.length - 1];
-      if (last && last.day === day) last.items.push(message);
-      else groups.push({ day, items: [message] });
+  function onScroll() {
+    atBottomRef.current = isAtBottom();
+    if (atBottomRef.current && unseen > 0) {
+      setUnseen(0);
+      markReadIfVisible();
     }
-    return groups;
-  }, [messages]);
+  }
+
+  function jumpToBottom() {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    setUnseen(0);
+  }
+
+  function loadOlder() {
+    const oldest = messages[0];
+    if (!oldest) return;
+    startLoadOlder(async () => {
+      const older = (await fetchOlderMessages(threadId, oldest.created_at)) as Message[];
+      if (older.length === 0) {
+        setHasOlder(false);
+        return;
+      }
+      setHasOlder(older.length >= 40);
+      setMessages((current) => [...older, ...current]);
+    });
+  }
 
   const today = dayKey(new Date().toISOString());
   const yesterday = dayKey(new Date(Date.now() - 86_400_000).toISOString());
 
+  /** Day separators, the resume line and author grouping, in one pass. */
+  const rows = useMemo<Row[]>(() => {
+    const out: Row[] = [];
+    let currentDay: string | null = null;
+    let unreadDrawn = false;
+    let previous: Message | null = null;
+    for (const message of messages) {
+      const day = dayKey(message.created_at);
+      if (day !== currentDay) {
+        out.push({ kind: "day", key: `day-${day}`, day });
+        currentDay = day;
+        previous = null;
+      }
+      if (
+        !unreadDrawn &&
+        !searchMode &&
+        lastReadAt !== null &&
+        message.author_id !== meId &&
+        message.created_at > lastReadAt
+      ) {
+        out.push({ kind: "unread", key: "unread" });
+        unreadDrawn = true;
+        previous = null;
+      }
+      const startsGroup =
+        previous === null ||
+        previous.author_id !== message.author_id ||
+        new Date(message.created_at).getTime() - new Date(previous.created_at).getTime() >
+          GROUP_WINDOW_MS;
+      out.push({ kind: "message", key: message.id, message, startsGroup });
+      previous = message;
+    }
+    return out;
+  }, [messages, lastReadAt, meId, searchMode]);
+
+  const reasonTarget = reason ? messages.find((m) => m.id === reason.id) : undefined;
+
   return (
-    <div className="flex flex-col gap-4">
-      <ol className="flex flex-col gap-4">
-        {days.map((group) => (
-          <li key={group.day} className="flex flex-col gap-3">
-            <p className="mx-auto rounded-full bg-muted px-3 py-0.5 text-xs text-muted-foreground">
-              {group.day === today
-                ? t("today")
-                : group.day === yesterday
-                  ? t("yesterday")
-                  : format.dateTime(new Date(`${group.day}T12:00:00`), { dateStyle: "long" })}
-            </p>
-            {group.items.map((message) => (
-              <MessageItem
-                key={message.id}
-                message={message}
-                mine={message.author_id === meId}
-                author={message.author_id ? memberMap.get(message.author_id) : undefined}
-                memberNames={memberNames}
-                memberMap={memberMap}
-                replyTarget={
-                  message.reply_to
-                    ? (messages.find((m) => m.id === message.reply_to) ?? null)
-                    : null
-                }
-                canWrite={canWrite}
-                canModerate={canModerate}
-                onReply={() => setReplyTo(message)}
-                onReport={() => setReportFor(message.id)}
-                onModerate={() => setModerateFor(message.id)}
-                reporting={reportFor === message.id}
-                moderating={moderateFor === message.id}
-                onCloseForms={() => {
-                  setReportFor(null);
-                  setModerateFor(null);
-                }}
-              />
-            ))}
-          </li>
-        ))}
-      </ol>
-      <div ref={bottomRef} />
+    <div className="relative flex min-h-0 flex-1 flex-col">
+      <div
+        ref={scrollerRef}
+        onScroll={onScroll}
+        className="min-h-0 flex-1 lg:overflow-y-auto lg:px-1"
+      >
+        {hasOlder && !searchMode && (
+          <div className="mb-4 flex justify-center">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="min-h-11"
+              onClick={loadOlder}
+              disabled={loadingOlder}
+            >
+              <ChevronUpIcon aria-hidden />
+              {t("loadOlder")}
+            </Button>
+          </div>
+        )}
+        <ol className="flex flex-col">
+          {rows.map((row) => {
+            if (row.kind === "day")
+              return (
+                <li key={row.key} className="my-3 flex items-center gap-3">
+                  <span className="h-px flex-1 bg-border" />
+                  <span className="text-[0.6875rem] font-semibold tracking-wide text-muted-foreground uppercase">
+                    {row.day === today
+                      ? t("today")
+                      : row.day === yesterday
+                        ? t("yesterday")
+                        : format.dateTime(new Date(`${row.day}T12:00:00`), { dateStyle: "long" })}
+                  </span>
+                  <span className="h-px flex-1 bg-border" />
+                </li>
+              );
+            if (row.kind === "unread")
+              return (
+                <li key={row.key} className="my-3 flex items-center gap-3">
+                  <span className="h-px flex-1 bg-brick/40" />
+                  <span className="text-[0.6875rem] font-bold tracking-wide text-brick uppercase">
+                    {t("newMessages")}
+                  </span>
+                  <span className="h-px flex-1 bg-brick/40" />
+                </li>
+              );
+            return (
+              <li key={row.key} className={cn(row.startsGroup ? "mt-3 first:mt-0" : "mt-0.5")}>
+                <MessageItem
+                  message={row.message}
+                  mine={row.message.author_id === meId}
+                  meId={meId}
+                  startsGroup={row.startsGroup}
+                  author={row.message.author_id ? memberMap.get(row.message.author_id) : undefined}
+                  memberNames={memberNames}
+                  memberMap={memberMap}
+                  replyTarget={
+                    row.message.reply_to
+                      ? (messages.find((m) => m.id === row.message.reply_to) ?? null)
+                      : null
+                  }
+                  canWrite={canWrite}
+                  canModerate={canModerate}
+                  onReply={() => {
+                    setReplyTo(row.message);
+                    composerRef.current?.focus();
+                  }}
+                  onReport={() => setReason({ id: row.message.id, mode: "report" })}
+                  onModerate={() => setReason({ id: row.message.id, mode: "moderate" })}
+                  onDelete={() => setConfirmDelete(row.message.id)}
+                />
+              </li>
+            );
+          })}
+        </ol>
+        <div ref={bottomRef} />
+      </div>
+
+      {unseen > 0 && (
+        <div className="pointer-events-none sticky bottom-2 z-10 flex justify-center">
+          <Button
+            type="button"
+            size="sm"
+            className="pointer-events-auto min-h-11 rounded-full shadow-lift"
+            onClick={jumpToBottom}
+          >
+            <ChevronDownIcon aria-hidden />
+            {t("newBelow", { count: unseen })}
+          </Button>
+        </div>
+      )}
+
       {canWrite ? (
         <Composer
+          ref={composerRef}
           threadId={threadId}
+          hint={hint}
           replyTo={replyTo}
           replyName={
             replyTo?.author_id
@@ -234,13 +421,29 @@ export function ThreadView({
                   ],
             );
             setReplyTo(null);
+            atBottomRef.current = true;
           }}
         />
       ) : (
         closedReason && (
-          <p className="rounded-xl bg-muted p-3 text-sm text-muted-foreground">{closedReason}</p>
+          <p className="mt-4 rounded-xl border border-border bg-muted p-3 text-sm text-muted-foreground">
+            {closedReason}
+          </p>
         )
       )}
+
+      <ReasonDialog
+        open={reason !== null}
+        mode={reason?.mode ?? "report"}
+        messageId={reason?.id ?? ""}
+        excerpt={reasonTarget?.body.slice(0, 140) ?? ""}
+        onClose={() => setReason(null)}
+      />
+      <DeleteDialog
+        open={confirmDelete !== null}
+        messageId={confirmDelete ?? ""}
+        onClose={() => setConfirmDelete(null)}
+      />
     </div>
   );
 }
@@ -248,6 +451,8 @@ export function ThreadView({
 function MessageItem({
   message,
   mine,
+  meId,
+  startsGroup,
   author,
   memberNames,
   memberMap,
@@ -257,12 +462,12 @@ function MessageItem({
   onReply,
   onReport,
   onModerate,
-  reporting,
-  moderating,
-  onCloseForms,
+  onDelete,
 }: {
   message: Message;
   mine: boolean;
+  meId: string;
+  startsGroup: boolean;
   author: Member | undefined;
   memberNames: string[];
   memberMap: Map<string, Member>;
@@ -272,99 +477,186 @@ function MessageItem({
   onReply: () => void;
   onReport: () => void;
   onModerate: () => void;
-  reporting: boolean;
-  moderating: boolean;
-  onCloseForms: () => void;
+  onDelete: () => void;
 }) {
   const t = useTranslations("messaging");
   const format = useFormatter();
   const attachments = parseAttachments(message.attachments);
   const name = mine ? t("message.you") : (author?.name ?? t("message.unknown"));
+
+  // `mine` here means "I reacted", and it used to be assigned to itself while
+  // being compared against the message's author: nobody could see their own
+  // reaction, and a second tap silently removed it.
   const reactionCounts = new Map<string, { count: number; mine: boolean }>();
-  for (const r of message.reactions) {
-    const entry = reactionCounts.get(r.emoji) ?? { count: 0, mine: false };
+  for (const reaction of message.reactions) {
+    const entry = reactionCounts.get(reaction.emoji) ?? { count: 0, mine: false };
     entry.count++;
-    if (r.user_id === author?.id && mine) entry.mine = entry.mine;
-    reactionCounts.set(r.emoji, entry);
+    if (reaction.user_id === meId) entry.mine = true;
+    reactionCounts.set(reaction.emoji, entry);
   }
 
+  const showMenu = canWrite || canModerate;
+
   return (
-    <article className={cn("flex gap-3", mine && "flex-row-reverse")}>
-      <Avatar className="size-9 shrink-0">
-        <AvatarFallback className="bg-accent text-xs text-accent-foreground">
-          {author?.initials ?? "?"}
-        </AvatarFallback>
-      </Avatar>
-      <div className={cn("flex max-w-[85%] flex-col gap-1", mine && "items-end")}>
-        <p className="text-xs text-muted-foreground">
-          {name} · {format.dateTime(new Date(message.created_at), { timeStyle: "short" })}
-          {message.edited_at && ` · ${t("message.edited")}`}
-        </p>
-        <div
-          className={cn(
-            "rounded-2xl px-3 py-2 text-sm",
-            mine ? "bg-primary text-primary-foreground" : "bg-muted",
-          )}
-        >
-          {replyTarget && (
-            <p
-              className={cn(
-                "mb-1 flex items-center gap-1 border-l-2 pl-2 text-xs opacity-80",
-                mine ? "border-primary-foreground/50" : "border-primary/50",
-              )}
-            >
-              <CornerDownRightIcon className="size-3" aria-hidden />
-              {(replyTarget.author_id && memberMap.get(replyTarget.author_id)?.name) ??
-                t("message.unknown")}{" "}
-              : {replyTarget.deleted_at ? t("message.deleted") : replyTarget.body.slice(0, 80)}
-            </p>
-          )}
-          {message.deleted_at ? (
-            <p className="italic opacity-70">
-              {message.moderation_reason
-                ? t("message.moderated", { reason: message.moderation_reason })
-                : t("message.deleted")}
-            </p>
-          ) : (
-            <p className="break-words whitespace-pre-wrap">
-              {segmentMentions(message.body, memberNames).map((segment, i) =>
-                segment.mention ? (
-                  <span key={i} className="font-semibold underline decoration-dotted">
-                    {segment.text}
-                  </span>
-                ) : (
-                  <span key={i}>{segment.text}</span>
-                ),
-              )}
-            </p>
-          )}
-          {!message.deleted_at && attachments.length > 0 && (
-            <ul className="mt-2 flex flex-col gap-1">
-              {attachments.map((file: MessageAttachment) => (
-                <li key={file.path}>
-                  <a
-                    href={`/api/storage/messages?path=${encodeURIComponent(file.path)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-1 underline"
-                  >
-                    <PaperclipIcon className="size-3" aria-hidden />
-                    {file.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
+    <article id={`m-${message.id}`} className="group/message flex scroll-mt-24 gap-3">
+      <div className="w-9 shrink-0">
+        {startsGroup && !mine && (
+          <UserAvatar name={author?.name} initials={author?.initials ?? "?"} />
+        )}
+      </div>
+      <div className="flex min-w-0 flex-1 flex-col">
+        {startsGroup && (
+          <p className="mb-1 flex flex-wrap items-baseline gap-x-2 text-xs text-muted-foreground">
+            <span className="text-[0.8125rem] font-semibold text-foreground">{name}</span>
+            {author?.role === "moderator" && (
+              <span className="rounded-sm bg-accent px-1.5 py-px text-[0.625rem] font-bold tracking-wide text-accent-foreground uppercase">
+                {t("message.staff")}
+              </span>
+            )}
+            <span>{format.dateTime(new Date(message.created_at), { timeStyle: "short" })}</span>
+            {message.edited_at && <span>· {t("message.edited")}</span>}
+          </p>
+        )}
+        <div className="flex items-start gap-1">
+          <div
+            className={cn(
+              "max-w-[min(85%,42rem)] min-w-0 rounded-2xl px-3 py-2 text-sm",
+              mine
+                ? "bg-primary text-primary-foreground"
+                : "border border-border bg-card text-card-foreground",
+            )}
+          >
+            {replyTarget && (
+              <p
+                className={cn(
+                  "mb-1 flex items-center gap-1 border-l-2 pl-2 text-xs opacity-80",
+                  mine ? "border-primary-foreground/50" : "border-primary/50",
+                )}
+              >
+                <CornerDownRightIcon className="size-3 shrink-0" aria-hidden />
+                {(replyTarget.author_id && memberMap.get(replyTarget.author_id)?.name) ??
+                  t("message.unknown")}{" "}
+                : {replyTarget.deleted_at ? t("message.deleted") : replyTarget.body.slice(0, 80)}
+              </p>
+            )}
+            {message.deleted_at ? (
+              <p className="italic opacity-70">
+                {message.moderation_reason
+                  ? t("message.moderated", { reason: message.moderation_reason })
+                  : t("message.deleted")}
+              </p>
+            ) : (
+              <p className="break-words whitespace-pre-wrap">
+                {segmentMentions(message.body, memberNames).map((segment, i) =>
+                  segment.mention ? (
+                    <span key={i} className="font-semibold underline decoration-dotted">
+                      {segment.text}
+                    </span>
+                  ) : (
+                    <span key={i}>{segment.text}</span>
+                  ),
+                )}
+              </p>
+            )}
+            {!message.deleted_at && attachments.length > 0 && (
+              <ul className="mt-2 flex flex-col gap-1">
+                {attachments.map((file: MessageAttachment) => (
+                  <li key={file.path}>
+                    <a
+                      href={`/api/storage/messages?path=${encodeURIComponent(file.path)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1 underline"
+                    >
+                      <PaperclipIcon className="size-3 shrink-0" aria-hidden />
+                      {file.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/*
+            One control instead of five. Every message used to carry Reply,
+            React, Report, Delete and Moderate as permanent 28 px buttons —
+            sixty to a hundred of them in a twenty-message thread, all of them
+            below the 44 px the project mandates.
+          */}
+          {showMenu && !message.deleted_at && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  aria-label={t("message.actions")}
+                  className="mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground opacity-60 transition-opacity hover:bg-accent hover:text-accent-foreground hover:opacity-100 focus-visible:opacity-100 md:size-8 md:opacity-0 md:group-focus-within/message:opacity-100 md:group-hover/message:opacity-100"
+                >
+                  <MoreHorizontalIcon className="size-4" aria-hidden />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align={mine ? "end" : "start"}>
+                {canWrite && (
+                  <>
+                    <div className="flex gap-0.5 px-1 py-1">
+                      {REACTION_EMOJIS.map((emoji) => (
+                        <form key={emoji} action={toggleReaction}>
+                          <input type="hidden" name="messageId" value={message.id} />
+                          <input type="hidden" name="emoji" value={emoji} />
+                          <button
+                            type="submit"
+                            aria-label={emoji}
+                            className="flex size-9 items-center justify-center rounded-md text-base hover:bg-accent"
+                          >
+                            {emoji}
+                          </button>
+                        </form>
+                      ))}
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onSelect={onReply}>
+                      <ReplyIcon aria-hidden />
+                      {t("message.reply")}
+                    </DropdownMenuItem>
+                  </>
+                )}
+                {!mine && canWrite && (
+                  <DropdownMenuItem onSelect={onReport}>
+                    <FlagIcon aria-hidden />
+                    {t("message.report")}
+                  </DropdownMenuItem>
+                )}
+                {mine && (
+                  <DropdownMenuItem variant="destructive" onSelect={onDelete}>
+                    <Trash2Icon aria-hidden />
+                    {t("message.delete")}
+                  </DropdownMenuItem>
+                )}
+                {canModerate && !mine && (
+                  <DropdownMenuItem variant="destructive" onSelect={onModerate}>
+                    <ShieldXIcon aria-hidden />
+                    {t("message.moderate")}
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
-        {(reactionCounts.size > 0 || canWrite) && !message.deleted_at && (
-          <div className="flex flex-wrap items-center gap-1">
+
+        {reactionCounts.size > 0 && !message.deleted_at && (
+          <div className="mt-1 flex flex-wrap items-center gap-1">
             {[...reactionCounts.entries()].map(([emoji, entry]) => (
               <form key={emoji} action={toggleReaction}>
                 <input type="hidden" name="messageId" value={message.id} />
                 <input type="hidden" name="emoji" value={emoji} />
                 <button
                   type="submit"
-                  className="min-h-11 rounded-full border bg-background px-2 py-0.5 text-xs md:min-h-0"
+                  aria-pressed={entry.mine}
+                  className={cn(
+                    "flex h-7 items-center gap-1 rounded-full border px-2 text-xs font-semibold",
+                    entry.mine
+                      ? "border-primary/50 bg-primary/12 text-primary"
+                      : "border-border bg-card text-muted-foreground hover:bg-accent",
+                  )}
                   disabled={!canWrite}
                 >
                   {emoji} {entry.count}
@@ -372,90 +664,52 @@ function MessageItem({
               </form>
             ))}
             {canWrite && (
-              <details className="relative">
-                <summary
-                  className="flex min-h-11 cursor-pointer list-none items-center px-2 text-xs text-muted-foreground md:min-h-0"
-                  aria-label={t("message.react")}
-                >
-                  ＋
-                </summary>
-                <div className="absolute z-10 mt-1 flex gap-1 rounded-full border bg-popover p-1 shadow">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label={t("message.react")}
+                    className="flex size-7 items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:bg-accent"
+                  >
+                    <SmilePlusIcon className="size-3.5" aria-hidden />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="flex gap-0.5 p-1">
                   {REACTION_EMOJIS.map((emoji) => (
                     <form key={emoji} action={toggleReaction}>
                       <input type="hidden" name="messageId" value={message.id} />
                       <input type="hidden" name="emoji" value={emoji} />
                       <button
                         type="submit"
-                        className="min-h-11 min-w-11 rounded-full px-1.5 py-0.5 text-base hover:bg-accent md:min-h-0 md:min-w-0"
+                        aria-label={emoji}
+                        className="flex size-9 items-center justify-center rounded-md text-base hover:bg-accent"
                       >
                         {emoji}
                       </button>
                     </form>
                   ))}
-                </div>
-              </details>
-            )}
-            {canWrite && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-7 px-2 text-xs"
-                onClick={onReply}
-              >
-                <ReplyIcon className="size-3" aria-hidden />
-                {t("message.reply")}
-              </Button>
-            )}
-            {!mine && canWrite && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-7 px-2 text-xs"
-                onClick={onReport}
-              >
-                <FlagIcon className="size-3" aria-hidden />
-                {t("message.report")}
-              </Button>
-            )}
-            {mine && (
-              <form action={deleteOwnMessage}>
-                <input type="hidden" name="messageId" value={message.id} />
-                <Button type="submit" variant="ghost" size="sm" className="h-7 px-2 text-xs">
-                  <Trash2Icon className="size-3" aria-hidden />
-                  {t("message.delete")}
-                </Button>
-              </form>
-            )}
-            {canModerate && !mine && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-7 px-2 text-xs text-destructive"
-                onClick={onModerate}
-              >
-                <ShieldXIcon className="size-3" aria-hidden />
-                {t("message.moderate")}
-              </Button>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
         )}
-        {reporting && <ReasonForm messageId={message.id} mode="report" onClose={onCloseForms} />}
-        {moderating && <ReasonForm messageId={message.id} mode="moderate" onClose={onCloseForms} />}
       </div>
     </article>
   );
 }
 
-function ReasonForm({
-  messageId,
+/** Reporting and moderating open a dialog instead of pushing a form into the thread. */
+function ReasonDialog({
+  open,
   mode,
+  messageId,
+  excerpt,
   onClose,
 }: {
-  messageId: string;
+  open: boolean;
   mode: "report" | "moderate";
+  messageId: string;
+  excerpt: string;
   onClose: () => void;
 }) {
   const t = useTranslations("messaging");
@@ -466,43 +720,87 @@ function ReasonForm({
   useEffect(() => {
     if (state.status === "success") onClose();
   }, [state.status, onClose]);
+
   return (
-    <form
-      action={action}
-      className="flex w-full flex-col gap-2 rounded-xl border bg-background p-3"
-    >
-      <input type="hidden" name="messageId" value={messageId} />
-      <label className="text-sm font-medium" htmlFor={`reason-${messageId}`}>
-        {mode === "report" ? t("report.reason") : t("message.reason")}
-      </label>
-      <Textarea id={`reason-${messageId}`} name="reason" rows={2} maxLength={500} required />
-      {state.status === "error" && <p className="text-sm text-destructive">{state.message}</p>}
-      <div className="flex gap-2">
-        <Button
-          type="submit"
-          size="sm"
-          variant={mode === "moderate" ? "destructive" : "default"}
-          disabled={pending}
-        >
-          {mode === "report" ? t("report.submit") : t("message.moderate")}
-        </Button>
-        <Button type="button" size="sm" variant="ghost" onClick={onClose}>
-          <XIcon aria-hidden />
-          {t("composer.cancel")}
-        </Button>
-      </div>
-    </form>
+    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
+      <DialogContent>
+        <form action={action} className="flex flex-col gap-4">
+          <DialogHeader>
+            <DialogTitle>
+              {mode === "report" ? t("report.reason") : t("message.reason")}
+            </DialogTitle>
+            {excerpt && <DialogDescription>« {excerpt} »</DialogDescription>}
+          </DialogHeader>
+          <input type="hidden" name="messageId" value={messageId} />
+          <Textarea name="reason" rows={3} maxLength={500} required autoFocus />
+          {state.status === "error" && <p className="text-sm text-destructive">{state.message}</p>}
+          <DialogFooter>
+            <Button type="button" variant="ghost" className="min-h-11" onClick={onClose}>
+              <XIcon aria-hidden />
+              {t("composer.cancel")}
+            </Button>
+            <Button
+              type="submit"
+              className="min-h-11"
+              variant={mode === "moderate" ? "destructive" : "default"}
+              disabled={pending}
+            >
+              {mode === "report" ? t("report.submit") : t("message.moderate")}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Deleting used to be destructive on the first click, with no confirmation. */
+function DeleteDialog({
+  open,
+  messageId,
+  onClose,
+}: {
+  open: boolean;
+  messageId: string;
+  onClose: () => void;
+}) {
+  const t = useTranslations("messaging");
+  return (
+    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("message.delete")}</DialogTitle>
+          <DialogDescription>{t("message.deleteConfirm")}</DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button type="button" variant="ghost" className="min-h-11" onClick={onClose}>
+            {t("composer.cancel")}
+          </Button>
+          <form action={deleteOwnMessage} onSubmit={onClose}>
+            <input type="hidden" name="messageId" value={messageId} />
+            <Button type="submit" variant="destructive" className="min-h-11">
+              <Trash2Icon aria-hidden />
+              {t("message.delete")}
+            </Button>
+          </form>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
 function Composer({
+  ref,
   threadId,
+  hint,
   replyTo,
   replyName,
   onCancelReply,
   onSent,
 }: {
+  ref?: Ref<{ focus: () => void }>;
   threadId: string;
+  hint?: string;
   replyTo: Message | null;
   replyName: string;
   onCancelReply: () => void;
@@ -511,13 +809,22 @@ function Composer({
   const t = useTranslations("messaging");
   const [state, action, pending] = useActionState(sendMessage, initialSend);
   const formRef = useRef<HTMLFormElement>(null);
+  const textRef = useRef<HTMLTextAreaElement>(null);
   const lastSent = useRef<string | null>(null);
+  const [files, setFiles] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (ref && typeof ref === "object") ref.current = { focus: () => textRef.current?.focus() };
+  }, [ref]);
 
   useEffect(() => {
     if (state.status === "success" && state.sent && state.sent.id !== lastSent.current) {
       lastSent.current = state.sent.id;
       onSent(state.sent);
       formRef.current?.reset();
+      setFiles([]);
+      // Resetting the form used to close the keyboard between two messages.
+      textRef.current?.focus();
     }
   }, [state, onSent]);
 
@@ -525,34 +832,60 @@ function Composer({
     <form
       ref={formRef}
       action={action}
-      className="sticky bottom-16 flex flex-col gap-2 rounded-2xl border bg-background p-3 shadow-sm md:bottom-4"
+      // `bottom-16` was 64 px against a tab bar of 56 px plus 34 px of iPhone
+      // safe area: 26 px of the composer, the Send button included, sat under it.
+      className="sticky bottom-[calc(var(--nav-h)+0.5rem)] mt-4 flex flex-col gap-2 rounded-2xl border border-border bg-card p-3 shadow-lift lg:bottom-2"
     >
       <input type="hidden" name="threadId" value={threadId} />
       {replyTo && (
-        <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between gap-2 rounded-lg bg-muted px-2 py-1 text-xs text-muted-foreground">
           <input type="hidden" name="replyTo" value={replyTo.id} />
           <span className="truncate">
             {t("composer.replyingTo", { name: replyName })} : {replyTo.body.slice(0, 60)}
           </span>
-          <button type="button" onClick={onCancelReply} aria-label={t("composer.cancel")}>
+          <button
+            type="button"
+            onClick={onCancelReply}
+            aria-label={t("composer.cancel")}
+            className="flex size-6 shrink-0 items-center justify-center rounded-md hover:bg-accent"
+          >
             <XIcon className="size-4" />
           </button>
         </div>
       )}
       <Textarea
+        ref={textRef}
         name="body"
         rows={2}
         maxLength={5000}
-        placeholder={t("composer.placeholder")}
+        placeholder={hint ?? t("composer.placeholder")}
+        className="field-sizing-content max-h-40 resize-none"
         onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
+          // Enter sends on a keyboard; on a touch screen it has to make a line
+          // break, or writing a paragraph with a thumb is impossible.
+          const touch =
+            typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+          if (e.key === "Enter" && !e.shiftKey && !touch) {
             e.preventDefault();
             formRef.current?.requestSubmit();
           }
         }}
       />
+      {files.length > 0 && (
+        <ul className="flex flex-wrap gap-1">
+          {files.map((name) => (
+            <li
+              key={name}
+              className="flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground"
+            >
+              <PaperclipIcon className="size-3" aria-hidden />
+              {name}
+            </li>
+          ))}
+        </ul>
+      )}
       <div className="flex items-center justify-between gap-2">
-        <label className="flex min-h-11 cursor-pointer items-center gap-2 text-xs text-muted-foreground">
+        <label className="flex min-h-11 cursor-pointer items-center gap-2 text-xs text-muted-foreground hover:text-foreground">
           <PaperclipIcon className="size-4" aria-hidden />
           <span className="sr-only sm:not-sr-only">{t("composer.attach")}</span>
           <input
@@ -561,13 +894,14 @@ function Composer({
             accept="image/*,application/pdf"
             multiple
             className="sr-only"
+            onChange={(e) => setFiles([...(e.target.files ?? [])].map((file) => file.name))}
           />
         </label>
         <div className="flex items-center gap-2">
           {state.status === "error" && (
             <span className="text-xs text-destructive">{state.message}</span>
           )}
-          <Button type="submit" size="sm" className="min-h-11" disabled={pending}>
+          <Button type="submit" className="min-h-11" disabled={pending}>
             <SendIcon aria-hidden />
             {t("composer.send")}
           </Button>

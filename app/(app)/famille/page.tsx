@@ -1,10 +1,18 @@
+import {
+  BookOpenIcon,
+  CalendarXIcon,
+  ChevronRightIcon,
+  GraduationCapIcon,
+  ImagesIcon,
+  MessageSquareTextIcon,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { StudentCard } from "@/components/domain/student-card";
 import { PageHeader } from "@/components/layouts/page-header";
-import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/domain/empty-state";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { getMyChildren } from "@/server/queries/family";
 
@@ -13,6 +21,20 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
+/** Sections of a child's file, in the order a parent actually asks for them. */
+const SECTIONS = [
+  { segment: "devoirs", key: "homework", icon: BookOpenIcon },
+  { segment: "cahier", key: "journal", icon: ImagesIcon },
+  { segment: "mots", key: "notes", icon: MessageSquareTextIcon },
+  { segment: "evaluations", key: "assessments", icon: GraduationCapIcon },
+  { segment: "absences", key: "absences", icon: CalendarXIcon },
+] as const;
+
+/**
+ * "Mon enfant" — homework, journal, notes, assessments and absences are things
+ * that belong to a child, and they used to be reachable only through tabs of a
+ * class, two levels down, behind a relay screen.
+ */
 export default async function FamilyPage() {
   const user = await requireCurrentUser();
   const [t, tSpace, children] = await Promise.all([
@@ -28,47 +50,32 @@ export default async function FamilyPage() {
       <PageHeader title={t("title")} description={t("subtitle")} />
       {readOnly && <p className="mb-4 text-sm text-muted-foreground">{t("readOnly")}</p>}
       {children.length === 0 ? (
-        <p className="text-muted-foreground">{t("noChildren")}</p>
+        <EmptyState title={t("noChildren")} />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2 2xl:grid-cols-3">
           {children.map((child) => {
             const classId = child.student.enrollments[0]?.class?.id;
             return (
-              <div key={child.student.id} className="flex flex-col gap-2">
+              <div key={child.student.id} className="flex flex-col gap-3">
                 <StudentCard child={child} />
                 {classId && (
-                  <div className="flex flex-wrap gap-2">
-                    {(["", "devoirs", "cahier", "mots", "evaluations", "absences"] as const).map(
-                      (segment, index) => (
-                        <Button
-                          key={segment}
-                          asChild
-                          variant="outline"
-                          size="sm"
-                          className="min-h-11"
+                  <ul className="overflow-hidden rounded-xl border border-border bg-card shadow-soft">
+                    {SECTIONS.map(({ segment, key, icon: Icon }) => (
+                      <li key={segment} className="border-b border-border/70 last:border-b-0">
+                        <Link
+                          href={`/classes/${classId}/${segment}`}
+                          className="flex min-h-12 items-center gap-3 px-4 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
                         >
-                          <Link
-                            href={
-                              segment ? `/classes/${classId}/${segment}` : `/classes/${classId}`
-                            }
-                          >
-                            {tSpace(
-                              (
-                                [
-                                  "feed",
-                                  "homework",
-                                  "journal",
-                                  "notes",
-                                  "assessments",
-                                  "absences",
-                                ] as const
-                              )[index]!,
-                            )}
-                          </Link>
-                        </Button>
-                      ),
-                    )}
-                  </div>
+                          <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                          {tSpace(key)}
+                          <ChevronRightIcon
+                            className="ml-auto size-4 text-muted-foreground"
+                            aria-hidden
+                          />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </div>
             );

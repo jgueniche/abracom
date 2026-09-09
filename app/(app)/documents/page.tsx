@@ -2,6 +2,7 @@ import { CheckCircle2Icon, DownloadIcon, FileTextIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,7 @@ export default async function DocumentsPage() {
   return (
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      {documents.length === 0 && <p className="text-muted-foreground">{t("empty")}</p>}
+      {documents.length === 0 && <EmptyState title={t("empty")} />}
       <div className="flex flex-col gap-8">
         {groups.map((group) => (
           <section key={group.name || "none"} className="flex flex-col gap-3">

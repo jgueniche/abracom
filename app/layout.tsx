@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Fraunces, Inter, Source_Serif_4 } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { headers } from "next/headers";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -17,11 +17,20 @@ const inter = Inter({
   display: "swap",
 });
 
+// SOFT and WONK are what make Fraunces look like Fraunces rather than a
+// generic serif; loading only `opsz` disabled its personality (audit, §3).
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-heading",
   display: "swap",
-  axes: ["opsz"],
+  axes: ["SOFT", "WONK", "opsz"],
+});
+
+// Long-form institutional copy: circulars, announcements, cahier de vie.
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  display: "swap",
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -54,7 +63,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html
       lang={locale}
-      className={`${inter.variable} ${fraunces.variable}`}
+      className={`${inter.variable} ${fraunces.variable} ${sourceSerif.variable}`}
       suppressHydrationWarning
     >
       <body className="min-h-dvh font-sans antialiased">

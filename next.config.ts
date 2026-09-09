@@ -6,6 +6,47 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./lib/i18n/request.ts");
 
 /**
+ * `NEXT_PUBLIC_*` values are baked into the browser bundle while the page is
+ * compiled, not read when it runs. A deployment built without them therefore
+ * ships an application that cannot reach Supabase at all, and says so only
+ * through a small notice on the sign-in page — which is how a production build
+ * once went out silently broken.
+ *
+ * On Vercel (production and preview) the build now stops instead. Local builds
+ * and CI have no `VERCEL_ENV` and are untouched: the app is meant to boot
+ * without a Supabase stack.
+ */
+function assertPublicSupabaseConfigAtBuildTime(): void {
+  const target = process.env.VERCEL_ENV;
+  if (target !== "production" && target !== "preview") return;
+  const required = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"];
+  const missing = required.filter((name) => !process.env[name]?.trim());
+  if (missing.length === 0) return;
+
+  // What the build actually received, so the log answers "is it there, is it
+  // named differently, is it empty" instead of leaving it to guesswork.
+  // Names and lengths only: no value is ever printed.
+  const seen = Object.keys(process.env)
+    .filter((name) => name.startsWith("NEXT_PUBLIC_"))
+    .sort()
+    .map((name) => `${name} (${process.env[name]?.length ?? 0} caractères)`);
+  const inventory =
+    seen.length > 0
+      ? `Variables NEXT_PUBLIC_* reçues par ce build :\n  - ${seen.join("\n  - ")}`
+      : "Ce build n'a reçu AUCUNE variable NEXT_PUBLIC_*.";
+
+  throw new Error(
+    `Build ${target} sans ${missing.join(" ni ")} : ces variables sont lues à la compilation, ` +
+      "pas à l'exécution.\n" +
+      inventory +
+      "\nSi le nom attendu ne figure pas dans cette liste, la variable n'est pas fournie à " +
+      "l'étape de build pour cet environnement (Settings → Environment Variables).",
+  );
+}
+
+assertPublicSupabaseConfigAtBuildTime();
+
+/**
  * Baseline security headers. A strict nonce-based CSP is scheduled for
  * session 14 (docs/ROADMAP.md) because it requires middleware support.
  */

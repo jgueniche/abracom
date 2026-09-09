@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
+import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -185,7 +186,7 @@ export default async function AgendaPage({
       </div>
 
       {keys.length === 0 ? (
-        <p className="text-muted-foreground">{t("empty")}</p>
+        <EmptyState title={t("empty")} />
       ) : (
         <ol className="flex flex-col gap-5">
           {keys.map((key) => {
