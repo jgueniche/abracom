@@ -10,6 +10,7 @@ import { type MessageAttachment, REACTION_EMOJIS } from "@/lib/messaging/format"
 import { safeFileName } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 import { logAudit } from "@/server/audit";
+import { getMessagesBefore } from "@/server/queries/messaging";
 
 import { type ActionState, field, optional, toActionError, uuid } from "./admin/_shared";
 
@@ -100,6 +101,13 @@ export async function sendMessage(_prev: SendState, formData: FormData): Promise
   } catch (error) {
     return toActionError(error);
   }
+}
+
+/** Client-callable pagination for the thread view ("older messages"). */
+export async function fetchOlderMessages(threadId: string, before: string) {
+  if (!uuid.test(threadId) || Number.isNaN(Date.parse(before))) return [];
+  await requireCurrentUser();
+  return getMessagesBefore(threadId, before);
 }
 
 export async function markThreadRead(threadId: string): Promise<void> {
