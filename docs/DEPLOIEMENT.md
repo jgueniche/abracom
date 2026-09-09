@@ -62,10 +62,13 @@
 ## Mise à jour
 
 1. PR vers `main` avec CI verte (lint, types, build, e2e, base de données).
-2. `supabase db push` **avant** le déploiement Vercel si la version ajoute des migrations ; les migrations
-   sont additives. Le workflow `.github/workflows/deploy-db.yml` le fait à chaque push sur `main` touchant
-   `supabase/` dès que les secrets `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF` et
-   `SUPABASE_DB_PASSWORD` existent (sinon `scripts/ops/promote.sh <ref>`).
+2. Les migrations partent **avant** le déploiement Vercel ; elles sont additives. Le workflow
+   `.github/workflows/deploy-db.yml` s'en charge à chaque push sur `main` touchant `supabase/`, dès que
+   le secret **`SUPABASE_ACCESS_TOKEN`** existe (jeton d'accès personnel Supabase, dans Settings →
+   Secrets and variables → Actions). La référence du projet vient de `[remotes.*].project_id` dans
+   `supabase/config.toml`, ou de la variable `SUPABASE_PROJECT_REF`. Aucun mot de passe de base n'est
+   nécessaire : le workflow passe par l'API de gestion. Sans le secret, le job ne fait rien.
+   La variable `SUPABASE_CONFIG_PUSH` à `true` ajoute la configuration Auth au même workflow.
 3. Déploiement Vercel automatique sur `main` ; surveiller Sentry pendant une heure.
 
 ## Sauvegardes et retour arrière
