@@ -446,3 +446,12 @@ additional_redirect_urls = ["https://abracom.vercel.app/**", "https://abracom-*.
 
 [remotes.kesher.auth.rate_limit]
 email_sent = 30
+
+# Anti-abuse values of the hosted platform (the local ones above are for development only).
+[remotes.kesher.auth.email]
+max_frequency = "1m0s"
+otp_length = 8
+
+[remotes.kesher.db.pooler]
+default_pool_size = 15
+max_client_conn = 200
