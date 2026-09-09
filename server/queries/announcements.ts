@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 const LIST_SELECT = `
   id, title, title_en, body_md, body_md_en, locale, audience, target_ids, pinned, requires_ack,
   published_at, expires_at, created_at, updated_at, deleted_at, template, document_id, author_id,
-  author:profiles ( first_name, last_name ),
+  author:profiles!announcements_author_profile_fkey ( first_name, last_name ),
   attachments:announcement_attachments ( id, filename, size_bytes, mime, storage_path ),
   reads:announcement_reads ( user_id, read_at, acked_at )
 ` as const;

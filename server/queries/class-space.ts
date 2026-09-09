@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 
 const POST_SELECT = `
   id, class_id, school_id, type, title, body_md, subject, due_on, published_at, visibility, created_at, updated_at, author_id,
-  author:profiles ( id, first_name, last_name ),
+  author:profiles!class_posts_author_profile_fkey ( id, first_name, last_name ),
   media:class_post_media ( id, storage_path, kind, width, height, blurhash, caption, tagged_student_ids, sort_order ),
   completions:homework_completions ( student_id, done_at, marked_by_user_id )
 ` as const;
