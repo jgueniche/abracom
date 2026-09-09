@@ -392,10 +392,11 @@ sessions sont codées ; la validation sur une stack Supabase cloud reste à fair
 
 ## Bilan V1
 
-Les quinze sessions sont codées et testées localement (107 unitaires, 24 e2e, 305 pgTAP, build). Restent,
-côté porteur : partager le projet Supabase avec le connecteur, renseigner les variables Vercel et les clés
-(Resend, VAPID, `CRON_SECRET`, Sentry), rejouer les validations « à valider sur une stack Supabase » listées
-dans chaque session, puis dérouler `docs/DEMO.md`.
+Les quinze sessions sont codées et testées localement (107 unitaires, 24 e2e, 305 pgTAP, build). Le projet
+Supabase « Kesher » (`eu-west-3`) porte les 30 migrations, le jeu de données fictif, le compte de direction
+du porteur, la configuration Auth (URL publique, redirections, inscription fermée, TOTP) et les quatre
+jobs pg_cron. Restent : variables Vercel, expéditeur SMTP (Resend) puis modèles d'e-mails, rejouer les
+validations « à valider sur une stack Supabase » listées dans chaque session, puis dérouler `docs/DEMO.md`.
 
 ## Revue de sécurité (2026-09-08)
 

@@ -10,8 +10,10 @@
 
 ## Première mise en production
 
-1. **Supabase** : créer le projet (région Paris), noter l'URL et les clés. `scripts/ops/promote.sh <ref>`
-   applique les migrations ; vérifier `supabase migration list`.
+1. **Supabase** : créer le projet (région Paris), noter l'URL et les clés. Deux façons d'appliquer les
+   migrations : `scripts/ops/promote.sh <ref>` (CLI, mot de passe de base requis) ou
+   `SUPABASE_ACCESS_TOKEN=… scripts/ops/apply-migrations.sh <ref> [--seed]` (API de gestion, jeton
+   d'accès personnel seulement ; enregistre l'historique pour `supabase migration list`).
 2. **Auth** : tout vit dans `supabase/config.toml` (inscription libre désactivée, TOTP, mot de passe ≥ 8
    caractères, modèles d'e-mails français de `supabase/templates/`). Pour l'appliquer au projet hébergé,
    ajouter un bloc de surcharge avec l'URL publique, puis `supabase config push` (proposé par
@@ -36,6 +38,8 @@
    ```
 
    Sans ce bloc, régler à la main Site URL, redirections (`/auth/callback`, `/auth/confirm`) et modèles.
+   Les modèles d'e-mails ne sont acceptés par l'offre gratuite qu'avec un expéditeur SMTP personnalisé :
+   ils restent commentés dans `config.toml` jusque-là (l'API renvoie 400 sinon).
 
 3. **Storage** : buckets privés `attachments`, `documents`, `class-media`, `avatars`, `justifications`,
    `messages` (créés par les migrations ; vérifier les politiques).

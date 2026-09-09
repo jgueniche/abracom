@@ -143,7 +143,7 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 - **Session 15 — code et documents complets** : guides utilisateurs (`content/guides`, `/aide`, PDF),
   assistant de promotion de niveau (`promote_school_year`), `docs/DEMO.md`, `docs/DEPLOIEMENT.md`, scripts
   `ops:check-env`, `ops:storage-sweep`, `promote.sh`. 305 assertions pgTAP (revue de sécurité, ADR-0029). **V1 codée en intégralité.**
-- **Suite** : partager le projet Supabase « Kesher » avec le connecteur, appliquer les 28 migrations et
-  le seed, variables Vercel, `supabase config push` (Auth, modèles), pg_cron (`supabase/jobs/cron.sql`),
-  puis rejouer les validations « à valider sur une stack Supabase » de `docs/ROADMAP.md` et la démo.
+- **Suite** : projet Supabase « Kesher » (`hhmqtavmfgjeacsweasz`, Paris) migré, seedé et configuré (Auth,
+  pg_cron) ; renseigner les variables Vercel, brancher Resend puis décommenter les modèles d'e-mails de
+  `config.toml`, rejouer les validations « stack Supabase » de `docs/ROADMAP.md`, dérouler la démo.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».
