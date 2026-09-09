@@ -14,6 +14,7 @@ import {
   Trash2Icon,
   XIcon,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
 import {
   type Ref,
@@ -27,6 +28,8 @@ import {
 } from "react";
 
 import { UserAvatar } from "@/components/domain/user-avatar";
+import { PollCard, type ThreadPollView } from "./poll-card";
+import { PollComposer } from "./poll-composer";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -102,6 +105,7 @@ export function ThreadView({
   searchMode,
   lastReadAt,
   hint,
+  polls = [],
 }: {
   threadId: string;
   initialMessages: Message[];
@@ -109,6 +113,8 @@ export function ThreadView({
   meId: string;
   canWrite: boolean;
   canModerate: boolean;
+  /** Polls of this conversation, rendered under the message that announced them. */
+  polls?: ThreadPollView[];
   closedReason: string | null;
   searchMode: boolean;
   /** Where the reader stopped last time — draws the "new messages" line. */
@@ -118,6 +124,7 @@ export function ThreadView({
 }) {
   const t = useTranslations("messaging");
   const format = useFormatter();
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [replyTo, setReplyTo] = useState<Message | null>(null);
   const [reason, setReason] = useState<{ id: string; mode: "report" | "moderate" } | null>(null);
@@ -133,6 +140,12 @@ export function ThreadView({
 
   const memberMap = useMemo(() => new Map(members.map((m) => [m.id, m])), [members]);
   const memberNames = useMemo(() => members.map((m) => m.name), [members]);
+  const memberLabels = useMemo(() => new Map(members.map((m) => [m.id, m.name])), [members]);
+  const pollsByMessage = useMemo(() => {
+    const index = new Map<string, ThreadPollView>();
+    for (const poll of polls) if (poll.messageId) index.set(poll.messageId, poll);
+    return index;
+  }, [polls]);
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -215,6 +228,17 @@ export function ThreadView({
           );
         },
       )
+      // A tally is shared state: when someone answers a poll, everyone reading
+      // the thread should see the bar move. Votes carry no payload we can merge
+      // locally, so the server component re-renders with the fresh counts.
+      .on("postgres_changes", { event: "*", schema: "public", table: "poll_votes" }, () =>
+        router.refresh(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "thread_polls", filter: `thread_id=eq.${threadId}` },
+        () => router.refresh(),
+      )
       .subscribe();
     markReadIfVisible();
     document.addEventListener("visibilitychange", markReadIfVisible);
@@ -222,7 +246,7 @@ export function ThreadView({
       document.removeEventListener("visibilitychange", markReadIfVisible);
       void supabase.removeChannel(channel);
     };
-  }, [threadId, searchMode, meId, isAtBottom, markReadIfVisible]);
+  }, [threadId, searchMode, meId, isAtBottom, markReadIfVisible, router]);
 
   // Follow the conversation only when the reader is already at the end of it.
   useEffect(() => {
@@ -371,6 +395,21 @@ export function ThreadView({
                   onModerate={() => setReason({ id: row.message.id, mode: "moderate" })}
                   onDelete={() => setConfirmDelete(row.message.id)}
                 />
+                {(() => {
+                  const poll = pollsByMessage.get(row.message.id);
+                  if (!poll || row.message.deleted_at) return null;
+                  return (
+                    <div className="pl-11">
+                      <PollCard
+                        poll={poll}
+                        threadId={threadId}
+                        meId={meId}
+                        names={memberLabels}
+                        canClose={canModerate || poll.createdBy === meId}
+                      />
+                    </div>
+                  );
+                })()}
               </li>
             );
           })}
@@ -885,18 +924,21 @@ function Composer({
         </ul>
       )}
       <div className="flex items-center justify-between gap-2">
-        <label className="flex min-h-11 cursor-pointer items-center gap-2 text-xs text-muted-foreground hover:text-foreground">
-          <PaperclipIcon className="size-4" aria-hidden />
-          <span className="sr-only sm:not-sr-only">{t("composer.attach")}</span>
-          <input
-            type="file"
-            name="files"
-            accept="image/*,application/pdf"
-            multiple
-            className="sr-only"
-            onChange={(e) => setFiles([...(e.target.files ?? [])].map((file) => file.name))}
-          />
-        </label>
+        <div className="flex items-center gap-2">
+          <label className="flex min-h-11 cursor-pointer items-center gap-2 text-xs text-muted-foreground hover:text-foreground">
+            <PaperclipIcon className="size-4" aria-hidden />
+            <span className="sr-only sm:not-sr-only">{t("composer.attach")}</span>
+            <input
+              type="file"
+              name="files"
+              accept="image/*,application/pdf"
+              multiple
+              className="sr-only"
+              onChange={(e) => setFiles([...(e.target.files ?? [])].map((file) => file.name))}
+            />
+          </label>
+          <PollComposer threadId={threadId} />
+        </div>
         <div className="flex items-center gap-2">
           {state.status === "error" && (
             <span className="text-xs text-destructive">{state.message}</span>

@@ -2099,6 +2099,35 @@ export type Database = {
           },
         ]
       }
+      poll_votes: {
+        Row: {
+          created_at: string
+          option_index: number
+          poll_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          option_index: number
+          poll_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          option_index?: number
+          poll_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_votes_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "thread_polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_contacts: {
         Row: {
           phone: string | null
@@ -2580,6 +2609,80 @@ export type Database = {
           },
         ]
       }
+      thread_polls: {
+        Row: {
+          closed_at: string | null
+          closes_at: string | null
+          created_at: string
+          created_by: string | null
+          event_id: string | null
+          id: string
+          message_id: string | null
+          multiple: boolean
+          options: string[]
+          question: string
+          school_id: string
+          thread_id: string
+        }
+        Insert: {
+          closed_at?: string | null
+          closes_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          id?: string
+          message_id?: string | null
+          multiple?: boolean
+          options: string[]
+          question: string
+          school_id: string
+          thread_id: string
+        }
+        Update: {
+          closed_at?: string | null
+          closes_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          id?: string
+          message_id?: string | null
+          multiple?: boolean
+          options?: string[]
+          question?: string
+          school_id?: string
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "thread_polls_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "thread_polls_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "thread_polls_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "thread_polls_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       threads: {
         Row: {
           allow_replies: boolean
@@ -2816,6 +2919,27 @@ export type Database = {
           phone: string
         }[]
       }
+      close_poll: { Args: { poll_: string }; Returns: undefined }
+      create_group_thread: {
+        Args: {
+          class_ids?: string[]
+          extra_user_ids?: string[]
+          include_teachers?: boolean
+          title_: string
+        }
+        Returns: string
+      }
+      create_thread_poll: {
+        Args: {
+          closes_at_?: string
+          event_?: string
+          multiple_?: boolean
+          options_: string[]
+          question_: string
+          thread_: string
+        }
+        Returns: string
+      }
       delete_my_account: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -2929,6 +3053,15 @@ export type Database = {
           title: string
         }[]
       }
+      group_target_classes: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          guardians: number
+          id: string
+          level_code: string
+          name: string
+        }[]
+      }
       guardian_class_ids: { Args: { uid?: string }; Returns: string[] }
       guardian_student_ids: { Args: { uid?: string }; Returns: string[] }
       has_school_role: {
@@ -2994,6 +3127,7 @@ export type Database = {
         Returns: boolean
       }
       may_inspect: { Args: { uid: string }; Returns: boolean }
+      mfa_required: { Args: { school: string }; Returns: boolean }
       my_calendar_feed: {
         Args: { with_holidays?: boolean }
         Returns: {
@@ -3102,6 +3236,10 @@ export type Database = {
       }
       try_uuid: { Args: { value: string }; Returns: string }
       user_school_ids: { Args: { uid?: string }; Returns: string[] }
+      vote_in_poll: {
+        Args: { choices: number[]; poll_: string }
+        Returns: undefined
+      }
     }
     Enums: {
       absence_kind: "absence" | "late"

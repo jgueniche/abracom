@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { EventPollButton } from "@/components/domain/event-poll-button";
 import { Markdown } from "@/components/domain/markdown";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ import { cancelSlotSignup } from "@/server/actions/agenda";
 import { cache } from "react";
 
 import { getEvent, getEventRecipients } from "@/server/queries/agenda";
+import { getPollableThreads } from "@/server/queries/messaging";
 
 const loadEvent = cache((userId: string, id: string) => getEvent(userId, id));
 
@@ -38,8 +40,9 @@ export async function generateMetadata({
 export default async function EventPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const user = await requireCurrentUser();
-  const [t, format, event] = await Promise.all([
+  const [t, tMessaging, format, event] = await Promise.all([
     getTranslations("agenda"),
+    getTranslations("messaging"),
     getFormatter(),
     loadEvent(user.id, id),
   ]);
@@ -50,6 +53,8 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
   const canEdit = staff || event.created_by === user.id;
   const canRespond = canWriteInSchool(user.roles, event.school_id);
   const recipients = canEdit ? await getEventRecipients(event.id) : [];
+  // Asking "who is coming?" where the families already are, not only on this page.
+  const pollThreads = canRespond ? await getPollableThreads() : [];
   const answered = recipients.filter((r) => r.status !== null);
   const pending = recipients.filter((r) => r.status === null);
 
@@ -84,14 +89,30 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
         title={event.title}
         description={when}
         actions={
-          canEdit ? (
-            <Button asChild variant="outline" className="min-h-11">
-              <Link href={`/agenda/${event.id}/modifier`}>
-                <PencilIcon aria-hidden />
-                {t("edit")}
-              </Link>
-            </Button>
-          ) : undefined
+          <>
+            {canEdit && (
+              <EventPollButton
+                eventId={event.id}
+                eventTitle={event.title}
+                threads={pollThreads.map((thread) => ({
+                  id: thread.thread_id,
+                  label:
+                    thread.class_name ??
+                    thread.title ??
+                    [thread.other_first_name, thread.other_last_name].filter(Boolean).join(" ") ??
+                    tMessaging(`kinds.${thread.kind}`),
+                }))}
+              />
+            )}
+            {canEdit && (
+              <Button asChild variant="outline" className="min-h-11">
+                <Link href={`/agenda/${event.id}/modifier`}>
+                  <PencilIcon aria-hidden />
+                  {t("edit")}
+                </Link>
+              </Button>
+            )}
+          </>
         }
       />
       <div className="mb-4 flex flex-wrap gap-2">
