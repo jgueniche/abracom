@@ -16,8 +16,8 @@ export const brand = {
 
 /** `--background` of each theme, as written in app/globals.css. */
 export const themeBackground = {
-  light: "oklch(0.941 0.036 84.2)",
-  dark: "oklch(0.185 0.029 211.5)",
+  light: "oklch(0.949 0.016 253.9)",
+  dark: "oklch(0.194 0.035 256.5)",
 } as const;
 
 export const themeColorHex = {

@@ -5,15 +5,16 @@ import { cn } from "@/lib/utils";
  * Every avatar in the app was the same grey monogram, so a class channel showed
  * sixty identical circles. The tone is derived from the person's own name: it is
  * stable, needs no upload, and makes a thread scannable.
- * All seven tints are token pairs, so they hold up in both themes.
+ * Mostly blues, to stay inside the palette, plus two warm tints so that two
+ * people side by side are never the same colour. All are token pairs, so they
+ * hold up in both themes.
  */
 const TONES = [
   "bg-accent text-accent-foreground",
   "bg-secondary text-secondary-foreground",
   "bg-primary/15 text-primary",
-  "bg-brick/12 text-brick",
   "bg-success/15 text-success",
-  "bg-warning/15 text-warning",
+  "bg-brick/12 text-brick",
   "bg-muted text-muted-foreground",
 ] as const;
 

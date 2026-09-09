@@ -451,3 +451,22 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   masqué par la barre d'onglets sur iPhone, bannière d'installation superposée, réactions dont on ne
   voyait jamais les siennes, recherche qui faisait disparaître le champ de saisie, « Vu par n » sans
   dénominateur, fil marqué lu sans être visible.
+
+## ADR-0032 — Charte « Blanc & Techelet » : bleus et blanc plutôt que papier chaud
+
+- **Contexte** : à la revue de la refonte (ADR-0031), le porteur a écarté le fond beige. Il veut une
+  interface nettement plus pâle et une identité construite sur les couleurs d'Israël — des nuances de
+  bleu et du blanc — plutôt que sur le papier chaud de la direction « Papier & Grenat ».
+- **Décision** : le thème clair devient **« Blanc & Techelet »** — page bleu très pâle
+  `oklch(0.949 0.016 253.9)` (#e7eff9), cartes **blanc pur**, primaire au bleu du drapeau
+  `oklch(0.412 0.206 262.9)` (#0038b8). Le thème sombre devient **« Nuit Techelet »** — nuit marine
+  #0a1524, plans #152740 et #203756, primaire bleu clair #8ab4ff. Le rouge brique du logo est conservé
+  mais **uniquement pour ce qui attend le lecteur** (accusé de lecture dû, signalement) : il n'a plus
+  aucun rôle décoratif. Le vert et l'ambre restent les couleurs fonctionnelles de succès et
+  d'avertissement. Les icônes PWA sont régénérées sur le nouveau fond (`scripts/brand/generate-icons.ts`),
+  et les teintes d'avatar sont recentrées sur les bleus.
+- **Conséquences** : les 47 assertions de `tests/unit/design-tokens.test.ts` passent sans ajustement de
+  seuil — séparation fond / carte à 1,16:1, bordure de champ à 3,8:1 sur la page, blanc sur primaire à
+  9,3:1. Les jetons de marque `--brand-*` restent les couleurs extraites du logo et ne changent pas ;
+  seule leur mise en œuvre change. Les planches d'audit publiées (directions A / B / C) documentent la
+  décision précédente et ne sont pas réécrites : cette ADR est la trace de l'arbitrage suivant.

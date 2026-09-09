@@ -442,8 +442,8 @@ migrations `20260908172400` et `20260908172500` (ADR-0029) et dans l'application
 
 Audit UI/UX de la version déployée, puis mise en œuvre des cinq arbitrages validés par le porteur.
 
-- [x] Charte : thème clair « Papier & Grenat » et thème sombre « Nuit Sarcelle », jetons morts
-      supprimés, `--brick` / `--success` / `--warning` ajoutés, axes `SOFT`/`WONK` de Fraunces activés,
+- [x] Charte : thème clair « Blanc & Techelet » et thème sombre « Nuit Techelet » — bleus et blanc,
+      le rouge brique réservé à ce qui attend le lecteur (ADR-0032) — jetons morts supprimés, `--brick` / `--success` / `--warning` ajoutés, axes `SOFT`/`WONK` de Fraunces activés,
       Source Serif 4 pour les textes institutionnels longs, échelle typographique unique
 - [x] Largeur : plafond fluide `max-w-[110rem]`, paliers `xl:`/`2xl:`, colonne latérale
       d'administration, messagerie en deux volets, variable `--nav-h` partagée
