@@ -2,6 +2,7 @@
 
 import {
   BackpackIcon,
+  BuildingIcon,
   CalendarDaysIcon,
   HouseIcon,
   LayoutDashboardIcon,
@@ -42,6 +43,11 @@ type Item = { href: string; label: Label; icon: typeof HouseIcon; badge?: boolea
  * reason a parent opens the app on a weekday evening, so it is a tab, not a
  * page buried three taps inside a class.
  *
+ * "Classe" is a parent tab too: the class space (feed, cahier de vie, mots,
+ * absences) was reachable only through "Mon enfant" — a page about allergies
+ * and image rights — which put the daily content two screens deep. The child
+ * record itself is what moves out, to the desktop bar and the avatar menu.
+ *
  * "École" gathers everything the school sends or asks for (announcements,
  * circulars, agenda, forms): announcements are the first product objective and
  * used to live inside a card titled "My account", behind "More".
@@ -50,9 +56,9 @@ const ITEMS: Record<Perspective, Item[]> = {
   parent: [
     { href: "/accueil", label: "home", icon: HouseIcon },
     { href: "/devoirs", label: "homework", icon: NotebookPenIcon },
+    { href: "/classes", label: "myClass", icon: SchoolIcon },
     { href: "/messages", label: "messages", icon: MessageCircleIcon, badge: true },
-    { href: "/famille", label: "myChild", icon: BackpackIcon },
-    { href: "/ecole", label: "school", icon: SchoolIcon },
+    { href: "/ecole", label: "school", icon: BuildingIcon },
   ],
   teacher: [
     { href: "/accueil", label: "home", icon: HouseIcon },
@@ -65,7 +71,7 @@ const ITEMS: Record<Perspective, Item[]> = {
     { href: "/accueil", label: "dashboard", icon: LayoutDashboardIcon },
     { href: "/publier", label: "publish", icon: SquarePenIcon },
     { href: "/messages", label: "messages", icon: MessageCircleIcon, badge: true },
-    { href: "/ecole", label: "school", icon: SchoolIcon },
+    { href: "/ecole", label: "school", icon: BuildingIcon },
     { href: "/admin", label: "manage", icon: SettingsIcon },
   ],
 };
@@ -75,9 +81,12 @@ const ITEMS: Record<Perspective, Item[]> = {
  * bar, where there is room to name everything (the header must be complete).
  */
 const DESKTOP_EXTRA: Record<Perspective, Item[]> = {
-  parent: [{ href: "/agenda", label: "agenda", icon: CalendarDaysIcon }],
+  parent: [
+    { href: "/agenda", label: "agenda", icon: CalendarDaysIcon },
+    { href: "/famille", label: "myChild", icon: BackpackIcon },
+  ],
   teacher: [
-    { href: "/ecole", label: "school", icon: SchoolIcon },
+    { href: "/ecole", label: "school", icon: BuildingIcon },
     { href: "/agenda", label: "agenda", icon: CalendarDaysIcon },
   ],
   admin: [{ href: "/agenda", label: "agenda", icon: CalendarDaysIcon }],

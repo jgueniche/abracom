@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { MetaChip } from "@/components/domain/content-card";
+import { NewHomeworkButton } from "@/components/domain/new-homework-button";
 import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
@@ -101,6 +102,9 @@ export default async function DiaryPage({
 
   const canTick = user.school ? canWriteInSchool(user.roles, user.school.id) : false;
   const teacherView = teaching.length > 0 && allChildren.length === 0;
+  const myClasses = teaching.flatMap((row) =>
+    row.class ? [{ id: row.class.id, name: row.class.name }] : [],
+  );
   const childHref = (id: string | null) => {
     const params = new URLSearchParams();
     if (!isCurrentWeek) params.set("semaine", iso(monday));
@@ -127,6 +131,7 @@ export default async function DiaryPage({
         description={teacherView ? t("subtitleTeacher") : t("subtitle")}
         actions={
           <>
+            <NewHomeworkButton classes={myClasses} />
             <Button asChild variant="outline" size="icon" className="size-11">
               <Link href={weekHref(-1)} aria-label={t("previousWeek")}>
                 <ChevronLeftIcon aria-hidden />

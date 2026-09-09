@@ -155,7 +155,7 @@
   "auth": {
     "login": {
       "title": "Connexion",
-      "subtitle": "Saisissez l'adresse e-mail communiquée à l'école : vous recevrez un lien de connexion, sans mot de passe.",
+      "subtitle": "Connectez-vous avec l'adresse e-mail et le mot de passe communiqués par l'école.",
       "email": "Adresse e-mail",
       "submit": "Recevoir mon lien",
       "sending": "Envoi…",
@@ -166,7 +166,7 @@
       "notConfigured": "La connexion n'est pas encore disponible sur cet environnement.",
       "rateLimited": "Trop de demandes. Réessayez dans quelques minutes.",
       "linkError": "Ce lien est invalide ou a expiré. Demandez-en un nouveau.",
-      "noAccount": "Pas encore d'accès ? L'école vous enverra une invitation par e-mail.",
+      "noAccount": "Les comptes sont créés par l'école : adressez-vous au secrétariat ou à la direction, qui vous enverra une invitation par e-mail à l'adresse déjà connue de l'établissement.",
       "usePassword": "Se connecter avec un mot de passe",
       "useLink": "Recevoir un lien par e-mail",
       "passwordHint": "Réservé aux comptes auxquels l'école a attribué un mot de passe.",
@@ -174,7 +174,8 @@
       "signIn": "Se connecter",
       "signingIn": "Connexion…",
       "invalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
-      "unavailable": "Le service de connexion est momentanément indisponible. Réessayez dans un instant."
+      "unavailable": "Le service de connexion est momentanément indisponible. Réessayez dans un instant.",
+      "noAccountCta": "Pas de compte ? Demandez directement à l'école de vous créer votre compte"
     },
     "onboarding": {
       "title": "Bienvenue, faisons connaissance",
@@ -217,7 +218,8 @@
       "children": "Mes enfants",
       "pendingAcks": "{count, plural, =0 {Aucune annonce à confirmer} one {# annonce à confirmer} other {# annonces à confirmer}}",
       "pendingHint": "Ouvrir les annonces à confirmer.",
-      "seeFamily": "Voir ma famille"
+      "seeFamily": "Voir ma famille",
+      "childrenHint": "Ouvrir l'espace de la classe : devoirs, cahier de vie, mots et absences."
     },
     "teacher": {
       "title": "Mes classes",
@@ -828,7 +830,8 @@
       "consent": "J'atteste qu'aucun enfant sans autorisation de droit à l'image n'apparaît sur ces photos.",
       "consentRequired": "Merci de confirmer que les photos ne montrent aucun enfant sans autorisation.",
       "deleteConfirm": "Cette publication et ses photos seront retirées pour toutes les familles.",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "newHomework": "Nouveau devoir"
     },
     "journal": {
       "empty": "Pas encore de photos.",
@@ -1709,7 +1712,9 @@
     "eventHint": "Réunion, sortie ou fête, avec inscription.",
     "form": "Formulaire",
     "formHint": "Sondage ou autorisation à collecter.",
-    "noClass": "Aucune classe ne vous est affectée pour l'instant."
+    "noClass": "Aucune classe ne vous est affectée pour l'instant.",
+    "homework": "Devoir",
+    "homeworkHint": "À faire pour une date, avec accusé « vu » par famille."
   },
   "diary": {
     "title": "Cahier de texte",
@@ -1731,6 +1736,7 @@
     "noClass": "Aucune classe ne vous est rattachée pour l'instant.",
     "allChildren": "Tous",
     "dueTomorrow": "À rendre demain",
-    "weekCount": "{count, plural, =0 {Aucun devoir} one {# devoir} other {# devoirs}} cette semaine"
+    "weekCount": "{count, plural, =0 {Aucun devoir} one {# devoir} other {# devoirs}} cette semaine",
+    "newHomework": "Nouveau devoir"
   }
 }

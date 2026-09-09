@@ -11,6 +11,10 @@ import { cn } from "@/lib/utils";
  * bare `<p class="text-sm text-muted-foreground">` with no explanation of what
  * would make content appear and no way out.
  */
+function isLinkAction(action: unknown): action is { href: string; label: string } {
+  return typeof action === "object" && action !== null && "href" in action && "label" in action;
+}
+
 export function EmptyState({
   icon: Icon,
   title,
@@ -21,7 +25,8 @@ export function EmptyState({
   icon?: ComponentType<SVGProps<SVGSVGElement>>;
   title: string;
   description?: ReactNode;
-  action?: { href: string; label: string };
+  /** A link out of the dead end, or any control that gets content flowing. */
+  action?: { href: string; label: string } | ReactNode;
   className?: string;
 }) {
   return (
@@ -40,11 +45,14 @@ export function EmptyState({
       {description && (
         <p className="mt-1 max-w-prose text-sm text-balance text-muted-foreground">{description}</p>
       )}
-      {action && (
-        <Button asChild className="mt-4 min-h-11">
-          <Link href={action.href}>{action.label}</Link>
-        </Button>
-      )}
+      {action &&
+        (isLinkAction(action) ? (
+          <Button asChild className="mt-4 min-h-11">
+            <Link href={action.href}>{action.label}</Link>
+          </Button>
+        ) : (
+          <div className="mt-4">{action}</div>
+        ))}
     </div>
   );
 }

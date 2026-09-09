@@ -38,6 +38,7 @@ test.describe("entry points", () => {
   test("rejects an invalid e-mail without leaving the page", async ({ page }) => {
     await page.goto("/connexion");
 
+    await page.getByRole("button", { name: "Recevoir un lien par e-mail" }).click();
     await page.getByLabel("Adresse e-mail").fill("pas-un-email");
     await page.getByRole("button", { name: "Recevoir mon lien" }).click();
 
@@ -46,10 +47,10 @@ test.describe("entry points", () => {
     await expect(page.getByLabel("Adresse e-mail")).toBeFocused();
   });
 
-  test("offers password sign-in and reports an unreachable backend", async ({ page }) => {
+  test("signs in by password first and reports an unreachable backend", async ({ page }) => {
     await page.goto("/connexion");
 
-    await page.getByRole("button", { name: "Se connecter avec un mot de passe" }).click();
+    // password is the default mode: no switch to make
     await page.getByLabel("Adresse e-mail").fill("admin@demo.local");
     await page.getByLabel("Mot de passe").fill("not-the-password");
     await page.getByRole("button", { name: "Se connecter", exact: true }).click();
@@ -60,6 +61,13 @@ test.describe("entry points", () => {
 
     await page.getByRole("button", { name: "Recevoir un lien par e-mail" }).click();
     await expect(page.getByRole("button", { name: "Recevoir mon lien" })).toBeVisible();
+  });
+
+  test("tells a visitor without an account to ask the school", async ({ page }) => {
+    await page.goto("/connexion");
+
+    await page.getByText("Pas de compte ?").click();
+    await expect(page.getByText(/comptes sont créés par l'école/)).toBeVisible();
   });
 
   test("sends baseline security headers", async ({ request }) => {

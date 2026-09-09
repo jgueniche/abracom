@@ -17,13 +17,16 @@ const initial: PostFormState = { status: "idle" };
 export function PostForm({
   classId,
   students,
+  defaultType = "journal",
 }: {
   classId: string;
   students: Array<{ id: string; name: string; imageRights: boolean }>;
+  /** Pre-selected by the caller, so "Nouveau devoir" opens on Devoir. */
+  defaultType?: (typeof TYPES)[number];
 }) {
   const t = useTranslations("classSpace");
   const [state, action] = useActionState(saveClassPost, initial);
-  const [type, setType] = useState<(typeof TYPES)[number]>("journal");
+  const [type, setType] = useState<(typeof TYPES)[number]>(defaultType);
   const [compressing, setCompressing] = useState(false);
   const [hasMedia, setHasMedia] = useState(false);
 

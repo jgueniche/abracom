@@ -17,9 +17,17 @@ import {
 const initialLinkState: MagicLinkState = { status: "idle" };
 const initialPasswordState: PasswordState = { status: "idle" };
 
+/**
+ * Password first, magic link second.
+ *
+ * The magic link was the default, so the whole school had to go through their
+ * inbox to open the app — including on a phone whose mail app is not the one
+ * the invitation reached. The e-mail + password everyone was given is the
+ * shortest path; the link stays one tap away for whoever forgot theirs.
+ */
 export function LoginForm({ next, initialError }: { next: string; initialError?: string }) {
   const t = useTranslations("auth.login");
-  const [mode, setMode] = useState<"link" | "password">("link");
+  const [mode, setMode] = useState<"link" | "password">("password");
   const [linkState, linkAction, linkPending] = useActionState(requestMagicLink, initialLinkState);
   const [passwordState, passwordAction, passwordPending] = useActionState(
     signInWithPassword,
@@ -51,11 +59,10 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
   }
 
   if (mode === "password") {
-    const error = passwordState.status === "error" ? passwordState.message : undefined;
+    const error = passwordState.status === "error" ? passwordState.message : initialError;
     return (
       <form action={passwordAction} className="flex flex-col gap-4">
         <input type="hidden" name="next" value={next} />
-        <p className="text-sm text-muted-foreground">{t("passwordHint")}</p>
         <div className="flex flex-col gap-2">
           <Label htmlFor="email">{t("email")}</Label>
           <Input

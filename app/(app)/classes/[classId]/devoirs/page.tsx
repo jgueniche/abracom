@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { NewHomeworkButton } from "@/components/domain/new-homework-button";
 import { PostCard } from "@/components/domain/post-card";
 import { requireClassAccess } from "@/lib/auth/class-access";
 import { canWriteInSchool } from "@/lib/permissions";
@@ -48,10 +49,21 @@ export default async function HomeworkPage({ params }: { params: Promise<{ class
     { key: "later", items: posts.filter((p) => p.due_on && p.due_on >= iso(afterNext)) },
   ] as const;
 
-  if (posts.length === 0) return <EmptyState title={t("noHomework")} />;
+  // The empty state used to be a dead end: a teacher with no homework yet saw
+  // "Aucun devoir" and no way to set one.
+  const canPublish = isTeacher || isStaff;
+  const composer = canPublish ? [{ id: classId, name: cls.name }] : [];
+
+  if (posts.length === 0)
+    return <EmptyState title={t("noHomework")} action={<NewHomeworkButton classes={composer} />} />;
 
   return (
     <div className="flex flex-col gap-8">
+      {canPublish && (
+        <div className="flex justify-end">
+          <NewHomeworkButton classes={composer} />
+        </div>
+      )}
       {groups
         .filter((g) => g.items.length > 0)
         .map((group) => (

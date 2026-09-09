@@ -155,7 +155,7 @@
   "auth": {
     "login": {
       "title": "Sign in",
-      "subtitle": "Enter the e-mail address you gave the school: you will receive a sign-in link, no password needed.",
+      "subtitle": "Sign in with the e-mail address and password the school gave you.",
       "email": "E-mail address",
       "submit": "Send me a link",
       "sending": "Sending…",
@@ -166,7 +166,7 @@
       "notConfigured": "Sign-in is not available on this environment yet.",
       "rateLimited": "Too many requests. Try again in a few minutes.",
       "linkError": "This link is invalid or has expired. Request a new one.",
-      "noAccount": "No access yet? The school will send you an invitation by e-mail.",
+      "noAccount": "Accounts are created by the school: ask the office or the head teacher, who will send an invitation to the address the school already has on file.",
       "usePassword": "Sign in with a password",
       "useLink": "Get a link by e-mail",
       "passwordHint": "Only for accounts the school has given a password to.",
@@ -174,7 +174,8 @@
       "signIn": "Sign in",
       "signingIn": "Signing in…",
       "invalidCredentials": "Incorrect e-mail address or password.",
-      "unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment."
+      "unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment.",
+      "noAccountCta": "No account? Ask the school directly to create one for you"
     },
     "onboarding": {
       "title": "Welcome, let's get acquainted",
@@ -217,7 +218,8 @@
       "children": "My children",
       "pendingAcks": "{count, plural, =0 {No announcement to confirm} one {# announcement to confirm} other {# announcements to confirm}}",
       "pendingHint": "Open the announcements to confirm.",
-      "seeFamily": "See my family"
+      "seeFamily": "See my family",
+      "childrenHint": "Open the class space: homework, journal, notes and absences."
     },
     "teacher": {
       "title": "My classes",
@@ -828,7 +830,8 @@
       "consent": "I confirm that no child without a signed image-rights consent appears on these photos.",
       "consentRequired": "Please confirm that the photos show no child without consent.",
       "deleteConfirm": "This post and its photos will be removed for every family.",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "newHomework": "New homework"
     },
     "journal": {
       "empty": "No photo yet.",
@@ -1709,7 +1712,9 @@
     "eventHint": "Meeting, outing or celebration, with sign-up.",
     "form": "Form",
     "formHint": "Survey or permission to collect.",
-    "noClass": "No class is assigned to you yet."
+    "noClass": "No class is assigned to you yet.",
+    "homework": "Homework",
+    "homeworkHint": "Due on a date, with a per-family “seen” receipt."
   },
   "diary": {
     "title": "Homework diary",
@@ -1731,6 +1736,7 @@
     "noClass": "No class is linked to you yet.",
     "allChildren": "All",
     "dueTomorrow": "Due tomorrow",
-    "weekCount": "{count, plural, =0 {No homework} one {# piece of homework} other {# pieces of homework}} this week"
+    "weekCount": "{count, plural, =0 {No homework} one {# piece of homework} other {# pieces of homework}} this week",
+    "newHomework": "New homework"
   }
 }

@@ -2,7 +2,7 @@ import { CheckCircle2Icon, ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
-import { StudentCard } from "@/components/domain/student-card";
+import { ChildClassCard } from "@/components/domain/child-class-card";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -65,9 +65,10 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
               </Link>
             </Button>
           </div>
+          <p className="mb-3 text-sm text-muted-foreground">{t("parent.childrenHint")}</p>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-2">
             {children.map((child) => (
-              <StudentCard key={child.student.id} child={child} compact />
+              <ChildClassCard key={child.student.id} child={child} />
             ))}
           </div>
         </section>
