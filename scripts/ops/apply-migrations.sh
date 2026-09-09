@@ -8,7 +8,10 @@ set -euo pipefail
 cd "$(dirname "$0")/../.."
 ref="${1:?usage: scripts/ops/apply-migrations.sh <project-ref> [--seed]}"
 : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN is required}"
+command -v jq >/dev/null || { echo "jq is required" >&2; exit 1; }
 api="https://api.supabase.com/v1/projects/$ref/database/query"
+applied_count=0
+skipped_count=0
 
 run_sql() { # $1 = sql text ; prints the JSON answer
   jq -Rn --arg q "$1" '{query: $q}' | curl -sS --max-time 300 -X POST "$api" \
@@ -34,6 +37,7 @@ for file in supabase/migrations/*.sql; do
   name=${base#*_}
   if [[ ",$applied," == *",$version,"* ]]; then
     echo "  = $base (already applied)"
+    skipped_count=$((skipped_count + 1))
     continue
   fi
   echo "  + $base"
@@ -43,6 +47,7 @@ for file in supabase/migrations/*.sql; do
     exit 1
   fi
   run_sql "insert into supabase_migrations.schema_migrations (version, name) values ('$version', '$name') on conflict do nothing" >/dev/null
+  applied_count=$((applied_count + 1))
 done
 
 if [[ "${2:-}" == "--seed" ]]; then
@@ -55,4 +60,4 @@ if [[ "${2:-}" == "--seed" ]]; then
     fi
   done
 fi
-echo "done"
+echo "done: $applied_count applied, $skipped_count already present"
