@@ -19,15 +19,28 @@ const withNextIntl = createNextIntlPlugin("./lib/i18n/request.ts");
 function assertPublicSupabaseConfigAtBuildTime(): void {
   const target = process.env.VERCEL_ENV;
   if (target !== "production" && target !== "preview") return;
-  const missing = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"].filter(
-    (name) => !process.env[name]?.trim(),
-  );
+  const required = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"];
+  const missing = required.filter((name) => !process.env[name]?.trim());
   if (missing.length === 0) return;
+
+  // What the build actually received, so the log answers "is it there, is it
+  // named differently, is it empty" instead of leaving it to guesswork.
+  // Names and lengths only: no value is ever printed.
+  const seen = Object.keys(process.env)
+    .filter((name) => name.startsWith("NEXT_PUBLIC_"))
+    .sort()
+    .map((name) => `${name} (${process.env[name]?.length ?? 0} caractères)`);
+  const inventory =
+    seen.length > 0
+      ? `Variables NEXT_PUBLIC_* reçues par ce build :\n  - ${seen.join("\n  - ")}`
+      : "Ce build n'a reçu AUCUNE variable NEXT_PUBLIC_*.";
+
   throw new Error(
     `Build ${target} sans ${missing.join(" ni ")} : ces variables sont lues à la compilation, ` +
-      "pas à l'exécution. Vérifiez qu'elles sont bien affectées à cet environnement dans Vercel " +
-      "(Settings → Environment Variables → Environments), puis relancez le déploiement sans le " +
-      "cache de build.",
+      "pas à l'exécution.\n" +
+      inventory +
+      "\nSi le nom attendu ne figure pas dans cette liste, la variable n'est pas fournie à " +
+      "l'étape de build pour cet environnement (Settings → Environment Variables).",
   );
 }
 
