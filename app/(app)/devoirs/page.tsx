@@ -194,19 +194,31 @@ export default async function DiaryPage({
                 const isToday = day === todayIso;
                 const isTomorrow = day === tomorrowIso;
                 const isPast = day < todayIso;
+                const empty = items.length === 0;
                 return (
                   <li
                     key={day}
                     className={cn(
-                      "rounded-2xl border bg-card p-4 shadow-soft",
-                      isToday ? "border-primary/60 ring-1 ring-primary/25" : "border-border",
-                      isPast && items.length === 0 && "opacity-60",
+                      "rounded-2xl border",
+                      empty
+                        ? "border-dashed border-border/70 px-4 py-2.5"
+                        : "bg-card p-4 shadow-soft",
+                      isToday && !empty && "border-primary/60 ring-1 ring-primary/25",
+                      isToday && empty && "border-primary/40",
+                      !isToday && !empty && "border-border",
+                      isPast && empty && "opacity-55",
                     )}
                   >
-                    <p className="mb-3 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                    <p
+                      className={cn(
+                        "flex flex-wrap items-baseline gap-x-2 gap-y-1",
+                        !empty && "mb-3",
+                      )}
+                    >
                       <span
                         className={cn(
-                          "font-heading text-lg tracking-tight capitalize",
+                          "font-heading tracking-tight first-letter:uppercase",
+                          empty ? "text-base text-muted-foreground" : "text-lg",
                           isToday && "text-primary",
                         )}
                       >
@@ -218,14 +230,13 @@ export default async function DiaryPage({
                       </span>
                       {isToday && <span className="eyebrow text-primary">{t("today")}</span>}
                       {isTomorrow && <span className="eyebrow">{t("dueTomorrow")}</span>}
-                      {isPast && items.length > 0 && (
-                        <span className="eyebrow text-brick">{t("late")}</span>
+                      {isPast && !empty && <span className="eyebrow text-brick">{t("late")}</span>}
+                      {empty && (
+                        <span className="text-sm text-muted-foreground">{t("nothingToday")}</span>
                       )}
                     </p>
 
-                    {items.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">{t("nothingToday")}</p>
-                    ) : (
+                    {empty ? null : (
                       <ul className="flex flex-col gap-4">
                         {items.map((entry) => {
                           const concerned = childrenByClass.get(entry.class_id) ?? [];
@@ -252,7 +263,9 @@ export default async function DiaryPage({
                                 </p>
                               )}
                               <div className="mt-2 flex flex-wrap items-center gap-2">
+                                {/* a read-only guardian sees the homework but cannot tick it */}
                                 {!teacherView &&
+                                  canTick &&
                                   concerned.map((child) => {
                                     const done = entry.completions.some(
                                       (completion) => completion.student_id === child.id,
@@ -283,7 +296,7 @@ export default async function DiaryPage({
                                       </form>
                                     );
                                   })}
-                                {(teacherView || canTick) && (
+                                {teacherView && (
                                   <MetaChip>
                                     {t("seenBy", { count: entry.completions.length })}
                                   </MetaChip>

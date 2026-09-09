@@ -35,6 +35,7 @@ export function PollCard({
   meId,
   names,
   canClose,
+  showQuestion = true,
 }: {
   poll: ThreadPollView;
   threadId: string;
@@ -42,6 +43,11 @@ export function PollCard({
   /** user id → display name, for the "who answered" line. */
   names: Map<string, string>;
   canClose: boolean;
+  /**
+   * False under the message that announced the poll: that message already
+   * carries the question, and printing it twice reads as a glitch.
+   */
+  showQuestion?: boolean;
 }) {
   const t = useTranslations("messaging.poll");
   const format = useFormatter();
@@ -87,7 +93,7 @@ export function PollCard({
         )}
       </p>
 
-      <p className="mb-1 font-medium">{poll.question}</p>
+      {showQuestion && <p className="mb-1 font-medium">{poll.question}</p>}
       {poll.event && (
         <Link
           href={`/agenda/${poll.event.id}`}

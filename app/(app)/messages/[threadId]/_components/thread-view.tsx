@@ -406,6 +406,7 @@ export function ThreadView({
                         meId={meId}
                         names={memberLabels}
                         canClose={canModerate || poll.createdBy === meId}
+                        showQuestion={false}
                       />
                     </div>
                   );

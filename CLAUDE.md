@@ -149,7 +149,18 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   direction, administration en quatre familles), messagerie refondue (barre de conversation, groupage,
   actions au menu, deux volets), `ContentCard` / `EmptyState` / `HubCard` uniques, six bugs d'affichage
   corrigés.
-- **Suite** : projet Supabase « Kesher » (`hhmqtavmfgjeacsweasz`, Paris) migré, seedé et configuré (Auth,
-  pg_cron) ; renseigner les variables Vercel, brancher Resend puis décommenter les modèles d'e-mails de
-  `config.toml`, rejouer les validations « stack Supabase » de `docs/ROADMAP.md`, dérouler la démo.
+- **Session 17 — code complet, vérifiée sur la base réelle** : cahier de texte `/devoirs` (vue
+  chronologique par semaine, toutes les classes du lecteur fusionnées, filtre par enfant, « vu » par
+  enfant) ; navigation complète sans onglet « Plus » (compte, aide, langue et thème sous l'avatar,
+  `AccountMenu`) ; onglet **Classe** pour les parents et accès direct à l'espace de classe depuis le
+  tableau de bord (`ChildClassCard`) ; « Nouveau devoir » visible depuis l'accueil, le cahier de texte,
+  l'onglet de classe et le pôle Publier (`?type=homework`) ; connexion par identifiant + mot de passe
+  par défaut, lien magique en second, bloc « Pas de compte ? » ; **groupes de discussion** créés en
+  cochant une ou plusieurs classes (`create_group_thread`, `group_target_classes`) ; **sondages dans
+  les fils** (`thread_polls`, `poll_votes`, `create_thread_poll`, `vote_in_poll`, `close_poll`), avec
+  « Sonder les familles » depuis un événement. Educartable retiré partout. 331 assertions pgTAP.
+- **Suite** : projet Supabase « Kesher » (`hhmqtavmfgjeacsweasz`, Paris) à jour (migrations `20260909*`
+  appliquées) ; renseigner les variables Vercel, brancher Resend puis décommenter les modèles d'e-mails
+  de `config.toml`, rejouer les validations « stack Supabase » de `docs/ROADMAP.md`, dérouler la démo.
+  **Audit global par rôle et par catégorie** demandé pour la prochaine session.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».
