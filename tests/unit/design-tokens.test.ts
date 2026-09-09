@@ -38,15 +38,16 @@ const TEXT_PAIRS: Array<[string, string]> = [
 ];
 
 /**
- * The old palette passed every contrast test and still looked flat: card on
- * background was 1.04:1. Planes only read as planes when they are separated,
- * so the separation itself is a test now.
+ * The original palette passed every contrast test and still looked flat: card on
+ * background was 1.04:1 AND its border only 1.35:1, so nothing drew the plane.
+ * A plane can be drawn by its fill or by its edge; on a near-white page it has
+ * to be the edge, so the fill threshold is low and the border one is strict.
  */
 const SURFACE_PAIRS: Array<[string, string, number]> = [
-  ["background", "card", 1.15],
-  ["background", "surface", 1.12],
-  ["card", "border", 1.4],
-  ["background", "border", 1.35],
+  ["background", "card", 1.06],
+  ["background", "surface", 1.1],
+  ["card", "border", 1.55],
+  ["background", "border", 1.5],
 ];
 
 describe.each([

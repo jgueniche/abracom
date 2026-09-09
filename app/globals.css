@@ -74,10 +74,12 @@
      truth for everything that floats above it (composer, install banner, main). */
   --nav-h: calc(3.5rem + env(safe-area-inset-bottom, 0px));
 
-  /* light — "Blanc & Techelet": white sheets on a pale blue page */
-  --background: oklch(0.949 0.016 253.9); /* #e7eff9 */
+  /* light — "Blanc & Techelet": an almost-white page, white cards, blue ink.
+     The page and the card are nearly the same value on purpose; what separates
+     the planes here is the edge and the lift, not the fill. */
+  --background: oklch(0.977 0.01 252.8); /* #f3f8fe */
   --foreground: oklch(0.234 0.046 257); /* #0f1e33 */
-  --surface: oklch(0.902 0.03 256); /* #d2e0f3 */
+  --surface: oklch(0.926 0.024 254); /* #dce8f7 */
   --surface-foreground: oklch(0.234 0.046 257);
   --card: oklch(1 0 0); /* #ffffff */
   --card-foreground: oklch(0.234 0.046 257);
@@ -85,11 +87,11 @@
   --popover-foreground: oklch(0.234 0.046 257);
   --primary: oklch(0.412 0.206 262.9); /* #0038b8 — techelet, the flag blue */
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.902 0.03 256); /* #d2e0f3 */
+  --secondary: oklch(0.926 0.024 254); /* #dce8f7 */
   --secondary-foreground: oklch(0.349 0.08 257.9); /* #1e3a63 */
-  --muted: oklch(0.925 0.023 258.4); /* #dde7f6 */
+  --muted: oklch(0.949 0.017 256.3); /* #e7effa */
   --muted-foreground: oklch(0.471 0.053 258.7); /* #495c79 */
-  --accent: oklch(0.93 0.026 257); /* #dde9fa */
+  --accent: oklch(0.927 0.028 256.5); /* #dbe8fa */
   --accent-foreground: oklch(0.388 0.143 259.8); /* #0b3f8f */
   --brick: oklch(0.457 0.157 27.4); /* #9c2420 — the wordmark red, for what waits */
   --brick-foreground: oklch(1 0 0);
@@ -98,12 +100,12 @@
   --warning: oklch(0.5 0.109 69.6); /* #8a5600 */
   --warning-foreground: oklch(1 0 0);
   --destructive: oklch(0.469 0.165 27.6); /* #a3231f */
-  --border: oklch(0.839 0.042 256.3); /* #b9cce6 */
-  --input: oklch(0.584 0.075 257.4); /* #5f7da8 — 3.8:1 on the page (SC 1.4.11) */
+  --border: oklch(0.836 0.044 255.9); /* #b7cbe6 — 1.65:1 seen from a white card */
+  --input: oklch(0.584 0.075 257.4); /* #5f7da8 — 3.9:1 on the page (SC 1.4.11) */
   --ring: oklch(0.412 0.206 262.9);
   --radius: 0.875rem;
-  --soft-shadow: 0 1px 1px oklch(0.23 0.05 257 / 6%), 0 6px 20px -14px oklch(0.23 0.05 257 / 30%);
-  --lift-shadow: 0 1px 2px oklch(0.23 0.05 257 / 8%), 0 14px 34px -18px oklch(0.23 0.05 257 / 34%);
+  --soft-shadow: 0 1px 2px oklch(0.23 0.05 257 / 7%), 0 8px 22px -14px oklch(0.23 0.05 257 / 34%);
+  --lift-shadow: 0 2px 4px oklch(0.23 0.05 257 / 9%), 0 16px 36px -18px oklch(0.23 0.05 257 / 38%);
 }
 
 .dark {
@@ -131,7 +133,7 @@
   --warning: oklch(0.837 0.125 79.4); /* #f5c064 */
   --warning-foreground: oklch(0.194 0.035 256.5);
   --destructive: oklch(0.741 0.136 26.8); /* #f5877c */
-  --border: oklch(0.382 0.061 255.3); /* #2c4463 */
+  --border: oklch(0.405 0.064 255.6); /* #31496a — 1.64:1 seen from a card */
   --input: oklch(0.62 0.083 256.4); /* #6588b8 — 3:1 on card and page (SC 1.4.11) */
   --ring: oklch(0.769 0.117 261.6);
   --soft-shadow: 0 1px 0 oklch(1 0 0 / 6%) inset;
