@@ -6,6 +6,34 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./lib/i18n/request.ts");
 
 /**
+ * `NEXT_PUBLIC_*` values are baked into the browser bundle while the page is
+ * compiled, not read when it runs. A deployment built without them therefore
+ * ships an application that cannot reach Supabase at all, and says so only
+ * through a small notice on the sign-in page — which is how a production build
+ * once went out silently broken.
+ *
+ * On Vercel (production and preview) the build now stops instead. Local builds
+ * and CI have no `VERCEL_ENV` and are untouched: the app is meant to boot
+ * without a Supabase stack.
+ */
+function assertPublicSupabaseConfigAtBuildTime(): void {
+  const target = process.env.VERCEL_ENV;
+  if (target !== "production" && target !== "preview") return;
+  const missing = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"].filter(
+    (name) => !process.env[name]?.trim(),
+  );
+  if (missing.length === 0) return;
+  throw new Error(
+    `Build ${target} sans ${missing.join(" ni ")} : ces variables sont lues à la compilation, ` +
+      "pas à l'exécution. Vérifiez qu'elles sont bien affectées à cet environnement dans Vercel " +
+      "(Settings → Environment Variables → Environments), puis relancez le déploiement sans le " +
+      "cache de build.",
+  );
+}
+
+assertPublicSupabaseConfigAtBuildTime();
+
+/**
  * Baseline security headers. A strict nonce-based CSP is scheduled for
  * session 14 (docs/ROADMAP.md) because it requires middleware support.
  */
