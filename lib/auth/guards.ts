@@ -6,7 +6,8 @@ import { redirect } from "next/navigation";
 import { getMfaStatus } from "@/lib/auth/mfa";
 import { APP_HOME_PATH } from "@/lib/auth/routes";
 import { type CurrentUser, requireCurrentUser } from "@/lib/auth/session";
-import { ForbiddenError, hasSchoolRole, requiresStrongAuth, STAFF_ROLES } from "@/lib/permissions";
+import { mfaRequiredFor } from "@/lib/auth/policy";
+import { ForbiddenError, hasSchoolRole, STAFF_ROLES } from "@/lib/permissions";
 import type { MembershipRole } from "@/lib/supabase/types";
 
 export type SchoolContext = { user: CurrentUser; schoolId: string };
@@ -21,8 +22,9 @@ export async function requireSchoolRole(roles: readonly MembershipRole[]): Promi
 }
 
 /**
- * Two-factor policy (brief §9): an enrolled person must have verified their code in this session
- * before reaching staff screens; school administrators must enrol before using the admin area.
+ * Two-factor policy: an enrolled person must have verified their code in this session before
+ * reaching staff screens; the direction must enrol first where the school requires it
+ * (`modules.security.mfaRequired`, off during the QA phase).
  */
 export async function enforceStaffMfa(
   user: CurrentUser,
@@ -35,7 +37,7 @@ export async function enforceStaffMfa(
     const pathname = (await headers()).get("x-pathname") ?? APP_HOME_PATH;
     redirect(`/verification?next=${encodeURIComponent(pathname)}`);
   }
-  if (!mfa.enrolled && requiresStrongAuth(user.roles)) {
+  if (!mfa.enrolled && mfaRequiredFor(user)) {
     if (mode === "action") throw new ForbiddenError();
     redirect("/profil/securite?requis=1");
   }

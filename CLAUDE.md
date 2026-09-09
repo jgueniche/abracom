@@ -96,7 +96,7 @@ Toute visibilité d'enfant passe par `student_guardians` + `enrollments`.
 Hébergement UE uniquement (Supabase `eu-west`/`eu-central`, Vercel `cdg1`, Resend UE) · pas de trackers
 tiers · photos en bucket privé, URL signées 10 min, tag d'élève bloqué sans droit à l'image signé ·
 familles séparées (droits indépendants, flag « restriction judiciaire ») · export / suppression de compte ·
-2FA admin · CSP stricte + HSTS (session 14) · audit log sur toute action admin et modération ·
+2FA direction optionnelle par école (ADR-0030) · CSP stricte + HSTS (session 14) · audit log sur toute action admin et modération ·
 durées de conservation dans `docs/RGPD.md` (session 14).
 
 ## 9. Mode opératoire

@@ -7,7 +7,7 @@ import { getTranslations } from "next-intl/server";
 import { getMfaStatus } from "@/lib/auth/mfa";
 import { APP_HOME_PATH, safeNextPath } from "@/lib/auth/routes";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { requiresStrongAuth } from "@/lib/permissions";
+import { mfaRequiredFor } from "@/lib/auth/policy";
 import { createClient } from "@/lib/supabase/server";
 import { logAudit } from "@/server/audit";
 
@@ -87,7 +87,7 @@ export async function disableTotp(_prev: ActionState, formData: FormData): Promi
   try {
     const t = await getTranslations("security");
     const user = await requireCurrentUser();
-    if (requiresStrongAuth(user.roles)) {
+    if (mfaRequiredFor(user)) {
       return { status: "error", message: t("adminCannotDisable") };
     }
     const status = await getMfaStatus();

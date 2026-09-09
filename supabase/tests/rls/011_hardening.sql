@@ -1,6 +1,6 @@
 -- pgTAP: rules added by the hardening migrations (20260908172400 / 172500).
 begin;
-select plan(39);
+select plan(40);
 
 create or replace function pg_temp.login(uid uuid, aal text default 'aal2') returns void language plpgsql as $$
 begin
@@ -33,14 +33,20 @@ end $$;
 \set event_school '''00000000-0000-4000-8000-000000002049'''
 \set invited51 '''c0000000-0000-4000-8000-000000510002'''
 
--- ── two-factor sessions ────────────────────────────────────────────────────────
+-- ── two-factor sessions (per-school option, off by default) ───────────────────
 select pg_temp.login(:admin, 'aal1');
-select is(public.is_school_admin(:school), false, 'an administrator without a two-factor session holds no admin right');
+select is(public.is_school_admin(:school), true, 'without the school option, an aal1 administrator keeps their rights (QA phase)');
+select pg_temp.owner();
+update public.schools set modules = modules || '{"security": {"mfaRequired": true}}'::jsonb where id = :school;
+select pg_temp.login(:admin, 'aal1');
+select is(public.is_school_admin(:school), false, 'once the school requires it, an administrator without a two-factor session holds no admin right');
 select is((select count(*) from public.audit_log), 0::bigint, 'the audit log is hidden from an aal1 administrator session');
 select is((select count(*) from public.announcements), (select count(*) from public.announcements where published_at <= now() and deleted_at is null), 'the aal1 session still reads what any member reads');
 select pg_temp.login(:admin);
 select is(public.is_school_admin(:school), true, 'the same administrator with aal2 holds the right');
 select ok((select count(*) from public.audit_log) > 0, 'and reads the audit log');
+select pg_temp.owner();
+update public.schools set modules = modules - 'security' where id = :school;
 
 -- ── helpers answering about other users ────────────────────────────────────────
 select pg_temp.login(:parent1);

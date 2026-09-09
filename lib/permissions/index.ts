@@ -31,13 +31,6 @@ export function activeMemberships(memberships: readonly MembershipLike[]): Membe
   return memberships.filter((m) => m.status === "active");
 }
 
-/** Two-factor authentication is mandatory for platform and school administrators (brief §8). */
-export function requiresStrongAuth(memberships: readonly MembershipLike[]): boolean {
-  return activeMemberships(memberships).some(
-    (m) => m.role === "school_admin" || m.role === "super_admin",
-  );
-}
-
 export function isSuperAdmin(memberships: readonly MembershipLike[]): boolean {
   return activeMemberships(memberships).some((m) => m.role === "super_admin");
 }

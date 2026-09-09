@@ -434,6 +434,8 @@ migrations `20260908172400` et `20260908172500` (ADR-0029) et dans l'application
       réactivation d'un membre resynchronisant ses fils, livraisons abandonnées purgées, abonnement push
       conservé à la déconnexion et ré-attaché à la connexion suivante, 2FA exigée dès l'entrée dans
       l'application pour la direction, responsables en lecture seule sans cases « vu » ni formulaires
+- [x] Phase de recette : double authentification optionnelle par école (`modules.security.mfaRequired`,
+      ADR-0030), à activer avant la mise en production réelle
 - [ ] Reste à décider : limitation de débit du flux ICS (jeton de 192 bits, cache 15 min)
 
 ## Questions ouvertes (§15 du brief)

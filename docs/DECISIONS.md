@@ -404,3 +404,17 @@ par le brief. Numérotation croissante, jamais réécrite (on ajoute un ADR qui 
 authenticated, service_role`** ; les invités voient le nom de l'école qui les invite ; les enseignants
   peuvent être affectés avant d'avoir accepté leur invitation ; 305 assertions pgTAP couvrent ces
   règles (`011_hardening.sql`).
+
+## ADR-0030 — Validation en deux étapes optionnelle par école pendant la recette
+
+- **Contexte** : le porteur veut une authentification minimale pour la phase de recette (comptes de test,
+  mot de passe, aucune confirmation par e-mail) avant de durcir. La double authentification obligatoire
+  pour la direction (ADR-0026, ADR-0029) bloquait ce parcours.
+- **Décision** : l'exigence devient une option par établissement, `modules.security.mfaRequired`
+  (défaut : désactivée), lue à la fois par `mfa_required()` dans les politiques RLS et par
+  `mfaRequiredFor()` dans l'application. L'inscription TOTP reste possible pour tout le monde et une
+  personne inscrite doit toujours saisir son code à chaque session ; le super administrateur n'est pas
+  soumis à l'option. Les inscriptions libres restent fermées et les comptes sont confirmés d'office.
+- **Conséquences** : avant la mise en production réelle, activer l'option pour l'école (`update
+public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) ; la direction devra
+  alors s'inscrire avant tout accès administrateur.
