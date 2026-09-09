@@ -418,3 +418,36 @@ authenticated, service_role`** ; les invités voient le nom de l'école qui les 
 - **Conséquences** : avant la mise en production réelle, activer l'option pour l'école (`update
 public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) ; la direction devra
   alors s'inscrire avant tout accès administrateur.
+
+## ADR-0031 — Refonte de l'interface : charte « Papier & Grenat », navigation par rôle, anatomie unique
+
+- **Contexte** : audit UI/UX du 2026-09-09 sur la version déployée (164 fichiers d'interface, 26 captures
+  des trois rôles en 390 px et 1440 px). Quatre constats chiffrés : un unique `max-w-5xl` plafonnait
+  toutes les pages connectées à 1 024 px et le dépôt ne contenait aucune règle `xl:`/`2xl:` (48 % d'un
+  écran 1 920 px sans rien) ; l'en-tête empilait ~1 200 px de contenu dans 992 px, ce qui comprimait la
+  cloche et l'avatar sous les 44 px tactiles ; 43 % des jetons de couleur ne peignaient aucun pixel et
+  carte sur fond valait 1,04:1 ; une conversation montrait 24 % de messages pour 404 px de chrome, avec
+  cinq boutons libellés sous chacun d'eux. Les annonces — objectif produit n° 1, porteur de l'accusé de
+  lecture — n'étaient un onglet pour personne : elles vivaient dans une carte « Mon compte », sous « Plus ».
+- **Décision** : (1) **Charte** — thème clair « Papier & Grenat » (papier chaud, sarcelle du logo en
+  primaire, brique du logo en accent) et thème sombre « Nuit Sarcelle » (nuit sarcelle, or du mandala en
+  primaire) ; les jetons morts `chart-*` et `sidebar-*` sont supprimés, `--brick`, `--success` et
+  `--warning` sont ajoutés, Fraunces charge enfin ses axes `SOFT`/`WONK` et Source Serif 4 porte les
+  textes institutionnels longs. (2) **Largeur** — plafond fluide `max-w-[110rem]` avec paliers
+  `xl:`/`2xl:`, colonne latérale d'administration et messagerie en deux volets ; une variable
+  `--nav-h` unique remplace `pb-24`, `bottom-16` et `bottom-20`. (3) **Navigation** — une barre par
+  rôle, un onglet « École » qui réunit annonces, documents, agenda et formulaires, un pôle « Publier »
+  pour les enseignants et la direction, un tableau de bord qui liste la file d'attente réelle, douze
+  pastilles d'administration regroupées en quatre familles, « Plus » réduit au compte. (4) **Messagerie**
+  — barre de conversation unique, groupage par auteur, actions au menu, séparateur « Nouveaux messages »,
+  pagination remontante, recherche en surcouche. (5) **Contenus** — un `ContentCard` unique, un
+  `EmptyState`, un `HubCard`, des monogrammes teintés déterministes.
+- **Conséquences** : `tests/unit/design-tokens.test.ts` vérifie désormais aussi la séparation des plans
+  (fond/carte ≥ 1,15:1) et le seuil non textuel de 3:1 des bordures de champ — le test précédent
+  garantissait la lisibilité, jamais la hiérarchie, ce qui explique qu'une charte parfaitement conforme
+  soit restée parfaitement fade. L'onglet « Fil » d'une classe disparaît (il rejouait Devoirs et Cahier),
+  `/classes/[classId]` mène aux devoirs, `/classes` redirige quand il n'y a qu'une classe, et deux
+  nouvelles routes existent : `/ecole` et `/publier`. Six bugs avérés sont corrigés au passage : composeur
+  masqué par la barre d'onglets sur iPhone, bannière d'installation superposée, réactions dont on ne
+  voyait jamais les siennes, recherche qui faisait disparaître le champ de saisie, « Vu par n » sans
+  dénominateur, fil marqué lu sans être visible.

@@ -438,6 +438,28 @@ migrations `20260908172400` et `20260908172500` (ADR-0029) et dans l'application
       ADR-0030), à activer avant la mise en production réelle
 - [ ] Reste à décider : limitation de débit du flux ICS (jeton de 192 bits, cache 15 min)
 
+## Session 16 — Refonte de l'interface (ADR-0031)
+
+Audit UI/UX de la version déployée, puis mise en œuvre des cinq arbitrages validés par le porteur.
+
+- [x] Charte : thème clair « Papier & Grenat » et thème sombre « Nuit Sarcelle », jetons morts
+      supprimés, `--brick` / `--success` / `--warning` ajoutés, axes `SOFT`/`WONK` de Fraunces activés,
+      Source Serif 4 pour les textes institutionnels longs, échelle typographique unique
+- [x] Largeur : plafond fluide `max-w-[110rem]`, paliers `xl:`/`2xl:`, colonne latérale
+      d'administration, messagerie en deux volets, variable `--nav-h` partagée
+- [x] Navigation : une barre par rôle, onglet « École », pôle « Publier », tableau de bord de direction,
+      douze pastilles d'administration regroupées en quatre familles, « Plus » réduit au compte,
+      compteur de messages non lus sur l'onglet
+- [x] Messagerie : barre de conversation, groupage par auteur, rôles affichés, actions au menu,
+      séparateur « Nouveaux messages », pagination remontante, recherche en surcouche
+- [x] Contenus : `ContentCard`, `EmptyState`, `HubCard`, monogrammes teintés, écrêtage des corps
+      Markdown, grille photo limitée avec « +N », agrandissement et couleur moyenne du blurhash
+- [x] Six bugs corrigés : composeur masqué sur iPhone, bannière PWA superposée, réactions invisibles,
+      recherche qui supprimait le composeur, « Vu par n » sans dénominateur, fil marqué lu à l'aveugle
+- [x] `tests/unit/design-tokens.test.ts` : 47 assertions, dont la séparation des plans et le seuil 3:1
+      des bordures de champ
+- [ ] Validation visuelle par le porteur, puis passage en production
+
 ## Questions ouvertes (§15 du brief)
 
 Bloquantes pour la session 2 :
