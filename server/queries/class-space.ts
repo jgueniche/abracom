@@ -57,22 +57,31 @@ export async function getClassFeed(
 
 export type ClassPost = Awaited<ReturnType<typeof getClassFeed>>[number];
 
-/** Homework of the coming weeks (parent weekly view). */
-export async function getUpcomingHomework(classIds: string[], from: string, to: string) {
+/**
+ * Homework due between two dates, across every class the reader follows.
+ *
+ * This is what makes a cahier de texte out of a per-class list: a parent with
+ * two children in two classes reads one diary, not two tabs.
+ */
+export async function getHomeworkDiary(classIds: string[], from: string, to: string) {
   if (classIds.length === 0) return [];
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("class_posts")
-    .select(POST_SELECT)
+    .select(`${POST_SELECT}, class:classes ( id, name )`)
     .in("class_id", classIds)
     .eq("type", "homework")
     .is("deleted_at", null)
+    .not("published_at", "is", null)
     .gte("due_on", from)
     .lte("due_on", to)
-    .order("due_on");
+    .order("due_on")
+    .order("subject", { nullsFirst: false });
   if (error) throw error;
   return data;
 }
+
+export type DiaryEntry = Awaited<ReturnType<typeof getHomeworkDiary>>[number];
 
 export async function getIndividualNotes(studentId: string) {
   const supabase = await createClient();

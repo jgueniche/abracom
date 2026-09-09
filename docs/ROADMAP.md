@@ -470,7 +470,8 @@ Bloquantes pour la session 2 :
 Non bloquantes avant la session 3 (à trancher pour les sessions 3–10) :
 
 3. Nom définitif et domaine (`kesher-abravanel.fr` ? sous-domaine de institutions-abravanel.fr ?).
-4. Educartable : simple lien profond (aucune API publique connue) — hypothèse retenue.
+4. ~~Educartable : simple lien profond~~ — **tranchée** : lien retiré, les devoirs sont publiés dans
+   Kesher (cahier de texte `/devoirs`), la plateforme ne renvoie plus vers un site externe.
 5. Évaluations : compétences uniquement en maternelle ; notes chiffrées optionnelles en élémentaire ?
 6. Groupes de classe : enseignant présent par défaut ou « parents seuls » avec parent délégué ?
 7. Petites annonces / marketplace : autorisées par la direction ?

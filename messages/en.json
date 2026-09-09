@@ -30,7 +30,6 @@
     "classes": "Class(es)",
     "messages": "Messages",
     "agenda": "Calendar",
-    "more": "More",
     "dashboard": "Dashboard",
     "announcements": "Announcements",
     "family": "My family",
@@ -45,7 +44,8 @@
     "school": "School",
     "publish": "Publish",
     "manage": "Manage",
-    "unreadMessages": "Messages: {count, plural, one {# unread} other {# unread}}"
+    "unreadMessages": "Messages: {count, plural, one {# unread} other {# unread}}",
+    "homework": "Homework"
   },
   "errors": {
     "notFound": {
@@ -285,12 +285,7 @@
     "data": "My data"
   },
   "more": {
-    "title": "More",
     "account": "My account",
-    "preferences": "Preferences",
-    "language": "Language",
-    "theme": "Theme",
-    "community": "Community",
     "help": "Help"
   },
   "roles": {
@@ -1715,5 +1710,27 @@
     "form": "Form",
     "formHint": "Survey or permission to collect.",
     "noClass": "No class is assigned to you yet."
+  },
+  "diary": {
+    "title": "Homework diary",
+    "subtitle": "What has to be prepared, day by day.",
+    "subtitleTeacher": "What you set, day by day.",
+    "thisWeek": "This week",
+    "previousWeek": "Previous week",
+    "nextWeek": "Next week",
+    "week": "{from} to {to}",
+    "nothingToday": "Nothing to prepare",
+    "empty": "No homework this week.",
+    "emptyHint": "Homework set by teachers shows up here, on the day it is due.",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "late": "Overdue",
+    "forChild": "for {name}",
+    "seenBy": "{count, plural, =0 {Nobody ticked it} one {# pupil ticked it} other {# pupils ticked it}}",
+    "openClass": "Open the class",
+    "noClass": "No class is linked to you yet.",
+    "allChildren": "All",
+    "dueTomorrow": "Due tomorrow",
+    "weekCount": "{count, plural, =0 {No homework} one {# piece of homework} other {# pieces of homework}} this week"
   }
 }

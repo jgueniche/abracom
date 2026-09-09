@@ -30,7 +30,6 @@
     "classes": "Classe(s)",
     "messages": "Messages",
     "agenda": "Agenda",
-    "more": "Plus",
     "dashboard": "Tableau de bord",
     "announcements": "Annonces",
     "family": "Ma famille",
@@ -45,7 +44,8 @@
     "school": "École",
     "publish": "Publier",
     "manage": "Gestion",
-    "unreadMessages": "Messages : {count, plural, one {# non lu} other {# non lus}}"
+    "unreadMessages": "Messages : {count, plural, one {# non lu} other {# non lus}}",
+    "homework": "Devoirs"
   },
   "errors": {
     "notFound": {
@@ -285,12 +285,7 @@
     "data": "Mes données"
   },
   "more": {
-    "title": "Plus",
     "account": "Mon compte",
-    "preferences": "Préférences",
-    "language": "Langue",
-    "theme": "Thème",
-    "community": "Communauté",
     "help": "Aide"
   },
   "roles": {
@@ -1715,5 +1710,27 @@
     "form": "Formulaire",
     "formHint": "Sondage ou autorisation à collecter.",
     "noClass": "Aucune classe ne vous est affectée pour l'instant."
+  },
+  "diary": {
+    "title": "Cahier de texte",
+    "subtitle": "Ce qu'il y a à préparer, jour par jour.",
+    "subtitleTeacher": "Ce que vous avez donné à préparer, jour par jour.",
+    "thisWeek": "Cette semaine",
+    "previousWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
+    "week": "Du {from} au {to}",
+    "nothingToday": "Rien à préparer",
+    "empty": "Aucun devoir cette semaine.",
+    "emptyHint": "Les devoirs donnés par les enseignants apparaîtront ici, à la date à laquelle ils sont à rendre.",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "late": "En retard",
+    "forChild": "pour {name}",
+    "seenBy": "{count, plural, =0 {Personne n'a coché} one {# élève a coché} other {# élèves ont coché}}",
+    "openClass": "Voir la classe",
+    "noClass": "Aucune classe ne vous est rattachée pour l'instant.",
+    "allChildren": "Tous",
+    "dueTomorrow": "À rendre demain",
+    "weekCount": "{count, plural, =0 {Aucun devoir} one {# devoir} other {# devoirs}} cette semaine"
   }
 }
