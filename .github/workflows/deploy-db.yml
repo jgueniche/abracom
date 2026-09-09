@@ -1,11 +1,9 @@
 name: Deploy database
 
-# Applies the versioned migrations (and the auth configuration / e-mail templates of
-# supabase/config.toml) to the linked Supabase project. Runs on demand, or on every push to
-# `main` that touches the migrations. Skipped silently while the secrets are not set:
-#   SUPABASE_ACCESS_TOKEN   personal access token (Supabase dashboard → Account → Access tokens)
-#   SUPABASE_PROJECT_REF    project reference (20 characters)
-#   SUPABASE_DB_PASSWORD    database password of the project
+# Applies the versioned migrations to the Supabase project through the Management API, which needs
+# a single secret (SUPABASE_ACCESS_TOKEN, a personal access token) and no database password. The
+# project reference is versioned in supabase/config.toml ([remotes.*].project_id) and can be
+# overridden by the repository variable SUPABASE_PROJECT_REF. Without the secret the job is a no-op.
 on:
   workflow_dispatch:
   push:
@@ -14,6 +12,7 @@ on:
       - "supabase/migrations/**"
       - "supabase/config.toml"
       - "supabase/templates/**"
+      - "scripts/ops/apply-migrations.sh"
 
 concurrency:
   group: deploy-db
@@ -21,46 +20,43 @@ concurrency:
 
 jobs:
   push:
-    name: supabase db push
+    name: Migrations
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check secrets
-        id: secrets
+      - name: Resolve the project reference
+        id: project
         run: |
-          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_PROJECT_REF" ] || [ -z "$SUPABASE_DB_PASSWORD" ]; then
-            echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Supabase secrets not set — deployment skipped."
+          ref="${{ vars.SUPABASE_PROJECT_REF }}"
+          if [ -z "$ref" ]; then
+            ref=$(awk '/^\[remotes\./ {block=1} block && /project_id/ {gsub(/[" ]/, "", $3); print $3; exit}' supabase/config.toml)
+          fi
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$ref" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::SUPABASE_ACCESS_TOKEN or the project reference is missing — deployment skipped."
           else
-            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "ref=$ref" >> "$GITHUB_OUTPUT"
+            echo "::notice::Target project: $ref"
           fi
 
+      - name: Apply the migrations
+        if: steps.project.outputs.ready == 'true'
+        run: scripts/ops/apply-migrations.sh "${{ steps.project.outputs.ref }}"
+
+      # `config push` overwrites the hosted auth settings with those of config.toml, so it only runs
+      # when the repository variable SUPABASE_CONFIG_PUSH is set to "true".
       - uses: supabase/setup-cli@v1
-        if: steps.secrets.outputs.configured == 'true'
+        if: steps.project.outputs.ready == 'true' && vars.SUPABASE_CONFIG_PUSH == 'true'
         with:
           version: latest
 
-      - name: Link project
-        if: steps.secrets.outputs.configured == 'true'
-        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
-
-      - name: Migrations
-        if: steps.secrets.outputs.configured == 'true'
+      - name: Auth configuration
+        if: steps.project.outputs.ready == 'true' && vars.SUPABASE_CONFIG_PUSH == 'true'
         run: |
-          supabase migration list
-          supabase db push
-
-      # `config push` overwrites the hosted auth settings with those of config.toml, so it only
-      # runs once a [remotes.<name>] block for the project exists (docs/DEPLOIEMENT.md) and the
-      # repository variable SUPABASE_CONFIG_PUSH is set to "true".
-      - name: Auth configuration and e-mail templates
-        if: steps.secrets.outputs.configured == 'true' && vars.SUPABASE_CONFIG_PUSH == 'true'
-        run: |
-          supabase config diff
-          supabase config push < /dev/null
+          supabase config diff --project-ref "${{ steps.project.outputs.ref }}"
+          supabase config push --project-ref "${{ steps.project.outputs.ref }}" < /dev/null
