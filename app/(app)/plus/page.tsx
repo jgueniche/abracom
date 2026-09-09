@@ -2,7 +2,6 @@ import {
   BellIcon,
   BookOpenIcon,
   ChevronRightIcon,
-  ExternalLinkIcon,
   PaletteIcon,
   UserRoundIcon,
   UsersRoundIcon,
@@ -17,7 +16,6 @@ import { SignOutButton } from "@/components/layouts/sign-out-button";
 import { ThemeToggle } from "@/components/layouts/theme-toggle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { publicEnv } from "@/lib/env";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("more");
@@ -45,7 +43,7 @@ export default async function MorePage() {
   return (
     <>
       <PageHeader title={t("title")} />
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>{t("account")}</CardTitle>
@@ -83,28 +81,6 @@ export default async function MorePage() {
             <div className="mt-3">
               <SignOutButton className="min-h-11 w-full" />
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="h-fit">
-          <CardHeader>
-            <CardTitle>{t("school")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <a
-              href={publicEnv.NEXT_PUBLIC_EDUCARTABLE_URL}
-              target="_blank"
-              rel="noreferrer"
-              className={linkClass}
-            >
-              <ExternalLinkIcon className="size-4 shrink-0" aria-hidden />
-              <span className="flex flex-col">
-                {t("educartable")}
-                <span className="text-xs font-normal text-muted-foreground">
-                  {t("educartableHint")}
-                </span>
-              </span>
-            </a>
           </CardContent>
         </Card>
 
