@@ -60,7 +60,14 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      # apt mirrors on the runners occasionally serve a stale index; retry before failing the job
+      - name: Install Chromium
+        run: |
+          for attempt in 1 2 3; do
+            sudo apt-get update -qq && break
+            echo "apt-get update failed (attempt $attempt), retrying in 10 s"; sleep 10
+          done
+          pnpm exec playwright install --with-deps chromium
       - run: pnpm build
       - run: pnpm test:e2e
         env:
@@ -80,7 +87,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install PostgreSQL 16 and pgTAP
         run: |
-          sudo apt-get update -qq
+          for attempt in 1 2 3; do
+            sudo apt-get update -qq && break
+            echo "apt-get update failed (attempt $attempt), retrying in 10 s"; sleep 10
+          done
           sudo apt-get install -y -qq postgresql-16 postgresql-16-pgtap
           sudo pg_ctlcluster 16 main start
           sudo -u postgres psql -v ON_ERROR_STOP=1 -c "CREATE ROLE kesher LOGIN SUPERUSER PASSWORD 'kesher';"
