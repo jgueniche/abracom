@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm exec supabase:*)",
+      "Bash(supabase:*)",
+      "Bash(pnpm:*)",
+      "Bash(git:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "Bash(python3:*)",
+      "Bash(psql:*)"
+    ]
+  }
+}
