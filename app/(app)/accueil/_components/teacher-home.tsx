@@ -1,6 +1,6 @@
 import { BookOpenIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -13,10 +13,11 @@ import { getWeeklySummary } from "@/server/queries/class-space";
 import { getMyTeachingClasses } from "@/server/queries/classes";
 
 export async function TeacherHome({ user }: { user: CurrentUser }) {
-  const [t, tFamily, tWeek, locale, classes] = await Promise.all([
+  const [t, tFamily, tWeek, format, locale, classes] = await Promise.all([
     getTranslations("appHome"),
     getTranslations("family"),
     getTranslations("classSpace.week"),
+    getFormatter(),
     getLocale(),
     getMyTeachingClasses(user.id),
   ]);
@@ -25,13 +26,14 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
   return (
     <>
       <PageHeader
+        eyebrow={format.dateTime(new Date(), { weekday: "long", day: "numeric", month: "long" })}
         title={t("greeting", { name: user.profile.first_name })}
         description={t("teacher.title")}
       />
       {classes.length === 0 ? (
         <p className="text-muted-foreground">{t("teacher.noClasses")}</p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {classes.map((row) => {
             const cls = row.class!;
             const summary = summaries.get(cls.id) ?? { posts: 0, homework: 0 };

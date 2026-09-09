@@ -1,8 +1,10 @@
 import { ChevronRightIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
+import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -56,18 +58,24 @@ export default async function ClassesPage() {
     }
   }
 
+  // A parent of one child — or a teacher of one class — had to cross a relay
+  // screen carrying a single row before reaching anything.
+  if (user.perspective !== "admin" && entries.size === 1) {
+    redirect(`/classes/${[...entries.keys()][0]}`);
+  }
+
   return (
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {entries.size === 0 ? (
-        <p className="text-muted-foreground">{t("empty")}</p>
+        <EmptyState title={t("empty")} />
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2">
+        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {[...entries.entries()].map(([id, entry]) => (
             <li key={id}>
               <Link
                 href={`/classes/${id}`}
-                className="flex items-center gap-3 rounded-2xl border p-4 hover:bg-accent/60"
+                className="flex min-h-16 items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft transition-colors hover:bg-accent/40"
               >
                 {entry.level && <Badge variant="secondary">{entry.level}</Badge>}
                 <div className="min-w-0 flex-1">
