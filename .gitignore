@@ -52,3 +52,6 @@ next-env.d.ts
 
 # editor
 .idea/
+
+# local caches
+/.cache/

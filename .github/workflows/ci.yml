@@ -60,7 +60,17 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      # The runner image ships Google's Chrome apt repository, which regularly serves a package
+      # index whose hash does not match its Release file and makes every `apt-get update` fail.
+      # Playwright brings its own Chromium, so the repository is dropped for this job.
+      - name: Install Chromium
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/google-chrome*.sources
+          for attempt in 1 2 3; do
+            sudo apt-get update -qq && break
+            echo "apt-get update failed (attempt $attempt), retrying in 10 s"; sleep 10
+          done
+          pnpm exec playwright install --with-deps chromium
       - run: pnpm build
       - run: pnpm test:e2e
         env:
@@ -71,3 +81,25 @@ jobs:
           name: playwright-report
           path: playwright-report
           retention-days: 7
+
+  database:
+    name: Database (migrations · seed · pgTAP RLS)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL 16 and pgTAP
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/google-chrome*.sources
+          for attempt in 1 2 3; do
+            sudo apt-get update -qq && break
+            echo "apt-get update failed (attempt $attempt), retrying in 10 s"; sleep 10
+          done
+          sudo apt-get install -y -qq postgresql-16 postgresql-16-pgtap
+          sudo pg_ctlcluster 16 main start
+          sudo -u postgres psql -v ON_ERROR_STOP=1 -c "CREATE ROLE kesher LOGIN SUPERUSER PASSWORD 'kesher';"
+          sudo -u postgres psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE kesher_test OWNER kesher;"
+      - name: Migrations, seed and RLS tests
+        run: scripts/db/test-local.sh --seed
+        env:
+          KESHER_TEST_DB_URL: postgresql://kesher:kesher@127.0.0.1:5432/kesher_test

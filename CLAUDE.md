@@ -37,22 +37,23 @@ Realtime, Edge Functions) avec **RLS obligatoire sur toutes les tables** · migr
 
 ## 4. Commandes
 
-| Commande                                  | Rôle                                                                      |
-| ----------------------------------------- | ------------------------------------------------------------------------- |
-| `pnpm dev`                                | Serveur de dev (Turbopack) sur http://localhost:3000                      |
-| `pnpm build` / `pnpm start`               | Build et serveur de production                                            |
-| `pnpm check`                              | lint + typecheck + format:check + tests unitaires (ce que fait la CI)     |
-| `pnpm lint` / `pnpm lint:fix`             | ESLint (config Next + TS + Prettier)                                      |
-| `pnpm typecheck`                          | `tsc --noEmit`                                                            |
-| `pnpm format` / `pnpm format:check`       | Prettier (plugin Tailwind)                                                |
-| `pnpm test` / `pnpm test:watch`           | Vitest (`tests/unit`)                                                     |
-| `pnpm test:e2e`                           | Playwright (`tests/e2e`, projets mobile + desktop). `CI=1` ⇒ `next start` |
-| `pnpm db:start` / `db:stop` / `db:status` | Stack Supabase locale (**Docker requis**)                                 |
-| `pnpm db:reset`                           | Rejoue migrations + `supabase/seed/*.sql`                                 |
-| `pnpm db:types`                           | Génère `lib/supabase/database.types.ts`                                   |
+| Commande                                  | Rôle                                                                        |
+| ----------------------------------------- | --------------------------------------------------------------------------- |
+| `pnpm dev`                                | Serveur de dev (Turbopack) sur http://localhost:3000                        |
+| `pnpm build` / `pnpm start`               | Build et serveur de production                                              |
+| `pnpm check`                              | lint + typecheck + format:check + tests unitaires (ce que fait la CI)       |
+| `pnpm lint` / `pnpm lint:fix`             | ESLint (config Next + TS + Prettier)                                        |
+| `pnpm typecheck`                          | `tsc --noEmit`                                                              |
+| `pnpm format` / `pnpm format:check`       | Prettier (plugin Tailwind)                                                  |
+| `pnpm test` / `pnpm test:watch`           | Vitest (`tests/unit`)                                                       |
+| `pnpm test:e2e`                           | Playwright (`tests/e2e`, projets mobile + desktop). `CI=1` ⇒ `next start`   |
+| `pnpm test:smoke`                         | Playwright contre un déploiement (`SMOKE_BASE_URL`, `SMOKE_PASSWORD`)       |
+| `pnpm db:start` / `db:stop` / `db:status` | Stack Supabase locale (**Docker requis**)                                   |
+| `pnpm db:reset`                           | Rejoue migrations + `supabase/seed/*.sql`                                   |
+| `pnpm db:types` / `pnpm db:types:local`   | Génère `lib/supabase/database.types.ts` (stack Supabase / PostgreSQL local) |
+| `pnpm db:test`                            | Migrations + seed + tests pgTAP sur un PostgreSQL local (sans Docker)       |
 
-Variables d'environnement : copier `.env.example` vers `.env.local`. Sans Supabase configuré,
-l'app démarre quand même (session 1) ; les clients Supabase lèvent une erreur explicite à l'usage.
+Variables : copier `.env.example` vers `.env.local` ; sans Supabase, l'app démarre et ses clients lèvent une erreur explicite.
 
 ## 5. Structure du dépôt
 
@@ -95,7 +96,7 @@ Toute visibilité d'enfant passe par `student_guardians` + `enrollments`.
 Hébergement UE uniquement (Supabase `eu-west`/`eu-central`, Vercel `cdg1`, Resend UE) · pas de trackers
 tiers · photos en bucket privé, URL signées 10 min, tag d'élève bloqué sans droit à l'image signé ·
 familles séparées (droits indépendants, flag « restriction judiciaire ») · export / suppression de compte ·
-2FA admin · CSP stricte + HSTS (session 14) · audit log sur toute action admin et modération ·
+2FA direction optionnelle par école (ADR-0030) · CSP stricte + HSTS (session 14) · audit log sur toute action admin et modération ·
 durées de conservation dans `docs/RGPD.md` (session 14).
 
 ## 9. Mode opératoire
@@ -111,13 +112,38 @@ durées de conservation dans `docs/RGPD.md` (session 14).
 
 ## 10. État d'avancement
 
-- **Session 1 — terminée** : bootstrap Next 15.5 + Tailwind v4 + shadcn (preset Nova/Radix) + next-intl
-  - next-themes + zod, clients Supabase, `supabase/config.toml` (projet `kesher`), CI GitHub Actions
-    (lint, types, format, unit, build, e2e), Husky + commitlint, tests unitaires (9) et e2e (8) verts,
-    `vercel.json` (région `cdg1`), projet Vercel `abracom` importé depuis GitHub (production :
-    https://abracom.vercel.app, previews par branche). **Reste** : vérifier `supabase start` sur un poste
-    avec Docker ; créer le projet Supabase cloud `kesher-staging` (UE) avant la session 3.
-- **Prochaine session — 2** : identité visuelle (téléchargement du logo, extraction de palette, tokens
-  `primary` / `accent` / `surface` / `muted`, typographies Inter + serif, page `/dev/ui`, icônes PWA).
-- Le schéma BDD n'a **pas** été commencé (session 3), conformément au brief.
+- **Sessions 1–2 — terminées** : bootstrap Next 15.5 + Tailwind v4 + shadcn + next-intl + next-themes +
+  zod, clients Supabase, CI (lint, types, format, unit, build, e2e, database), Husky + commitlint, Vercel
+  `abracom` (`cdg1`) ; palette dérivée du logo (sarcelle `#01525e`, brique `#852624`), Inter + Fraunces,
+  `/dev/ui`, icônes PWA. **Validation visuelle par le porteur en attente.**
+- **Session 3 — terminée (à rejouer sur Supabase)** : 10 migrations, 47 tables, 23 enums, `can_access_*`,
+  132 politiques RLS (+ storage), seed fictif (137 comptes, 66 élèves), pgTAP en CI (job `database`).
+- **Session 4 — code complet, validation Supabase en attente** : middleware de session, magic link (+ mot
+  de passe pour la démo, ADR-0028), callbacks PKCE, onboarding avec CGU, `lib/auth` + `lib/permissions`,
+  perspectives multi-rôle, coquille par rôle. E2e « invitation → 1re connexion » réservé à une stack Supabase.
+- **Sessions 5–8 — code complet (MVP)** : espace `/admin` (familles, classes, utilisateurs, années, import
+  CSV, journal, invitations par lots, restriction judiciaire) · annonces (Markdown, ciblage, planification,
+  accusés de lecture, relance, export CSV), documents et signatures · espace classe (fil, devoirs « vu »,
+  cahier de vie + droit à l'image, mots individuels, absences) · messagerie temps réel (DM, groupes de
+  classe, réactions, pièces jointes, recherche, signalement, modération).
+- **Session 9 — code complet** : agenda (`lib/hebcal`, `lib/calendar`), fêtes juives + Chabbat + parachah +
+  fériés, vacances zone C, RSVP / jauge / liste d'attente, bénévolat, flux ICS privé, rappels J-7 / J-1.
+- **Session 10 — code complet, clés réelles à valider** : livraisons planifiées par trigger selon les
+  préférences, fan-out SQL, worker `/api/jobs/notifications` (push VAPID, Resend, digest, rappels), **mode
+  Chabbat / heures calmes** appliqués par le worker, préférences + activation push.
+- **Session 11 — code complet** : matrice de compétences par période, appréciations, publication différée
+  notifiée, livret PDF `/api/livret/[studentId]` (`@react-pdf/renderer`), notes /20 optionnelles.
+- **Session 12 — code complet** : annuaire opt-in, anniversaires (J-3), petites annonces modérées a priori
+  (trigger), RDV parents-enseignant (`book_appointment`), formulaires / sondages avec export CSV.
+- **Session 13 — code complet** : PWA (service worker hors ligne, bannière d'installation), recherche globale
+  (`global_search` sous RLS), lien d'évitement + tests axe, `pnpm perf` (Lighthouse 95 / 100 / 100).
+- **Session 14 — code complet, validation Supabase en attente** : `docs/RGPD.md`, export JSON et
+  suppression de compte (anonymisation), purge de rétention nocturne, 2FA TOTP (obligatoire direction),
+  CSP stricte à nonce, Sentry optionnel. 216 assertions pgTAP.
+- **Session 15 — code et documents complets** : guides utilisateurs (`content/guides`, `/aide`, PDF),
+  assistant de promotion de niveau (`promote_school_year`), `docs/DEMO.md`, `docs/DEPLOIEMENT.md`, scripts
+  `ops:check-env`, `ops:storage-sweep`, `promote.sh`. 305 assertions pgTAP (revue de sécurité, ADR-0029). **V1 codée en intégralité.**
+- **Suite** : projet Supabase « Kesher » (`hhmqtavmfgjeacsweasz`, Paris) migré, seedé et configuré (Auth,
+  pg_cron) ; renseigner les variables Vercel, brancher Resend puis décommenter les modèles d'e-mails de
+  `config.toml`, rejouer les validations « stack Supabase » de `docs/ROADMAP.md`, dérouler la démo.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

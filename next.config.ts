@@ -28,8 +28,25 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
+  // PDF rendering runs in Node.js only (report cards): keep the package out of the bundle.
+  serverExternalPackages: ["@react-pdf/renderer"],
+  // Markdown guides are read at request time (content/guides): keep them in the serverless bundle.
+  outputFileTracingIncludes: {
+    "/aide/[slug]": ["./content/guides/**/*"],
+    "/api/guides/[slug]": ["./content/guides/**/*"],
+  },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
+  },
+  webpack(config) {
+    // Sentry's OpenTelemetry instrumentation hooks `require` dynamically; the warning is expected
+    // (same rule as `withSentryConfig`, which is not used because source maps are not uploaded).
+    const rules = [
+      { module: /@opentelemetry\/instrumentation/, message: /Critical dependency/ },
+      { module: /require-in-the-middle/, message: /Critical dependency/ },
+    ];
+    config.ignoreWarnings = [...(config.ignoreWarnings ?? []), ...rules];
+    return config;
   },
 };
 

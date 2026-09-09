@@ -4,6 +4,7 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
 import { getSupabasePublicConfig } from "@/lib/env";
 import { getServerEnv } from "@/lib/env.server";
+import type { Database } from "@/lib/supabase/database.types";
 
 /**
  * Service-role client: bypasses RLS. Server-side only, for trusted jobs
@@ -17,7 +18,7 @@ export function createAdminClient() {
     throw new Error("SUPABASE_SERVICE_ROLE_KEY manquante : client admin indisponible.");
   }
 
-  return createSupabaseClient(url, SUPABASE_SERVICE_ROLE_KEY, {
+  return createSupabaseClient<Database>(url, SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
 }
