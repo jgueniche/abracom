@@ -51,11 +51,13 @@
    clés VAPID, Sentry (`pnpm ops:check-env --prod` après `vercel env pull`) ; branche de production `main`,
    région `cdg1`. Aucun cron Vercel : toute la planification vient de pg_cron (étape 4).
 6. **Premier compte de direction** : `scripts/ops/create-account.sql` (psql ou éditeur SQL, mot de passe
-   jamais committé — ADR-0028) ; la validation en deux étapes est demandée à la première connexion.
+   jamais committé — ADR-0028) ; la validation en deux étapes n'est demandée à la première connexion
+   que si l'école l'exige (`modules.security.mfaRequired`, ADR-0030), à activer avant la production.
 7. **Données réelles** : import CSV des familles depuis l'administration, puis invitations par lots.
    Ne jamais rejouer `seed.sql` en production.
-8. **Vérifications** : `pnpm perf https://…/connexion`, push de test depuis Notifications → Préférences,
-   e-mail de test, un cycle complet annonce → accusé de lecture.
+8. **Vérifications** : `SMOKE_BASE_URL=https://… SMOKE_PASSWORD=… pnpm test:smoke` (connexion des comptes
+   de démo et écrans principaux de chaque rôle), `pnpm perf https://…/connexion`, push de test depuis
+   Notifications → Préférences, e-mail de test, un cycle complet annonce → accusé de lecture.
 
 ## Mise à jour
 

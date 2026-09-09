@@ -47,13 +47,13 @@ Realtime, Edge Functions) avec **RLS obligatoire sur toutes les tables** · migr
 | `pnpm format` / `pnpm format:check`       | Prettier (plugin Tailwind)                                                  |
 | `pnpm test` / `pnpm test:watch`           | Vitest (`tests/unit`)                                                       |
 | `pnpm test:e2e`                           | Playwright (`tests/e2e`, projets mobile + desktop). `CI=1` ⇒ `next start`   |
+| `pnpm test:smoke`                         | Playwright contre un déploiement (`SMOKE_BASE_URL`, `SMOKE_PASSWORD`)       |
 | `pnpm db:start` / `db:stop` / `db:status` | Stack Supabase locale (**Docker requis**)                                   |
 | `pnpm db:reset`                           | Rejoue migrations + `supabase/seed/*.sql`                                   |
 | `pnpm db:types` / `pnpm db:types:local`   | Génère `lib/supabase/database.types.ts` (stack Supabase / PostgreSQL local) |
 | `pnpm db:test`                            | Migrations + seed + tests pgTAP sur un PostgreSQL local (sans Docker)       |
 
-Variables d'environnement : copier `.env.example` vers `.env.local`. Sans Supabase configuré,
-l'app démarre quand même (session 1) ; les clients Supabase lèvent une erreur explicite à l'usage.
+Variables : copier `.env.example` vers `.env.local` ; sans Supabase, l'app démarre et ses clients lèvent une erreur explicite.
 
 ## 5. Structure du dépôt
 
