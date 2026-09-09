@@ -392,7 +392,7 @@ sessions sont codées ; la validation sur une stack Supabase cloud reste à fair
 
 ## Bilan V1
 
-Les quinze sessions sont codées et testées localement (106 unitaires, 22 e2e, 305 pgTAP, build). Restent,
+Les quinze sessions sont codées et testées localement (107 unitaires, 24 e2e, 305 pgTAP, build). Restent,
 côté porteur : partager le projet Supabase avec le connecteur, renseigner les variables Vercel et les clés
 (Resend, VAPID, `CRON_SECRET`, Sentry), rejouer les validations « à valider sur une stack Supabase » listées
 dans chaque session, puis dérouler `docs/DEMO.md`.
