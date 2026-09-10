@@ -496,3 +496,28 @@ export async function closePoll(formData: FormData): Promise<void> {
   if (error) console.error("[poll] close failed:", error.code, error.message);
   if (uuid.test(threadId)) revalidatePath(`/messages/${threadId}`);
 }
+
+/**
+ * A teacher's own switch on their channel (chantier A): "Les familles peuvent
+ * répondre" / "Annonce seule". `overrideSchoolClosure` is the derogation of
+ * ADR-0038 — a teacher may reopen despite a school-wide closure, and the
+ * database records who did it.
+ */
+export async function setThreadReplies(formData: FormData): Promise<void> {
+  await requireCurrentUser();
+  const threadId = field(formData, "threadId");
+  if (!uuid.test(threadId)) return;
+  const allow = formData.has("allowReplies") ? formData.get("allowReplies") === "true" : null;
+  const override = formData.has("override") ? formData.get("override") === "true" : null;
+  if (allow === null && override === null) return;
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_thread_replies", {
+    thread_: threadId,
+    allow_: allow ?? undefined,
+    override_: override ?? undefined,
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath(`/messages/${threadId}`);
+  revalidatePath("/messages");
+  revalidatePath("/admin/messagerie");
+}

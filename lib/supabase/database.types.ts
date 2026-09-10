@@ -1969,6 +1969,80 @@ export type Database = {
           },
         ]
       }
+      messaging_windows: {
+        Row: {
+          class_id: string | null
+          closes_at: string
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: Database["public"]["Enums"]["messaging_window_kind"]
+          note: string | null
+          opens_at: string
+          school_id: string
+          scope: Database["public"]["Enums"]["messaging_scope"]
+          target_user_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          class_id?: string | null
+          closes_at: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["messaging_window_kind"]
+          note?: string | null
+          opens_at: string
+          school_id: string
+          scope?: Database["public"]["Enums"]["messaging_scope"]
+          target_user_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          class_id?: string | null
+          closes_at?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["messaging_window_kind"]
+          note?: string | null
+          opens_at?: string
+          school_id?: string
+          scope?: Database["public"]["Enums"]["messaging_scope"]
+          target_user_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messaging_windows_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messaging_windows_created_by_profile_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messaging_windows_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messaging_windows_target_profile_fkey"
+            columns: ["target_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_deliveries: {
         Row: {
           attempts: number
@@ -3127,6 +3201,60 @@ export type Database = {
         Returns: boolean
       }
       may_inspect: { Args: { uid: string }; Returns: boolean }
+      messaging_channels: {
+        Args: { school_: string }
+        Returns: {
+          allow_replies: boolean
+          archived: boolean
+          class_id: string
+          class_name: string
+          is_open: boolean
+          kind: Database["public"]["Enums"]["thread_kind"]
+          locked: boolean
+          override: boolean
+          reopens_at: string
+          thread_id: string
+        }[]
+      }
+      messaging_current_closing: {
+        Args: {
+          at_?: string
+          class_?: string
+          school_: string
+          scope_: Database["public"]["Enums"]["messaging_scope"]
+          target_?: string
+        }
+        Returns: string
+      }
+      messaging_is_open: {
+        Args: {
+          at_?: string
+          class_?: string
+          school_: string
+          scope_: Database["public"]["Enums"]["messaging_scope"]
+          target_?: string
+        }
+        Returns: boolean
+      }
+      messaging_load: {
+        Args: { school_: string; weeks?: number }
+        Returns: {
+          class_id: string
+          messages: number
+          teacher_id: string
+          week_start: string
+        }[]
+      }
+      messaging_next_opening: {
+        Args: {
+          at_?: string
+          class_?: string
+          school_: string
+          scope_: Database["public"]["Enums"]["messaging_scope"]
+          target_?: string
+        }
+        Returns: string
+      }
       mfa_required: { Args: { school: string }; Returns: boolean }
       my_calendar_feed: {
         Args: { with_holidays?: boolean }
@@ -3176,6 +3304,10 @@ export type Database = {
         Args: { class_?: string; uid: string }
         Returns: boolean
       }
+      parent_channel_open: {
+        Args: { thread_: string; uid?: string }
+        Returns: boolean
+      }
       promote_event_waitlist: { Args: { event: string }; Returns: number }
       promote_school_year: {
         Args: { current_year: string; mapping: Json; next_year: string }
@@ -3187,6 +3319,10 @@ export type Database = {
         Returns: number
       }
       purge_expired_data: { Args: Record<PropertyKey, never>; Returns: Json }
+      purge_messaging_windows: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       queue_birthday_reminders: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -3228,11 +3364,28 @@ export type Database = {
         Args: { signed: boolean; student: string }
         Returns: number
       }
+      set_messaging_mode: {
+        Args: {
+          mode_: string
+          school_: string
+          scopes_?: string[]
+          urgency_?: string
+        }
+        Returns: Json
+      }
+      set_thread_replies: {
+        Args: { allow_?: boolean; override_?: boolean; thread_: string }
+        Returns: undefined
+      }
       student_school_id: { Args: { student: string }; Returns: string }
       teacher_class_ids: { Args: { uid?: string }; Returns: string[] }
       teaches_student: {
         Args: { student: string; uid?: string }
         Returns: boolean
+      }
+      thread_messaging_state: {
+        Args: { thread_: string; uid?: string }
+        Returns: Json
       }
       try_uuid: { Args: { value: string }; Returns: string }
       user_school_ids: { Args: { uid?: string }; Returns: string[] }
@@ -3289,6 +3442,8 @@ export type Database = {
         | "parent"
         | "guardian"
       membership_status: "active" | "invited" | "suspended"
+      messaging_scope: "teachers" | "staff" | "direction" | "all"
+      messaging_window_kind: "open" | "closed"
       note_kind: "praise" | "concern" | "info"
       notification_channel: "push" | "email" | "inapp"
       post_visibility: "parents" | "staff"
@@ -3466,6 +3621,8 @@ export const Constants = {
         "guardian",
       ],
       membership_status: ["active", "invited", "suspended"],
+      messaging_scope: ["teachers", "staff", "direction", "all"],
+      messaging_window_kind: ["open", "closed"],
       note_kind: ["praise", "concern", "info"],
       notification_channel: ["push", "email", "inapp"],
       post_visibility: ["parents", "staff"],

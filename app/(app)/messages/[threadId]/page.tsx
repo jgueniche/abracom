@@ -8,11 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { canWriteInSchool, isSchoolStaff } from "@/lib/permissions";
+import { canWriteInSchool, hasSchoolRole, isSchoolStaff } from "@/lib/permissions";
 import {
   getMessages,
   getMyThreads,
   getThread,
+  getThreadMessagingState,
   getThreadPolls,
   searchMessages,
 } from "@/server/queries/messaging";
@@ -42,10 +43,11 @@ export default async function ThreadPage({
   const isModerator = me?.role === "moderator" || isSchoolStaff(user.roles, thread.school_id);
   const query = (search.q ?? "").trim();
   const searchOpen = query.length > 0 || search.recherche === "1";
-  const [messages, results, polls] = await Promise.all([
+  const [messages, results, polls, channel] = await Promise.all([
     getMessages(threadId),
     query ? searchMessages(threadId, query) : Promise.resolve([]),
     getThreadPolls(threadId),
+    getThreadMessagingState(threadId),
   ]);
 
   const members: Member[] = thread.members
@@ -68,16 +70,47 @@ export default async function ThreadPage({
         }`;
 
   const writer = canWriteInSchool(user.roles, thread.school_id);
+  // The direction's tap (session 19): a parent whose channel is shut never meets
+  // a dead button — the composer is replaced by a sentence that says it is shut,
+  // when it opens again if that was scheduled, and whom to call meanwhile.
+  const staffSide =
+    isSchoolStaff(user.roles, thread.school_id) ||
+    hasSchoolRole(user.roles, thread.school_id, ["teacher"]);
+  const channelShut = !staffSide && !channel.open;
+  const urgencyContact = readUrgencyContact(user.school?.modules);
+  // A teacher only sees the derogation when there is something to derogate from.
+  const threadOverride =
+    (thread.settings as { overrideSchoolClosure?: boolean } | null)?.overrideSchoolClosure === true;
+  const schoolClosedForClass = staffSide && (!channel.open || threadOverride);
   let closedReason: string | null = null;
   if (!me) closedReason = t("notAllowed");
   else if (!writer) closedReason = t("composer.readOnly");
   else if (thread.locked || thread.archived) closedReason = t("composer.closed");
+  else if (channelShut)
+    closedReason = channel.reopensAt
+      ? t("channelClosedUntil", {
+          date: format.dateTime(new Date(channel.reopensAt), {
+            dateStyle: "long",
+            timeStyle: "short",
+          }),
+        })
+      : t("channelClosed");
   else if (!thread.allow_replies && !isModerator) closedReason = t("readOnlyChannel");
   // Searching used to flip this to false: the composer vanished mid-conversation
   // with no explanation of why.
   const canWrite = closedReason === null;
-  const showResponseHours =
-    thread.kind === "class_official" || (thread.kind === "dm" && other && members.length === 2);
+  // "Heures de réponse" was a static sentence promising 48 working hours that
+  // nothing in the code applied. What replaces it is a fact the database holds:
+  // when the current opening period ends. No period, no promise.
+  const composerHint =
+    canWrite && !staffSide && channel.closesAt
+      ? t("channelClosesAt", {
+          date: format.dateTime(new Date(channel.closesAt), {
+            dateStyle: "long",
+            timeStyle: "short",
+          }),
+        })
+      : undefined;
 
   return (
     <div className="lg:grid lg:h-[calc(100dvh-9.5rem)] lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-6 2xl:grid-cols-[22rem_minmax(0,1fr)]">
@@ -130,6 +163,10 @@ export default async function ThreadPage({
               archived={thread.archived}
               canModerate={isModerator}
               searchHref={`/messages/${thread.id}?recherche=1`}
+              allowReplies={thread.allow_replies}
+              canSetReplies={isModerator && thread.kind !== "dm"}
+              schoolClosed={schoolClosedForClass}
+              override={threadOverride}
             />
           </div>
         </div>
@@ -200,9 +237,12 @@ export default async function ThreadPage({
           canWrite={canWrite}
           canModerate={isModerator}
           closedReason={closedReason}
+          closedNote={
+            channelShut && urgencyContact ? t("urgencyContact", { contact: urgencyContact }) : null
+          }
           searchMode={false}
           lastReadAt={me?.last_read_at ?? null}
-          hint={showResponseHours ? t("responseHours") : undefined}
+          hint={composerHint}
           polls={polls.map((poll) => ({
             id: poll.id,
             messageId: poll.message_id,
@@ -224,4 +264,13 @@ export default async function ThreadPage({
       </div>
     </div>
   );
+}
+
+/** The emergency contact the direction typed in the school settings, never invented. */
+function readUrgencyContact(modules: unknown): string | null {
+  if (!modules || typeof modules !== "object") return null;
+  const messaging = (modules as { messaging?: unknown }).messaging;
+  if (!messaging || typeof messaging !== "object") return null;
+  const contact = (messaging as { urgencyContact?: unknown }).urgencyContact;
+  return typeof contact === "string" && contact.trim() !== "" ? contact : null;
 }

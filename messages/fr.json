@@ -326,7 +326,8 @@
       "community": "Annonces communauté",
       "forms": "Formulaires",
       "all": "Toutes les rubriques",
-      "subtitle": "Les rubriques de gestion et où en est chacune."
+      "subtitle": "Les rubriques de gestion et où en est chacune.",
+      "messaging": "Messagerie"
     },
     "years": {
       "title": "Années scolaires",
@@ -555,6 +556,87 @@
       "pendingClassifieds": "{count, plural, one {# petite annonce à valider} other {# petites annonces à valider}}",
       "lateAcks": "{count, plural, one {# annonce dont l'accusé traîne} other {# annonces dont l'accusé traîne}}",
       "shortcuts": "Raccourcis"
+    },
+    "messaging": {
+      "eyebrow": "Direction",
+      "title": "Dialogue avec les familles",
+      "description": "Ouvrir ou fermer les échanges parents → école, et voir ce que cela représente.",
+      "invalid": "Renseignez une période valide : la fin doit suivre le début.",
+      "saveError": "L'enregistrement n'a pas abouti. Réessayez dans un instant.",
+      "modeSaved": "Le réglage est enregistré.",
+      "windowSaved": "La période est enregistrée.",
+      "modeTitle": "Le réglage de l'école",
+      "modeLegend": "Les familles peuvent écrire à l'équipe",
+      "modes": {
+        "open": "Sans restriction",
+        "closed": "Fermé",
+        "scheduled": "Seulement pendant les périodes ouvertes"
+      },
+      "modeHints": {
+        "open": "Chacun écrit quand il en a besoin.",
+        "closed": "Les familles lisent l'historique mais ne peuvent plus écrire.",
+        "scheduled": "Les échanges n'ouvrent que pendant les périodes définies ci-dessous."
+      },
+      "scopesLegend": "À qui cela s'applique",
+      "scopes": {
+        "teachers": "Enseignants",
+        "staff": "Secrétariat",
+        "direction": "Direction",
+        "all": "Toute l'équipe"
+      },
+      "urgencyContact": "Contact en cas d'urgence",
+      "urgencyPlaceholder": "Secrétariat : 01 00 00 00 00",
+      "urgencyHint": "Cette ligne s'affiche aux familles quand les échanges sont fermés. Elle n'est jamais écrite à votre place.",
+      "saveMode": "Enregistrer le réglage",
+      "windowsTitle": "Périodes",
+      "windowsHint": "Une période ouvre ou ferme un canal sur une plage de dates : la permanence du mardi soir, ou la quinzaine de juin.",
+      "noWindow": "Aucune période",
+      "noWindowHint": "Ajoutez-en une pour ouvrir ponctuellement, ou pour fermer sur quelques jours.",
+      "windowKind": "Effet",
+      "windowKinds": {
+        "open": "Ouvre",
+        "closed": "Ferme"
+      },
+      "windowScope": "Canal concerné",
+      "opensAt": "Début",
+      "closesAt": "Fin",
+      "windowNarrow": "Portée",
+      "narrow": {
+        "school": "Toute l'école",
+        "class": "Une classe",
+        "teacher": "Un enseignant"
+      },
+      "windowNote": "Note (facultative)",
+      "addWindow": "Ajouter la période",
+      "removeWindow": "Supprimer",
+      "running": "En cours",
+      "channelsTitle": "Canaux de classe",
+      "channelsHint": "Une fermeture d'école s'applique à tous. Un enseignant peut mettre son fil en annonce seule, ou le rouvrir malgré la fermeture — cela apparaît ici.",
+      "noChannel": "Aucun canal de classe",
+      "noChannelHint": "Les fils de classe se créent dès qu'une classe publie.",
+      "channelKinds": {
+        "class_official": "Informations de la classe",
+        "class_group": "Groupe des parents"
+      },
+      "channelOpen": "Ouvert aux familles",
+      "channelClosed": "Fermé aux familles",
+      "reopensOn": "rouvre le {date}",
+      "removeOverride": "Retirer la dérogation",
+      "makeAnnouncement": "Passer en annonce seule",
+      "allowReplies": "Autoriser les réponses",
+      "openChannel": "Ouvrir",
+      "loadTitle": "Charge des huit dernières semaines",
+      "loadHint": "Messages écrits par des parents, par semaine et par canal.",
+      "noLoad": "Aucun message de parent",
+      "noLoadHint": "La mesure apparaîtra dès les premiers échanges.",
+      "messagesTotal": "{count, plural, one {# message} other {# messages}}",
+      "weekCount": "semaine du {week} : {count, plural, one {# message} other {# messages}}",
+      "channels": {
+        "office": "Direction et secrétariat",
+        "unknownClass": "Classe retirée",
+        "unknownTeacher": "Enseignant retiré"
+      },
+      "channelAnnouncementOnly": "Annonce seule"
     }
   },
   "editor": {
@@ -933,7 +1015,6 @@
     "locked": "Verrouillée",
     "archived": "Archivée",
     "readOnlyChannel": "Canal en lecture seule : seule l'équipe publie ici.",
-    "responseHours": "L'équipe répond en général sous 48 h ouvrés ; pas de réponse pendant Shabbat et les fêtes.",
     "composer": {
       "placeholder": "Votre message… (@Prénom pour mentionner)",
       "send": "Envoyer",
@@ -1057,7 +1138,15 @@
       "presetPresent": "Présent",
       "presetAbsent": "Absent",
       "presetMaybe": "Peut-être"
-    }
+    },
+    "channelClosed": "Les échanges avec l'équipe sont momentanément fermés. Vous pouvez toujours relire cette conversation.",
+    "channelClosedUntil": "Les échanges avec l'équipe sont fermés jusqu'au {date}. Vous pouvez toujours relire cette conversation.",
+    "urgencyContact": "En cas d'urgence : {contact}",
+    "makeAnnouncement": "Annonce seule",
+    "allowReplies": "Les familles peuvent répondre",
+    "takeOverride": "Rouvrir malgré la fermeture",
+    "dropOverride": "Suivre la fermeture de l'école",
+    "channelClosesAt": "Les échanges ferment le {date}."
   },
   "adminReports": {
     "title": "Signalements",

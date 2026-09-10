@@ -36,6 +36,7 @@ export const ADMIN_GROUPS = [
     items: [
       { href: "/admin/signalements", key: "reports" },
       { href: "/admin/communaute", key: "community" },
+      { href: "/admin/messagerie", key: "messaging", adminOnly: true },
     ],
   },
   {

@@ -326,7 +326,8 @@
       "community": "Community posts",
       "forms": "Forms",
       "all": "All sections",
-      "subtitle": "The management sections and where each one stands."
+      "subtitle": "The management sections and where each one stands.",
+      "messaging": "Messaging"
     },
     "years": {
       "title": "School years",
@@ -555,6 +556,87 @@
       "pendingClassifieds": "{count, plural, one {# classified to approve} other {# classifieds to approve}}",
       "lateAcks": "{count, plural, one {# announcement with late receipts} other {# announcements with late receipts}}",
       "shortcuts": "Shortcuts"
+    },
+    "messaging": {
+      "eyebrow": "Direction",
+      "title": "Talking with families",
+      "description": "Open or close parent → school messaging, and see what it amounts to.",
+      "invalid": "Enter a valid period: the end must follow the start.",
+      "saveError": "Saving did not go through. Try again in a moment.",
+      "modeSaved": "The setting is saved.",
+      "windowSaved": "The period is saved.",
+      "modeTitle": "The school setting",
+      "modeLegend": "Families may write to the team",
+      "modes": {
+        "open": "Without restriction",
+        "closed": "Closed",
+        "scheduled": "Only during open periods"
+      },
+      "modeHints": {
+        "open": "Anyone writes whenever they need to.",
+        "closed": "Families still read the history but can no longer write.",
+        "scheduled": "Messaging only opens during the periods listed below."
+      },
+      "scopesLegend": "Who this applies to",
+      "scopes": {
+        "teachers": "Teachers",
+        "staff": "Office",
+        "direction": "Direction",
+        "all": "The whole team"
+      },
+      "urgencyContact": "Emergency contact",
+      "urgencyHint": "This line is shown to families while messaging is closed. It is never written for you.",
+      "urgencyPlaceholder": "Office: 01 00 00 00 00",
+      "saveMode": "Save the setting",
+      "windowsTitle": "Periods",
+      "windowsHint": "A period opens or closes a channel over a date range: Tuesday evening office hours, or the second half of June.",
+      "noWindow": "No period",
+      "noWindowHint": "Add one to open occasionally, or to close for a few days.",
+      "windowKind": "Effect",
+      "windowKinds": {
+        "open": "Opens",
+        "closed": "Closes"
+      },
+      "windowScope": "Channel concerned",
+      "opensAt": "Start",
+      "closesAt": "End",
+      "windowNarrow": "Reach",
+      "narrow": {
+        "school": "The whole school",
+        "class": "One class",
+        "teacher": "One teacher"
+      },
+      "windowNote": "Note (optional)",
+      "addWindow": "Add the period",
+      "removeWindow": "Remove",
+      "running": "Running",
+      "channelsTitle": "Class channels",
+      "channelsHint": "A school-wide closure applies to everyone. A teacher may set their thread to announcements only, or reopen it despite the closure — that shows up here.",
+      "noChannel": "No class channel",
+      "noChannelHint": "Class threads are created as soon as a class publishes.",
+      "channelKinds": {
+        "class_official": "Class information",
+        "class_group": "Parents' group"
+      },
+      "channelOpen": "Open to families",
+      "channelClosed": "Closed to families",
+      "reopensOn": "reopens on {date}",
+      "removeOverride": "Remove the derogation",
+      "makeAnnouncement": "Switch to announcements only",
+      "allowReplies": "Allow replies",
+      "openChannel": "Open",
+      "loadTitle": "Load over the last eight weeks",
+      "loadHint": "Messages written by parents, by week and by channel.",
+      "noLoad": "No parent message",
+      "noLoadHint": "The measurement appears with the first exchanges.",
+      "messagesTotal": "{count, plural, one {# message} other {# messages}}",
+      "weekCount": "week of {week}: {count, plural, one {# message} other {# messages}}",
+      "channels": {
+        "office": "Direction and office",
+        "unknownClass": "Removed class",
+        "unknownTeacher": "Removed teacher"
+      },
+      "channelAnnouncementOnly": "Announcements only"
     }
   },
   "editor": {
@@ -933,7 +1015,6 @@
     "locked": "Locked",
     "archived": "Archived",
     "readOnlyChannel": "Read-only channel: only the team posts here.",
-    "responseHours": "The team usually replies within 48 working hours; no replies during Shabbat and holidays.",
     "composer": {
       "placeholder": "Your message… (@Name to mention)",
       "send": "Send",
@@ -1057,7 +1138,15 @@
       "presetPresent": "Coming",
       "presetAbsent": "Not coming",
       "presetMaybe": "Maybe"
-    }
+    },
+    "channelClosed": "Messaging with the team is closed for now. You can still read this conversation.",
+    "channelClosedUntil": "Messaging with the team is closed until {date}. You can still read this conversation.",
+    "urgencyContact": "In an emergency: {contact}",
+    "makeAnnouncement": "Announcements only",
+    "allowReplies": "Families may reply",
+    "takeOverride": "Reopen despite the closure",
+    "dropOverride": "Follow the school closure",
+    "channelClosesAt": "Messaging closes on {date}."
   },
   "adminReports": {
     "title": "Reports",

@@ -7,7 +7,10 @@ import {
   BellOffIcon,
   LockIcon,
   LockOpenIcon,
+  MegaphoneIcon,
+  MessagesSquareIcon,
   MoreVerticalIcon,
+  RadioIcon,
   SearchIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -20,7 +23,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { setThreadState, toggleMute } from "@/server/actions/messaging";
+import { setThreadReplies, setThreadState, toggleMute } from "@/server/actions/messaging";
 
 /**
  * Mute, lock and archive were three stacked full-width buttons inside the page
@@ -35,6 +38,10 @@ export function ThreadMenu({
   archived,
   canModerate,
   searchHref,
+  allowReplies,
+  canSetReplies = false,
+  schoolClosed = false,
+  override = false,
 }: {
   threadId: string;
   isMember: boolean;
@@ -43,6 +50,11 @@ export function ThreadMenu({
   archived: boolean;
   canModerate: boolean;
   searchHref: string;
+  allowReplies?: boolean;
+  /** A class thread the reader runs: the teacher's own switch on their channel. */
+  canSetReplies?: boolean;
+  schoolClosed?: boolean;
+  override?: boolean;
 }) {
   const t = useTranslations("messaging");
 
@@ -76,6 +88,39 @@ export function ThreadMenu({
                 </button>
               </DropdownMenuItem>
             </form>
+          </>
+        )}
+        {canSetReplies && (
+          <>
+            <DropdownMenuSeparator />
+            {/* `allow_replies` existed in the very first migration and was exposed
+                nowhere. It is the teacher's own switch, in words they use. */}
+            <form action={setThreadReplies}>
+              <input type="hidden" name="threadId" value={threadId} />
+              <input type="hidden" name="allowReplies" value={String(!allowReplies)} />
+              <DropdownMenuItem asChild>
+                <button type="submit" className="w-full">
+                  {allowReplies ? (
+                    <MegaphoneIcon aria-hidden />
+                  ) : (
+                    <MessagesSquareIcon aria-hidden />
+                  )}
+                  {allowReplies ? t("makeAnnouncement") : t("allowReplies")}
+                </button>
+              </DropdownMenuItem>
+            </form>
+            {schoolClosed && (
+              <form action={setThreadReplies}>
+                <input type="hidden" name="threadId" value={threadId} />
+                <input type="hidden" name="override" value={String(!override)} />
+                <DropdownMenuItem asChild>
+                  <button type="submit" className="w-full">
+                    <RadioIcon aria-hidden />
+                    {override ? t("dropOverride") : t("takeOverride")}
+                  </button>
+                </DropdownMenuItem>
+              </form>
+            )}
           </>
         )}
         {canModerate && (
