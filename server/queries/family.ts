@@ -33,9 +33,13 @@ export async function getMyChildren() {
       ...row,
       student: {
         ...row.student!,
-        enrollments: row.student!.enrollments.filter(
-          (e) => e.left_on === null || e.left_on >= today,
-        ),
+        // The database allows a single open enrolment per pupil (ADR-0034), but
+        // a class change closes the old one on the day it opens the new, and
+        // both pass this filter for a day. The open one comes first so the
+        // screens that read a single enrolment always read the current class.
+        enrollments: row
+          .student!.enrollments.filter((e) => e.left_on === null || e.left_on >= today)
+          .sort((a, b) => (a.left_on === null ? 0 : 1) - (b.left_on === null ? 0 : 1)),
       },
     }));
 }
