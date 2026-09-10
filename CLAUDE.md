@@ -175,11 +175,12 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   réparé, `pnpm db:test:supabase` ajouté (336 assertions vertes sur les deux chemins), 28 e2e verts
   contre la stack dont l'invitation. Garde-fou de build `scripts/ops/check-bundle.mjs` en `postbuild` :
   il échoue si l'origine Supabase ou la clé anon manque des bundles client.
-- **Suite** : vérifier la production en ouvrant **une conversation** sur `abracom.vercel.app` — c'est le
-  seul écran qui utilise le client Supabase navigateur, donc le seul que casserait un bundle compilé sans
-  les variables publiques. (Un premier diagnostic de la session 18 concluait à tort que la production
-  était cassée : il ne lisait que les chunks référencés par `/connexion`, où l'origine Supabase n'a
-  aucune raison de figurer. Le garde-fou `check-bundle`, lui, balaie tout `.next/static` et arrêtera le
-  build si le cas se produit.) Puis brancher Resend et décommenter les modèles d'e-mails de
-  `config.toml`, chronométrer l'import CSV, valider l'upload Storage et le push VAPID, dérouler la démo.
+- **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
+  `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
+  écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
+  diagnostic de la session 18 concluait à tort à une production cassée : il ne lisait que les chunks
+  référencés par `/connexion`, où l'origine Supabase n'a aucune raison de figurer. Le garde-fou
+  `check-bundle` balaie tout `.next/static` et arrêtera un build de ce genre s'il se produit un jour.
+- **Suite** : brancher Resend et décommenter les modèles d'e-mails de `config.toml`, chronométrer
+  l'import CSV, valider l'upload Storage et le push VAPID, dérouler la démo.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».
