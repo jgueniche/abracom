@@ -3,7 +3,8 @@
 Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committée**.
 **MVP présentable à la direction = sessions 1–8.** Sessions 9–15 = V1 complète. État au 2026-09-10 : les dix-sept
 sessions sont codées ; la session 18 a rejoué les validations « stack Supabase » qui pouvaient l'être
-sans clés e-mail ni push (voir « Session 18 »).
+sans clés e-mail ni push (voir « Session 18 ») ; la session 19 ajoute la maîtrise du dialogue par la
+direction et la pointeuse, toutes deux jouées à la main sur une stack réelle.
 
 | #   | Livrable                                                                                                                     | Definition of done                                      | État                                                                                                 |
 | --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -525,6 +526,104 @@ rôle. Trente-deux défauts relevés, hiérarchisés, puis corrigés dans l'ordr
 - [ ] Resend à brancher, puis décommenter les modèles d'e-mails de `supabase/config.toml` (le gratuit
       refuse les modèles personnalisés avec l'expéditeur par défaut). Les modèles utilisent déjà le flux
       token-hash de `/auth/confirm` ; `/auth/session` couvre le flux implicite en attendant.
+
+## Session 19 — Le robinet du dialogue, la pointeuse, et un coup de rabot (2026-09-10)
+
+Deux demandes explicites de la directrice, puis un rabot sur ce qui restait trop compliqué pour un
+parent pressé. Huit arbitrages posés au porteur avant la première ligne de SQL (ADR-0037 à ADR-0039).
+
+### A — Maîtrise du dialogue par la direction
+
+- [x] Interrupteur d'école dans `schools.modules -> 'messaging' ->> 'parentToStaff'`
+      (`open` / `closed` / `scheduled`) avec les publics concernés, écrit par `set_messaging_mode`
+      (audité, et il normalise le `messaging: true` que le seed portait encore).
+- [x] `messaging_windows` : une période datée qui **ouvre** ou **ferme** un canal — la permanence du
+      mardi soir et la quinzaine de juin sont le même objet avec un `kind` différent — resserrable
+      sur une classe ou sur une seule personne de l'équipe. RLS : lecture par l'équipe, écriture par
+      la direction seule.
+- [x] **Application par les RLS** : `can_post_in_thread` (appelée par `messages_insert`) refuse
+      l'INSERT quand le canal est fermé, et `can_direct_message` applique la même règle à l'ouverture
+      d'une conversation. Une interface qui masque le champ sans que la base ne refuse n'est pas une
+      fermeture, c'est un décor.
+- [x] Le bouton de l'enseignant sur son propre fil : « Les familles peuvent répondre » / « Annonce
+      seule », plus la dérogation d'ADR-0038 (rouvrir malgré une fermeture d'école), auditée et
+      visible de la direction, qui peut la retirer.
+- [x] Vue du parent : jamais de bouton mort — une phrase par next-intl, la date de réouverture
+      seulement si une période le dit, et le contact d'urgence tel que la direction l'a saisi.
+- [x] « Heures de réponse » supprimée : la phrase promettait 48 h ouvrés et rien ne l'appliquait.
+      Remplacée par `messaging_current_closing()` — la fin de la période d'ouverture en cours.
+- [x] `/admin/messagerie` : état de chaque canal, un interrupteur par ligne, et la charge réelle
+      (`messaging_load`, huit semaines, par classe et par enseignant).
+- [x] 30 assertions pgTAP, chacune se terminant sur un vrai INSERT dans `public.messages`.
+
+### B — La pointeuse (ADR-0039)
+
+- [x] Périmètre consigné **avant** le SQL : présence, arrivée, départ, qui récupère l'enfant. Pas de
+      facturation, mais un modèle qui peut l'alimenter (code de service, date, deux horodatages).
+- [x] `attendance_lists` (appel de classe · service récurrent · sortie), `attendance_sessions`
+      (occurrence datée, ouverte puis clôturée), `attendance_records` (statut, heures, qui récupère).
+- [x] Droit de pointer accordé **liste par liste** (`attendance_list_managers`) : aucune animatrice du
+      soir n'hérite des droits du secrétariat. Vérifié en SQL sous l'identité de chaque rôle.
+- [x] **Le point de sécurité** : un responsable sous restriction judiciaire n'est jamais proposé et est
+      refusé en base (`attendance_pickup_guard`), assertion pgTAP dédiée.
+- [x] Grille ludique : vignettes de 173 × 163 px, initiales sur pastille teintée, une tape = présent
+      avec l'heure, une seconde annule, compteur permanent, « Qui manque ? », départs en second passage.
+- [x] **Hors ligne** : file dans `localStorage`, rejouée dans l'ordre au retour du réseau, chaque
+      pointage portant l'heure de la tape. Testé réseau coupé : trois pointages en file, zéro perdu.
+- [x] Liste d'une sortie créée depuis l'événement de l'agenda ; récapitulatif CSV de fin de service.
+- [x] Rétention 12 mois glissants dans `purge_expired_data()` et dans `docs/RGPD.md`.
+- [x] 39 assertions pgTAP. Deux défauts trouvés à la main et corrigés : une annulation qui repointait
+      l'enfant (`status_: undefined` retombait sur la valeur par défaut, d'où `clear_attendance`), et
+      un export CSV à l'heure UTC au lieu de l'horloge de l'école.
+
+### C — Simplicité (le rabot)
+
+- [x] Accueil du parent : un bloc **« Aujourd'hui »** (annonce à confirmer, devoirs du jour et du
+      lendemain, mot non lu, circulaire à signer, événement du jour), la carte d'accusés de lecture
+      repliée dedans — la page perd un bloc au lieu d'en gagner un.
+- [x] Bouton **« Bravo »** d'une tape depuis la liste de classe, la phrase envoyée affichée sur le
+      bouton avant l'envoi.
+- [x] Marquer « vu » depuis la liste : **déjà en place** depuis la session 17, rien à faire.
+- [ ] Mosaïque du cahier de vie : non jugeable sur une stack dont le seed ne porte aucune photo
+      (`class_post_media` vide). À reprendre avec de vraies images.
+- [ ] Premier lancement du parent en trois écrans : écarté pour l'instant — découper un formulaire en
+      trois étapes ajoute des écrans là où le chantier demandait d'en retirer.
+
+### Recette
+
+- 405 assertions pgTAP vertes sur les deux chemins (`pnpm db:test` **et** `pnpm db:test:supabase`).
+- Les deux fonctionnalités jouées à la main sur une stack Supabase réelle, à 390 px et 1440 px,
+  sous six identités ; pointeuse testée réseau coupé ; axe-core propre sur chaque écran nouveau.
+
+## Écarts avec Educartable et consorts — évaluation (session 19)
+
+Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle
+le 2026-09-10. Le chiffrage est en sessions de travail (≈ 2–4 h), écran + SQL + tests + recette compris.
+
+| Écart                               | Ce qui existe déjà                                                                                      | Reste à faire                                                                           | Coût      | Verdict                          |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------- | -------------------------------- |
+| **Emploi du temps de la classe**    | Rien. Aucune table d'horaires.                                                                          | Table `class_timetable` (jour, créneau, matière, intervenant), écran classe, impression | 1 session | **Vaut le coup** — n° 1          |
+| **Mot d'excuse signé du téléphone** | `absences` (déclaration + pièce jointe) et `document_signatures` (signature horodatée, IP, navigateur)  | Rapprocher les deux : une signature au doigt vaut justificatif, sans scan ni papier     | ½ session | **Vaut le coup** — n° 2          |
+| **Suivi des retards**               | `absences.kind = 'late'` (déclaré) **et**, depuis la session 19, `attendance_records.status/arrived_at` | Une vue par élève et par classe qui additionne les deux registres, exportable           | ½ session | **Vaut le coup** — n° 3          |
+| **Autorisation de sortie signée**   | `documents.requires_signature` + `signature_per_student`, relances et export CSV                        | Rien. C'est fait, et c'est le cas d'usage pour lequel la signature a été construite     | 0         | Déjà là — à montrer en démo      |
+| **Objets trouvés**                  | `community_category = 'lost_found'`, modération a priori, écran et libellés                             | Rien de fonctionnel ; au mieux une photo au lieu d'un texte                             | 0         | Déjà là                          |
+| **Covoiturage**                     | `community_category = 'carpool'`, mêmes garanties                                                       | Rien. Un vrai module d'appariement serait une application à part                        | 0         | Déjà là — ne pas aller plus loin |
+| **Trombinoscope**                   | `students.photo_path`, `class_teachers`, droit à l'image signé par élève                                | Un écran, plus la chaîne de photos (upload en masse, vignettes, URL signées)            | 1 session | **Du bruit pour l'instant**      |
+
+**Recommandation** : trois choses, dans cet ordre — emploi du temps, mot d'excuse signable,
+suivi des retards. Elles se tiennent : ce sont les trois raisons pour lesquelles une famille garde
+Educartable ouvert à côté, et les trois seules du tableau qui demandent du code neuf tout en
+s'appuyant sur des briques déjà testées.
+
+**Le trombinoscope est écarté** — non parce qu'il est difficile, mais parce qu'il est cher là où on ne
+le voit pas : sans photos il est vide, et les photos supposent une collecte, un consentement par
+élève (le droit à l'image existe déjà, mais il est signé par une minorité de familles au démarrage),
+un traitement d'images et un balayage de rétention. C'est un écran d'une session et une chaîne
+d'exploitation de plusieurs. À reprendre quand les droits à l'image seront majoritairement signés.
+
+**Objets trouvés et covoiturage sont déjà livrés** et personne ne le sait : ce sont deux catégories
+des petites annonces, modérées a priori. Le manque n'est pas fonctionnel, il est de notoriété — deux
+entrées nommées depuis le pôle Communauté suffiraient, et cela ne coûte rien.
 
 ## Questions ouvertes (§15 du brief)
 
