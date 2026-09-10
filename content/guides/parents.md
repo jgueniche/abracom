@@ -2,7 +2,9 @@
 
 ## Se connecter
 
-- Vous recevez une invitation par e-mail de l'école. Ouvrez le lien : aucun mot de passe à retenir, un lien de connexion vous est envoyé à chaque fois.
+- Vous recevez une invitation par e-mail de l'école. Ouvrez le lien : il crée votre accès et vous connecte.
+- Ensuite, connectez-vous avec votre adresse e-mail et votre mot de passe. Si vous l'oubliez, « Recevoir un
+  lien par e-mail » vous ouvre la session sans mot de passe.
 - À la première connexion, acceptez les conditions d'utilisation et la charte, puis vérifiez votre profil (langue, téléphone).
 - Sur téléphone, ajoutez Kesher à l'écran d'accueil : bouton « Installer » (Android) ou Partager → « Sur l'écran d'accueil » (iPhone). Vous recevrez alors les notifications.
 
@@ -14,7 +16,9 @@
 
 ## La classe de votre enfant
 
-- Onglet Classe(s) : fil de la classe, devoirs (cochez « vu » quand c'est fait), cahier de vie avec les photos, mots de l'enseignant·e, absences, évaluations.
+- Onglet « Ma classe » : devoirs (cochez « vu » quand c'est fait), cahier de vie avec les photos, mots de
+  l'enseignant·e, absences, évaluations, rendez-vous.
+- Onglet « Devoirs » : le cahier de texte de tous vos enfants, semaine par semaine, avec un filtre par enfant.
 - Pour déclarer une absence ou un retard : Classe → Absences → « Déclarer », avec un justificatif si besoin.
 - Les évaluations sont publiées par période ; le livret PDF se télécharge depuis la même page.
 
@@ -35,6 +39,13 @@
 - Annuaire : vous choisissez ce que vous partagez (rien par défaut).
 - Petites annonces : covoiturage, garde partagée, objets trouvés ; chaque annonce est relue par l'école avant publication.
 - Formulaires : fiche de rentrée, sondages ; rendez-vous parents-enseignant : réservez un créneau (un par famille).
+
+## Responsable en lecture seule
+
+- Un grand-parent ou une nounou peut recevoir un accès **en lecture seule** : les annonces, la classe, le
+  cahier de vie et l'agenda, sans messagerie, sans évaluations, sans case « vu » et sans signature. Les
+  onglets correspondants n'apparaissent pas — l'agenda prend la place de « Messages ».
+- Ce sont les parents qui déclarent une absence, signent les documents et répondent aux formulaires.
 
 ## Notifications et données
 

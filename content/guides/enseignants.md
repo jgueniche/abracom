@@ -3,7 +3,10 @@
 ## Vos classes
 
 - L'accueil affiche vos classes, ce qui a été publié cette semaine et les devoirs à venir.
-- Depuis une classe : Fil, Devoirs, Cahier de vie, Mots, Évaluations, Absences, Rendez-vous.
+- Depuis une classe : Devoirs, Cahier de vie, Mots, Évaluations, Absences, Rendez-vous.
+- « Devoirs » en bas de l'écran est le cahier de texte : toutes vos classes, semaine par semaine.
+- « École » réunit ce que l'établissement envoie ou demande : annonces, circulaires à signer, agenda
+  et formulaires.
 
 ## Publier
 
