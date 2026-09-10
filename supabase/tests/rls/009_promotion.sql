@@ -1,7 +1,7 @@
 -- pgTAP: level promotion (session 15) — admin only, classes recreated at the next level,
 -- students moved, leavers marked, previous year archived and still readable.
 begin;
-select plan(9);
+select plan(10);
 
 create or replace function pg_temp.login(uid uuid) returns void language plpgsql as $$
 begin
@@ -44,6 +44,13 @@ select is((select count(*) from public.classes where school_year_id = :year_next
 select is((select level_id from public.classes where school_year_id = :year_next), :level_ms::uuid, 'the new class carries the next level');
 select ok(exists (select 1 from public.enrollments e join public.classes c on c.id = e.class_id where e.student_id = :maya and c.school_year_id = :year_next), 'students are enrolled in the new class');
 select is((select count(*) from public.students s join public.enrollments e on e.student_id = s.id where e.class_id = :class_ce1 and s.status = 'left'), (select count(*) from public.enrollments where class_id = :class_ce1), 'students of the last level leave the school');
+select is(
+  (select count(*) from (
+     select e.student_id from public.enrollments e where e.left_on is null
+     group by e.student_id having count(*) > 1) x),
+  0::bigint,
+  'promotion closes the previous enrolment before opening the next one'
+);
 select is((select is_current from public.school_years where id = :year_next), true, 'the next year becomes current');
 select is((select archived from public.classes where id = :class_ps), true, 'the previous class is archived');
 
