@@ -49,7 +49,8 @@ export function ContentCard({
   return (
     <Card
       className={cn(
-        "h-full",
+        "relative h-full",
+        href && "transition-colors focus-within:bg-accent/40 hover:bg-accent/40",
         accent && "border-t-[3px] border-t-brick",
         muted && "border-dashed",
         className,
@@ -65,18 +66,27 @@ export function ContentCard({
               </p>
             )}
             {href ? (
-              <Link href={href} className="group/title block hover:underline">
+              // The title line was the only target: 25 px tall on the list a
+              // parent opens most, well under the 44 px the project sets itself.
+              // The overlay makes the whole card the target, as a card should be.
+              <Link
+                href={href}
+                className="group/title block after:absolute after:inset-0 hover:underline"
+              >
                 {heading}
               </Link>
             ) : (
               heading
             )}
           </div>
-          {menu && <div className="shrink-0">{menu}</div>}
+          {menu && <div className="relative z-10 shrink-0">{menu}</div>}
         </div>
       </CardHeader>
       {(excerpt || body || media) && (
-        <CardContent className="flex flex-col gap-3">
+        // Whatever a caller puts in `body` or `media` may be interactive — a
+        // "seen" toggle, a photo to enlarge — so it stays above the overlay that
+        // makes the rest of the card a target. A plain excerpt does not.
+        <CardContent className={cn("flex flex-col gap-3", (body || media) && "relative z-10")}>
           {excerpt && (
             <p className="prose-kesher line-clamp-3 text-[0.9375rem] text-pretty">{excerpt}</p>
           )}
@@ -85,7 +95,7 @@ export function ContentCard({
         </CardContent>
       )}
       {footer && (
-        <CardContent className="flex flex-wrap items-center gap-2 border-t border-border/70 pt-3">
+        <CardContent className="relative z-10 flex flex-wrap items-center gap-2 border-t border-border/70 pt-3">
           {footer}
         </CardContent>
       )}
