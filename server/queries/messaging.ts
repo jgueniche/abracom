@@ -95,9 +95,46 @@ export async function searchMessages(threadId: string, query: string) {
   return (data ?? []).reverse();
 }
 
+/** Polls of a conversation with every vote, so the tally names who answered. */
+export async function getThreadPolls(threadId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("thread_polls")
+    .select(
+      `id, thread_id, message_id, event_id, question, options, multiple, closes_at, closed_at, created_by, created_at,
+       event:events ( id, title, starts_at ),
+       votes:poll_votes ( user_id, option_index )`,
+    )
+    .eq("thread_id", threadId)
+    .order("created_at");
+  if (error) throw error;
+  return data ?? [];
+}
+
+export type ThreadPoll = Awaited<ReturnType<typeof getThreadPolls>>[number];
+
+/** Live conversations the caller may open a poll in (announcement channels excluded). */
+export async function getPollableThreads() {
+  const threads = await getMyThreads();
+  return threads.filter(
+    (thread) =>
+      !thread.archived &&
+      !thread.locked &&
+      (thread.allow_replies || thread.member_role === "moderator"),
+  );
+}
+
 export async function getDmContacts() {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("dm_contacts");
+  if (error) throw error;
+  return data ?? [];
+}
+
+/** Classes the caller may build a discussion group from, with their reach. */
+export async function getGroupTargetClasses() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("group_target_classes");
   if (error) throw error;
   return data ?? [];
 }

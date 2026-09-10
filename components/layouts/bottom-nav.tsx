@@ -2,10 +2,12 @@
 
 import {
   BackpackIcon,
+  BuildingIcon,
+  CalendarDaysIcon,
   HouseIcon,
   LayoutDashboardIcon,
-  MenuIcon,
   MessageCircleIcon,
+  NotebookPenIcon,
   SchoolIcon,
   SettingsIcon,
   SquarePenIcon,
@@ -19,6 +21,7 @@ import { cn } from "@/lib/utils";
 
 type Label =
   | "home"
+  | "homework"
   | "myChild"
   | "myClass"
   | "messages"
@@ -26,13 +29,24 @@ type Label =
   | "publish"
   | "dashboard"
   | "manage"
-  | "more";
+  | "agenda";
 
 type Item = { href: string; label: Label; icon: typeof HouseIcon; badge?: boolean };
 
 /**
  * One bar per role — a parent consults, a teacher publishes, the direction
  * processes a queue, and they were all given the same five tabs.
+ *
+ * Every destination is named: the sixth tab used to be a "More" catch-all
+ * holding the profile, help and preferences, which are now behind the header
+ * avatar (AccountMenu). The slot it frees goes to Devoirs — the diary is the
+ * reason a parent opens the app on a weekday evening, so it is a tab, not a
+ * page buried three taps inside a class.
+ *
+ * "Classe" is a parent tab too: the class space (feed, cahier de vie, mots,
+ * absences) was reachable only through "Mon enfant" — a page about allergies
+ * and image rights — which put the daily content two screens deep. The child
+ * record itself is what moves out, to the desktop bar and the avatar menu.
  *
  * "École" gathers everything the school sends or asks for (announcements,
  * circulars, agenda, forms): announcements are the first product objective and
@@ -41,25 +55,41 @@ type Item = { href: string; label: Label; icon: typeof HouseIcon; badge?: boolea
 const ITEMS: Record<Perspective, Item[]> = {
   parent: [
     { href: "/accueil", label: "home", icon: HouseIcon },
-    { href: "/famille", label: "myChild", icon: BackpackIcon },
+    { href: "/devoirs", label: "homework", icon: NotebookPenIcon },
+    { href: "/classes", label: "myClass", icon: SchoolIcon },
     { href: "/messages", label: "messages", icon: MessageCircleIcon, badge: true },
-    { href: "/ecole", label: "school", icon: SchoolIcon },
-    { href: "/plus", label: "more", icon: MenuIcon },
+    { href: "/ecole", label: "school", icon: BuildingIcon },
   ],
   teacher: [
     { href: "/accueil", label: "home", icon: HouseIcon },
+    { href: "/devoirs", label: "homework", icon: NotebookPenIcon },
     { href: "/classes", label: "myClass", icon: SchoolIcon },
-    { href: "/publier", label: "publish", icon: SquarePenIcon },
     { href: "/messages", label: "messages", icon: MessageCircleIcon, badge: true },
-    { href: "/plus", label: "more", icon: MenuIcon },
+    { href: "/publier", label: "publish", icon: SquarePenIcon },
   ],
   admin: [
     { href: "/accueil", label: "dashboard", icon: LayoutDashboardIcon },
     { href: "/publier", label: "publish", icon: SquarePenIcon },
     { href: "/messages", label: "messages", icon: MessageCircleIcon, badge: true },
+    { href: "/ecole", label: "school", icon: BuildingIcon },
     { href: "/admin", label: "manage", icon: SettingsIcon },
-    { href: "/plus", label: "more", icon: MenuIcon },
   ],
+};
+
+/**
+ * Destinations that do not fit the five mobile tabs but belong in the desktop
+ * bar, where there is room to name everything (the header must be complete).
+ */
+const DESKTOP_EXTRA: Record<Perspective, Item[]> = {
+  parent: [
+    { href: "/agenda", label: "agenda", icon: CalendarDaysIcon },
+    { href: "/famille", label: "myChild", icon: BackpackIcon },
+  ],
+  teacher: [
+    { href: "/ecole", label: "school", icon: BuildingIcon },
+    { href: "/agenda", label: "agenda", icon: CalendarDaysIcon },
+  ],
+  admin: [{ href: "/agenda", label: "agenda", icon: CalendarDaysIcon }],
 };
 
 function useActive() {
@@ -120,7 +150,7 @@ export function BottomNav({
   );
 }
 
-/** Same destinations as a horizontal bar from `lg` up. */
+/** The same destinations from `lg` up, plus the ones the mobile bar cannot fit. */
 export function TopNav({
   perspective,
   unreadMessages = 0,
@@ -132,31 +162,33 @@ export function TopNav({
   const isActive = useActive();
 
   return (
-    <nav aria-label={t("home")} className="hidden items-center gap-1 lg:flex">
-      {ITEMS[perspective].map(({ href, label, icon: Icon, badge }) => {
-        const active = isActive(href);
-        const count = badge ? unreadMessages : 0;
-        return (
-          <Link
-            key={href}
-            href={href}
-            aria-current={active ? "page" : undefined}
-            aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
-            className={cn(
-              "flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium whitespace-nowrap text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-              active && "bg-accent text-accent-foreground",
-            )}
-          >
-            <Icon className="size-4" aria-hidden />
-            {t(label)}
-            {count > 0 && (
-              <span className="min-w-4 rounded-full bg-brick px-1 text-center text-[10px] leading-4 font-semibold text-brick-foreground">
-                {count > 99 ? "99+" : count}
-              </span>
-            )}
-          </Link>
-        );
-      })}
+    <nav aria-label={t("home")} className="hidden items-center gap-0.5 lg:flex">
+      {[...ITEMS[perspective], ...DESKTOP_EXTRA[perspective]].map(
+        ({ href, label, icon: Icon, badge }) => {
+          const active = isActive(href);
+          const count = badge ? unreadMessages : 0;
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={active ? "page" : undefined}
+              aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
+              className={cn(
+                "flex min-h-11 items-center gap-2 rounded-lg px-2.5 text-sm font-medium whitespace-nowrap text-muted-foreground hover:bg-accent hover:text-accent-foreground xl:px-3",
+                active && "bg-accent text-accent-foreground",
+              )}
+            >
+              <Icon className="size-4" aria-hidden />
+              {t(label)}
+              {count > 0 && (
+                <span className="min-w-4 rounded-full bg-brick px-1 text-center text-[10px] leading-4 font-semibold text-brick-foreground">
+                  {count > 99 ? "99+" : count}
+                </span>
+              )}
+            </Link>
+          );
+        },
+      )}
     </nav>
   );
 }

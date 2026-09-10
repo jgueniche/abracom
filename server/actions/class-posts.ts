@@ -224,4 +224,5 @@ export async function toggleHomeworkSeen(formData: FormData): Promise<void> {
   }
   if (uuid.test(classId)) revalidatePath(`/classes/${classId}`, "layout");
   revalidatePath("/accueil");
+  revalidatePath("/devoirs");
 }

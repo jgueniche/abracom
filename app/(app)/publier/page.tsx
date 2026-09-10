@@ -3,6 +3,7 @@ import {
   ClipboardListIcon,
   FilePlusIcon,
   MegaphoneIcon,
+  NotebookPenIcon,
   SchoolIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -40,6 +41,16 @@ export default async function PublishPage() {
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
       <HubGrid>
+        {classes.length > 0 && (
+          <HubCard
+            href={
+              classes.length === 1 ? `/classes/${classes[0]!.id}/publier?type=homework` : "/devoirs"
+            }
+            icon={NotebookPenIcon}
+            title={t("homework")}
+            hint={t("homeworkHint")}
+          />
+        )}
         {classes.map((cls) => (
           <HubCard
             key={cls.id}

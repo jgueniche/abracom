@@ -30,7 +30,6 @@
     "classes": "Class(es)",
     "messages": "Messages",
     "agenda": "Calendar",
-    "more": "More",
     "dashboard": "Dashboard",
     "announcements": "Announcements",
     "family": "My family",
@@ -45,7 +44,8 @@
     "school": "School",
     "publish": "Publish",
     "manage": "Manage",
-    "unreadMessages": "Messages: {count, plural, one {# unread} other {# unread}}"
+    "unreadMessages": "Messages: {count, plural, one {# unread} other {# unread}}",
+    "homework": "Homework"
   },
   "errors": {
     "notFound": {
@@ -155,7 +155,7 @@
   "auth": {
     "login": {
       "title": "Sign in",
-      "subtitle": "Enter the e-mail address you gave the school: you will receive a sign-in link, no password needed.",
+      "subtitle": "Sign in with the e-mail address and password the school gave you.",
       "email": "E-mail address",
       "submit": "Send me a link",
       "sending": "Sending…",
@@ -166,7 +166,7 @@
       "notConfigured": "Sign-in is not available on this environment yet.",
       "rateLimited": "Too many requests. Try again in a few minutes.",
       "linkError": "This link is invalid or has expired. Request a new one.",
-      "noAccount": "No access yet? The school will send you an invitation by e-mail.",
+      "noAccount": "Accounts are created by the school: ask the office or the head teacher, who will send an invitation to the address the school already has on file.",
       "usePassword": "Sign in with a password",
       "useLink": "Get a link by e-mail",
       "passwordHint": "Only for accounts the school has given a password to.",
@@ -174,7 +174,8 @@
       "signIn": "Sign in",
       "signingIn": "Signing in…",
       "invalidCredentials": "Incorrect e-mail address or password.",
-      "unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment."
+      "unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment.",
+      "noAccountCta": "No account? Ask the school directly to create one for you"
     },
     "onboarding": {
       "title": "Welcome, let's get acquainted",
@@ -217,7 +218,8 @@
       "children": "My children",
       "pendingAcks": "{count, plural, =0 {No announcement to confirm} one {# announcement to confirm} other {# announcements to confirm}}",
       "pendingHint": "Open the announcements to confirm.",
-      "seeFamily": "See my family"
+      "seeFamily": "See my family",
+      "childrenHint": "Open the class space: homework, journal, notes and absences."
     },
     "teacher": {
       "title": "My classes",
@@ -285,15 +287,7 @@
     "data": "My data"
   },
   "more": {
-    "title": "More",
     "account": "My account",
-    "school": "School",
-    "educartable": "Open Educartable",
-    "educartableHint": "Existing homework and reports (external site).",
-    "preferences": "Preferences",
-    "language": "Language",
-    "theme": "Theme",
-    "community": "Community",
     "help": "Help"
   },
   "roles": {
@@ -836,7 +830,8 @@
       "consent": "I confirm that no child without a signed image-rights consent appears on these photos.",
       "consentRequired": "Please confirm that the photos show no child without consent.",
       "deleteConfirm": "This post and its photos will be removed for every family.",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "newHomework": "New homework"
     },
     "journal": {
       "empty": "No photo yet.",
@@ -990,7 +985,60 @@
     "officialPinned": "Official channel",
     "directMessages": "Direct messages",
     "classThreads": "Classes",
-    "emptyHint": "Write to a teacher or to the head teacher: the conversation will show up here."
+    "emptyHint": "Write to a teacher or to the head teacher: the conversation will show up here.",
+    "group": {
+      "title": "New discussion group",
+      "subtitle": "Pick one or several classes: every one of their parents joins the conversation at once.",
+      "back": "Back to messages",
+      "name": "Group name",
+      "namePlaceholder": "Museum trip, school fair, garden project…",
+      "classes": "Classes involved",
+      "classesHint": "Each ticked class adds every guardian of its pupils, second parent included.",
+      "guardians": "{count, plural, =0 {no guardian} one {# guardian} other {# guardians}}",
+      "includeTeachers": "Also add these classes' teachers (as moderators)",
+      "reach": "Up to {count, plural, one {# person} other {# people}} — a family in two classes is only counted once at creation.",
+      "reachEmpty": "No class selected: the group will hold only you, to be filled in afterwards.",
+      "create": "Create the group",
+      "creating": "Creating…",
+      "invalid": "Check the name and the selected classes.",
+      "createError": "The group could not be created.",
+      "noClass": "No class to build a group from.",
+      "noClassHint": "Only the head teacher, the office and teachers can create a discussion group.",
+      "new": "New group"
+    },
+    "poll": {
+      "label": "Poll",
+      "new": "Create a poll",
+      "newHint": "One question, at least two answers. Everyone sees who answered what.",
+      "question": "Question",
+      "questionPlaceholder": "Who is joining the trip on the 12th?",
+      "options": "Possible answers",
+      "option": "Answer {number}",
+      "removeOption": "Remove answer {number}",
+      "addOption": "Add an answer",
+      "allowMultiple": "Allow several answers",
+      "multiple": "several answers",
+      "closesAt": "Closes on (optional)",
+      "closesOn": "closes on {date}",
+      "closed": "Closed",
+      "close": "Close the poll",
+      "create": "Publish the poll",
+      "creating": "Publishing…",
+      "created": "Poll published.",
+      "invalid": "Check the question and the answers (at least two).",
+      "createError": "The poll could not be published.",
+      "vote": "Answer",
+      "changeVote": "Change my answer",
+      "voters": "{count, plural, =0 {No answer} one {# answer} other {# answers}}",
+      "public": "Answers are visible to the members of the conversation.",
+      "presetYesNo": "Yes / No",
+      "presetAttendance": "Attendance",
+      "presetYes": "Yes",
+      "presetNo": "No",
+      "presetPresent": "Coming",
+      "presetAbsent": "Not coming",
+      "presetMaybe": "Maybe"
+    }
   },
   "adminReports": {
     "title": "Reports",
@@ -1247,6 +1295,16 @@
       "answers": "{yes} yes · {maybe} maybe · {no} no",
       "waiting": "{count} waiting",
       "noRsvp": "No RSVP"
+    },
+    "poll": {
+      "button": "Poll the families",
+      "title": "Attendance poll",
+      "hint": "Posts the question in a conversation, with a link back to the event.",
+      "thread": "Conversation",
+      "question": "Coming to “{title}”?",
+      "answers": "Answers offered: {answers}",
+      "send": "Publish the poll",
+      "openThread": "Open the conversation"
     }
   },
   "notificationPrefs": {
@@ -1717,6 +1775,31 @@
     "eventHint": "Meeting, outing or celebration, with sign-up.",
     "form": "Form",
     "formHint": "Survey or permission to collect.",
-    "noClass": "No class is assigned to you yet."
+    "noClass": "No class is assigned to you yet.",
+    "homework": "Homework",
+    "homeworkHint": "Due on a date, with a per-family “seen” receipt."
+  },
+  "diary": {
+    "title": "Homework diary",
+    "subtitle": "What has to be prepared, day by day.",
+    "subtitleTeacher": "What you set, day by day.",
+    "thisWeek": "This week",
+    "previousWeek": "Previous week",
+    "nextWeek": "Next week",
+    "week": "{from} to {to}",
+    "nothingToday": "Nothing to prepare",
+    "empty": "No homework this week.",
+    "emptyHint": "Homework set by teachers shows up here, on the day it is due.",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "late": "Overdue",
+    "forChild": "for {name}",
+    "seenBy": "{count, plural, =0 {Nobody ticked it} one {# pupil ticked it} other {# pupils ticked it}}",
+    "openClass": "Open the class",
+    "noClass": "No class is linked to you yet.",
+    "allChildren": "All",
+    "dueTomorrow": "Due tomorrow",
+    "weekCount": "{count, plural, =0 {No homework} one {# piece of homework} other {# pieces of homework}} this week",
+    "newHomework": "New homework"
   }
 }

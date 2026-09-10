@@ -1,3 +1,4 @@
+import { InfoIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
@@ -36,7 +37,17 @@ export default async function LoginPage({
         next={safeNextPath(next)}
         initialError={error === "link" ? t("linkError") : undefined}
       />
-      <p className="text-sm text-muted-foreground">{t("noAccount")}</p>
+      {/* Accounts are created by the school, never self-served: this says so
+          where someone without one looks, instead of leaving them to guess. */}
+      <details className="rounded-2xl border border-border bg-card">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center gap-2 px-4 text-sm font-medium">
+          <InfoIcon className="size-4 shrink-0 text-primary" aria-hidden />
+          {t("noAccountCta")}
+        </summary>
+        <p className="border-t border-border px-4 py-3 text-sm text-pretty text-muted-foreground">
+          {t("noAccount")}
+        </p>
+      </details>
     </div>
   );
 }

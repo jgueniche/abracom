@@ -357,3 +357,142 @@ export async function openClassGroup(formData: FormData): Promise<void> {
     throw new Error(error?.message ?? "ensure_class_threads failed");
   redirect(`/messages/${row.parents_group}`);
 }
+
+const groupSchema = z.object({
+  title: z.string().trim().min(2).max(120),
+  classIds: z.array(z.string().regex(uuid)).max(40),
+  includeTeachers: z.boolean(),
+});
+
+/**
+ * A discussion group built from classes.
+ *
+ * The point is that nobody assembles a recipient list by hand: ticking "CE1 A"
+ * adds every guardian of every pupil enrolled in it, siblings and second
+ * parents included, minus the ones a court order keeps out. The database
+ * function does the authorisation (staff anywhere in their school, a teacher
+ * for the classes they teach) and the membership fan-out in one transaction.
+ */
+export async function createGroupThread(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  try {
+    const t = await getTranslations("messaging.group");
+    const user = await requireCurrentUser();
+    const parsed = groupSchema.safeParse({
+      title: field(formData, "title"),
+      classIds: formData.getAll("classIds").map(String),
+      includeTeachers: formData.get("includeTeachers") === "on",
+    });
+    if (!parsed.success) return { status: "error", message: t("invalid") };
+
+    const supabase = await createClient();
+    const { data, error } = await supabase.rpc("create_group_thread", {
+      title_: parsed.data.title,
+      class_ids: parsed.data.classIds,
+      include_teachers: parsed.data.includeTeachers,
+    });
+    if (error || !data) return { status: "error", message: t("createError") };
+
+    if (user.school)
+      await logAudit(supabase, {
+        schoolId: user.school.id,
+        actorId: user.id,
+        action: "thread.group_created",
+        entity: "threads",
+        entityId: data,
+        diff: { title: parsed.data.title, classes: parsed.data.classIds },
+      });
+    revalidatePath("/messages");
+    redirect(`/messages/${data}`);
+  } catch (error) {
+    return toActionError(error);
+  }
+}
+
+const pollSchema = z.object({
+  threadId: z.string().regex(uuid),
+  question: z.string().trim().min(3).max(300),
+  options: z.array(z.string().trim().min(1).max(120)).min(2).max(10),
+  multiple: z.boolean(),
+  closesAt: z.string().trim().min(1).nullable(),
+  eventId: z.string().regex(uuid).nullable(),
+});
+
+/**
+ * A poll in a conversation.
+ *
+ * "Who is coming?" was only answerable through an event's RSVP, so the question
+ * had to be about attendance and an event had to exist first. The poll is
+ * announced by a real message, which is what puts it in the timeline and sends
+ * the usual notification.
+ */
+export async function createThreadPoll(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  try {
+    const t = await getTranslations("messaging.poll");
+    await requireCurrentUser();
+    const parsed = pollSchema.safeParse({
+      threadId: field(formData, "threadId"),
+      question: field(formData, "question"),
+      options: formData
+        .getAll("options")
+        .map((option) => String(option).trim())
+        .filter(Boolean),
+      multiple: formData.get("multiple") === "on",
+      closesAt: optional(formData, "closesAt"),
+      eventId: optional(formData, "eventId"),
+    });
+    if (!parsed.success) return { status: "error", message: t("invalid") };
+
+    const closesAt = parsed.data.closesAt ? new Date(parsed.data.closesAt) : null;
+    if (closesAt && Number.isNaN(closesAt.getTime()))
+      return { status: "error", message: t("invalid") };
+
+    const supabase = await createClient();
+    const { error } = await supabase.rpc("create_thread_poll", {
+      thread_: parsed.data.threadId,
+      question_: parsed.data.question,
+      options_: parsed.data.options,
+      multiple_: parsed.data.multiple,
+      closes_at_: closesAt?.toISOString() ?? undefined,
+      event_: parsed.data.eventId ?? undefined,
+    });
+    if (error) return { status: "error", message: t("createError") };
+
+    revalidatePath(`/messages/${parsed.data.threadId}`);
+    return { status: "success", message: t("created") };
+  } catch (error) {
+    return toActionError(error);
+  }
+}
+
+/** Answering replaces the caller's whole answer, so changing your mind is one call. */
+export async function voteInPoll(formData: FormData): Promise<void> {
+  const pollId = field(formData, "pollId");
+  const threadId = field(formData, "threadId");
+  if (!uuid.test(pollId)) return;
+  await requireCurrentUser();
+  const choices = formData
+    .getAll("choices")
+    .map((choice) => Number(choice))
+    .filter((choice) => Number.isInteger(choice) && choice >= 0 && choice < 10);
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("vote_in_poll", { poll_: pollId, choices });
+  if (error) console.error("[poll] vote failed:", error.code, error.message);
+  if (uuid.test(threadId)) revalidatePath(`/messages/${threadId}`);
+}
+
+export async function closePoll(formData: FormData): Promise<void> {
+  const pollId = field(formData, "pollId");
+  const threadId = field(formData, "threadId");
+  if (!uuid.test(pollId)) return;
+  await requireCurrentUser();
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("close_poll", { poll_: pollId });
+  if (error) console.error("[poll] close failed:", error.code, error.message);
+  if (uuid.test(threadId)) revalidatePath(`/messages/${threadId}`);
+}

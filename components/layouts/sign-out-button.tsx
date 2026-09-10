@@ -2,7 +2,7 @@
 
 import { LogOutIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useTransition } from "react";
+import { useCallback, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/server/actions/auth";
@@ -11,12 +11,14 @@ import { signOut } from "@/server/actions/auth";
  * Signs out and forgets this browser's push subscription on the server (shared devices,
  * brief §8). The browser subscription itself is kept: the next person who signs in on this
  * device re-registers it under their own account (see ServiceWorkerRegistration).
+ *
+ * Exposed as a hook so the account menu can sign out from a menu item without
+ * nesting a `<Button>` inside a `DropdownMenuItem`.
  */
-export function SignOutButton({ className }: { className?: string }) {
-  const t = useTranslations("auth");
+export function useSignOut(): { signOut: () => void; pending: boolean } {
   const [pending, startTransition] = useTransition();
 
-  function handleSignOut() {
+  const run = useCallback(() => {
     startTransition(async () => {
       let endpoint: string | null = null;
       try {
@@ -30,16 +32,17 @@ export function SignOutButton({ className }: { className?: string }) {
       }
       await signOut(endpoint);
     });
-  }
+  }, []);
+
+  return { signOut: run, pending };
+}
+
+export function SignOutButton({ className }: { className?: string }) {
+  const t = useTranslations("auth");
+  const { signOut: run, pending } = useSignOut();
 
   return (
-    <Button
-      type="button"
-      variant="outline"
-      className={className}
-      onClick={handleSignOut}
-      disabled={pending}
-    >
+    <Button type="button" variant="outline" className={className} onClick={run} disabled={pending}>
       <LogOutIcon aria-hidden />
       {t("signOut")}
     </Button>

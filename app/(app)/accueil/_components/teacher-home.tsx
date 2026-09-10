@@ -2,6 +2,7 @@ import { BookOpenIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
+import { NewHomeworkButton } from "@/components/domain/new-homework-button";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,6 +30,13 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
         eyebrow={format.dateTime(new Date(), { weekday: "long", day: "numeric", month: "long" })}
         title={t("greeting", { name: user.profile.first_name })}
         description={t("teacher.title")}
+        actions={
+          <NewHomeworkButton
+            classes={classes.flatMap((row) =>
+              row.class ? [{ id: row.class.id, name: row.class.name }] : [],
+            )}
+          />
+        }
       />
       {classes.length === 0 ? (
         <p className="text-muted-foreground">{t("teacher.noClasses")}</p>

@@ -30,7 +30,6 @@
     "classes": "Classe(s)",
     "messages": "Messages",
     "agenda": "Agenda",
-    "more": "Plus",
     "dashboard": "Tableau de bord",
     "announcements": "Annonces",
     "family": "Ma famille",
@@ -45,7 +44,8 @@
     "school": "École",
     "publish": "Publier",
     "manage": "Gestion",
-    "unreadMessages": "Messages : {count, plural, one {# non lu} other {# non lus}}"
+    "unreadMessages": "Messages : {count, plural, one {# non lu} other {# non lus}}",
+    "homework": "Devoirs"
   },
   "errors": {
     "notFound": {
@@ -155,7 +155,7 @@
   "auth": {
     "login": {
       "title": "Connexion",
-      "subtitle": "Saisissez l'adresse e-mail communiquée à l'école : vous recevrez un lien de connexion, sans mot de passe.",
+      "subtitle": "Connectez-vous avec l'adresse e-mail et le mot de passe communiqués par l'école.",
       "email": "Adresse e-mail",
       "submit": "Recevoir mon lien",
       "sending": "Envoi…",
@@ -166,7 +166,7 @@
       "notConfigured": "La connexion n'est pas encore disponible sur cet environnement.",
       "rateLimited": "Trop de demandes. Réessayez dans quelques minutes.",
       "linkError": "Ce lien est invalide ou a expiré. Demandez-en un nouveau.",
-      "noAccount": "Pas encore d'accès ? L'école vous enverra une invitation par e-mail.",
+      "noAccount": "Les comptes sont créés par l'école : adressez-vous au secrétariat ou à la direction, qui vous enverra une invitation par e-mail à l'adresse déjà connue de l'établissement.",
       "usePassword": "Se connecter avec un mot de passe",
       "useLink": "Recevoir un lien par e-mail",
       "passwordHint": "Réservé aux comptes auxquels l'école a attribué un mot de passe.",
@@ -174,7 +174,8 @@
       "signIn": "Se connecter",
       "signingIn": "Connexion…",
       "invalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
-      "unavailable": "Le service de connexion est momentanément indisponible. Réessayez dans un instant."
+      "unavailable": "Le service de connexion est momentanément indisponible. Réessayez dans un instant.",
+      "noAccountCta": "Pas de compte ? Demandez directement à l'école de vous créer votre compte"
     },
     "onboarding": {
       "title": "Bienvenue, faisons connaissance",
@@ -217,7 +218,8 @@
       "children": "Mes enfants",
       "pendingAcks": "{count, plural, =0 {Aucune annonce à confirmer} one {# annonce à confirmer} other {# annonces à confirmer}}",
       "pendingHint": "Ouvrir les annonces à confirmer.",
-      "seeFamily": "Voir ma famille"
+      "seeFamily": "Voir ma famille",
+      "childrenHint": "Ouvrir l'espace de la classe : devoirs, cahier de vie, mots et absences."
     },
     "teacher": {
       "title": "Mes classes",
@@ -285,15 +287,7 @@
     "data": "Mes données"
   },
   "more": {
-    "title": "Plus",
     "account": "Mon compte",
-    "school": "École",
-    "educartable": "Ouvrir Educartable",
-    "educartableHint": "Devoirs et bulletins existants (site externe).",
-    "preferences": "Préférences",
-    "language": "Langue",
-    "theme": "Thème",
-    "community": "Communauté",
     "help": "Aide"
   },
   "roles": {
@@ -836,7 +830,8 @@
       "consent": "J'atteste qu'aucun enfant sans autorisation de droit à l'image n'apparaît sur ces photos.",
       "consentRequired": "Merci de confirmer que les photos ne montrent aucun enfant sans autorisation.",
       "deleteConfirm": "Cette publication et ses photos seront retirées pour toutes les familles.",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "newHomework": "Nouveau devoir"
     },
     "journal": {
       "empty": "Pas encore de photos.",
@@ -990,7 +985,60 @@
     "officialPinned": "Canal officiel",
     "directMessages": "Messages directs",
     "classThreads": "Classes",
-    "emptyHint": "Écrivez à un enseignant ou à la direction : la conversation apparaîtra ici."
+    "emptyHint": "Écrivez à un enseignant ou à la direction : la conversation apparaîtra ici.",
+    "group": {
+      "title": "Nouveau groupe de discussion",
+      "subtitle": "Choisissez une ou plusieurs classes : tous leurs parents rejoignent la conversation d'un coup.",
+      "back": "Retour aux messages",
+      "name": "Nom du groupe",
+      "namePlaceholder": "Sortie au musée, kermesse, projet jardin…",
+      "classes": "Classes concernées",
+      "classesHint": "Chaque classe cochée ajoute tous les responsables de ses élèves, deuxième parent compris.",
+      "guardians": "{count, plural, =0 {aucun responsable} one {# responsable} other {# responsables}}",
+      "includeTeachers": "Ajouter aussi les enseignants de ces classes (comme modérateurs)",
+      "reach": "Jusqu'à {count, plural, one {# personne} other {# personnes}} — une famille présente dans deux classes n'est comptée qu'une fois à la création.",
+      "reachEmpty": "Aucune classe sélectionnée : le groupe ne contiendra que vous, à compléter ensuite.",
+      "create": "Créer le groupe",
+      "creating": "Création…",
+      "invalid": "Vérifiez le nom et les classes sélectionnées.",
+      "createError": "Le groupe n'a pas pu être créé.",
+      "noClass": "Aucune classe à laquelle rattacher un groupe.",
+      "noClassHint": "Seules la direction, le secrétariat et les enseignants peuvent créer un groupe de discussion.",
+      "new": "Nouveau groupe"
+    },
+    "poll": {
+      "label": "Sondage",
+      "new": "Créer un sondage",
+      "newHint": "Une question, deux réponses au moins. Tout le monde voit qui a répondu quoi.",
+      "question": "Question",
+      "questionPlaceholder": "Qui accompagne la sortie du 12 ?",
+      "options": "Réponses possibles",
+      "option": "Réponse {number}",
+      "removeOption": "Supprimer la réponse {number}",
+      "addOption": "Ajouter une réponse",
+      "allowMultiple": "Plusieurs réponses possibles",
+      "multiple": "plusieurs réponses",
+      "closesAt": "Clôture (facultatif)",
+      "closesOn": "clôture le {date}",
+      "closed": "Clos",
+      "close": "Clore le sondage",
+      "create": "Publier le sondage",
+      "creating": "Publication…",
+      "created": "Sondage publié.",
+      "invalid": "Vérifiez la question et les réponses (deux au minimum).",
+      "createError": "Le sondage n'a pas pu être publié.",
+      "vote": "Répondre",
+      "changeVote": "Modifier ma réponse",
+      "voters": "{count, plural, =0 {Aucune réponse} one {# réponse} other {# réponses}}",
+      "public": "Les réponses sont visibles par les membres de la conversation.",
+      "presetYesNo": "Oui / Non",
+      "presetAttendance": "Présence",
+      "presetYes": "Oui",
+      "presetNo": "Non",
+      "presetPresent": "Présent",
+      "presetAbsent": "Absent",
+      "presetMaybe": "Peut-être"
+    }
   },
   "adminReports": {
     "title": "Signalements",
@@ -1247,6 +1295,16 @@
       "answers": "{yes} oui · {maybe} peut-être · {no} non",
       "waiting": "{count} en attente",
       "noRsvp": "Sans RSVP"
+    },
+    "poll": {
+      "button": "Sonder les familles",
+      "title": "Sondage de présence",
+      "hint": "Publie la question dans une conversation, avec un lien vers l'événement.",
+      "thread": "Conversation",
+      "question": "Présence à « {title} » ?",
+      "answers": "Réponses proposées : {answers}",
+      "send": "Publier le sondage",
+      "openThread": "Ouvrir la conversation"
     }
   },
   "notificationPrefs": {
@@ -1717,6 +1775,31 @@
     "eventHint": "Réunion, sortie ou fête, avec inscription.",
     "form": "Formulaire",
     "formHint": "Sondage ou autorisation à collecter.",
-    "noClass": "Aucune classe ne vous est affectée pour l'instant."
+    "noClass": "Aucune classe ne vous est affectée pour l'instant.",
+    "homework": "Devoir",
+    "homeworkHint": "À faire pour une date, avec accusé « vu » par famille."
+  },
+  "diary": {
+    "title": "Cahier de texte",
+    "subtitle": "Ce qu'il y a à préparer, jour par jour.",
+    "subtitleTeacher": "Ce que vous avez donné à préparer, jour par jour.",
+    "thisWeek": "Cette semaine",
+    "previousWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
+    "week": "Du {from} au {to}",
+    "nothingToday": "Rien à préparer",
+    "empty": "Aucun devoir cette semaine.",
+    "emptyHint": "Les devoirs donnés par les enseignants apparaîtront ici, à la date à laquelle ils sont à rendre.",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "late": "En retard",
+    "forChild": "pour {name}",
+    "seenBy": "{count, plural, =0 {Personne n'a coché} one {# élève a coché} other {# élèves ont coché}}",
+    "openClass": "Voir la classe",
+    "noClass": "Aucune classe ne vous est rattachée pour l'instant.",
+    "allChildren": "Tous",
+    "dueTomorrow": "À rendre demain",
+    "weekCount": "{count, plural, =0 {Aucun devoir} one {# devoir} other {# devoirs}} cette semaine",
+    "newHomework": "Nouveau devoir"
   }
 }

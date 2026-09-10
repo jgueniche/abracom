@@ -9,7 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { canWriteInSchool, isSchoolStaff } from "@/lib/permissions";
-import { getMessages, getMyThreads, getThread, searchMessages } from "@/server/queries/messaging";
+import {
+  getMessages,
+  getMyThreads,
+  getThread,
+  getThreadPolls,
+  searchMessages,
+} from "@/server/queries/messaging";
 
 import { ThreadList } from "../_components/thread-list";
 import { ThreadMenu } from "./_components/thread-menu";
@@ -36,9 +42,10 @@ export default async function ThreadPage({
   const isModerator = me?.role === "moderator" || isSchoolStaff(user.roles, thread.school_id);
   const query = (search.q ?? "").trim();
   const searchOpen = query.length > 0 || search.recherche === "1";
-  const [messages, results] = await Promise.all([
+  const [messages, results, polls] = await Promise.all([
     getMessages(threadId),
     query ? searchMessages(threadId, query) : Promise.resolve([]),
+    getThreadPolls(threadId),
   ]);
 
   const members: Member[] = thread.members
@@ -196,6 +203,23 @@ export default async function ThreadPage({
           searchMode={false}
           lastReadAt={me?.last_read_at ?? null}
           hint={showResponseHours ? t("responseHours") : undefined}
+          polls={polls.map((poll) => ({
+            id: poll.id,
+            messageId: poll.message_id,
+            question: poll.question,
+            options: poll.options,
+            multiple: poll.multiple,
+            closesAt: poll.closes_at,
+            closedAt: poll.closed_at,
+            createdBy: poll.created_by,
+            event: poll.event
+              ? { id: poll.event.id, title: poll.event.title, startsAt: poll.event.starts_at }
+              : null,
+            votes: poll.votes.map((vote) => ({
+              userId: vote.user_id,
+              optionIndex: vote.option_index,
+            })),
+          }))}
         />
       </div>
     </div>
