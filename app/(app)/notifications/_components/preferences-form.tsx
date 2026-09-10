@@ -56,7 +56,7 @@ export function PreferencesForm({ initial }: { initial: PreferencesInitial }) {
                     <td key={channel} className="p-0 text-center">
                       {/* 24 boxes of 20 px on the one screen a parent opens to
                           stop the app notifying them, on a phone, at night */}
-                      <label className="flex min-h-11 cursor-pointer items-center justify-center px-2">
+                      <label className="mx-auto flex min-h-11 min-w-11 cursor-pointer items-center justify-center px-2">
                         <input
                           type="checkbox"
                           name={`${group}.${channel}`}
