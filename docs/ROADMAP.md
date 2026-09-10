@@ -1,26 +1,27 @@
 # Feuille de route — Kesher
 
 Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committée**.
-**MVP présentable à la direction = sessions 1–8.** Sessions 9–15 = V1 complète. État au 2026-09-08 : les quinze
-sessions sont codées ; la validation sur une stack Supabase cloud reste à faire (voir « Bilan V1 »).
+**MVP présentable à la direction = sessions 1–8.** Sessions 9–15 = V1 complète. État au 2026-09-10 : les dix-sept
+sessions sont codées ; la session 18 a rejoué les validations « stack Supabase » qui pouvaient l'être
+sans clés e-mail ni push (voir « Session 18 »).
 
-| #   | Livrable                                                                                                                     | Definition of done                                      | État                                                                                                |
-| --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| 1   | Bootstrap : Next 15, Tailwind, shadcn, Supabase local, CI lint/test, Vercel preview, CLAUDE.md, ROADMAP                      | `pnpm dev` OK, déploiement preview vert                 | ✅                                                                                                  |
-| 2   | Identité visuelle : extraction palette logo, tokens, thème clair/sombre, page de style `/dev/ui`                             | Validation visuelle par le porteur                      | ✅ (validation visuelle du porteur en attente)                                                      |
-| 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ✅ (validé sur PostgreSQL 16 local + CI ; à rejouer sur Supabase dès que disponible)                |
-| 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | 🟡 code complet, e2e « invitation → 1re connexion » à exécuter sur une stack Supabase               |
-| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | 🟡 code complet, chronométrage de l'import à réaliser sur une stack Supabase                        |
-| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | 🟡 code complet, parcours à valider sur une stack Supabase (upload Storage, e-mails)                |
-| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | 🟡 code complet, upload photos à valider sur une stack Supabase                                     |
-| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | 🟡 code complet, échange à 2 navigateurs (Realtime) à valider sur une stack Supabase                |
-| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | 🟡 code complet, abonnement ICS à vérifier dans Google Agenda sur une stack Supabase                |
-| 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | 🟡 code complet ; push réel et e-mails à valider avec clés VAPID + Resend sur une stack Supabase    |
-| 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | 🟡 code complet ; livret PDF généré en test unitaire, rendu réel à valider sur une stack Supabase   |
-| 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | 🟡 code complet, réservation de créneau testée en pgTAP ; parcours à valider sur une stack Supabase |
-| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | 🟡 code complet ; installation à valider sur iOS / Android, Lighthouse mesuré sur le déploiement    |
-| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | 🟡 code complet ; 2FA et suppression de compte à valider sur une stack Supabase                     |
-| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | 🟡 code et documents complets ; démo à jouer sur une stack Supabase avant la présentation           |
+| #   | Livrable                                                                                                                     | Definition of done                                      | État                                                                                                 |
+| --- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| 1   | Bootstrap : Next 15, Tailwind, shadcn, Supabase local, CI lint/test, Vercel preview, CLAUDE.md, ROADMAP                      | `pnpm dev` OK, déploiement preview vert                 | ✅                                                                                                   |
+| 2   | Identité visuelle : extraction palette logo, tokens, thème clair/sombre, page de style `/dev/ui`                             | Validation visuelle par le porteur                      | ✅ (validation visuelle du porteur en attente)                                                       |
+| 3   | Schéma BDD complet + RLS + `can_access_*` + seed fictif (1 école, 6 classes PS→CE1, 12 enseignants, 60 familles) + tests RLS | Tests RLS verts pour les 6 rôles                        | ✅ (336 assertions vertes sur PostgreSQL 16 + CI **et** sur une stack Supabase réelle, session 18)   |
+| 4   | Auth : magic link, invitations, onboarding parent/enseignant, CGU versionnées, profil, multi-rôle                            | Flux e2e « invitation → 1re connexion »                 | ✅ (e2e « invitation → 1re connexion » vert sur une stack Supabase, session 18 — deux bugs corrigés) |
+| 5   | Admin : écoles, années, classes, affectations, import CSV, invitations en masse                                              | Directrice fictive importe 60 familles en < 2 min       | 🟡 code complet, chronométrage de l'import à réaliser sur une stack Supabase                         |
+| 6   | Annonces + accusés de lecture + documents + signatures                                                                       | Annonce ciblée classe avec relance des non-lecteurs     | 🟡 code complet, parcours à valider sur une stack Supabase (upload Storage, e-mails)                 |
+| 7   | Espace classe : fil, devoirs, cahier de vie (upload photos), mots individuels                                                | Enseignant publie, parent voit et coche « vu »          | 🟡 code complet, upload photos à valider sur une stack Supabase                                      |
+| 8   | Messagerie temps réel : DM, fils officiels, groupes de classe, modération, signalement                                       | 2 navigateurs, échange instantané, modération OK        | 🟡 code complet, échange à 2 navigateurs (Realtime) à valider sur une stack Supabase                 |
+| 9   | Agenda : hebcal, événements, RSVP, créneaux bénévolat, ICS                                                                   | Abonnement ICS visible dans Google Calendar             | 🟡 code complet, abonnement ICS à vérifier dans Google Agenda sur une stack Supabase                 |
+| 10  | Notifications : push, e-mail Resend, digest, préférences, **mode Shabbat**                                                   | Push reçu ; aucun envoi pendant fenêtre Shabbat simulée | 🟡 code complet ; push réel et e-mails à valider avec clés VAPID + Resend sur une stack Supabase     |
+| 11  | Évaluations par compétences + livret PDF ; absences                                                                          | Livret PDF généré pour un élève fictif                  | 🟡 code complet ; livret PDF généré en test unitaire, rendu réel à valider sur une stack Supabase    |
+| 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | 🟡 code complet, réservation de créneau testée en pgTAP ; parcours à valider sur une stack Supabase  |
+| 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | 🟡 code complet ; installation à valider sur iOS / Android, Lighthouse mesuré sur le déploiement     |
+| 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | 🟡 code complet ; 2FA et suppression de compte à valider sur une stack Supabase                      |
+| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | 🟡 code et documents complets ; démo à jouer sur une stack Supabase avant la présentation            |
 
 ## Session 1 — détail
 
@@ -459,6 +460,70 @@ Audit UI/UX de la version déployée, puis mise en œuvre des cinq arbitrages va
 - [x] `tests/unit/design-tokens.test.ts` : 47 assertions, dont la séparation des plans et le seuil 3:1
       des bordures de champ
 - [ ] Validation visuelle par le porteur, puis passage en production
+
+## Session 18 — Audit par rôle et corrections (2026-09-10)
+
+Audit systématique des six rôles, écran par écran, sur une stack Supabase réelle (34 migrations, seed
+fictif, PostgreSQL 17, GoTrue / Storage / Realtime), piloté par Playwright en `fr-FR` à 390 px et
+1440 px : **582 visites d'écran**, axe-core sur chacune, plus trois passes complémentaires (parcours de
+tous les liens visibles, profondeur réelle de chaque destination depuis la barre du téléphone, gestes
+clés de chaque rôle joués à la main) et une vérification des droits en SQL sous l'identité de chaque
+rôle. Trente-deux défauts relevés, hiérarchisés, puis corrigés dans l'ordre de gravité.
+
+### Vérifications de la « stack Supabase » rejouées
+
+- [x] **pgTAP sur Supabase** : `pnpm db:test:supabase` — 336 assertions vertes sur les schémas `auth` et
+      `storage` réels, en plus du shim de la CI. Elles échouaient sur 7 assertions de durcissement
+      jusqu'à ADR-0033.
+- [x] **e2e « invitation → 1re connexion »** (definition of done de la session 4) : 28 tests verts
+      contre la stack. Le parcours ne fonctionnait pas — deux causes, corrigées (voir plus bas).
+- [x] `pnpm db:test` réparé : le script s'arrêtait au premier fichier sans `pg_prove`.
+- [ ] Envois Resend et push VAPID : hors de portée sans clés.
+
+### Bloquants corrigés
+
+- [x] Responsable en lecture seule : plus d'onglet ni de lien « Évaluations », plus aucune porte vers la
+      messagerie (onglet, boutons, « Discussion de la classe ») — l'agenda prend l'onglet libéré.
+- [x] Enseignante sur téléphone : l'onglet **École** entre dans la barre ; annonces, documents,
+      formulaires et communauté n'étaient atteignables par aucun chemin (ADR-0036).
+- [x] `is_service_role()` : le privilège suit le contexte de requête, pas le rôle de connexion
+      (ADR-0033) — les garde-fous de durcissement sont enfin vérifiés sur la plateforme.
+- [x] Invitation → 1re connexion : `/auth/session` termine la poignée de main implicite, et les
+      invitations en lot partent en mode implicite au lieu de PKCE, dont le vérificateur restait dans le
+      navigateur de l'expéditeur.
+
+### Gênants corrigés
+
+- [x] Secrétariat : « Import CSV » et « Journal » ne sont plus dessinés pour lui (ADR-0035) ; en
+      contrepartie il peut saisir une absence signalée au téléphone.
+- [x] `/admin` : quatre familles repliées sur téléphone (≈ 830 px gagnés sur douze écrans), et un chiffre
+      vivant par rubrique au lieu d'une copie de la barre latérale.
+- [x] « Tableau de bord » passait à la ligne et débordait de sa colonne : la barre du téléphone dit
+      « Accueil ».
+- [x] Cartes de classe de la direction cliquables ; bouton principal qui nomme sa destination.
+- [x] Accusé de lecture : les annonces qui en attendent un remontent en tête, et l'accueil mène
+      directement à l'annonce quand il n'y en a qu'une.
+- [x] Accessibilité : contraste AA des jours vides du cahier de texte, libellé du champ de pièce jointe,
+      nom accessible de la case « vu », zones défilantes atteignables au clavier, 24 cases de
+      `/notifications/preferences` portées à 44 px, lien logo à 44 px.
+- [x] Seize états vides gagnent une sortie ou une explication ; `HubCard` partout ; « Salle Salle 1 » ;
+      sous-titre de classe passé par next-intl ; 404 qui propose des routes de retour.
+
+### Dette d'exploitation
+
+- [x] **Garde-fou de build** : `scripts/ops/check-bundle.mjs`, exécuté en `postbuild`, échoue quand
+      l'origine Supabase ou la clé anon est absente des bundles client. Le garde existant ne vérifiait
+      que la _présence des variables_ ; celui-ci vérifie la _sortie_.
+- [ ] **Production actuellement cassée** : sur `abracom.vercel.app`, la CSP porte
+      `https://hhmqtavmfgjeacsweasz.supabase.co` (le middleware lit l'environnement d'exécution) alors
+      qu'**aucun bundle client ne contient cette origine** — la signature exacte d'un cache de build
+      réutilisé. Les variables Vercel sont donc bien renseignées ; c'est le build qui est périmé.
+      **À faire par le porteur** : Vercel → Deployments → Redeploy, case « Use existing Build Cache »
+      **décochée**. Le prochain déploiement de cette branche peut échouer en `postbuild` : c'est le
+      garde-fou qui fait son travail.
+- [ ] Resend à brancher, puis décommenter les modèles d'e-mails de `supabase/config.toml` (le gratuit
+      refuse les modèles personnalisés avec l'expéditeur par défaut). Les modèles utilisent déjà le flux
+      token-hash de `/auth/confirm` ; `/auth/session` couvre le flux implicite en attendant.
 
 ## Questions ouvertes (§15 du brief)
 

@@ -473,3 +473,60 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   Le reste est inchangé : bordure de champ à 3,9:1, blanc sur primaire à 9,3:1, texte à 15,7:1. Les jetons de marque `--brand-*` restent les couleurs extraites du logo et ne changent pas ;
   seule leur mise en œuvre change. Les planches d'audit publiées (directions A / B / C) documentent la
   décision précédente et ne sont pas réécrites : cette ADR est la trace de l'arbitrage suivant.
+
+## ADR-0033 — Le rôle de service est un contexte de requête, pas un rôle de connexion
+
+- **Contexte** : `is_service_role()` répondait vrai dès que `session_user` valait `postgres` ou
+  `supabase_admin`. Or `set role authenticated` ne change pas `session_user` : l'éditeur SQL de
+  Supabase, une session psql d'exploitation et surtout `supabase test db` — la façon dont la suite
+  pgTAP s'exécute sur la plateforme — étaient tous traités comme la clé de service. Rejouée sur une
+  vraie stack Supabase (PostgreSQL 17, schémas `auth` et `storage` réels), la suite échouait sur sept
+  assertions de durcissement : `may_inspect`, colonnes de modération, message pré-supprimé,
+  auto-promotion en modérateur, déplacement d'un message, déclenchement du fan-out. En CI elles
+  passaient, parce que la suite s'y connecte sous un rôle applicatif. Les garde-fous n'avaient donc
+  jamais été vérifiés sur la plateforme de production. Une comparaison `current_user = session_user`
+  ne suffit pas : dans une fonction `security definer`, `current_user` redevient le propriétaire.
+- **Décision** : le privilège suit le **contexte de requête**. Une session qui porte un JWT
+  utilisateur n'est « service » que si la revendication le dit ; une session qui n'en porte aucun
+  (pg_cron, migrations, seed, psql d'exploitation) garde son privilège selon son rôle de connexion.
+- **Conséquences** : les 336 assertions pgTAP passent à l'identique sur le shim de la CI et sur une
+  stack Supabase réelle (`pnpm db:test:supabase`). Trois assertions nouvelles fixent la règle dans
+  `011_hardening.sql`. Aucun changement pour PostgREST, qui se connecte en `authenticator` et n'a
+  jamais bénéficié de l'échappatoire.
+
+## ADR-0034 — Une seule inscription ouverte par élève
+
+- **Contexte** : sept écrans lisent `enrollments[0]` — carte d'enfant, fiche famille, liste des
+  classes, annuaire, pôle communauté — pendant que le cahier de texte parcourt toutes les inscriptions.
+  L'index existant ne garantissait l'unicité que **par année scolaire**, et l'assistant de promotion
+  ouvrait l'inscription de l'année suivante _avant_ de clore l'année courante : un élève en détenait
+  donc légitimement deux, sans qu'aucun `order by` ne dise laquelle un parent verrait.
+- **Décision** (arbitrage du porteur) : un élève appartient à **une classe à la fois**. Index unique
+  partiel sur `enrollments (student_id) where left_on is null`.
+- **Conséquences** : `promote_school_year` clôt d'abord et reporte les élèves par la clause
+  `returning`, sinon l'index refuse l'insertion. `enrollments[0]` devient exact partout, et
+  `002_integrity.sql` comme `009_promotion.sql` le vérifient. Un changement de classe en cours d'année
+  se fait donc en deux temps : clore, puis inscrire.
+
+## ADR-0035 — Import CSV et journal d'audit réservés à la direction
+
+- **Contexte** : `docs/QA.md` demandait au secrétariat de réaliser l'import CSV, le code le réservait
+  à `school_admin`, et les deux entrées « Import CSV » et « Journal » figuraient malgré tout dans la
+  barre d'administration du secrétariat — d'où un renvoi silencieux vers l'accueil.
+- **Décision** (arbitrage du porteur) : ces deux rubriques restent **réservées à la direction**. Elles
+  ne sont plus dessinées pour les autres rôles (`adminGroupsFor`), et la recette est corrigée.
+- **Conséquences** : le secrétariat garde dix rubriques sur douze. En contrepartie, la saisie d'absence
+  lui est ouverte dans l'espace de classe — la politique `absences_insert` l'autorisait depuis toujours,
+  seul le formulaire manquait, et c'est lui qui reçoit l'appel téléphonique des familles.
+
+## ADR-0036 — L'onglet École sur le téléphone d'une enseignante, Publier au bureau
+
+- **Contexte** : l'onglet « École » n'existait qu'à partir de `lg`. Sur téléphone, une enseignante
+  n'atteignait ni les annonces, ni les circulaires, ni les formulaires, ni la communauté — le canal
+  officiel direction → école, qui est l'objectif produit n° 1. Vérifié par parcours automatique de
+  tous les liens visibles à 390 px : aucune route, à aucune profondeur.
+- **Décision** : « École » entre dans les cinq onglets de l'enseignante ; « Publier » prend sa place
+  dans la barre de bureau. Publier reste à un geste depuis l'accueil (« Nouveau devoir »), depuis
+  l'espace de classe (« Nouvelle publication ») et depuis le cahier de texte.
+- **Conséquences** : un responsable en lecture seule, qui n'a pas de messagerie, voit l'agenda à la
+  place de l'onglet « Messages » — sa barre reste à cinq destinations utiles.

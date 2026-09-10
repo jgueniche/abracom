@@ -52,6 +52,8 @@ Realtime, Edge Functions) avec **RLS obligatoire sur toutes les tables** · migr
 | `pnpm db:reset`                           | Rejoue migrations + `supabase/seed/*.sql`                                   |
 | `pnpm db:types` / `pnpm db:types:local`   | Génère `lib/supabase/database.types.ts` (stack Supabase / PostgreSQL local) |
 | `pnpm db:test`                            | Migrations + seed + tests pgTAP sur un PostgreSQL local (sans Docker)       |
+| `pnpm db:test:supabase`                   | Rejoue les tests pgTAP sur une stack Supabase déjà démarrée (`db:start`)    |
+| `pnpm ops:check-bundle`                   | Origine Supabase présente dans les bundles client (auto en `postbuild`)     |
 
 Variables : copier `.env.example` vers `.env.local` ; sans Supabase, l'app démarre et ses clients lèvent une erreur explicite.
 
@@ -159,8 +161,22 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   cochant une ou plusieurs classes (`create_group_thread`, `group_target_classes`) ; **sondages dans
   les fils** (`thread_polls`, `poll_votes`, `create_thread_poll`, `vote_in_poll`, `close_poll`), avec
   « Sonder les familles » depuis un événement. Educartable retiré partout. 331 assertions pgTAP.
-- **Suite** : projet Supabase « Kesher » (`hhmqtavmfgjeacsweasz`, Paris) à jour (migrations `20260909*`
-  appliquées) ; renseigner les variables Vercel, brancher Resend puis décommenter les modèles d'e-mails
-  de `config.toml`, rejouer les validations « stack Supabase » de `docs/ROADMAP.md`, dérouler la démo.
-  **Audit global par rôle et par catégorie** demandé pour la prochaine session.
+- **Session 18 — audit par rôle, corrections, validations Supabase rejouées** : 582 visites d'écran
+  pilotées par Playwright sur une stack Supabase réelle, six rôles à 390 px et 1440 px, axe-core sur
+  chacune, plus le parcours de tous les liens visibles, la profondeur réelle de chaque destination sur
+  téléphone, les gestes clés joués à la main et une vérification des droits en SQL sous l'identité de
+  chaque rôle. 32 défauts relevés puis corrigés. Quatre bloquants : le responsable en lecture seule se
+  voyait offrir évaluations et messagerie (ADR-0033 à ADR-0036 pour les arbitrages) ; une enseignante sur
+  téléphone n'atteignait ni les annonces ni les circulaires ; `is_service_role()` accordait le privilège
+  de service à toute session ouverte en `postgres`, ce qui faisait passer en CI sept assertions de
+  durcissement qui échouaient sur Supabase ; et **le parcours « invitation → 1re connexion » ne
+  fonctionnait pas** (session implicite dans le fragment d'URL, et PKCE dont le vérificateur restait chez
+  l'expéditeur). Une seule inscription ouverte par élève est désormais garantie en base. `pnpm db:test`
+  réparé, `pnpm db:test:supabase` ajouté (336 assertions vertes sur les deux chemins), 28 e2e verts
+  contre la stack dont l'invitation. Garde-fou de build `scripts/ops/check-bundle.mjs` en `postbuild` :
+  il échoue si l'origine Supabase ou la clé anon manque des bundles client.
+- **Suite** : **production cassée** — sur `abracom.vercel.app` la CSP porte l'origine Supabase mais aucun
+  bundle client ne la contient : cache de build réutilisé. Redéployer avec « Use existing Build Cache »
+  décochée. Puis brancher Resend et décommenter les modèles d'e-mails de `config.toml`, chronométrer
+  l'import CSV, valider l'upload Storage et le push VAPID, dérouler la démo.
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».
