@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollRegion } from "@/components/domain/scroll-region";
 import { requireSchoolStaff } from "@/lib/auth/guards";
 import { deleteAnnouncement } from "@/server/actions/admin/announcements";
 import {
@@ -119,13 +120,18 @@ export default async function AdminAnnouncementPage({
                   {nonReaders.length === 0 ? (
                     <p className="text-sm text-muted-foreground">{t("allRead")}</p>
                   ) : (
-                    <ul className="max-h-64 overflow-auto text-sm text-muted-foreground">
-                      {nonReaders.map((r) => (
-                        <li key={r.user_id}>
-                          {r.last_name} {r.first_name} · {tRoles(r.role)}
-                        </li>
-                      ))}
-                    </ul>
+                    <ScrollRegion
+                      label={t("nonReaders")}
+                      className="max-h-64 overflow-auto rounded-lg"
+                    >
+                      <ul className="text-sm text-muted-foreground">
+                        {nonReaders.map((r) => (
+                          <li key={r.user_id}>
+                            {r.last_name} {r.first_name} · {tRoles(r.role)}
+                          </li>
+                        ))}
+                      </ul>
+                    </ScrollRegion>
                   )}
                 </div>
               </CardContent>

@@ -51,11 +51,15 @@ Chaque ligne se coche quand le résultat attendu est observé ; noter l'écart s
 
 ## Responsable en lecture seule (`guardian-005`)
 
-- [ ] Voit la classe et les annonces, aucun onglet Évaluations, aucune case « Vu », pas de messagerie,
-      pas de signature de document, pas de formulaire, pas de réservation de créneau
+- [ ] Voit la classe et les annonces, aucun onglet Évaluations ni ligne Évaluations dans « Ma famille »,
+      aucune case « Vu », pas de signature de document, pas de formulaire, pas de réservation de créneau
+- [ ] **Aucune messagerie** : pas d'onglet Messages (l'agenda prend sa place), pas de bouton « Nouveau
+      message », pas de « Discussion de la classe » ; `/messages` saisi à la main renvoie à l'accueil
 
 ## Enseignante (`teacher-ps`)
 
+- [ ] Sur téléphone, la barre du bas porte **École** : annonces, documents, agenda, formulaires et
+      communauté sont à un geste (ADR-0036) ; « Publier » reste dans la barre de bureau
 - [ ] Accueil : classes et résumé de la semaine
 - [ ] Publier : journal avec photos (attestation obligatoire), devoir avec échéance, brouillon, info « équipe »
 - [ ] Identifier un élève sans droit à l'image → refus explicite
@@ -71,10 +75,13 @@ Chaque ligne se coche quand le résultat attendu est observé ; noter l'écart s
 
 - [ ] Familles : recherche, fiche élève, ajout d'un responsable (invitation), droits du responsable ;
       la restriction judiciaire est réservée à la direction (erreur attendue)
-- [ ] Import CSV : modèle, prévisualisation avec erreurs, import de 2 familles fictives
+- [ ] Import CSV et Journal d'audit **absents de sa barre d'administration** : réservés à la direction
+      (ADR-0035). Dix rubriques sur douze
+- [ ] Absences : dans l'espace d'une classe, enregistrer l'absence qu'une famille signale au téléphone
 - [ ] Annonces : rédaction, ciblage par niveau, planification, relance des non-lecteurs, export CSV
 - [ ] Documents : dépôt d'une circulaire à signer, suivi des signatures manquantes
-- [ ] Aucun accès aux évaluations ; modération des petites annonces ; résolution des signalements
+- [ ] Aucun accès aux évaluations, **et aucun onglet Évaluations** dans l'espace de classe ; modération
+      des petites annonces ; résolution des signalements
 
 ## Direction (`admin`)
 
@@ -87,7 +94,11 @@ Chaque ligne se coche quand le résultat attendu est observé ; noter l'écart s
 
 ## Transverses
 
-- [ ] Mobile : cibles tactiles ≥ 44 px, navigation basse, bannière d'installation PWA, page hors ligne
+- [ ] Mobile : cibles tactiles ≥ 44 px (dont les 24 cases de `/notifications/preferences`), navigation
+      basse dont aucun libellé ne passe à la ligne, bannière d'installation PWA, page hors ligne
+- [ ] Chaque écran vide dit ce qui le remplira, et propose l'action quand le rôle en a une
+- [ ] Invitation → 1re connexion : le lien reçu par e-mail ouvre `/bienvenue` dans **n'importe quel**
+      navigateur, pas seulement celui qui a envoyé l'invitation (couvert par `tests/e2e/auth-invitation`)
 - [ ] Mode sombre, contraste, navigation clavier, lien d'évitement
 - [ ] Aide : guides parents / enseignants / direction lisibles et exportables en PDF
 - [ ] Aucune trace technique dans les messages d'erreur ; aucune donnée d'un autre établissement

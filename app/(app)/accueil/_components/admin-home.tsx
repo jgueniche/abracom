@@ -23,6 +23,7 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
   const tFamily = await getTranslations("family");
   const tAdmin = await getTranslations("admin.nav");
   const tDash = await getTranslations("admin.dashboard");
+  const tPublish = await getTranslations("publish");
   const schoolId = user.school?.id;
   if (!schoolId) return <PageHeader title={t("admin.title")} />;
 
@@ -92,7 +93,8 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
               <Link href="/admin/familles">{tAdmin("families")}</Link>
             </Button>
             <Button asChild className="min-h-11">
-              <Link href="/publier">{tAdmin("announcements")}</Link>
+              {/* labelled "Annonces" while it opened the publishing hub */}
+              <Link href="/publier">{tPublish("title")}</Link>
             </Button>
           </>
         }
@@ -156,24 +158,28 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
 
       <h2 className="mb-3">{t("admin.classesTitle")}</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        {/* six inert cards on the opening screen of the direction, while the
+            same cards open the class space from a teacher's home */}
         {classes.map((c) => (
-          <Card key={c.id}>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary">{c.level?.code}</Badge>
-                <span className="text-xs text-muted-foreground">
-                  {t("teacher.students", { count: c.enrollments[0]?.count ?? 0 })}
-                </span>
-              </div>
-              <CardTitle>{c.name}</CardTitle>
-              <CardDescription>
-                {c.class_teachers
-                  .filter((ct) => ct.role === "main" && ct.profile)
-                  .map((ct) => `${ct.profile!.first_name} ${ct.profile!.last_name}`)
-                  .join(", ") || tFamily("teacherRole.main")}
-              </CardDescription>
-            </CardHeader>
-          </Card>
+          <Link key={c.id} href={`/classes/${c.id}`} className="block">
+            <Card className="h-full transition-colors hover:bg-accent/40">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary">{c.level?.code}</Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {t("teacher.students", { count: c.enrollments[0]?.count ?? 0 })}
+                  </span>
+                </div>
+                <CardTitle>{c.name}</CardTitle>
+                <CardDescription>
+                  {c.class_teachers
+                    .filter((ct) => ct.role === "main" && ct.profile)
+                    .map((ct) => `${ct.profile!.first_name} ${ct.profile!.last_name}`)
+                    .join(", ") || tFamily("teacherRole.main")}
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
         ))}
       </div>
     </>

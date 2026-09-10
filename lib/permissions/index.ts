@@ -68,6 +68,29 @@ export function canWriteInSchool(
   return hasSchoolRole(memberships, schoolId, WRITING_ROLES);
 }
 
+/**
+ * Messaging is a writing right (brief §7): a read-only guardian has none of it.
+ * `can_direct_message()` says the same in SQL, so an interface that still shows
+ * the tab and the "New message" button is only offering a locked door.
+ */
+export function canUseMessaging(memberships: readonly MembershipLike[], schoolId: string): boolean {
+  return canWriteInSchool(memberships, schoolId);
+}
+
+/**
+ * Skills assessments (brief §7): the teaching team and the direction record them,
+ * a parent reads the published ones for their own children. The secretariat and
+ * read-only guardians never see them — so neither should the tab that opens them.
+ */
+export const ASSESSMENT_ROLES: readonly MembershipRole[] = ["school_admin", "teacher", "parent"];
+
+export function canSeeAssessments(
+  memberships: readonly MembershipLike[],
+  schoolId: string,
+): boolean {
+  return hasSchoolRole(memberships, schoolId, ASSESSMENT_ROLES);
+}
+
 export function schoolIdsFor(memberships: readonly MembershipLike[]): string[] {
   return [...new Set(activeMemberships(memberships).map((m) => m.schoolId))];
 }

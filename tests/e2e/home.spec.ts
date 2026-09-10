@@ -47,7 +47,7 @@ test.describe("entry points", () => {
     await expect(page.getByLabel("Adresse e-mail")).toBeFocused();
   });
 
-  test("signs in by password first and reports an unreachable backend", async ({ page }) => {
+  test("signs in by password first and reports the failure in French", async ({ page }) => {
     await page.goto("/connexion");
 
     // password is the default mode: no switch to make
@@ -55,8 +55,10 @@ test.describe("entry points", () => {
     await page.getByLabel("Mot de passe").fill("not-the-password");
     await page.getByRole("button", { name: "Se connecter", exact: true }).click();
 
-    // no Supabase behind the test server: unconfigured locally, unreachable in CI
-    await expect(page.locator("#login-error")).toContainText(/disponible/);
+    // Either answer is correct and both are French: no backend behind the test
+    // server (unconfigured locally, unreachable in CI), or a real one refusing
+    // the password. What matters is that the failure is said, in the page.
+    await expect(page.locator("#login-error")).toContainText(/disponible|incorrect/);
     await expect(page).toHaveURL(/\/connexion$/);
 
     await page.getByRole("button", { name: "Recevoir un lien par e-mail" }).click();

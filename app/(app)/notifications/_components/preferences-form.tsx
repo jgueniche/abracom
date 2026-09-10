@@ -31,7 +31,7 @@ export function PreferencesForm({ initial }: { initial: PreferencesInitial }) {
 
   return (
     <form action={action} className="flex flex-col gap-6">
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" tabIndex={0} role="group" aria-label={t("group")}>
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-muted-foreground">
@@ -53,15 +53,19 @@ export function PreferencesForm({ initial }: { initial: PreferencesInitial }) {
                 {CHANNELS.map((channel) => {
                   const disabled = group === "message" && channel === "email";
                   return (
-                    <td key={channel} className="py-2 pr-2 text-center">
-                      <input
-                        type="checkbox"
-                        name={`${group}.${channel}`}
-                        defaultChecked={!disabled && initial.channels[group][channel]}
-                        disabled={disabled}
-                        aria-label={`${t(`groups.${group}.label`)} · ${t(`channels.${channel}`)}`}
-                        className="size-5 accent-primary disabled:opacity-40"
-                      />
+                    <td key={channel} className="p-0 text-center">
+                      {/* 24 boxes of 20 px on the one screen a parent opens to
+                          stop the app notifying them, on a phone, at night */}
+                      <label className="mx-auto flex min-h-11 min-w-11 cursor-pointer items-center justify-center px-2">
+                        <input
+                          type="checkbox"
+                          name={`${group}.${channel}`}
+                          defaultChecked={!disabled && initial.channels[group][channel]}
+                          disabled={disabled}
+                          aria-label={`${t(`groups.${group}.label`)} · ${t(`channels.${channel}`)}`}
+                          className="size-5 accent-primary disabled:opacity-40"
+                        />
+                      </label>
                     </td>
                   );
                 })}

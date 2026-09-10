@@ -1,3 +1,4 @@
+import { BackpackIcon } from "lucide-react";
 import {
   BookOpenIcon,
   CalendarXIcon,
@@ -14,6 +15,7 @@ import { StudentCard } from "@/components/domain/student-card";
 import { PageHeader } from "@/components/layouts/page-header";
 import { EmptyState } from "@/components/domain/empty-state";
 import { requireCurrentUser } from "@/lib/auth/session";
+import { canSeeAssessments } from "@/lib/permissions";
 import { getMyChildren } from "@/server/queries/family";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -44,13 +46,17 @@ export default async function FamilyPage() {
   ]);
   const readOnly =
     user.roles.some((r) => r.role === "guardian") && !user.roles.some((r) => r.role === "parent");
+  // The page announces "no assessments, no messaging" and then offered an
+  // Évaluations row six lines below it.
+  const showAssessments = user.school ? canSeeAssessments(user.roles, user.school.id) : false;
+  const sections = SECTIONS.filter((s) => s.segment !== "evaluations" || showAssessments);
 
   return (
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {readOnly && <p className="mb-4 text-sm text-muted-foreground">{t("readOnly")}</p>}
       {children.length === 0 ? (
-        <EmptyState title={t("noChildren")} />
+        <EmptyState icon={BackpackIcon} title={t("noChildren")} description={t("noChildrenHint")} />
       ) : (
         <div className="grid gap-6 lg:grid-cols-2 2xl:grid-cols-3">
           {children.map((child) => {
@@ -60,7 +66,7 @@ export default async function FamilyPage() {
                 <StudentCard child={child} />
                 {classId && (
                   <ul className="overflow-hidden rounded-xl border border-border bg-card shadow-soft">
-                    {SECTIONS.map(({ segment, key, icon: Icon }) => (
+                    {sections.map(({ segment, key, icon: Icon }) => (
                       <li key={segment} className="border-b border-border/70 last:border-b-0">
                         <Link
                           href={`/classes/${classId}/${segment}`}

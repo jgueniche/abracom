@@ -1,3 +1,4 @@
+import { ClipboardListIcon } from "lucide-react";
 import { CheckCircle2Icon, ChevronRightIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -30,7 +31,7 @@ export default async function FormsPage() {
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {forms.length === 0 ? (
-        <EmptyState title={t("empty")} />
+        <EmptyState icon={ClipboardListIcon} title={t("empty")} description={t("emptyHint")} />
       ) : (
         <ul className="flex flex-col gap-2">
           {forms.map((form) => {

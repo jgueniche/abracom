@@ -179,7 +179,7 @@ export default async function DiaryPage({
       )}
 
       {classIds.length === 0 ? (
-        <EmptyState icon={BookOpenIcon} title={t("noClass")} />
+        <EmptyState icon={BookOpenIcon} title={t("noClass")} description={t("noClassHint")} />
       ) : (
         <>
           <p className="mb-3 text-sm text-muted-foreground">
@@ -206,7 +206,8 @@ export default async function DiaryPage({
                       isToday && !empty && "border-primary/60 ring-1 ring-primary/25",
                       isToday && empty && "border-primary/40",
                       !isToday && !empty && "border-border",
-                      isPast && empty && "opacity-55",
+                      // `opacity-55` over muted text failed the AA contrast ratio
+                      isPast && empty && "border-border/50",
                     )}
                   >
                     <p
@@ -286,12 +287,19 @@ export default async function DiaryPage({
                                           variant={done ? "secondary" : "outline"}
                                           className="min-h-11"
                                           aria-pressed={done}
+                                          aria-label={t("seenFor", { name: child.firstName })}
                                         >
                                           <CheckIcon
                                             aria-hidden
                                             className={cn(!done && "opacity-40")}
                                           />
-                                          {child.firstName}
+                                          {/* the button used to read "Noam" and
+                                              nothing else, so neither the eye nor
+                                              a screen reader could tell what it
+                                              toggled */}
+                                          {allChildren.length > 1
+                                            ? `${t("seen")} · ${child.firstName}`
+                                            : t("seen")}
                                         </Button>
                                       </form>
                                     );

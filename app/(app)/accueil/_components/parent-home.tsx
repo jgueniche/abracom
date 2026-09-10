@@ -30,7 +30,11 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
 
       {/* Something is only worth a red card when something is actually waiting. */}
       {pending.length > 0 ? (
-        <Link href="/annonces" className="group mb-8 block">
+        // One receipt owed: go to it, not to a list of eight to hunt through.
+        <Link
+          href={pending.length === 1 ? `/annonces/${pending[0]!.id}` : "/annonces"}
+          className="group mb-8 block"
+        >
           <Card className="border-brick/40 transition-colors group-hover:bg-accent/40">
             <CardContent className="flex items-center gap-3">
               <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brick/10 text-sm font-semibold text-brick tabular-nums">

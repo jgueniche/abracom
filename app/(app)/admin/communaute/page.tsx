@@ -1,3 +1,4 @@
+import { ShieldCheckIcon } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
@@ -29,7 +30,7 @@ export default async function AdminCommunityPage() {
     <>
       <PageHeader title={t("moderation")} description={t("moderationSubtitle")} />
       {posts.length === 0 ? (
-        <EmptyState title={t("empty")} />
+        <EmptyState icon={ShieldCheckIcon} title={t("empty")} description={t("emptyHint")} />
       ) : (
         <ul className="flex flex-col gap-2">
           {posts.map((post) => (

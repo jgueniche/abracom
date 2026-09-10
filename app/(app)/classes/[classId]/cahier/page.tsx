@@ -1,3 +1,4 @@
+import { ImagesIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { ContentCard, EyebrowDot } from "@/components/domain/content-card";
@@ -8,9 +9,10 @@ import { getClassFeed } from "@/server/queries/class-space";
 
 export default async function JournalPage({ params }: { params: Promise<{ classId: string }> }) {
   const { classId } = await params;
-  const [{ isTeacher, isStaff }, t, format, posts] = await Promise.all([
+  const [{ isTeacher, isStaff }, t, tSpace, format, posts] = await Promise.all([
     requireClassAccess(classId),
     getTranslations("classSpace.journal"),
+    getTranslations("classSpace"),
     getFormatter(),
     getClassFeed(classId, "journal"),
   ]);
@@ -20,7 +22,19 @@ export default async function JournalPage({ params }: { params: Promise<{ classI
     const key = post.published_at!.slice(0, 7);
     months.set(key, [...(months.get(key) ?? []), post]);
   }
-  if (withMedia.length === 0) return <EmptyState title={t("empty")} />;
+  if (withMedia.length === 0)
+    return (
+      <EmptyState
+        icon={ImagesIcon}
+        title={t("empty")}
+        description={t("emptyHint")}
+        action={
+          isTeacher || isStaff
+            ? { href: `/classes/${classId}/publier`, label: tSpace("post.new") }
+            : undefined
+        }
+      />
+    );
 
   return (
     <div className="flex flex-col gap-8">

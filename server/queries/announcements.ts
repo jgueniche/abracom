@@ -29,7 +29,12 @@ export async function getAnnouncementsForUser(userId: string) {
     .order("published_at", { ascending: false })
     .limit(100);
   if (error) throw error;
-  return data.map((row) => withMyRead(row, userId));
+  // A receipt still owed comes first: the home screen counts them, and the
+  // reader used to land on the full list and hunt for the accented card —
+  // seventh of eight on the demonstration data set.
+  const rows = data.map((row) => withMyRead(row, userId));
+  const owed = (a: (typeof rows)[number]) => (a.requires_ack && !a.isAcked ? 0 : 1);
+  return rows.sort((a, b) => owed(a) - owed(b));
 }
 
 export async function getAnnouncement(userId: string, id: string) {

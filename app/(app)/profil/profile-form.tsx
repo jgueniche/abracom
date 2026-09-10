@@ -100,7 +100,10 @@ export function ProfileForm({
           <Label htmlFor="showHebrewDate">{t("hebrewDate")}</Label>
           <p className="text-sm text-muted-foreground">{t("hebrewDateHint")}</p>
         </div>
-        <Switch id="showHebrewDate" name="showHebrewDate" defaultChecked={showHebrewDate} />
+        {/* the switch itself is 32 × 18 px: the padded label around it carries the target */}
+        <label htmlFor="showHebrewDate" className="flex min-h-11 min-w-11 items-center justify-end">
+          <Switch id="showHebrewDate" name="showHebrewDate" defaultChecked={showHebrewDate} />
+        </label>
       </div>
       {state.status !== "idle" && (
         <p

@@ -1,5 +1,6 @@
 import { ArrowLeftIcon, MessageSquarePlusIcon } from "lucide-react";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
@@ -7,6 +8,7 @@ import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
+import { canUseMessaging } from "@/lib/permissions";
 import { openDm } from "@/server/actions/messaging";
 import { getDmContacts } from "@/server/queries/messaging";
 
@@ -16,7 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function NewMessagePage() {
-  await requireCurrentUser();
+  const user = await requireCurrentUser();
+  if (!user.school || !canUseMessaging(user.roles, user.school.id)) redirect("/accueil");
   const [t, tRoles, contacts] = await Promise.all([
     getTranslations("messaging"),
     getTranslations("roles"),

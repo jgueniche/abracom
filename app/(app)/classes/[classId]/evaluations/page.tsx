@@ -1,14 +1,15 @@
-import { FileDownIcon } from "lucide-react";
+import { FileDownIcon, GraduationCapIcon } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
+import { EmptyState } from "@/components/domain/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireClassAccess } from "@/lib/auth/class-access";
 import { localDateKey } from "@/lib/calendar/dates";
 import { TIME_ZONE } from "@/lib/i18n/config";
-import { isSchoolAdmin } from "@/lib/permissions";
+import { canSeeAssessments, isSchoolAdmin } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 import type { AssessmentLevel } from "@/lib/assessments";
 import {
@@ -40,7 +41,7 @@ export default async function AssessmentsPage({
 }) {
   const { classId } = await params;
   const { p } = await searchParams;
-  const [{ user, cls, isTeacher, isStaff, myStudentIds }, t, format, locale] = await Promise.all([
+  const [{ user, cls, isTeacher, myStudentIds }, t, format, locale] = await Promise.all([
     requireClassAccess(classId),
     getTranslations("assessments"),
     getFormatter(),
@@ -48,12 +49,14 @@ export default async function AssessmentsPage({
   ]);
   const isAdmin = isSchoolAdmin(user.roles, cls.school_id);
   const editor = isTeacher || isAdmin;
-  if (isStaff && !editor) return <p className="text-muted-foreground">{t("noAccess")}</p>;
+  // The tab is hidden for these roles (ClassTabs); this guards the direct URL.
+  if (!editor && !canSeeAssessments(user.roles, cls.school_id))
+    return <EmptyState icon={GraduationCapIcon} title={t("noAccess")} />;
 
   const periods = await getAssessmentPeriods(cls.school_id);
   const period =
     periods.find((x) => x.id === p) ?? currentPeriod(periods, localDateKey(new Date(), TIME_ZONE));
-  if (!period) return <p className="text-muted-foreground">{t("noPeriods")}</p>;
+  if (!period) return <EmptyState icon={GraduationCapIcon} title={t("noPeriods")} />;
 
   const [{ skills }, rows, remarks] = await Promise.all([
     getSkillCatalogForClass(classId),

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
+import { isSchoolStaff } from "@/lib/permissions";
 import { getDocumentsForUser, groupByFolder } from "@/server/queries/documents";
 import { getMyChildren } from "@/server/queries/family";
 
@@ -27,12 +28,20 @@ export default async function DocumentsPage() {
     getMyChildren(),
   ]);
   const isParent = user.roles.some((r) => r.role === "parent" && r.status === "active");
+  const canPublish = user.school ? isSchoolStaff(user.roles, user.school.id) : false;
   const groups = groupByFolder(documents);
 
   return (
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      {documents.length === 0 && <EmptyState title={t("empty")} />}
+      {documents.length === 0 && (
+        <EmptyState
+          icon={FileTextIcon}
+          title={t("empty")}
+          description={t("emptyHint")}
+          action={canPublish ? { href: "/admin/documents", label: t("deposit") } : undefined}
+        />
+      )}
       <div className="flex flex-col gap-8">
         {groups.map((group) => (
           <section key={group.name || "none"} className="flex flex-col gap-3">

@@ -261,7 +261,8 @@
       "assistant": "Assistant",
       "specialist": "Specialist"
     },
-    "readOnly": "Read-only access (no assessments, no messaging)."
+    "readOnly": "Read-only access (no assessments, no messaging).",
+    "noChildrenHint": "No child is linked to you yet. The school office can make the link."
   },
   "profile": {
     "title": "My profile",
@@ -323,7 +324,9 @@
       "reports": "Reports",
       "events": "Events",
       "community": "Community posts",
-      "forms": "Forms"
+      "forms": "Forms",
+      "all": "All sections",
+      "subtitle": "The management sections and where each one stands."
     },
     "years": {
       "title": "School years",
@@ -513,7 +516,8 @@
       "action": "Action",
       "entity": "Object",
       "details": "Details",
-      "empty": "No entry."
+      "empty": "No entry.",
+      "emptyHint": "Every administration and moderation action will be recorded here."
     },
     "promotion": {
       "title": "Level promotion",
@@ -584,7 +588,9 @@
     "expiresOn": "Until {date}",
     "back": "All announcements",
     "notFound": "Announcement not found.",
-    "morePhotos": "+{count}"
+    "morePhotos": "+{count}",
+    "emptyHint": "Announcements from the direction and the teaching team will arrive here.",
+    "write": "Write an announcement"
   },
   "documents": {
     "title": "Documents",
@@ -612,7 +618,9 @@
       "outing_authorization": "Outing authorisation",
       "charter": "Charter"
     },
-    "readOnlyGuardian": "Signatures are reserved for parents."
+    "readOnlyGuardian": "Signatures are reserved for parents.",
+    "emptyHint": "Rules, circulars and permissions to sign will be filed here.",
+    "deposit": "Upload a document"
   },
   "notifications": {
     "title": "Notifications",
@@ -647,7 +655,8 @@
       "appointmentCancelled": "An appointment was cancelled",
       "formNew": "To fill in: {title}"
     },
-    "preferences": "Preferences"
+    "preferences": "Preferences",
+    "emptyHint": "Announcements, homework, messages and events will arrive here. Choose what you want to receive."
   },
   "adminAnnouncements": {
     "title": "Announcements",
@@ -724,7 +733,8 @@
     "back": "All announcements",
     "readRatio": "{read} / {total} read",
     "readsCount": "{count, plural, =0 {no reads} one {# read} other {# reads}}",
-    "ackedShort": "{count, plural, =0 {no receipts} one {# receipt} other {# receipts}}"
+    "ackedShort": "{count, plural, =0 {no receipts} one {# receipt} other {# receipts}}",
+    "attachFile": "File to attach"
   },
   "adminDocuments": {
     "title": "Documents",
@@ -837,7 +847,8 @@
       "empty": "No photo yet.",
       "month": "{month}",
       "download": "Download disabled by the school",
-      "photos": "{count, plural, one {# photo} other {# photos}}"
+      "photos": "{count, plural, one {# photo} other {# photos}}",
+      "emptyHint": "Photos and entries from the class journal will appear here, month by month."
     },
     "notes": {
       "title": "Individual notes",
@@ -860,7 +871,9 @@
       "readOn": "Read on {date}",
       "readBy": "{count, plural, =0 {Unread} one {Read by # guardian} other {Read by # guardians}}",
       "from": "From {name}",
-      "for": "For {name}"
+      "for": "For {name}",
+      "emptyHint": "A note from the teacher about your child will appear here, with its read receipt.",
+      "emptyHintTeacher": "Write an individual note from a pupil's file or from the class composer."
     },
     "absences": {
       "title": "Absences and late arrivals",
@@ -891,11 +904,17 @@
       "unjustify": "Unjustified",
       "withFile": "Document attached",
       "period": "{from} → {to}",
-      "readOnly": "Declarations are reserved for parents."
+      "readOnly": "Declarations are reserved for parents.",
+      "record": "Record an absence",
+      "emptyHint": "Absences reported by families and those recorded by the office appear here."
     },
     "seenByTotal": "Seen by {count} / {total}",
     "readMore": "Read more",
-    "actions": "Post actions"
+    "actions": "Post actions",
+    "students": "{count, plural, one {# pupil} other {# pupils}}",
+    "emptyHint": "Your child's class will appear here once the school has enrolled them.",
+    "emptyHintStaff": "Create a class for the current year, then enrol pupils in it.",
+    "manageClasses": "Manage classes"
   },
   "messaging": {
     "title": "Messages",
@@ -1305,7 +1324,8 @@
       "answers": "Answers offered: {answers}",
       "send": "Publish the poll",
       "openThread": "Open the conversation"
-    }
+    },
+    "emptyHint": "Festivals, outings and meetings will appear here once published."
   },
   "notificationPrefs": {
     "title": "Notification preferences",
@@ -1511,7 +1531,8 @@
       "archive": "Withdraw my classified",
       "back": "Back to classifieds",
       "pendingBanner": "Your classified is awaiting review by the school.",
-      "rejectedBanner": "This classified was not approved by the school."
+      "rejectedBanner": "This classified was not approved by the school.",
+      "emptyHint": "Car sharing, lost property, shared childcare: family listings arrive here once reviewed."
     },
     "directory": {
       "title": "Family directory",
@@ -1566,7 +1587,9 @@
       "readOnly": "Your read-only access does not allow booking.",
       "noChild": "None of your children is in this class.",
       "slots": "{count, plural, one {# slot} other {# slots}}",
-      "with": "with {name}"
+      "with": "with {name}",
+      "emptyHint": "Slots opened by the teacher will appear here.",
+      "emptyHintTeacher": "Open slots above so families can book a meeting."
     },
     "forms": {
       "title": "Forms and surveys",
@@ -1597,7 +1620,8 @@
       "childrenDone": "{done} / {total} children",
       "saved": "Form saved.",
       "targetsRequired": "Choose at least one year group, class or person.",
-      "fieldsInvalid": "Check the fields: label required, at least two options for choices."
+      "fieldsInvalid": "Check the fields: label required, at least two options for choices.",
+      "emptyHint": "Questionnaires and forms sent by the school will appear here."
     },
     "admin": {
       "moderation": "Classifieds moderation",
@@ -1641,7 +1665,8 @@
       "submittedAt": "Sent on",
       "noResponses": "No answer yet.",
       "results": "Answers",
-      "open": "Open the form"
+      "open": "Open the form",
+      "emptyHint": "Listings posted by families arrive here for review before publication."
     }
   },
   "search": {
@@ -1658,7 +1683,8 @@
       "community": "Classified",
       "event": "Calendar",
       "document": "Document"
-    }
+    },
+    "emptyHint": "Try another word, or the name of an event, an announcement or a document."
   },
   "pwa": {
     "install": "Install Kesher on this device",
@@ -1759,7 +1785,8 @@
     "formsHint": "Requests from the school that need your answer.",
     "community": "Community",
     "communityHint": "Classifieds, directory and mutual help between families.",
-    "pendingAck": "{count, plural, one {# read receipt pending} other {# read receipts pending}}"
+    "pendingAck": "{count, plural, one {# read receipt pending} other {# read receipts pending}}",
+    "formsToAnswer": "{count, plural, one {# form to fill in} other {# forms to fill in}}"
   },
   "publish": {
     "title": "Publish",
@@ -1800,6 +1827,9 @@
     "allChildren": "All",
     "dueTomorrow": "Due tomorrow",
     "weekCount": "{count, plural, =0 {No homework} one {# piece of homework} other {# pieces of homework}} this week",
-    "newHomework": "New homework"
+    "newHomework": "New homework",
+    "seen": "Seen",
+    "seenFor": "Mark the homework as seen for {name}",
+    "noClassHint": "The homework diary will open as soon as a class is linked to you."
   }
 }

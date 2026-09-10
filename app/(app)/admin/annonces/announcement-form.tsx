@@ -119,7 +119,9 @@ export function AnnouncementForm({
       />
 
       <details className="rounded-xl border p-3">
-        <summary className="cursor-pointer text-sm font-medium">{t("fields.translation")}</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-medium">
+          {t("fields.translation")}
+        </summary>
         <div className="mt-3 flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="titleEn">{t("fields.titleEn")}</Label>

@@ -1,6 +1,6 @@
 -- pgTAP: integrity rules that must hold regardless of role.
 begin;
-select plan(8);
+select plan(9);
 
 select throws_ok(
   $$insert into public.school_years (school_id, label, starts_on, ends_on, is_current)
@@ -40,6 +40,17 @@ select is(
   (select count(*) from pg_tables where schemaname = 'public' and not rowsecurity),
   0::bigint,
   'every public table has row level security enabled'
+);
+
+-- a pupil belongs to one class at a time: the interface reads a single enrolment everywhere
+-- except the diary, so a second open one would silently hide a class from their family
+select throws_ok(
+  $$insert into public.enrollments (student_id, class_id, school_year_id, joined_on)
+    values ('d0000000-0000-4000-8000-000000010001', '00000000-0000-4000-8000-000000000515',
+            '00000000-0000-4000-8000-000000000016', current_date)$$,
+  '23505',
+  null,
+  'a pupil cannot hold two open enrolments at once'
 );
 
 -- signing the image-rights document for a child stamps the student record (family 004 had none)

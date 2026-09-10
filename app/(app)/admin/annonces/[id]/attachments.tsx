@@ -8,6 +8,7 @@ import { ActionMessage } from "@/components/forms/action-message";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { idle } from "@/server/actions/admin/_shared-client";
 import { deleteAttachment, uploadAttachment } from "@/server/actions/admin/announcements";
 
@@ -34,7 +35,13 @@ export function Attachments({
             </span>
             <form action={deleteAttachment}>
               <input type="hidden" name="attachmentId" value={f.id} />
-              <Button type="submit" variant="ghost" size="icon" aria-label={t("detach")}>
+              <Button
+                type="submit"
+                variant="ghost"
+                size="icon"
+                className="size-11"
+                aria-label={t("detach")}
+              >
                 <XIcon />
               </Button>
             </form>
@@ -43,7 +50,9 @@ export function Attachments({
       </ul>
       <form action={action} className="flex flex-col gap-2">
         <input type="hidden" name="id" value={announcementId} />
-        <Input name="file" type="file" required className="min-h-11" />
+        {/* the file field had no name at all for a screen reader (axe, critical) */}
+        <Label htmlFor="attachment-file">{t("attachFile")}</Label>
+        <Input id="attachment-file" name="file" type="file" required className="min-h-11" />
         <div className="flex items-center gap-3">
           <SubmitButton variant="outline" size="sm" className="min-h-11">
             {t("attach")}

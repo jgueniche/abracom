@@ -1,4 +1,4 @@
-import { PlusIcon } from "lucide-react";
+import { MegaphoneIcon, PlusIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -85,7 +85,12 @@ export default async function ClassifiedsPage({
         ))}
       </nav>
       {posts.length === 0 ? (
-        <EmptyState title={t("empty")} />
+        <EmptyState
+          icon={MegaphoneIcon}
+          title={t("empty")}
+          description={t("emptyHint")}
+          action={canPost ? { href: "/communaute/annonces/nouvelle", label: t("new") } : undefined}
+        />
       ) : (
         <ul className="flex flex-col gap-3">
           {posts.map((post) => (

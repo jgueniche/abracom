@@ -17,78 +17,90 @@ import { getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/components/layouts/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { requireSchoolStaff } from "@/lib/auth/guards";
+import { isSchoolAdmin } from "@/lib/permissions";
+import { getAdminCounts } from "@/server/queries/school";
+
+import { adminGroupsFor } from "./_components/groups";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin");
   return { title: t("title") };
 }
 
-const GROUPS = [
-  {
-    key: "publications",
-    items: [
-      { href: "/admin/annonces", key: "announcements", icon: MegaphoneIcon },
-      { href: "/admin/documents", key: "documents", icon: FolderIcon },
-      { href: "/admin/evenements", key: "events", icon: CalendarDaysIcon },
-      { href: "/admin/formulaires", key: "forms", icon: ClipboardListIcon },
-    ],
-  },
-  {
-    key: "people",
-    items: [
-      { href: "/admin/familles", key: "families", icon: UsersRoundIcon },
-      { href: "/admin/classes", key: "classes", icon: GraduationCapIcon },
-      { href: "/admin/utilisateurs", key: "members", icon: UsersIcon },
-      { href: "/admin/import", key: "import", icon: UploadIcon },
-    ],
-  },
-  {
-    key: "moderation",
-    items: [
-      { href: "/admin/signalements", key: "reports", icon: ShieldAlertIcon },
-      { href: "/admin/communaute", key: "community", icon: MegaphoneIcon },
-    ],
-  },
-  {
-    key: "year",
-    items: [
-      { href: "/admin/annees", key: "years", icon: FileTextIcon },
-      { href: "/admin/journal", key: "audit", icon: HistoryIcon },
-    ],
-  },
-] as const;
+const ICONS: Record<string, typeof MegaphoneIcon> = {
+  announcements: MegaphoneIcon,
+  documents: FolderIcon,
+  events: CalendarDaysIcon,
+  forms: ClipboardListIcon,
+  families: UsersRoundIcon,
+  classes: GraduationCapIcon,
+  members: UsersIcon,
+  import: UploadIcon,
+  reports: ShieldAlertIcon,
+  community: MegaphoneIcon,
+  years: FileTextIcon,
+  audit: HistoryIcon,
+};
+
+/** Entries whose figure means "something is waiting", not "here is the stock". */
+const WAITING = new Set(["reports", "community"]);
 
 /**
- * Landing page of the management section. `/admin` used to redirect straight
- * to Families, so the section had no home and no map of what it contains.
+ * Landing page of the management section.
+ *
+ * It used to repeat the twelve links of the sidebar shown right beside it, under
+ * the same four family names, with a subtitle borrowed from the dashboard —
+ * "what is waiting for a decision today" — while nothing on it was a queue.
+ * Each entry now carries its own live figure, so the page says something the
+ * navigation cannot.
  */
 export default async function AdminIndexPage() {
-  const [t, tNav, tGroups] = await Promise.all([
+  const { user, schoolId } = await requireSchoolStaff();
+  const [t, tNav, tGroups, counts] = await Promise.all([
     getTranslations("admin"),
     getTranslations("admin.nav"),
     getTranslations("admin.groups"),
+    getAdminCounts(schoolId),
   ]);
+  const groups = adminGroupsFor(isSchoolAdmin(user.roles, schoolId));
 
   return (
     <>
-      <PageHeader title={t("title")} description={t("dashboard.subtitle")} />
+      <PageHeader title={t("title")} description={t("nav.subtitle")} />
       <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
-        {GROUPS.map((group) => (
+        {groups.map((group) => (
           <Card key={group.key}>
             <CardHeader>
               <CardTitle>{tGroups(group.key)}</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-1">
-              {group.items.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-                >
-                  <item.icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-                  {tNav(item.key)}
-                </Link>
-              ))}
+              {group.items.map((item) => {
+                const Icon = ICONS[item.key] ?? FileTextIcon;
+                const count = counts[item.key];
+                const waiting = WAITING.has(item.key) && (count ?? 0) > 0;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                    <span className="min-w-0 flex-1 truncate">{tNav(item.key)}</span>
+                    {count !== undefined && (
+                      <span
+                        className={
+                          waiting
+                            ? "text-sm font-semibold text-brick tabular-nums"
+                            : "text-sm text-muted-foreground tabular-nums"
+                        }
+                      >
+                        {count}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
             </CardContent>
           </Card>
         ))}

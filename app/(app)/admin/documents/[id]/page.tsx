@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollRegion } from "@/components/domain/scroll-region";
 import { requireSchoolStaff } from "@/lib/auth/guards";
 import { isSchoolAdmin } from "@/lib/permissions";
 import { deleteDocument, publishDocument } from "@/server/actions/admin/documents";
@@ -83,7 +84,7 @@ export default async function AdminDocumentPage({ params }: { params: Promise<{ 
             {missing.length === 0 ? (
               <p className="text-sm">{t("allSigned")}</p>
             ) : (
-              <div className="overflow-x-auto rounded-xl border">
+              <ScrollRegion label={t("signatures")} className="overflow-x-auto rounded-xl border">
                 <table className="w-full text-sm">
                   <thead className="bg-muted/50 text-left">
                     <tr>
@@ -106,7 +107,7 @@ export default async function AdminDocumentPage({ params }: { params: Promise<{ 
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </ScrollRegion>
             )}
           </CardContent>
         </Card>

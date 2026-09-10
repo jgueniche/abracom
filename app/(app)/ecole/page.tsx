@@ -64,7 +64,9 @@ export default async function SchoolPage() {
           icon={ClipboardListIcon}
           title={t("forms")}
           hint={t("formsHint")}
-          meta={toAnswer > 0 ? String(toAnswer) : undefined}
+          // a bare digit where the card beside it writes a sentence
+          meta={toAnswer > 0 ? t("formsToAnswer", { count: toAnswer }) : undefined}
+          urgent={toAnswer > 0}
         />
         <HubCard
           href="/communaute"

@@ -1,6 +1,6 @@
 -- pgTAP: rules added by the hardening migrations (20260908172400 / 172500).
 begin;
-select plan(40);
+select plan(43);
 
 create or replace function pg_temp.login(uid uuid, aal text default 'aal2') returns void language plpgsql as $$
 begin
@@ -47,6 +47,20 @@ select is(public.is_school_admin(:school), true, 'the same administrator with aa
 select ok((select count(*) from public.audit_log) > 0, 'and reads the audit log');
 select pg_temp.owner();
 update public.schools set modules = modules - 'security' where id = :school;
+
+-- ── the service role is a request context, not a login role ──────────────────
+-- `set role authenticated` leaves `session_user` alone, so keying the service privilege off the
+-- login role handed it to every session opened as `postgres` — the SQL editor, an ops psql, and
+-- `supabase test db` itself, which is what made the assertions below pass in CI and fail on Supabase.
+select pg_temp.login(:parent1);
+select is(public.is_service_role(), false, 'a session carrying a user JWT is never the service role, whatever it connected as');
+select is(public.is_privileged_context(), false, 'nor a privileged context');
+select pg_temp.owner();
+select is(
+  public.is_service_role(),
+  session_user in ('postgres', 'supabase_admin'),
+  'without a request context the login role decides (pg_cron, migrations, seed keep their privilege)'
+);
 
 -- ── helpers answering about other users ────────────────────────────────────────
 select pg_temp.login(:parent1);

@@ -1,3 +1,4 @@
+import { BellIcon } from "lucide-react";
 import { CheckCheckIcon, SettingsIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -48,7 +49,12 @@ export default async function NotificationsPage() {
         }
       />
       {notifications.length === 0 ? (
-        <EmptyState title={t("empty")} />
+        <EmptyState
+          icon={BellIcon}
+          title={t("empty")}
+          description={t("emptyHint")}
+          action={{ href: "/notifications/preferences", label: t("preferences") }}
+        />
       ) : (
         <ul className="flex flex-col gap-2">
           {notifications.map((n) => {

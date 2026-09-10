@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "lucide-react";
+import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
@@ -186,7 +186,12 @@ export default async function AgendaPage({
       </div>
 
       {keys.length === 0 ? (
-        <EmptyState title={t("empty")} />
+        <EmptyState
+          icon={CalendarDaysIcon}
+          title={t("empty")}
+          description={t("emptyHint")}
+          action={canEdit ? { href: "/agenda/nouveau", label: t("new") } : undefined}
+        />
       ) : (
         <ol className="flex flex-col gap-5">
           {keys.map((key) => {

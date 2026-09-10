@@ -1,4 +1,4 @@
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, MessageSquareTextIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
@@ -43,7 +43,13 @@ export default async function NotesPage({ params }: { params: Promise<{ classId:
           </CardContent>
         </Card>
       )}
-      {total === 0 && <EmptyState title={t("empty")} />}
+      {total === 0 && (
+        <EmptyState
+          icon={MessageSquareTextIcon}
+          title={t("empty")}
+          description={canWrite ? t("emptyHintTeacher") : t("emptyHint")}
+        />
+      )}
       {notesByStudent
         .filter((s) => s.notes.length > 0)
         .map(({ student, notes }) => (
