@@ -514,13 +514,15 @@ rôle. Trente-deux défauts relevés, hiérarchisés, puis corrigés dans l'ordr
 - [x] **Garde-fou de build** : `scripts/ops/check-bundle.mjs`, exécuté en `postbuild`, échoue quand
       l'origine Supabase ou la clé anon est absente des bundles client. Le garde existant ne vérifiait
       que la _présence des variables_ ; celui-ci vérifie la _sortie_.
-- [ ] **Production actuellement cassée** : sur `abracom.vercel.app`, la CSP porte
-      `https://hhmqtavmfgjeacsweasz.supabase.co` (le middleware lit l'environnement d'exécution) alors
-      qu'**aucun bundle client ne contient cette origine** — la signature exacte d'un cache de build
-      réutilisé. Les variables Vercel sont donc bien renseignées ; c'est le build qui est périmé.
-      **À faire par le porteur** : Vercel → Deployments → Redeploy, case « Use existing Build Cache »
-      **décochée**. Le prochain déploiement de cette branche peut échouer en `postbuild` : c'est le
-      garde-fou qui fait son travail.
+- [ ] **État de la production : à vérifier, pas établi.** Un premier diagnostic concluait que le bundle
+      client ne contenait pas l'origine Supabase. Il était faux : il ne lisait que les chunks référencés
+      par `/connexion`, alors que la configuration n'est compilée que dans le chunk de la conversation
+      temps réel (`app/(app)/messages/[threadId]`), le seul écran qui utilise le client navigateur. Deux
+      faits tiennent : les variables Vercel sont bien renseignées (la CSP porte l'origine, et le garde de
+      `next.config.ts` aurait arrêté le build sinon), et le seul symptôme possible serait l'ouverture
+      d'une conversation, la connexion passant par des Server Actions. **À faire par le porteur** :
+      ouvrir une conversation sur `abracom.vercel.app`. Si elle affiche l'écran d'erreur, redéployer avec
+      « Use existing Build Cache » décochée ; `check-bundle` arrêtera désormais un tel build.
 - [ ] Resend à brancher, puis décommenter les modèles d'e-mails de `supabase/config.toml` (le gratuit
       refuse les modèles personnalisés avec l'expéditeur par défaut). Les modèles utilisent déjà le flux
       token-hash de `/auth/confirm` ; `/auth/session` couvre le flux implicite en attendant.
