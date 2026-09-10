@@ -220,7 +220,17 @@
       "pendingAcks": "{count, plural, =0 {Aucune annonce à confirmer} one {# annonce à confirmer} other {# annonces à confirmer}}",
       "pendingHint": "Ouvrir les annonces à confirmer.",
       "seeFamily": "Voir ma famille",
-      "childrenHint": "Ouvrir l'espace de la classe : devoirs, cahier de vie, mots et absences."
+      "childrenHint": "Ouvrir l'espace de la classe : devoirs, cahier de vie, mots et absences.",
+      "today": "Aujourd'hui",
+      "todayKinds": {
+        "homework": "À préparer",
+        "note": "Mot",
+        "signature": "À signer",
+        "event": "Aujourd'hui",
+        "attendance": "Pointage",
+        "ack": "À confirmer"
+      },
+      "todayNothing": "Rien n'attend de vous aujourd'hui."
     },
     "teacher": {
       "title": "Mes classes",
@@ -999,7 +1009,10 @@
       "from": "De {name}",
       "for": "Pour {name}",
       "emptyHint": "Un mot de l'enseignant·e vous concernant apparaîtra ici, avec son accusé de lecture.",
-      "emptyHintTeacher": "Écrivez un mot individuel depuis la fiche d'un élève ou depuis le composeur de la classe."
+      "emptyHintTeacher": "Écrivez un mot individuel depuis la fiche d'un élève ou depuis le composeur de la classe.",
+      "praiseTitle": "Envoyer un bravo",
+      "praiseHint": "Une tape sur un prénom envoie « {sentence} » à sa famille. Pour en dire plus, utilisez le formulaire ci-dessous.",
+      "praiseBody": "Bravo !"
     },
     "absences": {
       "title": "Absences et retards",

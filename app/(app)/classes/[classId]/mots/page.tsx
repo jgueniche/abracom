@@ -11,6 +11,7 @@ import { markNoteRead } from "@/server/actions/individual-notes";
 import { getIndividualNotesForStudents } from "@/server/queries/class-space";
 
 import { NoteForm } from "./note-form";
+import { PraiseRow } from "./praise-row";
 
 export default async function NotesPage({ params }: { params: Promise<{ classId: string }> }) {
   const { classId } = await params;
@@ -27,6 +28,16 @@ export default async function NotesPage({ params }: { params: Promise<{ classId:
 
   return (
     <div className="flex flex-col gap-6">
+      {canWrite && (
+        <PraiseRow
+          classId={classId}
+          students={cls.students.map((s) => ({
+            id: s.id,
+            firstName: s.first_name,
+            lastName: s.last_name,
+          }))}
+        />
+      )}
       {canWrite && (
         <Card>
           <CardHeader>

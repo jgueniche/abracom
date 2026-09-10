@@ -220,7 +220,17 @@
       "pendingAcks": "{count, plural, =0 {No announcement to confirm} one {# announcement to confirm} other {# announcements to confirm}}",
       "pendingHint": "Open the announcements to confirm.",
       "seeFamily": "See my family",
-      "childrenHint": "Open the class space: homework, journal, notes and absences."
+      "childrenHint": "Open the class space: homework, journal, notes and absences.",
+      "today": "Today",
+      "todayKinds": {
+        "homework": "To prepare",
+        "note": "Note",
+        "signature": "To sign",
+        "event": "Today",
+        "attendance": "Attendance",
+        "ack": "To acknowledge"
+      },
+      "todayNothing": "Nothing needs you today."
     },
     "teacher": {
       "title": "My classes",
@@ -999,7 +1009,10 @@
       "from": "From {name}",
       "for": "For {name}",
       "emptyHint": "A note from the teacher about your child will appear here, with its read receipt.",
-      "emptyHintTeacher": "Write an individual note from a pupil's file or from the class composer."
+      "emptyHintTeacher": "Write an individual note from a pupil's file or from the class composer.",
+      "praiseTitle": "Send a well done",
+      "praiseHint": "One tap on a first name sends “{sentence}” to their family. To say more, use the form below.",
+      "praiseBody": "Well done!"
     },
     "absences": {
       "title": "Absences and late arrivals",
