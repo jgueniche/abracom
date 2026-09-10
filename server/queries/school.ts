@@ -69,6 +69,7 @@ export async function getAdminCounts(schoolId: string): Promise<AdminCounts> {
     classifieds,
     years,
     audit,
+    messaging,
   ] = await Promise.all([
     supabase
       .from("announcements")
@@ -93,6 +94,13 @@ export async function getAdminCounts(schoolId: string): Promise<AdminCounts> {
       .eq("status", "pending"),
     supabase.from("school_years").select("id", head).eq("school_id", schoolId),
     supabase.from("audit_log").select("id", head).eq("school_id", schoolId),
+    // Periods running right now: the figure that says "something is shut".
+    supabase
+      .from("messaging_windows")
+      .select("id", head)
+      .eq("school_id", schoolId)
+      .lte("opens_at", new Date().toISOString())
+      .gt("closes_at", new Date().toISOString()),
   ]);
 
   return {
@@ -107,5 +115,6 @@ export async function getAdminCounts(schoolId: string): Promise<AdminCounts> {
     community: classifieds.count ?? 0,
     years: years.count ?? 0,
     audit: audit.count ?? 0,
+    messaging: messaging.count ?? 0,
   };
 }

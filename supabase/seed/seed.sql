@@ -524,6 +524,22 @@ from generate_series(1, 8) as i;
 update public.appointment_slots set booked_by = pg_temp.person_uid('c', 1, 1), student_id = pg_temp.person_uid('d', 1, 1), booked_at = now() - interval '2 days'
 where id = pg_temp.uid('0', 3584 + 2);
 
+-- attendance (session 19): two fictional lists so the pointeuse has something to
+-- show on a demo — an evening after-school club open to the families, and the
+-- morning roll call of one class, which stays inside the team (ADR-0039).
+insert into public.attendance_lists (id, school_id, kind, name, code, class_ids, weekdays, records_pickup, visible_to_guardians, created_by)
+values
+  (pg_temp.uid('0', 1792 + 1), pg_temp.uid('0', 1), 'service', 'Périscolaire du soir', 'garderie_soir',
+   array[pg_temp.uid('0', 512 + 1), pg_temp.uid('0', 512 + 2), pg_temp.uid('0', 512 + 3)],
+   array[1, 2, 4, 5]::smallint[], true, true, pg_temp.uid('a', 1));
+insert into public.attendance_lists (id, school_id, kind, name, class_id, weekdays, records_pickup, visible_to_guardians, created_by)
+values
+  (pg_temp.uid('0', 1792 + 2), pg_temp.uid('0', 1), 'class_roll', 'Appel du matin', pg_temp.uid('0', 512 + 2),
+   array[1, 2, 3, 4, 5]::smallint[], false, false, pg_temp.uid('a', 1));
+-- the evening supervisor is the secretariat account, granted this one list only
+insert into public.attendance_list_managers (list_id, user_id, added_by)
+values (pg_temp.uid('0', 1792 + 1), pg_temp.uid('a', 2), pg_temp.uid('a', 1));
+
 -- cleanup helpers
 drop function pg_temp.create_user(uuid, text, text, text, text, text);
 drop function pg_temp.person_uid(text, int, int);

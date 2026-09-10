@@ -1,24 +1,56 @@
-import { CheckCircle2Icon, ChevronRightIcon } from "lucide-react";
+import {
+  BellRingIcon,
+  BookOpenIcon,
+  CalendarDaysIcon,
+  CheckCircle2Icon,
+  ChevronRightIcon,
+  FileSignatureIcon,
+  MessageSquareTextIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { ChildClassCard } from "@/components/domain/child-class-card";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import type { CurrentUser } from "@/lib/auth/session";
 
 import { UpcomingEvents } from "@/app/(app)/agenda/_components/upcoming-events";
 import { getPendingAcknowledgements } from "@/server/queries/announcements";
 import { getMyChildren } from "@/server/queries/family";
+import { type TodayItem, getTodayForParent } from "@/server/queries/today";
+
+const TODAY_ICONS = {
+  ack: BellRingIcon,
+  homework: BookOpenIcon,
+  note: MessageSquareTextIcon,
+  signature: FileSignatureIcon,
+  event: CalendarDaysIcon,
+  attendance: CheckCircle2Icon,
+} as const;
 
 export async function ParentHome({ user }: { user: CurrentUser }) {
-  const [t, format, children, pending] = await Promise.all([
+  const [t, format, children, pending, today] = await Promise.all([
     getTranslations("appHome"),
     getFormatter(),
     getMyChildren(),
     getPendingAcknowledgements(user.id),
+    getTodayForParent(user.id, user.school?.timezone ?? "Europe/Paris"),
   ]);
+
+  // A receipt owed is the most "today" thing there is, so it heads the list;
+  // one owed receipt still goes straight to its announcement, not to a list.
+  const items: TodayItem[] = [
+    ...pending.map((announcement) => ({
+      key: `ack-${announcement.id}`,
+      kind: "ack" as const,
+      title: announcement.title,
+      detail: null,
+      href: `/annonces/${announcement.id}`,
+      urgent: true,
+    })),
+    ...today,
+  ];
 
   return (
     <>
@@ -28,35 +60,60 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
         description={t("parent.title")}
       />
 
-      {/* Something is only worth a red card when something is actually waiting. */}
-      {pending.length > 0 ? (
-        // One receipt owed: go to it, not to a list of eight to hunt through.
-        <Link
-          href={pending.length === 1 ? `/annonces/${pending[0]!.id}` : "/annonces"}
-          className="group mb-8 block"
-        >
-          <Card className="border-brick/40 transition-colors group-hover:bg-accent/40">
-            <CardContent className="flex items-center gap-3">
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brick/10 text-sm font-semibold text-brick tabular-nums">
-                {pending.length}
-              </span>
-              <div className="flex min-w-0 flex-col">
-                <p className="font-medium">{t("parent.pendingAcks", { count: pending.length })}</p>
-                <p className="text-sm text-muted-foreground">{t("parent.pendingHint")}</p>
-              </div>
-              <ChevronRightIcon
-                className="ml-auto size-5 shrink-0 text-muted-foreground"
-                aria-hidden
-              />
-            </CardContent>
-          </Card>
-        </Link>
-      ) : (
-        <p className="mb-8 flex items-center gap-2 text-sm text-muted-foreground">
-          <CheckCircle2Icon className="size-4 text-success" aria-hidden />
-          {t("parent.pendingAcks", { count: 0 })}
-        </p>
-      )}
+      {/* The acknowledgement card used to sit on its own above the list, and it
+          is a "today" item like the others: one block, not two. */}
+      {/* "Qu'est-ce que je dois savoir aujourd'hui ?" — the only question this
+          page has to answer. Everything that merely exists comes after it. */}
+      <section className="mb-8">
+        <h2 className="mb-3">{t("parent.today")}</h2>
+        {items.length === 0 ? (
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
+            <CheckCircle2Icon className="size-4 text-success" aria-hidden />
+            {t("parent.todayNothing")}
+          </p>
+        ) : (
+          <ul className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
+            {items.map((item) => {
+              const Icon = TODAY_ICONS[item.kind];
+              return (
+                <li key={item.key} className="border-b border-border/70 last:border-b-0">
+                  <Link
+                    href={item.href}
+                    className="flex min-h-14 items-center gap-3 px-4 py-2 hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <Icon
+                      className={
+                        item.urgent
+                          ? "size-5 shrink-0 text-brick"
+                          : "size-5 shrink-0 text-muted-foreground"
+                      }
+                      aria-hidden
+                    />
+                    <span className="flex min-w-0 flex-col">
+                      <span className="truncate text-sm font-medium">
+                        <span className="text-muted-foreground">
+                          {t(`parent.todayKinds.${item.kind}`)}
+                        </span>
+                        {" · "}
+                        {item.title}
+                      </span>
+                      {item.detail && (
+                        <span className="truncate text-xs text-muted-foreground">
+                          {item.detail}
+                        </span>
+                      )}
+                    </span>
+                    <ChevronRightIcon
+                      className="ml-auto size-4 shrink-0 text-muted-foreground"
+                      aria-hidden
+                    />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
 
       <div className="grid gap-8 2xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <section>

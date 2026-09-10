@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { NewHomeworkButton } from "@/components/domain/new-homework-button";
+import { AttendanceToday } from "@/components/domain/attendance-today";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +39,7 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
           />
         }
       />
+      <AttendanceToday />
       {classes.length === 0 ? (
         <p className="text-muted-foreground">{t("teacher.noClasses")}</p>
       ) : (

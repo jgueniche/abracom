@@ -155,3 +155,58 @@ export async function getOpenReports(schoolId: string) {
   if (error) throw error;
   return data ?? [];
 }
+
+// ── The direction's tap (session 19, chantier A) ─────────────────────────────
+
+/** Whether this reader may still write in the thread, and when it opens again. */
+export async function getThreadMessagingState(threadId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("thread_messaging_state", { thread_: threadId });
+  if (error) throw error;
+  const state = (data ?? {}) as {
+    open?: boolean;
+    reopensAt?: string | null;
+    closesAt?: string | null;
+    governed?: boolean;
+  };
+  return {
+    open: state.open !== false,
+    reopensAt: state.reopensAt ?? null,
+    closesAt: state.closesAt ?? null,
+    governed: state.governed === true,
+  };
+}
+
+export async function getMessagingWindows(schoolId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("messaging_windows")
+    .select(
+      `id, scope, kind, class_id, target_user_id, opens_at, closes_at, note,
+       class:classes ( id, name ),
+       target:profiles!messaging_windows_target_profile_fkey ( id, first_name, last_name )`,
+    )
+    .eq("school_id", schoolId)
+    .order("opens_at", { ascending: false })
+    .limit(60);
+  if (error) throw error;
+  return data ?? [];
+}
+
+export type MessagingWindow = Awaited<ReturnType<typeof getMessagingWindows>>[number];
+
+/** One row per class channel: its state, and whether a teacher reopened it. */
+export async function getMessagingChannels(schoolId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("messaging_channels", { school_: schoolId });
+  if (error) throw error;
+  return data ?? [];
+}
+
+/** Messages written by parents, by week and by channel, over the last `weeks` weeks. */
+export async function getMessagingLoad(schoolId: string, weeks = 8) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("messaging_load", { school_: schoolId, weeks });
+  if (error) throw error;
+  return data ?? [];
+}

@@ -175,6 +175,19 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   réparé, `pnpm db:test:supabase` ajouté (336 assertions vertes sur les deux chemins), 28 e2e verts
   contre la stack dont l'invitation. Garde-fou de build `scripts/ops/check-bundle.mjs` en `postbuild` :
   il échoue si l'origine Supabase ou la clé anon manque des bundles client.
+- **Session 19 — code complet, joué à la main sur une stack Supabase réelle** : (A) **robinet du
+  dialogue** — interrupteur d'école `modules.messaging.parentToStaff` (`open`/`closed`/`scheduled`)
+  avec ses publics, table `messaging_windows` (une période ouvre **ou** ferme, resserrable sur une
+  classe ou une personne), application **par les RLS** via `can_post_in_thread` et
+  `can_direct_message`, bouton « Annonce seule » de l'enseignant et dérogation auditée (ADR-0038),
+  phrase honnête au parent avec date de réouverture et contact d'urgence, `/admin/messagerie` avec un
+  interrupteur par ligne et la charge sur huit semaines, « heures de réponse » remplacée par un fait
+  (ADR-0037). (B) **pointeuse** (ADR-0039) — `attendance_lists` / `attendance_sessions` /
+  `attendance_records`, droit de pointer accordé liste par liste, « qui récupère » limité aux
+  responsables autorisés et refusé en base sous restriction judiciaire, grille à grandes vignettes,
+  **file hors ligne** rejouée dans l'ordre, liste d'une sortie créée depuis l'agenda, export CSV,
+  rétention 12 mois. (C) **rabot** — bloc « Aujourd'hui » sur l'accueil du parent (la carte d'accusés
+  de lecture y est repliée), « Bravo » d'une tape. 405 assertions pgTAP vertes sur les deux chemins.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
@@ -182,5 +195,7 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   référencés par `/connexion`, où l'origine Supabase n'a aucune raison de figurer. Le garde-fou
   `check-bundle` balaie tout `.next/static` et arrêtera un build de ce genre s'il se produit un jour.
 - **Suite** : brancher Resend et décommenter les modèles d'e-mails de `config.toml`, chronométrer
-  l'import CSV, valider l'upload Storage et le push VAPID, dérouler la démo.
+  l'import CSV, valider l'upload Storage et le push VAPID, dérouler la démo. Trois écarts avec
+  Educartable retenus et chiffrés (emploi du temps, mot d'excuse signable, suivi des retards) :
+  voir `docs/ROADMAP.md`, section « Écarts avec Educartable ».
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

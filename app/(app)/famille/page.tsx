@@ -11,6 +11,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { ChildAttendance } from "@/components/domain/child-attendance";
 import { StudentCard } from "@/components/domain/student-card";
 import { PageHeader } from "@/components/layouts/page-header";
 import { EmptyState } from "@/components/domain/empty-state";
@@ -64,6 +65,7 @@ export default async function FamilyPage() {
             return (
               <div key={child.student.id} className="flex flex-col gap-3">
                 <StudentCard child={child} />
+                <ChildAttendance studentId={child.student.id} />
                 {classId && (
                   <ul className="overflow-hidden rounded-xl border border-border bg-card shadow-soft">
                     {sections.map(({ segment, key, icon: Icon }) => (

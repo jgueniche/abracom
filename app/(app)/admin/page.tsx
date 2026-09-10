@@ -1,11 +1,13 @@
 import {
   CalendarDaysIcon,
+  ClipboardCheckIcon,
   ClipboardListIcon,
   FileTextIcon,
   FolderIcon,
   GraduationCapIcon,
   HistoryIcon,
   MegaphoneIcon,
+  RadioIcon,
   ShieldAlertIcon,
   UploadIcon,
   UsersIcon,
@@ -37,14 +39,16 @@ const ICONS: Record<string, typeof MegaphoneIcon> = {
   classes: GraduationCapIcon,
   members: UsersIcon,
   import: UploadIcon,
+  attendance: ClipboardCheckIcon,
   reports: ShieldAlertIcon,
   community: MegaphoneIcon,
+  messaging: RadioIcon,
   years: FileTextIcon,
   audit: HistoryIcon,
 };
 
 /** Entries whose figure means "something is waiting", not "here is the stock". */
-const WAITING = new Set(["reports", "community"]);
+const WAITING = new Set(["reports", "community", "messaging"]);
 
 /**
  * Landing page of the management section.

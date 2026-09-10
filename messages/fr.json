@@ -45,7 +45,8 @@
     "publish": "Publier",
     "manage": "Gestion",
     "unreadMessages": "Messages : {count, plural, one {# non lu} other {# non lus}}",
-    "homework": "Devoirs"
+    "homework": "Devoirs",
+    "attendance": "Pointage"
   },
   "errors": {
     "notFound": {
@@ -219,7 +220,17 @@
       "pendingAcks": "{count, plural, =0 {Aucune annonce à confirmer} one {# annonce à confirmer} other {# annonces à confirmer}}",
       "pendingHint": "Ouvrir les annonces à confirmer.",
       "seeFamily": "Voir ma famille",
-      "childrenHint": "Ouvrir l'espace de la classe : devoirs, cahier de vie, mots et absences."
+      "childrenHint": "Ouvrir l'espace de la classe : devoirs, cahier de vie, mots et absences.",
+      "today": "Aujourd'hui",
+      "todayKinds": {
+        "homework": "À préparer",
+        "note": "Mot",
+        "signature": "À signer",
+        "event": "Aujourd'hui",
+        "attendance": "Pointage",
+        "ack": "À confirmer"
+      },
+      "todayNothing": "Rien n'attend de vous aujourd'hui."
     },
     "teacher": {
       "title": "Mes classes",
@@ -326,7 +337,9 @@
       "community": "Annonces communauté",
       "forms": "Formulaires",
       "all": "Toutes les rubriques",
-      "subtitle": "Les rubriques de gestion et où en est chacune."
+      "subtitle": "Les rubriques de gestion et où en est chacune.",
+      "messaging": "Messagerie",
+      "attendance": "Pointage"
     },
     "years": {
       "title": "Années scolaires",
@@ -555,6 +568,129 @@
       "pendingClassifieds": "{count, plural, one {# petite annonce à valider} other {# petites annonces à valider}}",
       "lateAcks": "{count, plural, one {# annonce dont l'accusé traîne} other {# annonces dont l'accusé traîne}}",
       "shortcuts": "Raccourcis"
+    },
+    "messaging": {
+      "eyebrow": "Direction",
+      "title": "Dialogue avec les familles",
+      "description": "Ouvrir ou fermer les échanges parents → école, et voir ce que cela représente.",
+      "invalid": "Renseignez une période valide : la fin doit suivre le début.",
+      "saveError": "L'enregistrement n'a pas abouti. Réessayez dans un instant.",
+      "modeSaved": "Le réglage est enregistré.",
+      "windowSaved": "La période est enregistrée.",
+      "modeTitle": "Le réglage de l'école",
+      "modeLegend": "Les familles peuvent écrire à l'équipe",
+      "modes": {
+        "open": "Sans restriction",
+        "closed": "Fermé",
+        "scheduled": "Seulement pendant les périodes ouvertes"
+      },
+      "modeHints": {
+        "open": "Chacun écrit quand il en a besoin.",
+        "closed": "Les familles lisent l'historique mais ne peuvent plus écrire.",
+        "scheduled": "Les échanges n'ouvrent que pendant les périodes définies ci-dessous."
+      },
+      "scopesLegend": "À qui cela s'applique",
+      "scopes": {
+        "teachers": "Enseignants",
+        "staff": "Secrétariat",
+        "direction": "Direction",
+        "all": "Toute l'équipe"
+      },
+      "urgencyContact": "Contact en cas d'urgence",
+      "urgencyPlaceholder": "Secrétariat : 01 00 00 00 00",
+      "urgencyHint": "Cette ligne s'affiche aux familles quand les échanges sont fermés. Elle n'est jamais écrite à votre place.",
+      "saveMode": "Enregistrer le réglage",
+      "windowsTitle": "Périodes",
+      "windowsHint": "Une période ouvre ou ferme un canal sur une plage de dates : la permanence du mardi soir, ou la quinzaine de juin.",
+      "noWindow": "Aucune période",
+      "noWindowHint": "Ajoutez-en une pour ouvrir ponctuellement, ou pour fermer sur quelques jours.",
+      "windowKind": "Effet",
+      "windowKinds": {
+        "open": "Ouvre",
+        "closed": "Ferme"
+      },
+      "windowScope": "Canal concerné",
+      "opensAt": "Début",
+      "closesAt": "Fin",
+      "windowNarrow": "Portée",
+      "narrow": {
+        "school": "Toute l'école",
+        "class": "Une classe",
+        "teacher": "Un enseignant"
+      },
+      "windowNote": "Note (facultative)",
+      "addWindow": "Ajouter la période",
+      "removeWindow": "Supprimer",
+      "running": "En cours",
+      "channelsTitle": "Canaux de classe",
+      "channelsHint": "Une fermeture d'école s'applique à tous. Un enseignant peut mettre son fil en annonce seule, ou le rouvrir malgré la fermeture — cela apparaît ici.",
+      "noChannel": "Aucun canal de classe",
+      "noChannelHint": "Les fils de classe se créent dès qu'une classe publie.",
+      "channelKinds": {
+        "class_official": "Informations de la classe",
+        "class_group": "Groupe des parents"
+      },
+      "channelOpen": "Ouvert aux familles",
+      "channelClosed": "Fermé aux familles",
+      "reopensOn": "rouvre le {date}",
+      "removeOverride": "Retirer la dérogation",
+      "makeAnnouncement": "Passer en annonce seule",
+      "allowReplies": "Autoriser les réponses",
+      "openChannel": "Ouvrir",
+      "loadTitle": "Charge des huit dernières semaines",
+      "loadHint": "Messages écrits par des parents, par semaine et par canal.",
+      "noLoad": "Aucun message de parent",
+      "noLoadHint": "La mesure apparaîtra dès les premiers échanges.",
+      "messagesTotal": "{count, plural, one {# message} other {# messages}}",
+      "weekCount": "semaine du {week} : {count, plural, one {# message} other {# messages}}",
+      "channels": {
+        "office": "Direction et secrétariat",
+        "unknownClass": "Classe retirée",
+        "unknownTeacher": "Enseignant retiré"
+      },
+      "channelAnnouncementOnly": "Annonce seule"
+    },
+    "attendance": {
+      "eyebrow": "Direction",
+      "title": "Pointage",
+      "description": "Les listes de pointage et qui a le droit de pointer sur chacune.",
+      "listsTitle": "Listes",
+      "noList": "Aucune liste",
+      "noListHint": "Créez l'appel d'une classe ou un service récurrent ci-dessous.",
+      "newListTitle": "Nouvelle liste",
+      "kind": "Nature",
+      "kinds": {
+        "class_roll": "Appel d'une classe",
+        "service": "Service récurrent",
+        "occasional": "Sortie"
+      },
+      "name": "Nom",
+      "namePlaceholder": "Périscolaire du soir",
+      "code": "Code du service (facultatif)",
+      "codeHint": "Sert à regrouper le service plus tard ; aucune tarification ici.",
+      "classLabel": "Classe",
+      "classesLabel": "Classes concernées",
+      "classesHint": "Aucune case cochée : toute l'école.",
+      "weekdays": "Jours",
+      "days": {
+        "1": "Lundi",
+        "2": "Mardi",
+        "3": "Mercredi",
+        "4": "Jeudi",
+        "5": "Vendredi"
+      },
+      "startsOn": "À partir du",
+      "endsOn": "Jusqu'au",
+      "rollCallRules": "L'appel reste interne à l'équipe : une tape par enfant, sans désigner qui le récupère.",
+      "serviceRules": "Les familles suivent ce service, et le départ demande qui récupère l'enfant.",
+      "createList": "Créer la liste",
+      "listCreated": "La liste est créée.",
+      "invalid": "Renseignez au moins un nom et une classe.",
+      "saveError": "L'enregistrement n'a pas abouti. Réessayez dans un instant.",
+      "managers": "Qui peut pointer sur cette liste",
+      "visibleToFamilies": "Visible des familles",
+      "archive": "Archiver",
+      "outingHint": "La liste d'une sortie se crée depuis l'événement lui-même, dans <link>l'agenda</link>."
     }
   },
   "editor": {
@@ -873,7 +1009,10 @@
       "from": "De {name}",
       "for": "Pour {name}",
       "emptyHint": "Un mot de l'enseignant·e vous concernant apparaîtra ici, avec son accusé de lecture.",
-      "emptyHintTeacher": "Écrivez un mot individuel depuis la fiche d'un élève ou depuis le composeur de la classe."
+      "emptyHintTeacher": "Écrivez un mot individuel depuis la fiche d'un élève ou depuis le composeur de la classe.",
+      "praiseTitle": "Envoyer un bravo",
+      "praiseHint": "Une tape sur un prénom envoie « {sentence} » à sa famille. Pour en dire plus, utilisez le formulaire ci-dessous.",
+      "praiseBody": "Bravo !"
     },
     "absences": {
       "title": "Absences et retards",
@@ -933,7 +1072,6 @@
     "locked": "Verrouillée",
     "archived": "Archivée",
     "readOnlyChannel": "Canal en lecture seule : seule l'équipe publie ici.",
-    "responseHours": "L'équipe répond en général sous 48 h ouvrés ; pas de réponse pendant Shabbat et les fêtes.",
     "composer": {
       "placeholder": "Votre message… (@Prénom pour mentionner)",
       "send": "Envoyer",
@@ -1057,7 +1195,15 @@
       "presetPresent": "Présent",
       "presetAbsent": "Absent",
       "presetMaybe": "Peut-être"
-    }
+    },
+    "channelClosed": "Les échanges avec l'équipe sont momentanément fermés. Vous pouvez toujours relire cette conversation.",
+    "channelClosedUntil": "Les échanges avec l'équipe sont fermés jusqu'au {date}. Vous pouvez toujours relire cette conversation.",
+    "urgencyContact": "En cas d'urgence : {contact}",
+    "makeAnnouncement": "Annonce seule",
+    "allowReplies": "Les familles peuvent répondre",
+    "takeOverride": "Rouvrir malgré la fermeture",
+    "dropOverride": "Suivre la fermeture de l'école",
+    "channelClosesAt": "Les échanges ferment le {date}."
   },
   "adminReports": {
     "title": "Signalements",
@@ -1831,5 +1977,56 @@
     "seen": "Vu",
     "seenFor": "Marquer le devoir comme vu pour {name}",
     "noClassHint": "Le cahier de texte s'ouvrira dès qu'une classe vous sera rattachée."
+  },
+  "attendance": {
+    "title": "Pointage",
+    "todayTitle": "À pointer aujourd'hui",
+    "backToLists": "Toutes les listes",
+    "kinds": {
+      "class_roll": "Appel",
+      "service": "Périscolaire",
+      "occasional": "Sortie"
+    },
+    "statuses": {
+      "present": "Présent",
+      "absent": "Absent",
+      "late": "En retard",
+      "excused": "Excusé"
+    },
+    "start": "Commencer le pointage",
+    "continue": "Reprendre",
+    "counter": "{present} présents · {expected} attendus · {absent} annoncés absents",
+    "counterShort": "{present} présents sur {expected} attendus",
+    "expectedCount": "{count, plural, one {# enfant attendu} other {# enfants attendus}}",
+    "whoIsMissing": "Qui manque ?",
+    "showEveryone": "Voir tout le monde",
+    "modeDeparture": "Passer aux départs",
+    "modeArrival": "Revenir aux arrivées",
+    "queued": "{count, plural, one {# pointage en attente d'envoi} other {# pointages en attente d'envoi}}",
+    "expected": "Attendu",
+    "declaredAbsent": "Annoncé absent",
+    "arrivedAt": "arrivé à {time}",
+    "leftAt": "parti à {time}",
+    "nobodyMissing": "Tout le monde est là.",
+    "emptyRoster": "Aucun enfant sur cette liste.",
+    "nothingToday": "Rien à pointer aujourd'hui",
+    "nothingTodayHint": "Les listes récurrentes apparaissent ici les jours où elles sont prévues.",
+    "otherLists": "Autres listes",
+    "closeSession": "Clôturer",
+    "reopen": "Rouvrir",
+    "closedBadge": "Clôturé",
+    "closedNotice": "Ce pointage est clôturé. Une correction reste possible et part dans le journal.",
+    "exportCsv": "Export CSV",
+    "pickupTitle": "Qui récupère {name} ?",
+    "pickupHint": "Seuls les responsables autorisés de cet enfant apparaissent ici.",
+    "pickupNote": "Précision (facultative)",
+    "confirmDeparture": "Confirmer le départ",
+    "noPickupOption": "Aucun responsable autorisé n'est enregistré pour cet enfant. Prévenez le secrétariat.",
+    "pickupRefused": "Cette personne n'est pas autorisée à récupérer cet enfant.",
+    "invalid": "Ce pointage n'a pas pu être enregistré.",
+    "saveError": "L'enregistrement n'a pas abouti. Le pointage reste en attente d'envoi.",
+    "createFromEvent": "Créer la liste de pointage",
+    "openList": "Liste de pointage",
+    "familyTitle": "Périscolaire et sorties"
   }
 }

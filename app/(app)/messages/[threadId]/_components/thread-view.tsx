@@ -102,6 +102,7 @@ export function ThreadView({
   canWrite,
   canModerate,
   closedReason,
+  closedNote,
   searchMode,
   lastReadAt,
   hint,
@@ -116,6 +117,8 @@ export function ThreadView({
   /** Polls of this conversation, rendered under the message that announced them. */
   polls?: ThreadPollView[];
   closedReason: string | null;
+  /** What to do meanwhile — the emergency contact the direction typed herself. */
+  closedNote?: string | null;
   searchMode: boolean;
   /** Where the reader stopped last time — draws the "new messages" line. */
   lastReadAt: string | null;
@@ -466,9 +469,10 @@ export function ThreadView({
         />
       ) : (
         closedReason && (
-          <p className="mt-4 rounded-xl border border-border bg-muted p-3 text-sm text-muted-foreground">
-            {closedReason}
-          </p>
+          <div className="mt-4 rounded-xl border border-border bg-muted p-3 text-sm text-muted-foreground">
+            <p>{closedReason}</p>
+            {closedNote && <p className="mt-1 font-medium text-foreground">{closedNote}</p>}
+          </div>
         )
       )}
 

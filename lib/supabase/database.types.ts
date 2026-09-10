@@ -535,6 +535,265 @@ export type Database = {
           },
         ]
       }
+      attendance_list_managers: {
+        Row: {
+          added_by: string | null
+          created_at: string
+          list_id: string
+          user_id: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string
+          list_id: string
+          user_id: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string
+          list_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_list_managers_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "attendance_lists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_list_managers_user_profile_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attendance_lists: {
+        Row: {
+          archived: boolean
+          class_id: string | null
+          class_ids: string[]
+          closes_at: string | null
+          code: string | null
+          created_at: string
+          created_by: string | null
+          ends_on: string | null
+          event_id: string | null
+          id: string
+          kind: Database["public"]["Enums"]["attendance_list_kind"]
+          name: string
+          opens_at: string | null
+          records_pickup: boolean
+          school_id: string
+          starts_on: string | null
+          updated_at: string
+          visible_to_guardians: boolean
+          weekdays: number[]
+        }
+        Insert: {
+          archived?: boolean
+          class_id?: string | null
+          class_ids?: string[]
+          closes_at?: string | null
+          code?: string | null
+          created_at?: string
+          created_by?: string | null
+          ends_on?: string | null
+          event_id?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["attendance_list_kind"]
+          name: string
+          opens_at?: string | null
+          records_pickup?: boolean
+          school_id: string
+          starts_on?: string | null
+          updated_at?: string
+          visible_to_guardians?: boolean
+          weekdays?: number[]
+        }
+        Update: {
+          archived?: boolean
+          class_id?: string | null
+          class_ids?: string[]
+          closes_at?: string | null
+          code?: string | null
+          created_at?: string
+          created_by?: string | null
+          ends_on?: string | null
+          event_id?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["attendance_list_kind"]
+          name?: string
+          opens_at?: string | null
+          records_pickup?: boolean
+          school_id?: string
+          starts_on?: string | null
+          updated_at?: string
+          visible_to_guardians?: boolean
+          weekdays?: number[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_lists_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_lists_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_lists_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attendance_records: {
+        Row: {
+          arrived_at: string | null
+          created_at: string
+          departed_at: string | null
+          id: string
+          marked_by: string | null
+          pickup_note: string | null
+          pickup_user_id: string | null
+          school_id: string
+          session_id: string
+          status: Database["public"]["Enums"]["attendance_status"]
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          arrived_at?: string | null
+          created_at?: string
+          departed_at?: string | null
+          id?: string
+          marked_by?: string | null
+          pickup_note?: string | null
+          pickup_user_id?: string | null
+          school_id: string
+          session_id: string
+          status?: Database["public"]["Enums"]["attendance_status"]
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          arrived_at?: string | null
+          created_at?: string
+          departed_at?: string | null
+          id?: string
+          marked_by?: string | null
+          pickup_note?: string | null
+          pickup_user_id?: string | null
+          school_id?: string
+          session_id?: string
+          status?: Database["public"]["Enums"]["attendance_status"]
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_records_marked_by_profile_fkey"
+            columns: ["marked_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_records_pickup_profile_fkey"
+            columns: ["pickup_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_records_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_records_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "attendance_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_records_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attendance_sessions: {
+        Row: {
+          closed_at: string | null
+          closed_by: string | null
+          created_at: string
+          id: string
+          list_id: string
+          note: string | null
+          on_date: string
+          opened_at: string
+          opened_by: string | null
+          school_id: string
+        }
+        Insert: {
+          closed_at?: string | null
+          closed_by?: string | null
+          created_at?: string
+          id?: string
+          list_id: string
+          note?: string | null
+          on_date: string
+          opened_at?: string
+          opened_by?: string | null
+          school_id: string
+        }
+        Update: {
+          closed_at?: string | null
+          closed_by?: string | null
+          created_at?: string
+          id?: string
+          list_id?: string
+          note?: string | null
+          on_date?: string
+          opened_at?: string
+          opened_by?: string | null
+          school_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_sessions_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "attendance_lists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_sessions_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -1969,6 +2228,80 @@ export type Database = {
           },
         ]
       }
+      messaging_windows: {
+        Row: {
+          class_id: string | null
+          closes_at: string
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: Database["public"]["Enums"]["messaging_window_kind"]
+          note: string | null
+          opens_at: string
+          school_id: string
+          scope: Database["public"]["Enums"]["messaging_scope"]
+          target_user_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          class_id?: string | null
+          closes_at: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["messaging_window_kind"]
+          note?: string | null
+          opens_at: string
+          school_id: string
+          scope?: Database["public"]["Enums"]["messaging_scope"]
+          target_user_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          class_id?: string | null
+          closes_at?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["messaging_window_kind"]
+          note?: string | null
+          opens_at?: string
+          school_id?: string
+          scope?: Database["public"]["Enums"]["messaging_scope"]
+          target_user_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messaging_windows_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messaging_windows_created_by_profile_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messaging_windows_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messaging_windows_target_profile_fkey"
+            columns: ["target_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_deliveries: {
         Row: {
           attempts: number
@@ -2780,6 +3113,45 @@ export type Database = {
           user_id: string
         }[]
       }
+      attendance_can_manage: {
+        Args: { list_: string; uid?: string }
+        Returns: boolean
+      }
+      attendance_can_view_record: {
+        Args: { record_: string; uid?: string }
+        Returns: boolean
+      }
+      attendance_list_students: { Args: { list_: string }; Returns: string[] }
+      attendance_pickup_options: {
+        Args: { student_: string }
+        Returns: {
+          full_name: string
+          is_primary: boolean
+          relation: Database["public"]["Enums"]["guardian_relation"]
+          user_id: string
+        }[]
+      }
+      attendance_roster: {
+        Args: { session_: string }
+        Returns: {
+          arrived_at: string
+          class_name: string
+          declared_absent: boolean
+          departed_at: string
+          first_name: string
+          last_name: string
+          photo_path: string
+          pickup_name: string
+          pickup_user_id: string
+          record_id: string
+          status: Database["public"]["Enums"]["attendance_status"]
+          student_id: string
+        }[]
+      }
+      attendance_student_on_list: {
+        Args: { session_: string; student_: string }
+        Returns: boolean
+      }
       book_appointment: {
         Args: { slot: string; student: string }
         Returns: undefined
@@ -2848,6 +3220,18 @@ export type Database = {
         Returns: boolean
       }
       cancel_appointment: { Args: { slot: string }; Returns: undefined }
+      child_attendance: {
+        Args: { days?: number; student_: string }
+        Returns: {
+          arrived_at: string
+          departed_at: string
+          kind: Database["public"]["Enums"]["attendance_list_kind"]
+          list_name: string
+          on_date: string
+          pickup_name: string
+          status: Database["public"]["Enums"]["attendance_status"]
+        }[]
+      }
       claim_notification_deliveries: {
         Args: { batch?: number }
         Returns: {
@@ -2918,6 +3302,14 @@ export type Database = {
           email: string
           phone: string
         }[]
+      }
+      clear_attendance: {
+        Args: { session_: string; student_: string }
+        Returns: undefined
+      }
+      close_attendance_session: {
+        Args: { reopen?: boolean; session_: string }
+        Returns: undefined
       }
       close_poll: { Args: { poll_: string }; Returns: undefined }
       create_group_thread: {
@@ -3117,6 +3509,18 @@ export type Database = {
         }
         Returns: undefined
       }
+      mark_attendance: {
+        Args: {
+          at_?: string
+          departure?: boolean
+          pickup_?: string
+          pickup_note_?: string
+          session_: string
+          status_?: Database["public"]["Enums"]["attendance_status"]
+          student_: string
+        }
+        Returns: string
+      }
       matches_audience: {
         Args: {
           audience: Database["public"]["Enums"]["audience_kind"]
@@ -3127,7 +3531,77 @@ export type Database = {
         Returns: boolean
       }
       may_inspect: { Args: { uid: string }; Returns: boolean }
+      messaging_channels: {
+        Args: { school_: string }
+        Returns: {
+          allow_replies: boolean
+          archived: boolean
+          class_id: string
+          class_name: string
+          is_open: boolean
+          kind: Database["public"]["Enums"]["thread_kind"]
+          locked: boolean
+          override: boolean
+          reopens_at: string
+          thread_id: string
+        }[]
+      }
+      messaging_current_closing: {
+        Args: {
+          at_?: string
+          class_?: string
+          school_: string
+          scope_: Database["public"]["Enums"]["messaging_scope"]
+          target_?: string
+        }
+        Returns: string
+      }
+      messaging_is_open: {
+        Args: {
+          at_?: string
+          class_?: string
+          school_: string
+          scope_: Database["public"]["Enums"]["messaging_scope"]
+          target_?: string
+        }
+        Returns: boolean
+      }
+      messaging_load: {
+        Args: { school_: string; weeks?: number }
+        Returns: {
+          class_id: string
+          messages: number
+          teacher_id: string
+          week_start: string
+        }[]
+      }
+      messaging_next_opening: {
+        Args: {
+          at_?: string
+          class_?: string
+          school_: string
+          scope_: Database["public"]["Enums"]["messaging_scope"]
+          target_?: string
+        }
+        Returns: string
+      }
       mfa_required: { Args: { school: string }; Returns: boolean }
+      my_attendance_lists: {
+        Args: { on_date_?: string }
+        Returns: {
+          class_id: string
+          class_name: string
+          closed_at: string
+          expected: number
+          kind: Database["public"]["Enums"]["attendance_list_kind"]
+          list_id: string
+          name: string
+          present: number
+          records_pickup: boolean
+          scheduled_today: boolean
+          session_id: string
+        }[]
+      }
       my_calendar_feed: {
         Args: { with_holidays?: boolean }
         Returns: {
@@ -3171,9 +3645,17 @@ export type Database = {
       notify_due_content: { Args: Record<PropertyKey, never>; Returns: number }
       notify_due_forms: { Args: Record<PropertyKey, never>; Returns: number }
       notify_event: { Args: { event: string }; Returns: number }
+      open_attendance_session: {
+        Args: { list_: string; on_date_?: string }
+        Returns: string
+      }
       open_dm: { Args: { other: string }; Returns: string }
       parent_can_message: {
         Args: { class_?: string; uid: string }
+        Returns: boolean
+      }
+      parent_channel_open: {
+        Args: { thread_: string; uid?: string }
         Returns: boolean
       }
       promote_event_waitlist: { Args: { event: string }; Returns: number }
@@ -3223,16 +3705,34 @@ export type Database = {
         Returns: boolean
       }
       school_staff_ids: { Args: { school: string }; Returns: string[] }
+      school_timezone: { Args: { school_: string }; Returns: string }
       set_current_school_year: { Args: { year_id: string }; Returns: undefined }
       set_image_rights: {
         Args: { signed: boolean; student: string }
         Returns: number
+      }
+      set_messaging_mode: {
+        Args: {
+          mode_: string
+          school_: string
+          scopes_?: string[]
+          urgency_?: string
+        }
+        Returns: Json
+      }
+      set_thread_replies: {
+        Args: { allow_?: boolean; override_?: boolean; thread_: string }
+        Returns: undefined
       }
       student_school_id: { Args: { student: string }; Returns: string }
       teacher_class_ids: { Args: { uid?: string }; Returns: string[] }
       teaches_student: {
         Args: { student: string; uid?: string }
         Returns: boolean
+      }
+      thread_messaging_state: {
+        Args: { thread_: string; uid?: string }
+        Returns: Json
       }
       try_uuid: { Args: { value: string }; Returns: string }
       user_school_ids: { Args: { uid?: string }; Returns: string[] }
@@ -3245,6 +3745,8 @@ export type Database = {
       absence_kind: "absence" | "late"
       absence_status: "declared" | "justified" | "unjustified"
       assessment_level: "not_yet" | "in_progress" | "acquired" | "mastered"
+      attendance_list_kind: "class_roll" | "service" | "occasional"
+      attendance_status: "present" | "absent" | "late" | "excused"
       audience_kind: "school" | "level" | "class" | "custom"
       class_post_type: "homework" | "journal" | "info" | "reminder"
       class_teacher_role: "main" | "assistant" | "specialist"
@@ -3289,6 +3791,8 @@ export type Database = {
         | "parent"
         | "guardian"
       membership_status: "active" | "invited" | "suspended"
+      messaging_scope: "teachers" | "staff" | "direction" | "all"
+      messaging_window_kind: "open" | "closed"
       note_kind: "praise" | "concern" | "info"
       notification_channel: "push" | "email" | "inapp"
       post_visibility: "parents" | "staff"
@@ -3427,6 +3931,8 @@ export const Constants = {
       absence_kind: ["absence", "late"],
       absence_status: ["declared", "justified", "unjustified"],
       assessment_level: ["not_yet", "in_progress", "acquired", "mastered"],
+      attendance_list_kind: ["class_roll", "service", "occasional"],
+      attendance_status: ["present", "absent", "late", "excused"],
       audience_kind: ["school", "level", "class", "custom"],
       class_post_type: ["homework", "journal", "info", "reminder"],
       class_teacher_role: ["main", "assistant", "specialist"],
@@ -3466,6 +3972,8 @@ export const Constants = {
         "guardian",
       ],
       membership_status: ["active", "invited", "suspended"],
+      messaging_scope: ["teachers", "staff", "direction", "all"],
+      messaging_window_kind: ["open", "closed"],
       note_kind: ["praise", "concern", "info"],
       notification_channel: ["push", "email", "inapp"],
       post_visibility: ["parents", "staff"],

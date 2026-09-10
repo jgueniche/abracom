@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, CoinsIcon, MapPinIcon, PencilIcon } from "lucide-react";
+import { ArrowLeftIcon, ClipboardCheckIcon, CoinsIcon, MapPinIcon, PencilIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -14,9 +14,11 @@ import { requireCurrentUser } from "@/lib/auth/session";
 import { localDateKey } from "@/lib/calendar/dates";
 import { TIME_ZONE } from "@/lib/i18n/config";
 import { canWriteInSchool, isSchoolStaff } from "@/lib/permissions";
+import { createOutingAttendanceList } from "@/server/actions/admin/attendance";
 import { cancelSlotSignup } from "@/server/actions/agenda";
 import { cache } from "react";
 
+import { getEventAttendanceList } from "@/server/queries/attendance";
 import { getEvent, getEventRecipients } from "@/server/queries/agenda";
 import { getPollableThreads } from "@/server/queries/messaging";
 
@@ -40,9 +42,10 @@ export async function generateMetadata({
 export default async function EventPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const user = await requireCurrentUser();
-  const [t, tMessaging, format, event] = await Promise.all([
+  const [t, tMessaging, tAttendance, format, event] = await Promise.all([
     getTranslations("agenda"),
     getTranslations("messaging"),
+    getTranslations("attendance"),
     getFormatter(),
     loadEvent(user.id, id),
   ]);
@@ -53,6 +56,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
   const canEdit = staff || event.created_by === user.id;
   const canRespond = canWriteInSchool(user.roles, event.school_id);
   const recipients = canEdit ? await getEventRecipients(event.id) : [];
+  const attendanceList = canEdit ? await getEventAttendanceList(event.id) : null;
   // Asking "who is coming?" where the families already are, not only on this page.
   const pollThreads = canRespond ? await getPollableThreads() : [];
   const answered = recipients.filter((r) => r.status !== null);
@@ -112,6 +116,25 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                 </Link>
               </Button>
             )}
+            {/* Three gestures from the outing to its grid: the event's target
+                classes become the roster (ADR-0039). */}
+            {canEdit &&
+              (attendanceList ? (
+                <Button asChild variant="outline" className="min-h-11">
+                  <Link href="/pointage">
+                    <ClipboardCheckIcon aria-hidden />
+                    {tAttendance("openList")}
+                  </Link>
+                </Button>
+              ) : (
+                <form action={createOutingAttendanceList}>
+                  <input type="hidden" name="eventId" value={event.id} />
+                  <Button type="submit" variant="outline" className="min-h-11">
+                    <ClipboardCheckIcon aria-hidden />
+                    {tAttendance("createFromEvent")}
+                  </Button>
+                </form>
+              ))}
           </>
         }
       />

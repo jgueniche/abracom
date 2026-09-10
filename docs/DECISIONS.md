@@ -530,3 +530,99 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   l'espace de classe (« Nouvelle publication ») et depuis le cahier de texte.
 - **Conséquences** : un responsable en lecture seule, qui n'a pas de messagerie, voit l'agenda à la
   place de l'onglet « Messages » — sa barre reste à cinq destinations utiles.
+
+## ADR-0037 — Le dialogue parents → école est un robinet, pas un module
+
+- **Contexte** : la directrice demande de pouvoir « ouvrir et fermer le dialogue ponctuellement, à sa
+  convenance ». Le levier existait déjà en base — `threads.allow_replies`, `locked`, `archived` — mais
+  n'était exposé nulle part comme une décision, et n'avait aucune notion de période. `parent_can_message`
+  ne réglait que le droit **d'un responsable**, jamais celui de l'école.
+- **Décision** : trois leviers, une table.
+  1. Un mode d'école dans `schools.modules -> 'messaging' ->> 'parentToStaff'` :
+     `open` | `closed` | `scheduled`, avec la liste des publics concernés (`closedScopes`) — la portée
+     est choisie à chaque fois (arbitrage 2), de sorte qu'une fermeture des enseignants peut laisser le
+     secrétariat comme porte de secours.
+  2. `messaging_windows` : une période datée qui **ouvre** ou **ferme** un canal. « Ouvrir le mardi
+     17 h – 19 h » et « fermer du 15 au 30 juin » sont le même objet avec un `kind` différent. Une
+     période peut viser toute l'école, une classe, ou une seule personne de l'équipe.
+  3. Le fil lui-même : `allow_replies`, enfin exposé comme un bouton lisible.
+- **Application** : par les RLS, jamais par l'écran. `can_post_in_thread` — que la politique
+  `messages_insert` appelle déjà — refuse l'INSERT quand le canal est fermé, et `can_direct_message`
+  applique la même règle à l'ouverture d'une conversation, sinon un canal fermé serait à un
+  « nouveau message » de distance. Trente assertions pgTAP couvrent école ouverte, école fermée,
+  fenêtre en cours, fenêtre passée, période de fermeture, classe visée seule, et responsable
+  individuellement bloqué ; chacune se termine sur un vrai INSERT dans `public.messages`.
+- **Historique** (arbitrage 1) : une fermeture rend les fils **en lecture seule**. Rien ne disparaît de
+  la liste : un parent qui cherche ce que la maîtresse a écrit en octobre le retrouve.
+- **Ce que voit le parent** (arbitrage 4) : le composeur est remplacé par une phrase générique passée
+  par next-intl, la date de réouverture **seulement si une période le dit** — on ne promet que ce qui est
+  saisi — et le contact d'urgence tel que la direction l'a tapé dans les réglages. Aucun texte
+  institutionnel n'est inventé.
+- **« Heures de réponse »** : la phrase statique promettait 48 h ouvrés et rien ne l'appliquait. Elle
+  disparaît, remplacée par `messaging_current_closing()` — la fin de la période d'ouverture en cours,
+  affichée en aide du composeur. Ou c'est vrai, ou ça n'est pas là.
+- **Conséquences** : les heures saisies sont lues à l'horloge de l'**école** (`schools.timezone`), pas à
+  celle du navigateur ; une directrice en voyage saisit donc bien l'heure de Neuilly. `/admin/messagerie`
+  montre l'état de chaque canal, un interrupteur par ligne, et la charge réelle (`messaging_load`,
+  huit semaines, par classe et par enseignant) — sans ce chiffre la fermeture se déciderait à l'aveugle.
+  Les périodes closes depuis plus d'un an sont purgées.
+
+## ADR-0038 — Un enseignant peut rouvrir son canal malgré une fermeture d'école
+
+- **Contexte** : la question se pose dès qu'il existe deux niveaux de décision. La rédaction initiale du
+  chantier posait la fermeture d'école comme un plafond absolu.
+- **Décision** (arbitrage 3 du porteur) : **oui, avec trace**. Un enseignant qui modère son fil peut y
+  poser `settings -> 'overrideSchoolClosure'`, et les familles de sa classe écrivent de nouveau.
+  L'action part dans `audit_log` (`thread.override`) et la dérogation apparaît sur l'écran de pilotage
+  de la direction, qui peut la retirer d'un bouton.
+- **Alternative écartée** : le plafond strict. Plus simple à retenir, mais il obligeait la directrice à
+  rouvrir toute l'école pour le cas d'une classe en voyage.
+- **Conséquences** : la fermeture d'école n'est pas une garantie technique, c'est un réglage par défaut
+  que l'équipe peut lever **visiblement**. C'est l'écran de pilotage, pas la base, qui porte la
+  responsabilité de le montrer — d'où la colonne `override` de `messaging_channels()` et l'assertion
+  pgTAP qui la vérifie.
+
+## ADR-0039 — La pointeuse : présence et remise de l'enfant, jamais la facturation
+
+- **Contexte** : le brief initial classait « cantine et garderie » en **non-objectif du MVP**. La
+  direction rouvre délibérément cette porte : elle veut pointer les enfants, d'abord au périscolaire.
+  Rien n'existait — aucune table de pointage, de présence ni d'appel. Le plus proche, `absences`, est
+  déclaratif et saisi par la famille ; `event_slots` et `appointment_slots` réservent des créneaux, ils
+  ne constatent pas une présence.
+- **Périmètre — ce qu'on fait** : constater une présence, une arrivée, un départ, et **qui récupère
+  l'enfant**. Trois natures de liste : l'appel de classe (`class_roll`), un service récurrent
+  (`service` : périscolaire matin, périscolaire soir, cantine), une occasion (`occasional` : sortie,
+  spectacle, événement de l'agenda).
+- **Périmètre — ce qu'on ne fait pas** : facturation, tarification, prélèvement. Le modèle doit
+  cependant pouvoir alimenter une facturation plus tard sans migration douloureuse : `attendance_lists`
+  porte un `code` de service, `attendance_sessions` une date, et `attendance_records` l'heure d'arrivée
+  et l'heure de départ. Une facturation future joint sur (session, élève) et calcule ses durées ; elle
+  n'a rien à ajouter au registre de présence.
+- **Récurrence** : jours de la semaine + plage de dates, pas de moteur de récurrence. Une occurrence
+  (`attendance_sessions`) est créée à la demande, le jour où l'on pointe, et vérifiée contre la
+  récurrence de la liste. Une occurrence hors récurrence reste possible (rattrapage), et elle est datée.
+- **Qui pointe** : aucun rôle nouveau. `school_admin` partout dans son école ; les enseignants sur
+  l'appel de leur propre classe ; et pour tout le reste une table de responsables **liste par liste**
+  (`attendance_list_managers`), pour qu'une animatrice du soir n'hérite pas des droits du secrétariat.
+  Le secrétariat n'est pas responsable d'office : on l'ajoute à une liste comme n'importe qui.
+- **Le point de sécurité** : `attendance_records.pickup_user_id` ne peut désigner qu'un responsable
+  autorisé de **cet** élève. Un responsable sous restriction judiciaire (`student_guardians.access_blocked`)
+  n'est jamais proposé et ne peut pas être saisi — un déclencheur le refuse en base, et une assertion
+  pgTAP le vérifie explicitement. Toute correction a posteriori d'un pointage part dans `audit_log`.
+- **Arbitrages du porteur** :
+  - **5. Visibilité famille** : le parent voit l'arrivée et le départ de son enfant **au périscolaire et
+    en sortie seulement**. L'appel de classe reste interne à l'équipe : la présence en classe visible en
+    direct, c'est de la surveillance scolaire, et chaque retard deviendrait une notification. Porté par
+    `attendance_lists.visible_to_guardians`, appliqué par les RLS.
+  - **6. Qui récupère** : enregistré au périscolaire et en sortie, pas à l'appel
+    (`attendance_lists.records_pickup`). Une tape par enfant à l'appel est la condition pour qu'il soit
+    réellement utilisé.
+  - **7. Conservation** : **12 mois glissants**, purgés par `purge_expired_data()` — l'année scolaire
+    écoulée et un éventuel litige de facturation périscolaire.
+  - **8. Lien avec les absences** : les deux registres restent **indépendants en écriture**. La liste de
+    pointage affiche « annoncé absent » pour les enfants déclarés par leur famille, pour que la personne
+    qui pointe ne les cherche pas ; elle ne crée jamais d'absence à justifier sur une saisie oubliée.
+- **Hors ligne** : le hall d'entrée n'a pas de wifi fiable. Les pointages sont mis en file dans le
+  navigateur (`localStorage`) et rejoués par la même Server Action au retour du réseau, avec un
+  compteur honnête. Un pointage perdu est pire qu'un pointage lent. La file est **par occurrence**, et
+  chaque entrée porte son horodatage local : c'est l'heure de la tape qui fait foi, pas celle de l'envoi.

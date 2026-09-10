@@ -74,3 +74,38 @@ export async function markNoteRead(formData: FormData): Promise<void> {
   const classId = field(formData, "classId");
   if (uuid.test(classId)) revalidatePath(`/classes/${classId}`, "layout");
 }
+
+/**
+ * "Bravo" in one tap (chantier C).
+ *
+ * Praise already existed as a `kind` of individual note, but it was buried
+ * behind a pupil selector, a nature selector and a visibility selector — four
+ * decisions to say well done, which is why nobody said it. The button carries
+ * the exact sentence it sends, so nothing is written in the teacher's name that
+ * they have not read on the button itself.
+ */
+export async function sendPraise(formData: FormData): Promise<void> {
+  const user = await requireCurrentUser();
+  const studentId = field(formData, "studentId");
+  const classId = field(formData, "classId");
+  if (!uuid.test(studentId)) return;
+  const t = await getTranslations("classSpace.notes");
+  const supabase = await createClient();
+  const { data: student } = await supabase
+    .from("students")
+    .select("school_id")
+    .eq("id", studentId)
+    .maybeSingle();
+  if (!student) return;
+  // RLS decides whether this author may write to this pupil.
+  await supabase.from("individual_notes").insert({
+    school_id: student.school_id,
+    student_id: studentId,
+    author_id: user.id,
+    body_md: t("praiseBody"),
+    kind: "praise",
+    visibility: "parents",
+  });
+  if (uuid.test(classId)) revalidatePath(`/classes/${classId}`, "layout");
+  revalidatePath("/famille");
+}
