@@ -2,6 +2,7 @@ import { CheckCircle2Icon, ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { AttendanceToday } from "@/components/domain/attendance-today";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -99,6 +100,7 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
           </>
         }
       />
+      <AttendanceToday />
 
       <section className="mb-8">
         <h2 className="mb-3">{tDash("queue")}</h2>

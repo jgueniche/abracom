@@ -4,6 +4,7 @@ import {
   BackpackIcon,
   BuildingIcon,
   CalendarDaysIcon,
+  ClipboardCheckIcon,
   HouseIcon,
   LayoutDashboardIcon,
   MessageCircleIcon,
@@ -29,7 +30,8 @@ type Label =
   | "publish"
   | "dashboard"
   | "manage"
-  | "agenda";
+  | "agenda"
+  | "attendance";
 
 type Item = {
   href: string;
@@ -92,13 +94,20 @@ const ITEMS: Record<Perspective, Item[]> = {
 const AGENDA: Item = { href: "/agenda", label: "agenda", icon: CalendarDaysIcon };
 
 /**
+ * The pointeuse. The phone bar is full at five named tabs, and the person about
+ * to point is standing in the entrance hall, so the one-tap route on a phone is
+ * the card on the home screen; the desktop bar, which has room, names it.
+ */
+const ATTENDANCE: Item = { href: "/pointage", label: "attendance", icon: ClipboardCheckIcon };
+
+/**
  * Destinations that do not fit the five mobile tabs but belong in the desktop
  * bar, where there is room to name everything (the header must be complete).
  */
 const DESKTOP_EXTRA: Record<Perspective, Item[]> = {
   parent: [AGENDA, { href: "/famille", label: "myChild", icon: BackpackIcon }],
-  teacher: [{ href: "/publier", label: "publish", icon: SquarePenIcon }, AGENDA],
-  admin: [AGENDA],
+  teacher: [{ href: "/publier", label: "publish", icon: SquarePenIcon }, AGENDA, ATTENDANCE],
+  admin: [AGENDA, ATTENDANCE],
 };
 
 /** The bar this reader actually gets: no messaging entry for a read-only guardian. */

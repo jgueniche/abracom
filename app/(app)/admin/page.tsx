@@ -1,5 +1,6 @@
 import {
   CalendarDaysIcon,
+  ClipboardCheckIcon,
   ClipboardListIcon,
   FileTextIcon,
   FolderIcon,
@@ -38,6 +39,7 @@ const ICONS: Record<string, typeof MegaphoneIcon> = {
   classes: GraduationCapIcon,
   members: UsersIcon,
   import: UploadIcon,
+  attendance: ClipboardCheckIcon,
   reports: ShieldAlertIcon,
   community: MegaphoneIcon,
   messaging: RadioIcon,

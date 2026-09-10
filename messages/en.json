@@ -45,7 +45,8 @@
     "publish": "Publish",
     "manage": "Manage",
     "unreadMessages": "Messages: {count, plural, one {# unread} other {# unread}}",
-    "homework": "Homework"
+    "homework": "Homework",
+    "attendance": "Attendance"
   },
   "errors": {
     "notFound": {
@@ -327,7 +328,8 @@
       "forms": "Forms",
       "all": "All sections",
       "subtitle": "The management sections and where each one stands.",
-      "messaging": "Messaging"
+      "messaging": "Messaging",
+      "attendance": "Attendance"
     },
     "years": {
       "title": "School years",
@@ -637,6 +639,48 @@
         "unknownTeacher": "Removed teacher"
       },
       "channelAnnouncementOnly": "Announcements only"
+    },
+    "attendance": {
+      "eyebrow": "Direction",
+      "title": "Attendance",
+      "description": "The attendance lists, and who may check children in on each.",
+      "listsTitle": "Lists",
+      "noList": "No list",
+      "noListHint": "Create a class roll call or a recurring service below.",
+      "newListTitle": "New list",
+      "kind": "Nature",
+      "kinds": {
+        "class_roll": "Class roll call",
+        "service": "Recurring service",
+        "occasional": "Outing"
+      },
+      "name": "Name",
+      "namePlaceholder": "After-school club",
+      "code": "Service code (optional)",
+      "codeHint": "Used to group the service later; nothing is priced here.",
+      "classLabel": "Class",
+      "classesLabel": "Classes concerned",
+      "classesHint": "No box ticked: the whole school.",
+      "weekdays": "Days",
+      "days": {
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday"
+      },
+      "startsOn": "From",
+      "endsOn": "Until",
+      "rollCallRules": "The roll call stays inside the team: one tap per child, and no one to name as collecting them.",
+      "serviceRules": "Families follow this service, and a departure asks who is collecting the child.",
+      "createList": "Create the list",
+      "listCreated": "The list is created.",
+      "invalid": "Enter at least a name and a class.",
+      "saveError": "Saving did not go through. Try again in a moment.",
+      "managers": "Who may check children in on this list",
+      "visibleToFamilies": "Visible to families",
+      "archive": "Archive",
+      "outingHint": "An outing's list is created from the event itself, in the <link>agenda</link>."
     }
   },
   "editor": {
@@ -1920,5 +1964,56 @@
     "seen": "Seen",
     "seenFor": "Mark the homework as seen for {name}",
     "noClassHint": "The homework diary will open as soon as a class is linked to you."
+  },
+  "attendance": {
+    "title": "Attendance",
+    "todayTitle": "To check in today",
+    "backToLists": "All lists",
+    "kinds": {
+      "class_roll": "Roll call",
+      "service": "After-school",
+      "occasional": "Outing"
+    },
+    "statuses": {
+      "present": "Present",
+      "absent": "Absent",
+      "late": "Late",
+      "excused": "Excused"
+    },
+    "start": "Start checking in",
+    "continue": "Resume",
+    "counter": "{present} here · {expected} expected · {absent} reported absent",
+    "counterShort": "{present} here of {expected} expected",
+    "expectedCount": "{count, plural, one {# child expected} other {# children expected}}",
+    "whoIsMissing": "Who is missing?",
+    "showEveryone": "Show everyone",
+    "modeDeparture": "Switch to departures",
+    "modeArrival": "Back to arrivals",
+    "queued": "{count, plural, one {# check-in waiting to be sent} other {# check-ins waiting to be sent}}",
+    "expected": "Expected",
+    "declaredAbsent": "Reported absent",
+    "arrivedAt": "arrived at {time}",
+    "leftAt": "left at {time}",
+    "nobodyMissing": "Everyone is here.",
+    "emptyRoster": "No child on this list.",
+    "nothingToday": "Nothing to check in today",
+    "nothingTodayHint": "Recurring lists appear here on the days they are scheduled.",
+    "otherLists": "Other lists",
+    "closeSession": "Close",
+    "reopen": "Reopen",
+    "closedBadge": "Closed",
+    "closedNotice": "This session is closed. A correction is still possible and is recorded in the journal.",
+    "exportCsv": "CSV export",
+    "pickupTitle": "Who is collecting {name}?",
+    "pickupHint": "Only this child's authorised guardians appear here.",
+    "pickupNote": "Note (optional)",
+    "confirmDeparture": "Confirm the departure",
+    "noPickupOption": "No authorised guardian is recorded for this child. Tell the office.",
+    "pickupRefused": "This person is not authorised to collect this child.",
+    "invalid": "This check-in could not be recorded.",
+    "saveError": "Saving did not go through. The check-in is still waiting to be sent.",
+    "createFromEvent": "Create the attendance list",
+    "openList": "Attendance list",
+    "familyTitle": "After-school and outings"
   }
 }

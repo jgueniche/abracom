@@ -581,3 +581,48 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   que l'équipe peut lever **visiblement**. C'est l'écran de pilotage, pas la base, qui porte la
   responsabilité de le montrer — d'où la colonne `override` de `messaging_channels()` et l'assertion
   pgTAP qui la vérifie.
+
+## ADR-0039 — La pointeuse : présence et remise de l'enfant, jamais la facturation
+
+- **Contexte** : le brief initial classait « cantine et garderie » en **non-objectif du MVP**. La
+  direction rouvre délibérément cette porte : elle veut pointer les enfants, d'abord au périscolaire.
+  Rien n'existait — aucune table de pointage, de présence ni d'appel. Le plus proche, `absences`, est
+  déclaratif et saisi par la famille ; `event_slots` et `appointment_slots` réservent des créneaux, ils
+  ne constatent pas une présence.
+- **Périmètre — ce qu'on fait** : constater une présence, une arrivée, un départ, et **qui récupère
+  l'enfant**. Trois natures de liste : l'appel de classe (`class_roll`), un service récurrent
+  (`service` : périscolaire matin, périscolaire soir, cantine), une occasion (`occasional` : sortie,
+  spectacle, événement de l'agenda).
+- **Périmètre — ce qu'on ne fait pas** : facturation, tarification, prélèvement. Le modèle doit
+  cependant pouvoir alimenter une facturation plus tard sans migration douloureuse : `attendance_lists`
+  porte un `code` de service, `attendance_sessions` une date, et `attendance_records` l'heure d'arrivée
+  et l'heure de départ. Une facturation future joint sur (session, élève) et calcule ses durées ; elle
+  n'a rien à ajouter au registre de présence.
+- **Récurrence** : jours de la semaine + plage de dates, pas de moteur de récurrence. Une occurrence
+  (`attendance_sessions`) est créée à la demande, le jour où l'on pointe, et vérifiée contre la
+  récurrence de la liste. Une occurrence hors récurrence reste possible (rattrapage), et elle est datée.
+- **Qui pointe** : aucun rôle nouveau. `school_admin` partout dans son école ; les enseignants sur
+  l'appel de leur propre classe ; et pour tout le reste une table de responsables **liste par liste**
+  (`attendance_list_managers`), pour qu'une animatrice du soir n'hérite pas des droits du secrétariat.
+  Le secrétariat n'est pas responsable d'office : on l'ajoute à une liste comme n'importe qui.
+- **Le point de sécurité** : `attendance_records.pickup_user_id` ne peut désigner qu'un responsable
+  autorisé de **cet** élève. Un responsable sous restriction judiciaire (`student_guardians.access_blocked`)
+  n'est jamais proposé et ne peut pas être saisi — un déclencheur le refuse en base, et une assertion
+  pgTAP le vérifie explicitement. Toute correction a posteriori d'un pointage part dans `audit_log`.
+- **Arbitrages du porteur** :
+  - **5. Visibilité famille** : le parent voit l'arrivée et le départ de son enfant **au périscolaire et
+    en sortie seulement**. L'appel de classe reste interne à l'équipe : la présence en classe visible en
+    direct, c'est de la surveillance scolaire, et chaque retard deviendrait une notification. Porté par
+    `attendance_lists.visible_to_guardians`, appliqué par les RLS.
+  - **6. Qui récupère** : enregistré au périscolaire et en sortie, pas à l'appel
+    (`attendance_lists.records_pickup`). Une tape par enfant à l'appel est la condition pour qu'il soit
+    réellement utilisé.
+  - **7. Conservation** : **12 mois glissants**, purgés par `purge_expired_data()` — l'année scolaire
+    écoulée et un éventuel litige de facturation périscolaire.
+  - **8. Lien avec les absences** : les deux registres restent **indépendants en écriture**. La liste de
+    pointage affiche « annoncé absent » pour les enfants déclarés par leur famille, pour que la personne
+    qui pointe ne les cherche pas ; elle ne crée jamais d'absence à justifier sur une saisie oubliée.
+- **Hors ligne** : le hall d'entrée n'a pas de wifi fiable. Les pointages sont mis en file dans le
+  navigateur (`localStorage`) et rejoués par la même Server Action au retour du réseau, avec un
+  compteur honnête. Un pointage perdu est pire qu'un pointage lent. La file est **par occurrence**, et
+  chaque entrée porte son horodatage local : c'est l'heure de la tape qui fait foi, pas celle de l'envoi.

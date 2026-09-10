@@ -29,6 +29,7 @@ export const ADMIN_GROUPS = [
       { href: "/admin/classes", key: "classes" },
       { href: "/admin/utilisateurs", key: "members" },
       { href: "/admin/import", key: "import", adminOnly: true },
+      { href: "/admin/pointage", key: "attendance", adminOnly: true },
     ],
   },
   {

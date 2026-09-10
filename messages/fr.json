@@ -45,7 +45,8 @@
     "publish": "Publier",
     "manage": "Gestion",
     "unreadMessages": "Messages : {count, plural, one {# non lu} other {# non lus}}",
-    "homework": "Devoirs"
+    "homework": "Devoirs",
+    "attendance": "Pointage"
   },
   "errors": {
     "notFound": {
@@ -327,7 +328,8 @@
       "forms": "Formulaires",
       "all": "Toutes les rubriques",
       "subtitle": "Les rubriques de gestion et où en est chacune.",
-      "messaging": "Messagerie"
+      "messaging": "Messagerie",
+      "attendance": "Pointage"
     },
     "years": {
       "title": "Années scolaires",
@@ -637,6 +639,48 @@
         "unknownTeacher": "Enseignant retiré"
       },
       "channelAnnouncementOnly": "Annonce seule"
+    },
+    "attendance": {
+      "eyebrow": "Direction",
+      "title": "Pointage",
+      "description": "Les listes de pointage et qui a le droit de pointer sur chacune.",
+      "listsTitle": "Listes",
+      "noList": "Aucune liste",
+      "noListHint": "Créez l'appel d'une classe ou un service récurrent ci-dessous.",
+      "newListTitle": "Nouvelle liste",
+      "kind": "Nature",
+      "kinds": {
+        "class_roll": "Appel d'une classe",
+        "service": "Service récurrent",
+        "occasional": "Sortie"
+      },
+      "name": "Nom",
+      "namePlaceholder": "Périscolaire du soir",
+      "code": "Code du service (facultatif)",
+      "codeHint": "Sert à regrouper le service plus tard ; aucune tarification ici.",
+      "classLabel": "Classe",
+      "classesLabel": "Classes concernées",
+      "classesHint": "Aucune case cochée : toute l'école.",
+      "weekdays": "Jours",
+      "days": {
+        "1": "Lundi",
+        "2": "Mardi",
+        "3": "Mercredi",
+        "4": "Jeudi",
+        "5": "Vendredi"
+      },
+      "startsOn": "À partir du",
+      "endsOn": "Jusqu'au",
+      "rollCallRules": "L'appel reste interne à l'équipe : une tape par enfant, sans désigner qui le récupère.",
+      "serviceRules": "Les familles suivent ce service, et le départ demande qui récupère l'enfant.",
+      "createList": "Créer la liste",
+      "listCreated": "La liste est créée.",
+      "invalid": "Renseignez au moins un nom et une classe.",
+      "saveError": "L'enregistrement n'a pas abouti. Réessayez dans un instant.",
+      "managers": "Qui peut pointer sur cette liste",
+      "visibleToFamilies": "Visible des familles",
+      "archive": "Archiver",
+      "outingHint": "La liste d'une sortie se crée depuis l'événement lui-même, dans <link>l'agenda</link>."
     }
   },
   "editor": {
@@ -1920,5 +1964,56 @@
     "seen": "Vu",
     "seenFor": "Marquer le devoir comme vu pour {name}",
     "noClassHint": "Le cahier de texte s'ouvrira dès qu'une classe vous sera rattachée."
+  },
+  "attendance": {
+    "title": "Pointage",
+    "todayTitle": "À pointer aujourd'hui",
+    "backToLists": "Toutes les listes",
+    "kinds": {
+      "class_roll": "Appel",
+      "service": "Périscolaire",
+      "occasional": "Sortie"
+    },
+    "statuses": {
+      "present": "Présent",
+      "absent": "Absent",
+      "late": "En retard",
+      "excused": "Excusé"
+    },
+    "start": "Commencer le pointage",
+    "continue": "Reprendre",
+    "counter": "{present} présents · {expected} attendus · {absent} annoncés absents",
+    "counterShort": "{present} présents sur {expected} attendus",
+    "expectedCount": "{count, plural, one {# enfant attendu} other {# enfants attendus}}",
+    "whoIsMissing": "Qui manque ?",
+    "showEveryone": "Voir tout le monde",
+    "modeDeparture": "Passer aux départs",
+    "modeArrival": "Revenir aux arrivées",
+    "queued": "{count, plural, one {# pointage en attente d'envoi} other {# pointages en attente d'envoi}}",
+    "expected": "Attendu",
+    "declaredAbsent": "Annoncé absent",
+    "arrivedAt": "arrivé à {time}",
+    "leftAt": "parti à {time}",
+    "nobodyMissing": "Tout le monde est là.",
+    "emptyRoster": "Aucun enfant sur cette liste.",
+    "nothingToday": "Rien à pointer aujourd'hui",
+    "nothingTodayHint": "Les listes récurrentes apparaissent ici les jours où elles sont prévues.",
+    "otherLists": "Autres listes",
+    "closeSession": "Clôturer",
+    "reopen": "Rouvrir",
+    "closedBadge": "Clôturé",
+    "closedNotice": "Ce pointage est clôturé. Une correction reste possible et part dans le journal.",
+    "exportCsv": "Export CSV",
+    "pickupTitle": "Qui récupère {name} ?",
+    "pickupHint": "Seuls les responsables autorisés de cet enfant apparaissent ici.",
+    "pickupNote": "Précision (facultative)",
+    "confirmDeparture": "Confirmer le départ",
+    "noPickupOption": "Aucun responsable autorisé n'est enregistré pour cet enfant. Prévenez le secrétariat.",
+    "pickupRefused": "Cette personne n'est pas autorisée à récupérer cet enfant.",
+    "invalid": "Ce pointage n'a pas pu être enregistré.",
+    "saveError": "L'enregistrement n'a pas abouti. Le pointage reste en attente d'envoi.",
+    "createFromEvent": "Créer la liste de pointage",
+    "openList": "Liste de pointage",
+    "familyTitle": "Périscolaire et sorties"
   }
 }
