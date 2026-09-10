@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon, SchoolIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -29,7 +29,8 @@ export default async function ClassesPage() {
       entries.set(c.id, {
         name: c.name,
         level: c.level?.code ?? null,
-        subtitle: `${c.enrollments[0]?.count ?? 0}`,
+        // a bare "11" — the only string in the application built outside next-intl
+        subtitle: t("students", { count: c.enrollments[0]?.count ?? 0 }),
       });
     }
   } else {
@@ -68,7 +69,12 @@ export default async function ClassesPage() {
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {entries.size === 0 ? (
-        <EmptyState title={t("empty")} />
+        <EmptyState
+          icon={SchoolIcon}
+          title={t("empty")}
+          description={staff ? t("emptyHintStaff") : t("emptyHint")}
+          action={staff ? { href: "/admin/classes", label: t("manageClasses") } : undefined}
+        />
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {[...entries.entries()].map(([id, entry]) => (

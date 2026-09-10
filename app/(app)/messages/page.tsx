@@ -1,5 +1,6 @@
 import { MessageCircleIcon, PlusIcon, UsersRoundIcon } from "lucide-react";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
@@ -7,7 +8,7 @@ import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { canWriteInSchool } from "@/lib/permissions";
+import { canUseMessaging, canWriteInSchool } from "@/lib/permissions";
 import { getMyThreads } from "@/server/queries/messaging";
 
 import { ThreadList } from "./_components/thread-list";
@@ -19,9 +20,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function MessagesPage() {
   const user = await requireCurrentUser();
+  // Messaging is a writing right: a read-only guardian used to land here on an
+  // empty list and two "New message" buttons that only ever led to "No contact
+  // available" — on a page whose subtitle promises conversations with the team.
+  if (!user.school || !canUseMessaging(user.roles, user.school.id)) redirect("/accueil");
   const [t, threads] = await Promise.all([getTranslations("messaging"), getMyThreads()]);
   // Groups are the school team's tool; parents keep direct messages.
-  const canCreateGroup = user.school ? canWriteInSchool(user.roles, user.school.id) : false;
+  const canCreateGroup = canWriteInSchool(user.roles, user.school.id);
 
   return (
     <>

@@ -1,3 +1,4 @@
+import { CalendarCheckIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
@@ -85,7 +86,11 @@ export default async function AppointmentsPage({
         </p>
       )}
       {slots.length === 0 ? (
-        <EmptyState title={t("empty")} />
+        <EmptyState
+          icon={CalendarCheckIcon}
+          title={t("empty")}
+          description={teamView ? t("emptyHintTeacher") : t("emptyHint")}
+        />
       ) : (
         [...days.entries()].map(([day, list]) => (
           <section key={day}>

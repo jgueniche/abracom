@@ -10,6 +10,7 @@ import { PerspectiveSwitcher } from "@/components/layouts/perspective-switcher";
 import { InstallPrompt } from "@/components/layouts/pwa";
 import { SearchBox } from "@/components/layouts/search-box";
 import { type CurrentUser, displayName, initials } from "@/lib/auth/session";
+import { canUseMessaging } from "@/lib/permissions";
 import { appName } from "@/lib/env";
 import { getUnreadMessageCount } from "@/server/queries/messaging";
 
@@ -34,6 +35,8 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
   ]);
   const perspective = user.perspective ?? "parent";
   const isParent = user.roles.some((r) => r.role === "parent" || r.role === "guardian");
+  // A read-only guardian has no messaging at all: no tab, no "New message".
+  const canMessage = user.school ? canUseMessaging(user.roles, user.school.id) : false;
   const showStyleGuide =
     process.env.NODE_ENV !== "production" || process.env.VERCEL_ENV === "preview";
 
@@ -47,7 +50,7 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
       </a>
       <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/65">
         <div className="mx-auto flex h-16 w-full max-w-[110rem] items-center gap-3 px-4 md:px-6 lg:px-8 2xl:px-12">
-          <Link href="/accueil" className="flex min-w-0 shrink-0 items-center gap-2.5">
+          <Link href="/accueil" className="flex min-h-11 min-w-0 shrink-0 items-center gap-2.5">
             <Image
               src="/icons/icon-192.png"
               alt=""
@@ -65,7 +68,11 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
               )}
             </span>
           </Link>
-          <TopNav perspective={perspective} unreadMessages={unreadMessages} />
+          <TopNav
+            perspective={perspective}
+            unreadMessages={unreadMessages}
+            canMessage={canMessage}
+          />
           <div className="ml-auto flex shrink-0 items-center gap-1">
             <SearchBox />
             <SearchBox compact />
@@ -87,7 +94,11 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
       >
         {children}
       </main>
-      <BottomNav perspective={perspective} unreadMessages={unreadMessages} />
+      <BottomNav
+        perspective={perspective}
+        unreadMessages={unreadMessages}
+        canMessage={canMessage}
+      />
       <InstallPrompt />
     </div>
   );

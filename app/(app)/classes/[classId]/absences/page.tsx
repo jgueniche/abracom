@@ -1,3 +1,4 @@
+import { CalendarXIcon } from "lucide-react";
 import { PaperclipIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
@@ -22,7 +23,14 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
   const staffView = isTeacher || isStaff;
   const absences = staffView ? await getClassAbsences(classId) : await getAbsences(myStudentIds);
   const myStudents = cls.students.filter((s) => myStudentIds.includes(s.id));
-  const canDeclare = !staffView && canWriteInSchool(user.roles, cls.school_id);
+  // The secretariat records the absence a family reports by telephone — the
+  // insert policy has always allowed it, only the form was missing. A teacher
+  // reviews absences but does not open them.
+  const declareFor = isStaff ? cls.students : myStudents;
+  const canDeclare =
+    declareFor.length > 0 &&
+    (isStaff || (!staffView && canWriteInSchool(user.roles, cls.school_id)));
+  const showDeclareCard = canDeclare || !staffView;
   const variant = {
     declared: "outline",
     justified: "secondary",
@@ -31,15 +39,15 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
 
   return (
     <div className="flex flex-col gap-6">
-      {!staffView && (
+      {showDeclareCard && (
         <Card>
           <CardHeader>
-            <CardTitle>{t("declare")}</CardTitle>
+            <CardTitle>{isStaff ? t("record") : t("declare")}</CardTitle>
           </CardHeader>
           <CardContent>
             {canDeclare ? (
               <AbsenceForm
-                students={myStudents.map((s) => ({
+                students={declareFor.map((s) => ({
                   id: s.id,
                   name: `${s.first_name} ${s.last_name}`,
                 }))}
@@ -52,7 +60,7 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
       )}
       <h2 className="text-lg font-semibold">{t("title")}</h2>
       {absences.length === 0 ? (
-        <EmptyState title={t("empty")} />
+        <EmptyState icon={CalendarXIcon} title={t("empty")} description={t("emptyHint")} />
       ) : (
         <ul className="flex flex-col gap-2">
           {absences.map((a) => (

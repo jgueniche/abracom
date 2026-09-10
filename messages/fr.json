@@ -261,7 +261,8 @@
       "assistant": "ATSEM / assistant·e",
       "specialist": "Intervenant·e"
     },
-    "readOnly": "Accès en lecture seule (sans évaluations ni messagerie)."
+    "readOnly": "Accès en lecture seule (sans évaluations ni messagerie).",
+    "noChildrenHint": "Aucun enfant ne vous est rattaché pour le moment. Le secrétariat peut faire le lien."
   },
   "profile": {
     "title": "Mon profil",
@@ -323,7 +324,9 @@
       "reports": "Signalements",
       "events": "Événements",
       "community": "Annonces communauté",
-      "forms": "Formulaires"
+      "forms": "Formulaires",
+      "all": "Toutes les rubriques",
+      "subtitle": "Les rubriques de gestion et où en est chacune."
     },
     "years": {
       "title": "Années scolaires",
@@ -513,7 +516,8 @@
       "action": "Action",
       "entity": "Objet",
       "details": "Détails",
-      "empty": "Aucune entrée."
+      "empty": "Aucune entrée.",
+      "emptyHint": "Chaque action d'administration et de modération sera consignée ici."
     },
     "promotion": {
       "title": "Promotion de niveau",
@@ -584,7 +588,9 @@
     "expiresOn": "Jusqu'au {date}",
     "back": "Toutes les annonces",
     "notFound": "Annonce introuvable.",
-    "morePhotos": "+{count}"
+    "morePhotos": "+{count}",
+    "emptyHint": "Les annonces de la direction et de l'équipe enseignante arriveront ici.",
+    "write": "Rédiger une annonce"
   },
   "documents": {
     "title": "Documents",
@@ -612,7 +618,9 @@
       "outing_authorization": "Autorisation de sortie",
       "charter": "Charte"
     },
-    "readOnlyGuardian": "Les signatures sont réservées aux parents."
+    "readOnlyGuardian": "Les signatures sont réservées aux parents.",
+    "emptyHint": "Règlement, circulaires et autorisations à signer seront déposés ici.",
+    "deposit": "Déposer un document"
   },
   "notifications": {
     "title": "Notifications",
@@ -647,7 +655,8 @@
       "appointmentCancelled": "Un rendez-vous a été annulé",
       "formNew": "À remplir : {title}"
     },
-    "preferences": "Préférences"
+    "preferences": "Préférences",
+    "emptyHint": "Annonces, devoirs, messages et événements viendront ici. Choisissez ce que vous voulez recevoir."
   },
   "adminAnnouncements": {
     "title": "Annonces",
@@ -724,7 +733,8 @@
     "back": "Toutes les annonces",
     "readRatio": "{read} / {total} lus",
     "readsCount": "{count, plural, =0 {aucune lecture} one {# lecture} other {# lectures}}",
-    "ackedShort": "{count, plural, =0 {aucun accusé} one {# accusé} other {# accusés}}"
+    "ackedShort": "{count, plural, =0 {aucun accusé} one {# accusé} other {# accusés}}",
+    "attachFile": "Fichier à joindre"
   },
   "adminDocuments": {
     "title": "Documents",
@@ -837,7 +847,8 @@
       "empty": "Pas encore de photos.",
       "month": "{month}",
       "download": "Téléchargement désactivé par l'école",
-      "photos": "{count, plural, one {# photo} other {# photos}}"
+      "photos": "{count, plural, one {# photo} other {# photos}}",
+      "emptyHint": "Les photos et les billets du cahier de vie s'afficheront ici, mois par mois."
     },
     "notes": {
       "title": "Mots individuels",
@@ -860,7 +871,9 @@
       "readOn": "Lu le {date}",
       "readBy": "{count, plural, =0 {Non lu} one {Lu par # responsable} other {Lu par # responsables}}",
       "from": "De {name}",
-      "for": "Pour {name}"
+      "for": "Pour {name}",
+      "emptyHint": "Un mot de l'enseignant·e vous concernant apparaîtra ici, avec son accusé de lecture.",
+      "emptyHintTeacher": "Écrivez un mot individuel depuis la fiche d'un élève ou depuis le composeur de la classe."
     },
     "absences": {
       "title": "Absences et retards",
@@ -891,11 +904,17 @@
       "unjustify": "Non justifiée",
       "withFile": "Justificatif joint",
       "period": "{from} → {to}",
-      "readOnly": "Les déclarations sont réservées aux parents."
+      "readOnly": "Les déclarations sont réservées aux parents.",
+      "record": "Enregistrer une absence",
+      "emptyHint": "Les absences déclarées par les familles et celles saisies par le secrétariat apparaissent ici."
     },
     "seenByTotal": "Vu par {count} / {total}",
     "readMore": "Lire la suite",
-    "actions": "Actions de la publication"
+    "actions": "Actions de la publication",
+    "students": "{count, plural, one {# élève} other {# élèves}}",
+    "emptyHint": "Vous verrez ici la classe de votre enfant dès que l'école l'y aura inscrit.",
+    "emptyHintStaff": "Créez une classe pour l'année en cours, puis affectez-lui des élèves.",
+    "manageClasses": "Gérer les classes"
   },
   "messaging": {
     "title": "Messages",
@@ -1305,7 +1324,8 @@
       "answers": "Réponses proposées : {answers}",
       "send": "Publier le sondage",
       "openThread": "Ouvrir la conversation"
-    }
+    },
+    "emptyHint": "Fêtes, sorties et réunions apparaîtront ici dès qu'elles seront publiées."
   },
   "notificationPrefs": {
     "title": "Préférences de notification",
@@ -1511,7 +1531,8 @@
       "archive": "Retirer mon annonce",
       "back": "Retour aux annonces",
       "pendingBanner": "Votre annonce est en attente de relecture par l'école.",
-      "rejectedBanner": "Cette annonce n'a pas été retenue par l'école."
+      "rejectedBanner": "Cette annonce n'a pas été retenue par l'école.",
+      "emptyHint": "Covoiturage, objets trouvés, garde partagée : les annonces des familles arrivent ici après relecture."
     },
     "directory": {
       "title": "Annuaire des familles",
@@ -1566,7 +1587,9 @@
       "readOnly": "Votre accès en lecture seule ne permet pas de réserver.",
       "noChild": "Aucun de vos enfants n'est dans cette classe.",
       "slots": "{count, plural, one {# créneau} other {# créneaux}}",
-      "with": "avec {name}"
+      "with": "avec {name}",
+      "emptyHint": "Les créneaux ouverts par l'enseignant·e apparaîtront ici.",
+      "emptyHintTeacher": "Ouvrez des créneaux ci-dessus pour que les familles puissent réserver."
     },
     "forms": {
       "title": "Formulaires et sondages",
@@ -1597,7 +1620,8 @@
       "childrenDone": "{done} / {total} enfants",
       "saved": "Formulaire enregistré.",
       "targetsRequired": "Choisissez au moins un niveau, une classe ou une personne.",
-      "fieldsInvalid": "Vérifiez les champs : intitulé requis, au moins deux options pour les choix."
+      "fieldsInvalid": "Vérifiez les champs : intitulé requis, au moins deux options pour les choix.",
+      "emptyHint": "Les questionnaires et les fiches à remplir envoyés par l'école apparaîtront ici."
     },
     "admin": {
       "moderation": "Modération des annonces",
@@ -1641,7 +1665,8 @@
       "submittedAt": "Envoyé le",
       "noResponses": "Aucune réponse pour l'instant.",
       "results": "Réponses",
-      "open": "Voir le formulaire"
+      "open": "Voir le formulaire",
+      "emptyHint": "Les petites annonces déposées par les familles arrivent ici pour relecture avant publication."
     }
   },
   "search": {
@@ -1658,7 +1683,8 @@
       "community": "Petite annonce",
       "event": "Agenda",
       "document": "Document"
-    }
+    },
+    "emptyHint": "Essayez un autre mot, ou le nom d'un événement, d'une annonce ou d'un document."
   },
   "pwa": {
     "install": "Installer Kesher sur cet appareil",
@@ -1759,7 +1785,8 @@
     "formsHint": "Les demandes de l'école auxquelles vous devez répondre.",
     "community": "Communauté",
     "communityHint": "Petites annonces, annuaire et entraide entre familles.",
-    "pendingAck": "{count, plural, one {# accusé de lecture en attente} other {# accusés de lecture en attente}}"
+    "pendingAck": "{count, plural, one {# accusé de lecture en attente} other {# accusés de lecture en attente}}",
+    "formsToAnswer": "{count, plural, one {# formulaire à remplir} other {# formulaires à remplir}}"
   },
   "publish": {
     "title": "Publier",
@@ -1800,6 +1827,9 @@
     "allChildren": "Tous",
     "dueTomorrow": "À rendre demain",
     "weekCount": "{count, plural, =0 {Aucun devoir} one {# devoir} other {# devoirs}} cette semaine",
-    "newHomework": "Nouveau devoir"
+    "newHomework": "Nouveau devoir",
+    "seen": "Vu",
+    "seenFor": "Marquer le devoir comme vu pour {name}",
+    "noClassHint": "Le cahier de texte s'ouvrira dès qu'une classe vous sera rattachée."
   }
 }

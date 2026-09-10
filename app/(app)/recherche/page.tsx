@@ -57,7 +57,7 @@ export default async function SearchPage({
         </p>
       )}
       {q.trim().length >= 2 && results.length === 0 ? (
-        <EmptyState title={t("empty")} />
+        <EmptyState icon={SearchIcon} title={t("empty")} description={t("emptyHint")} />
       ) : (
         <ul className="flex flex-col gap-2">
           {results.map((row) => (

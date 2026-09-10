@@ -6,6 +6,7 @@ import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollRegion } from "@/components/domain/scroll-region";
 import { requireSchoolStaff } from "@/lib/auth/guards";
 import { utcToZonedNaive } from "@/lib/calendar/dates";
 import { TIME_ZONE } from "@/lib/i18n/config";
@@ -76,7 +77,7 @@ export default async function AdminFormPage({ params }: { params: Promise<{ id: 
             {responses.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t("noResponses")}</p>
             ) : (
-              <div className="overflow-x-auto">
+              <ScrollRegion label={t("responses")} className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-muted-foreground">
@@ -121,7 +122,7 @@ export default async function AdminFormPage({ params }: { params: Promise<{ id: 
                     })}
                   </tbody>
                 </table>
-              </div>
+              </ScrollRegion>
             )}
           </CardContent>
         </Card>

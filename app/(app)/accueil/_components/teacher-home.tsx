@@ -58,9 +58,9 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
                     </div>
                     <CardTitle>{cls.name}</CardTitle>
                     <CardDescription>
-                      {cls.room
-                        ? t("teacher.room", { room: cls.room })
-                        : levelLabel(cls.level, locale)}
+                      {/* the label prefixed "Salle" onto a room already named
+                          "Salle 1", which read "Salle Salle 1" */}
+                      {cls.room ? cls.room : levelLabel(cls.level, locale)}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-1 text-sm text-muted-foreground">

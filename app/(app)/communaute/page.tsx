@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { HubCard } from "@/components/domain/hub-card";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -80,22 +81,18 @@ export default async function CommunityPage() {
   return (
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
+      {/* The section hubs share one card since session 16; this page kept a
+          hand-rolled copy of it, so the same object had two shapes. */}
       <div className="grid gap-4 md:grid-cols-2">
         {cards.map((card) => (
-          <Link key={card.href} href={card.href} className="group">
-            <Card className="h-full transition-colors group-hover:bg-accent/40">
-              <CardHeader className="flex flex-row items-start gap-3">
-                <card.icon className="mt-1 size-6 shrink-0 text-primary" aria-hidden />
-                <div>
-                  <CardTitle>{card.title}</CardTitle>
-                  <CardDescription>{card.hint}</CardDescription>
-                  {card.meta && (
-                    <p className="mt-2 text-sm font-medium text-primary">{card.meta}</p>
-                  )}
-                </div>
-              </CardHeader>
-            </Card>
-          </Link>
+          <HubCard
+            key={card.href}
+            href={card.href}
+            icon={card.icon}
+            title={card.title}
+            hint={card.hint}
+            meta={card.meta ?? undefined}
+          />
         ))}
         <Card className="h-full">
           <CardHeader className="flex flex-row items-start gap-3">

@@ -1,7 +1,9 @@
+import { HistoryIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
+import { ScrollRegion } from "@/components/domain/scroll-region";
 import { requireSchoolAdmin } from "@/lib/auth/guards";
 import { getAuditLog } from "@/server/queries/admin";
 
@@ -17,9 +19,9 @@ export default async function AuditPage() {
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {entries.length === 0 ? (
-        <EmptyState title={t("empty")} />
+        <EmptyState icon={HistoryIcon} title={t("empty")} description={t("emptyHint")} />
       ) : (
-        <div className="overflow-x-auto rounded-2xl border">
+        <ScrollRegion label={t("title")} className="overflow-x-auto rounded-2xl border">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
@@ -54,7 +56,7 @@ export default async function AuditPage() {
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollRegion>
       )}
     </>
   );

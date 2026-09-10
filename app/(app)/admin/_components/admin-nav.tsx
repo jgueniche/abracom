@@ -1,69 +1,42 @@
 "use client";
 
+import { ChevronDownIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 
-/**
- * Twelve flat pills measured 1 372 px: on any screen, finding "Journal" meant
- * scrolling sideways — including on a 1 920 px display with 928 px of empty
- * space beside it. Four named families, a real sidebar from `lg` up.
- */
-const GROUPS = [
-  {
-    key: "publications",
-    items: [
-      { href: "/admin/annonces", key: "announcements" },
-      { href: "/admin/documents", key: "documents" },
-      { href: "/admin/evenements", key: "events" },
-      { href: "/admin/formulaires", key: "forms" },
-    ],
-  },
-  {
-    key: "people",
-    items: [
-      { href: "/admin/familles", key: "families" },
-      { href: "/admin/classes", key: "classes" },
-      { href: "/admin/utilisateurs", key: "members" },
-      { href: "/admin/import", key: "import" },
-    ],
-  },
-  {
-    key: "moderation",
-    items: [
-      { href: "/admin/signalements", key: "reports" },
-      { href: "/admin/communaute", key: "community" },
-    ],
-  },
-  {
-    key: "year",
-    items: [
-      { href: "/admin/annees", key: "years" },
-      { href: "/admin/journal", key: "audit" },
-    ],
-  },
-] as const;
+import { adminGroupsFor } from "./groups";
 
-export function AdminNav() {
+export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
   const t = useTranslations("admin.nav");
   const tg = useTranslations("admin.groups");
   const tAdmin = useTranslations("admin");
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  const groups = adminGroupsFor(isAdmin);
+  const current = groups.flatMap((g) => g.items).find((item) => isActive(item.href));
 
   return (
     <>
-      {/* Phone and tablet: one scroller per family, so the groups survive. */}
-      <nav aria-label={tAdmin("title")} className="-mx-4 mb-6 px-4 lg:hidden">
-        <div className="flex flex-col gap-3">
-          {GROUPS.map((group) => (
+      {/* Phone and tablet: folded. Four open families cost about 830 px — the
+          whole first screen — before the title of the page you asked for. */}
+      <details className="mb-5 lg:hidden">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-medium">
+          <span className="eyebrow">{tAdmin("title")}</span>
+          <span className="min-w-0 flex-1 truncate">
+            {current ? t(current.key) : tAdmin("nav.all")}
+          </span>
+          <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+        </summary>
+        <nav aria-label={tAdmin("title")} className="mt-3 flex flex-col gap-3">
+          {groups.map((group) => (
             <div key={group.key}>
               <p className="eyebrow mb-1.5">{tg(group.key)}</p>
-              <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+              <ul className="flex flex-wrap gap-2">
                 {group.items.map((item) => (
-                  <li key={item.href} className="shrink-0">
+                  <li key={item.href}>
                     <Link
                       href={item.href}
                       aria-current={isActive(item.href) ? "page" : undefined}
@@ -81,15 +54,15 @@ export function AdminNav() {
               </ul>
             </div>
           ))}
-        </div>
-      </nav>
+        </nav>
+      </details>
 
-      {/* Desktop: a real column — all twelve destinations readable at a glance. */}
+      {/* Desktop: a real column — every destination readable at a glance. */}
       <nav
         aria-label={tAdmin("title")}
         className="sticky top-20 hidden h-fit flex-col gap-5 rounded-2xl border border-border bg-surface/60 p-4 lg:flex"
       >
-        {GROUPS.map((group) => (
+        {groups.map((group) => (
           <div key={group.key}>
             <p className="eyebrow mb-2">{tg(group.key)}</p>
             <ul className="flex flex-col gap-0.5">

@@ -6,6 +6,7 @@ import { ContentCard, EyebrowDot, MetaChip } from "@/components/domain/content-c
 import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
 import { requireCurrentUser } from "@/lib/auth/session";
+import { isSchoolStaff } from "@/lib/permissions";
 import { plainExcerpt } from "@/lib/text";
 import { getAnnouncementsForUser } from "@/server/queries/announcements";
 
@@ -22,12 +23,18 @@ export default async function AnnouncementsPage() {
     getLocale(),
     getAnnouncementsForUser(user.id),
   ]);
+  const canPublish = user.school ? isSchoolStaff(user.roles, user.school.id) : false;
 
   return (
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {announcements.length === 0 ? (
-        <EmptyState icon={MegaphoneIcon} title={t("empty")} />
+        <EmptyState
+          icon={MegaphoneIcon}
+          title={t("empty")}
+          description={t("emptyHint")}
+          action={canPublish ? { href: "/admin/annonces/nouvelle", label: t("write") } : undefined}
+        />
       ) : (
         <ul className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
           {announcements.map((a) => {
