@@ -3,10 +3,11 @@
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
 import { assertSchoolContext } from "@/lib/auth/guards";
-import { publicEnv } from "@/lib/env";
+import { getSupabasePublicConfig, publicEnv } from "@/lib/env";
 import { ForbiddenError } from "@/lib/permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -23,9 +24,23 @@ const inviteSchema = z.object({
   locale: z.enum(["fr", "en"]),
 });
 
-/** Sends a sign-in link to an existing (confirmed) account. */
+/**
+ * Sends a sign-in link to an existing (confirmed) account.
+ *
+ * Deliberately not the cookie-bound server client: that one signs requests with
+ * PKCE, and the code verifier it stores lands in the *sender's* browser. An
+ * invitation is opened by the family, in their own browser, days later — the
+ * exchange had nothing to verify against and every invited parent was bounced
+ * to the sign-in page. A stateless anon client in implicit mode produces a link
+ * that carries its own session, which `/auth/session` completes. Self-service
+ * links, requested by the reader from their own browser, keep PKCE (see
+ * `server/actions/auth.ts`).
+ */
 async function sendMagicLink(email: string, next = "/accueil"): Promise<boolean> {
-  const supabase = await createClient();
+  const { url, anonKey } = getSupabasePublicConfig();
+  const supabase = createSupabaseClient(url, anonKey, {
+    auth: { persistSession: false, autoRefreshToken: false, flowType: "implicit" },
+  });
   const origin = (await headers()).get("origin") ?? publicEnv.NEXT_PUBLIC_SITE_URL;
   const { error } = await supabase.auth.signInWithOtp({
     email,

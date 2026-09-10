@@ -33,7 +33,9 @@
     "perf": "node scripts/perf/lighthouse.mjs",
     "ops:check-env": "node scripts/ops/check-env.mjs",
     "ops:storage-sweep": "node scripts/ops/storage-sweep.mjs",
-    "db:test:supabase": "scripts/db/test-local.sh --supabase"
+    "db:test:supabase": "scripts/db/test-local.sh --supabase",
+    "ops:check-bundle": "node scripts/ops/check-bundle.mjs",
+    "postbuild": "node scripts/ops/check-bundle.mjs"
   },
   "dependencies": {
     "@hebcal/core": "^6.9.2",

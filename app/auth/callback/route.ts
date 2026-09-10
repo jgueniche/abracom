@@ -20,5 +20,12 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  // No code: the link came from Supabase's own template, which sends the session
+  // in a URL fragment the server never sees. Hand it to the client page that can
+  // read it — the browser carries the fragment across this redirect.
+  if (!code) {
+    return NextResponse.redirect(`${origin}/auth/session?next=${encodeURIComponent(next)}`);
+  }
+
   return NextResponse.redirect(`${origin}${LOGIN_PATH}?error=link`);
 }

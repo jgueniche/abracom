@@ -46,8 +46,9 @@ test.describe("invitation → first login", () => {
       await page.goto(link);
 
       await expect(page).toHaveURL(/\/bienvenue/);
-      await page.getByLabel("Prénom").fill("Test");
-      await page.getByLabel("Nom").fill("Invitation");
+      // "Nom" is a substring of "Prénom": both labels match without `exact`
+      await page.getByLabel("Prénom", { exact: true }).fill("Test");
+      await page.getByLabel("Nom", { exact: true }).fill("Invitation");
       for (const box of await page.getByRole("checkbox").all()) await box.check();
       await page.getByRole("button", { name: "Accéder à l'application" }).click();
 

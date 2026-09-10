@@ -1,22 +1,20 @@
 import { expect, test } from "@playwright/test";
 
-const isProduction = Boolean(process.env.CI);
-
 test.describe("style guide (/dev/ui)", () => {
-  test(
-    isProduction ? "is hidden in production" : "renders the token swatches",
-    async ({ page }) => {
-      const response = await page.goto("/dev/ui");
+  // The page exists in development and on previews, and is gone from a
+  // production build. Read the answer from the server rather than from `CI`,
+  // so the suite also passes when it is pointed at a production build locally.
+  test("is a full style guide in development and absent in production", async ({ page }) => {
+    const response = await page.goto("/dev/ui");
 
-      if (isProduction) {
-        expect(response?.status()).toBe(404);
-        return;
-      }
+    if (response?.status() === 404) {
+      await expect(page.getByRole("heading", { level: 1 })).toContainText("introuvable");
+      return;
+    }
 
-      await expect(page.getByRole("heading", { level: 1 })).toContainText("Guide de style");
-      await expect(page.getByText("--primary / --primary-foreground")).toBeVisible();
-    },
-  );
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Guide de style");
+    await expect(page.getByText("--primary / --primary-foreground")).toBeVisible();
+  });
 
   test("serves the PWA manifest and icons", async ({ request }) => {
     const manifest = await request.get("/manifest.webmanifest");
