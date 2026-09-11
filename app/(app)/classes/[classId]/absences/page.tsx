@@ -1,5 +1,4 @@
-import { CalendarXIcon } from "lucide-react";
-import { PaperclipIcon } from "lucide-react";
+import { CalendarXIcon, PaperclipIcon, PenLineIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
@@ -10,6 +9,7 @@ import { requireClassAccess } from "@/lib/auth/class-access";
 import { canWriteInSchool } from "@/lib/permissions";
 import { reviewAbsence } from "@/server/actions/absences";
 import { getAbsences, getClassAbsences } from "@/server/queries/class-space";
+import { getAbsenceJustifications } from "@/server/queries/timetable";
 
 import { AbsenceForm } from "./absence-form";
 
@@ -22,6 +22,9 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
   ]);
   const staffView = isTeacher || isStaff;
   const absences = staffView ? await getClassAbsences(classId) : await getAbsences(myStudentIds);
+  // The signed notes of session 20, so the office reads what the family wrote
+  // and sees that it was signed — which is what replaces the scan.
+  const notes = await getAbsenceJustifications(absences.map((a) => a.id));
   const myStudents = cls.students.filter((s) => myStudentIds.includes(s.id));
   // The secretariat records the absence a family reports by telephone — the
   // insert policy has always allowed it, only the form was missing. A teacher
@@ -51,6 +54,8 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
                   id: s.id,
                   name: `${s.first_name} ${s.last_name}`,
                 }))}
+                canSign={!staffView}
+                defaultName={`${user.profile.first_name} ${user.profile.last_name}`.trim()}
               />
             ) : (
               <p className="text-sm text-muted-foreground">{t("readOnly")}</p>
@@ -89,6 +94,25 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
                     </span>
                   ) : null}
                 </p>
+                {notes.get(a.id) && (
+                  <p className="mt-1 inline-flex items-start gap-1 text-sm">
+                    <PenLineIcon
+                      className="mt-0.5 size-3 shrink-0 text-muted-foreground"
+                      aria-hidden
+                    />
+                    <span>
+                      <span className="text-muted-foreground">
+                        {t("signedBy", {
+                          name: notes.get(a.id)!.signedName,
+                          date: format.dateTime(new Date(notes.get(a.id)!.signedAt), {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          }),
+                        })}
+                      </span>
+                    </span>
+                  </p>
+                )}
               </div>
               {isStaff && a.status === "declared" && (
                 <div className="flex gap-2">

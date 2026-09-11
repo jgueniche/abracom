@@ -920,7 +920,9 @@
       "absences": "Absences",
       "team": "Équipe",
       "assessments": "Évaluations",
-      "appointments": "Rendez-vous"
+      "appointments": "Rendez-vous",
+      "timetable": "Emploi du temps",
+      "late": "Retards"
     },
     "type": {
       "homework": "À préparer",
@@ -1045,7 +1047,16 @@
       "period": "{from} → {to}",
       "readOnly": "Les déclarations sont réservées aux parents.",
       "record": "Enregistrer une absence",
-      "emptyHint": "Les absences déclarées par les familles et celles saisies par le secrétariat apparaissent ici."
+      "emptyHint": "Les absences déclarées par les familles et celles saisies par le secrétariat apparaissent ici.",
+      "statement": "Le mot",
+      "statementPlaceholder": "Ethan a de la fièvre depuis cette nuit.",
+      "signLabel": "Je signe ce mot",
+      "signHint": "Vaut mot d'excuse écrit : horodaté et conservé. L'école reste seule à décider si l'absence est justifiée.",
+      "signedName": "Votre nom",
+      "signedBy": "Signé par {name} le {date}",
+      "signedAndDeclared": "Le mot est signé et transmis à l'école.",
+      "signatureNameRequired": "Indiquez le nom qui signe le mot.",
+      "statementRequired": "Écrivez le mot avant de le signer."
     },
     "seenByTotal": "Vu par {count} / {total}",
     "readMore": "Lire la suite",
@@ -2035,5 +2046,51 @@
     "noListGrantedHint": "La direction accorde le pointage liste par liste. Demandez-lui de vous ajouter à celle que vous tenez.",
     "createFirstList": "Créer une liste",
     "nothingTodaySeeLists": "{count, plural, one {Pointage · # liste} other {Pointage · # listes}}"
+  },
+  "timetable": {
+    "title": "Emploi du temps",
+    "day": "Jour",
+    "days": {
+      "1": "Lundi",
+      "2": "Mardi",
+      "3": "Mercredi",
+      "4": "Jeudi",
+      "5": "Vendredi",
+      "6": "Samedi",
+      "7": "Dimanche"
+    },
+    "subject": "Matière",
+    "subjectPlaceholder": "Langage",
+    "startsAt": "Début",
+    "endsAt": "Fin",
+    "teacher": "Intervenant",
+    "noTeacher": "L'équipe de la classe",
+    "room": "Salle",
+    "addSlot": "Ajouter le créneau",
+    "addTitle": "Ajouter un créneau",
+    "remove": "Retirer",
+    "nothing": "Rien de prévu.",
+    "empty": "Pas encore d'emploi du temps",
+    "emptyHint": "Il s'affichera ici dès que l'équipe de la classe l'aura saisi.",
+    "emptyHintTeacher": "Ajoutez les créneaux de la semaine ci-dessous : un jour, deux horaires, une matière.",
+    "saved": "Le créneau est ajouté.",
+    "invalid": "Vérifiez le jour, les horaires et la matière : la fin doit suivre le début.",
+    "saveError": "L'enregistrement n'a pas abouti. Réessayez dans un instant."
+  },
+  "late": {
+    "title": "Retards",
+    "windows": {
+      "30": "30 jours",
+      "90": "3 mois",
+      "365": "L'année"
+    },
+    "empty": "Aucun retard sur la période",
+    "emptyHint": "Les retards déclarés par les familles et ceux constatés au pointage apparaîtront ici.",
+    "summary": "{count, plural, one {# retard} other {# retards}} · {pupils, plural, one {# élève} other {# élèves}}",
+    "declared": "{count, plural, one {# déclaré} other {# déclarés}}",
+    "observed": "{count, plural, one {# constaté} other {# constatés}}",
+    "lastOn": "dernier le {date}",
+    "sources": "« Déclarés » vient des familles, « constatés » du pointage. Un même retard peut figurer dans les deux.",
+    "exportCsv": "Export CSV"
   }
 }

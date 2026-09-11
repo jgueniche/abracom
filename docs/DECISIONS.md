@@ -626,3 +626,50 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   navigateur (`localStorage`) et rejoués par la même Server Action au retour du réseau, avec un
   compteur honnête. Un pointage perdu est pire qu'un pointage lent. La file est **par occurrence**, et
   chaque entrée porte son horodatage local : c'est l'heure de la tape qui fait foi, pas celle de l'envoi.
+
+## ADR-0040 — Emploi du temps : une grille hebdomadaire, pas un moteur d'horaires
+
+- **Contexte** : premier des trois écarts avec Educartable retenus en session 19. Rien n'existait.
+  La tentation est de modéliser les semaines A/B, les demi-groupes, les remplacements et les salles
+  partagées ; une école de six classes n'en a pas besoin, et chacun de ces cas est une source de saisie
+  quotidienne que personne ne tiendra à jour.
+- **Décision** : `class_timetable` décrit **une semaine type** — jour ISO, deux heures, une matière,
+  éventuellement un intervenant et une salle. Les exceptions (sortie, spectacle, remplacement) vivent
+  déjà dans l'agenda, qui les notifie ; l'emploi du temps répond à « à quoi ressemble un mardi ».
+- **Conséquences** : la grille se lit comme une **liste de jours**, pas comme un tableau croisé
+  heures × jours — illisible à 390 px, et inutile pour une semaine aussi courte. Une politique
+  d'écriture réservée à l'équipe de la classe et au secrétariat, et un `with check` qui refuse de
+  nommer un intervenant qui n'enseigne pas dans cette classe. Le `weekday` accepte le dimanche sans
+  l'imposer : c'est un jour d'école en Israël, pas à Neuilly, et le schéma ne tranche pas pour l'école.
+
+## ADR-0041 — Un mot d'excuse signé soumet une justification, il ne l'accorde pas
+
+- **Contexte** : deuxième écart. Les deux briques existaient depuis des mois sans avoir été présentées
+  l'une à l'autre : `absences` portait une déclaration et un justificatif scanné, `document_signatures`
+  une signature électronique horodatée. Le manque était qu'une famille doive imprimer, signer, scanner.
+- **Décision** : `absence_justifications` — le texte de la famille, le nom tapé au moment de signer,
+  l'horodatage, l'IP et le navigateur. `declare_and_sign_absence()` écrit l'absence et son mot **dans la
+  même transaction** : un mot sans son absence, ou l'inverse, est pire que ni l'un ni l'autre.
+- **La frontière** : signer **soumet** une justification, cela ne l'**accorde** pas. `absences.status`
+  reste hors de portée de la famille, comme le durcissement de la session 15 l'a établi, et l'école
+  décide en lisant le mot. Une assertion pgTAP fixe la règle.
+- **Conséquences** : le déclencheur `stamp_absence_justification` impose `user_id` et `signed_at`
+  côté base — `document_signatures` fait confiance à sa Server Action pour les deux, ce qui laisse une
+  écriture PostgREST directe libre d'antidater un mot ; celui-ci ne peut pas être menti. Aucune
+  politique d'`update` : une signature est un fait, elle ne se réécrit pas ; seule la direction peut en
+  supprimer une, pour un mot déposé par erreur. Le justificatif scanné reste possible, en complément.
+
+## ADR-0042 — Les retards : une addition, pas une collecte
+
+- **Contexte** : troisième écart. Deux registres tenaient déjà la réponse et personne ne les avait
+  additionnés — ce que la famille déclare (`absences.kind = 'late'`) et ce que la pointeuse constate
+  (`attendance_records.status = 'late'`, ou une arrivée après l'heure d'ouverture de la liste).
+- **Décision** : `late_report()` additionne les deux et les garde **distincts** à l'écran. Un même
+  retard peut figurer dans les deux colonnes, et l'écran le dit plutôt que de dédupliquer à l'aveugle :
+  une famille qui prévient et un enfant qui arrive en retard sont deux faits, pas un doublon.
+- **Portée** : la lecture par classe est ouverte à l'équipe de cette classe ; la lecture de toute
+  l'école est réservée au secrétariat et à la direction. Une famille n'y accède jamais — c'est une
+  lecture transversale, pas une information sur son enfant.
+- **Conséquences** : aucune table nouvelle, aucune donnée nouvelle. L'heure de comparaison est lue à
+  l'horloge de l'école (`school_timezone`), sinon un service ouvrant à 8 h 30 compterait tout le monde
+  en retard deux heures durant l'été.
