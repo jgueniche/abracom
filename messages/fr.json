@@ -2027,6 +2027,13 @@
     "saveError": "L'enregistrement n'a pas abouti. Le pointage reste en attente d'envoi.",
     "createFromEvent": "Créer la liste de pointage",
     "openList": "Liste de pointage",
-    "familyTitle": "Périscolaire et sorties"
+    "familyTitle": "Périscolaire et sorties",
+    "noListSubtitle": "Les listes de pointage de l'école.",
+    "noListAdmin": "Aucune liste de pointage",
+    "noListAdminHint": "Créez l'appel d'une classe ou un service récurrent — périscolaire du matin, du soir, cantine. La liste d'une sortie se crée depuis l'événement de l'agenda.",
+    "noListGranted": "Aucune liste ne vous est confiée",
+    "noListGrantedHint": "La direction accorde le pointage liste par liste. Demandez-lui de vous ajouter à celle que vous tenez.",
+    "createFirstList": "Créer une liste",
+    "nothingTodaySeeLists": "{count, plural, one {Pointage · # liste} other {Pointage · # listes}}"
   }
 }
