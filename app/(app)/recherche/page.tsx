@@ -1,13 +1,17 @@
-import { SearchIcon } from "lucide-react";
+import { BookOpenIcon, SearchIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Highlighted } from "@/components/domain/highlight";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
+import { articlesFor, toSearchEntry } from "@/lib/help/articles";
+import { helpRolesFor } from "@/lib/help/roles";
+import { buildIndex, searchHelp } from "@/lib/help/search";
 import { globalSearch, hrefForResult } from "@/server/queries/search";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,18 +19,30 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
+/**
+ * One field over everything the reader may see.
+ *
+ * The help joins the announcements and the messages here, but not through
+ * `global_search()`: that function runs in SQL under RLS, and the articles are
+ * files on disk. They are matched on the server with the very same matcher the
+ * `/aide` field uses in the browser, and shown in their own block — a question
+ * about the software is not a result of the same nature as a circular, and
+ * mixing them would have buried one in the other (ADR-0045).
+ */
 export default async function SearchPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  await requireCurrentUser();
+  const user = await requireCurrentUser();
   const { q = "" } = await searchParams;
-  const [t, format, results] = await Promise.all([
+  const [t, format, results, helpArticles] = await Promise.all([
     getTranslations("search"),
     getFormatter(),
     globalSearch(q),
+    articlesFor(helpRolesFor(user.roles)),
   ]);
+  const helpMatches = searchHelp(buildIndex(helpArticles.map(toSearchEntry)), q, 3);
 
   return (
     <>
@@ -51,6 +67,32 @@ export default async function SearchPage({
           {t("submit")}
         </Button>
       </form>
+      {helpMatches.length > 0 && (
+        <section aria-labelledby="help-results" className="mb-6">
+          <h2 id="help-results" className="mb-2 flex items-center gap-2 text-lg">
+            <BookOpenIcon className="size-4 text-muted-foreground" aria-hidden />
+            {t("helpSection")}
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {helpMatches.map((match) => (
+              <li key={match.entry.slug}>
+                <Link
+                  href={`/aide/${match.entry.slug}`}
+                  className="block rounded-xl border p-3 hover:bg-accent/60"
+                >
+                  <Badge variant="secondary" className="mb-1">
+                    {t("kinds.help")}
+                  </Badge>
+                  <p className="font-medium">{match.entry.title}</p>
+                  <p className="line-clamp-2 text-sm text-muted-foreground">
+                    <Highlighted text={match.snippet} ranges={match.ranges} />
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {q.trim().length >= 2 && (
         <p className="mb-3 text-sm text-muted-foreground" role="status">
           {t("results", { count: results.length, query: q.trim() })}

@@ -18,11 +18,15 @@ env:
 
 jobs:
   quality:
-    name: Lint · Types · Format · Unit
+    name: Lint · Types · Format · Help · Unit
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          # `ops:check-help` dates each screen from the git log to tell a stale
+          # article from a fresh one; a shallow clone has no dates to read.
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -32,6 +36,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm format:check
+      - run: pnpm ops:check-help
       - run: pnpm test
 
   build:

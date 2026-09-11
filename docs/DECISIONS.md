@@ -673,3 +673,149 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
 - **Conséquences** : aucune table nouvelle, aucune donnée nouvelle. L'heure de comparaison est lue à
   l'horloge de l'école (`school_timezone`), sinon un service ouvrant à 8 h 30 compterait tout le monde
   en retard deux heures durant l'été.
+
+## ADR-0043 — L'aide reste du Markdown versionné dans le dépôt
+
+- **Contexte** : arbitrage 1 de la session 21. Trois options : garder des fichiers Markdown versionnés,
+  passer le contenu en base pour que la direction le corrige elle-même, ou les deux avec une surcouche
+  par école. La question a été posée au porteur ; l'outil de question a été refusé, donc la règle §9.2
+  s'applique : option la plus simple, consignée ici.
+- **Décision** : **Markdown versionné** (`content/help/*.md`), comme depuis la session 15 (ADR-0027).
+- **Pourquoi** : le problème mesuré n'est pas que la directrice ne puisse pas corriger une coquille,
+  c'est que l'aide avait cinq sessions de retard. Mettre le contenu en base coûte une table, ses
+  politiques RLS, ses assertions pgTAP et un éditeur d'administration — un chantier entier pris sur
+  l'écriture des articles — et **retire au garde-fou du chantier C tout son mordant** : la CI ne peut
+  pas vérifier la fraîcheur d'un texte qu'elle ne lit pas. L'option mixte repose la question « qui fait
+  foi » à chaque écran, pour une couverture de garde-fou réduite de moitié.
+- **Conséquences** : une correction de contenu passe par une session de développement. Si l'école veut
+  un jour écrire ses propres articles, la surcouche se construit **par-dessus** ce socle, et le
+  garde-fou continuera de couvrir la partie versionnée ; l'inverse n'était pas vrai.
+
+## ADR-0044 — Un seul jeu d'articles, l'audience déclarée par article et par paragraphe
+
+- **Contexte** : arbitrages 2 et 6. Faut-il un jeu d'articles par rôle (qui duplique) ou un jeu unique
+  avec des blocs conditionnels (qui se périme en un seul endroit) ? Et le responsable en lecture seule
+  mérite-t-il son propre jeu, ou une variante du guide des parents ?
+- **Décision** : **un seul jeu**. Chaque article déclare `roles:` dans son front-matter, et un bloc
+  `:::roles parent, guardian … :::` réserve un paragraphe à une partie de l'audience.
+- **Pourquoi** : six jeux complets, c'est six fichiers à relire quand un écran bouge — exactement le
+  mécanisme qui a produit les trois guides périmés. Un `roles:` au seul niveau de l'article obligeait à
+  dupliquer l'article entier dès qu'une phrase diffère (le responsable ne coche pas « vu », le
+  secrétariat ne voit pas les évaluations), donc ramenait à la duplication. Le bloc coûte quarante
+  lignes de parseur, testées.
+- **Le responsable en lecture seule** n'a donc ni jeu propre ni guide des parents amputé : il partage
+  les articles des écrans qu'il a, et les phrases qui ne le concernent pas **n'existent pas** dans ce
+  qu'il lit — `filterBody()` les retire avant le rendu, avant le PDF et avant l'index de recherche. Un
+  test unitaire vérifie qu'aucune phrase servie à un `guardian` ne lui demande d'écrire.
+- **Conséquences** : `roles: all` est un raccourci pour les six rôles. Un article servi à plusieurs
+  rôles se relit une fois, ce qui est le but ; en contrepartie il faut penser au bloc conditionnel au
+  moment de l'écriture, sous peine d'écrire une phrase fausse pour l'un des rôles listés.
+
+## ADR-0045 — Recherche d'aide : un index construit au rendu, jamais une copie en base
+
+- **Contexte** : arbitrage 3. Index embarqué côté client (marche hors ligne, pèse dans le bundle) ou
+  copie des articles en base pour rejoindre `global_search()` (une table de plus, sous RLS) ?
+- **Décision** : **index construit au rendu**, à partir des seuls articles du lecteur.
+  - Sur `/aide`, l'index part avec la page et le filtrage se fait dans le navigateur (`lib/help/search.ts`).
+  - Sur `/recherche`, le **même** module tourne côté serveur et ses résultats s'affichent dans un bloc
+    propre, à côté de ceux de `global_search()`.
+- **Pourquoi** : copier en base un contenu dont le dépôt est la source de vérité (ADR-0043) demande une
+  synchronisation à chaque déploiement — et une base qui ment est pire qu'une jointure manquante.
+  L'index client pèse le texte des articles du lecteur (≈ 50 ko, ≈ 15 ko compressés) sur la seule page
+  `/aide`, et c'est le seul contenu de l'application qu'on puisse légitimement mettre en cache hors
+  ligne (ADR-0025 interdit de cacher les pages privées).
+- **Accents** : `normalize()` (NFD + suppression des diacritiques) reproduit côté fichier ce que
+  `french_unaccent` fait en base — « declarer » trouve « Déclarer ».
+- **Conséquences** : deux moteurs de recherche coexistent, l'un en SQL sous RLS pour les données,
+  l'autre en mémoire pour les fichiers. Ils ne sont pas fusionnés à l'écran : une question sur le
+  logiciel et une circulaire ne sont pas des résultats de même nature, et les mélanger enterrait l'une
+  dans l'autre. L'index ne contient que les articles du lecteur : la recherche ne peut pas servir de
+  fenêtre sur les rôles voisins.
+
+## ADR-0046 — Le garde-fou de fraîcheur bloque la CI, couverture et péremption
+
+- **Contexte** : arbitrage 4. Bloquer garantit la fraîcheur et rendra rouge la première session qui
+  touche un écran sans y penser ; avertir ne coûte rien et ne change rien.
+- **Décision** : **bloquant sur les trois contrôles**. `scripts/ops/check-help.mjs`, dans `pnpm check`
+  et dans la CI, échoue si (1) un rôle qui atteint un écran de `app/(app)` n'a aucun article qui le lui
+  adresse, (2) un article documente une route qui n'existe plus, (3) la date `reviewed:` d'un article
+  précède le dernier commit touchant l'écran qu'il décrit.
+- **Pourquoi pas un avertissement** : un avertissement dans un journal de CI vert n'est jamais lu.
+  C'est très exactement le mécanisme qui a laissé passer cinq sessions.
+- **Deux atténuations, pour que ce soit tenable** :
+  - la comparaison de fraîcheur se fait **au jour près** — toucher un écran et relire son article le
+    même jour reste vert, ce qui est le geste qu'on veut encourager, pas punir ;
+  - une carte `EXEMPT` versionnée permet de déclarer un écran sans article, **avec un motif d'une
+    ligne**. Elle est vide aujourd'hui : les 68 écrans sont couverts, et c'est l'état à défendre.
+- **Les rôles ne sont pas une liste tenue à la main** : le script lit la garde appelée par la page (ou
+  par le layout le plus proche) et en déduit l'audience ; une garde inconnue fait échouer le script
+  avec un message qui dit où l'apprendre. La poignée d'écrans dont la page renvoie elle-même une partie
+  de son audience ailleurs est déclarée dans `ROLE_OVERRIDES`, un motif par ligne.
+- **L'aide contextuelle est le pendant visible** : le « ? » de chaque en-tête ouvre l'article dont les
+  `routes` correspondent au chemin courant. Un écran sans article se voit à l'écran, pas seulement dans
+  un journal de CI. La date de relecture est affichée au lecteur sur chaque article : le contrat de
+  fraîcheur est vérifiable par celui qui en pâtit.
+- **Conséquences** : la CI a besoin de l'historique git (`fetch-depth: 0`) ; sans lui le script le dit
+  et ne juge pas la fraîcheur plutôt que de la déclarer bonne. La règle est écrite dans `CLAUDE.md` §9
+  et dans la checklist de PR §6, pour survivre à la session qui l'a posée.
+
+## ADR-0047 — L'aide est en français, et l'interface le dit honnêtement
+
+- **Contexte** : arbitrage 5. Traduire l'aide (le volume double, la parité devient un test comme
+  `tests/unit/i18n.test.ts`) ou assumer le français et retirer la promesse de `help.languageNote`.
+- **Décision** : **articles en français seulement**. La coquille (titres, thèmes, recherche, boutons,
+  « Quoi de neuf ») reste bilingue via next-intl, catalogues à parité comme le reste de l'application.
+- **Pourquoi** : la promesse de session 15 — « la version anglaise arrivera avec les retours des
+  premières familles » — n'a pas été tenue en six sessions, et doubler quarante-trois articles doublerait
+  aussi le coût de chaque relecture imposée par ADR-0046. Trois familles anglophones figurent au seed ;
+  l'application leur parle anglais, les articles non, et `help.languageNote` le dit maintenant au présent
+  au lieu de promettre une date.
+- **Conséquences** : si l'anglais devient nécessaire, il se fera par un fichier frère
+  (`content/help/en/<slug>.md`) et un test de parité — pas par des chaînes next-intl, qui ne sont pas
+  faites pour de la prose longue.
+
+## ADR-0048 — Le PDF suit le lecteur, plus le fichier
+
+- **Contexte** : arbitrage 7. Garder l'export PDF (utile pour une réunion de rentrée, imprimable) ou le
+  supprimer au profit de l'aide en ligne seule.
+- **Décision** : **gardé, et rendu par rôle**. `/api/aide/guide` produit « mon guide » — tous les
+  articles du lecteur, dans l'ordre de `/aide`, sous les mêmes titres de thème. Il n'y a plus rien à
+  mettre dans l'URL : les rôles se lisent dans la session.
+- **Pourquoi** : un PDF par fichier n'avait de sens que tant que l'aide était trois guides monolithiques.
+  Avec des articles découpés par question, l'unité imprimable est la personne.
+- **Conséquences** : `lib/guides.ts` et `app/api/guides/[slug]` disparaissent. En chemin, un défaut réel :
+  `position: absolute` + `fixed` + `render` est une mise en page que `@react-pdf` ne sait pas faire —
+  au-delà d'une douzaine de pages elle translate un bloc de texte de -8,7 × 10²¹ points et lève
+  « unsupported number ». Les guides d'une page ne l'atteignaient jamais ; « mon guide » de la direction
+  fait douze pages. Le numéro de page est passé en **titre courant dans le flux**, et un test rend le
+  guide des six rôles pour que la régression ne repasse pas.
+
+## ADR-0049 — Les captures d'écran de l'aide : principe retenu, mise en œuvre reportée
+
+- **Contexte** : arbitrage 8 et piste D. Des captures dans les articles, générées par Playwright depuis
+  le seed fictif, seraient toujours à jour et sans aucune donnée réelle.
+- **Décision** : le **principe est retenu** — si des captures entrent un jour dans l'aide, elles sont
+  générées depuis le seed fictif (comptes `*@demo.local`) et régénérées en CI ; **aucune capture prise à
+  la main sur des données réelles**, jamais, ce sont des données de mineurs. La **mise en œuvre est
+  reportée** : elle suppose une stack Supabase, indisponible dans l'environnement de la session 21
+  (pas de démon Docker).
+- **Conséquences** : à faire dans une session qui dispose d'une stack. Le garde-fou d'ADR-0046 devra
+  alors s'étendre aux captures, sinon elles périmeront exactement comme les guides : une capture datée
+  d'un écran qui a bougé est un mensonge plus convaincant qu'une phrase.
+
+## ADR-0050 — « Quoi de neuf » : les `since:` des articles, un marqueur dans le navigateur
+
+- **Contexte** : la page « Quoi de neuf » doit dire à une famille ce qui a changé depuis sa dernière
+  visite. Il faut donc une notion d'ancienneté et un marqueur de lecture.
+- **Décision** : l'ancienneté est le champ `since:` de chaque article — le numéro de session qui a
+  introduit l'écran. Aucune table : le marqueur de lecture est un entier dans le `localStorage` du
+  navigateur (`kesher-help-seen`).
+- **Pourquoi** : un marqueur de lecture est un confort par appareil, pas un fait que l'école a besoin de
+  savoir sur une famille. Le mettre en base coûterait une table, une politique RLS et une assertion
+  pgTAP pour une donnée dont le pire défaut est qu'une pastille s'affiche deux fois. C'est aussi le bon
+  réflexe RGPD sur des comptes liés à des mineurs : ne pas collecter ce dont on n'a pas besoin.
+- **Conséquences** : la pastille ne suit pas d'un appareil à l'autre, et un navigateur qui bloque le
+  stockage la voit réapparaître — les deux accès sont protégés et la page s'affiche correctement sans.
+  À la première visite, le marqueur est posé au niveau courant : on n'annonce pas quarante-trois
+  nouveautés à quelqu'un qui n'a jamais ouvert l'aide. La page ne nomme jamais un numéro de session :
+  elle dit « depuis votre dernière visite », ce qui est la seule chose qui intéresse une famille.

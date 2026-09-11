@@ -1,7 +1,7 @@
 # Feuille de route — Kesher
 
 Une session ≈ 2–4 h de Claude Code, chacune **déployable, testée, committée**.
-**MVP présentable à la direction = sessions 1–8.** Sessions 9–15 = V1 complète. État au 2026-09-10 : les dix-sept
+**MVP présentable à la direction = sessions 1–8.** Sessions 9–15 = V1 complète. État au 2026-09-11 : les vingt et une
 sessions sont codées ; la session 18 a rejoué les validations « stack Supabase » qui pouvaient l'être
 sans clés e-mail ni push (voir « Session 18 ») ; la session 19 ajoute la maîtrise du dialogue par la
 direction et la pointeuse, toutes deux jouées à la main sur une stack réelle.
@@ -22,7 +22,7 @@ direction et la pointeuse, toutes deux jouées à la main sur une stack réelle.
 | 12  | Communauté : annuaire opt-in, petites annonces, anniversaires, RDV parents-prof, formulaires                                 | Réservation de créneau fonctionnelle                    | 🟡 code complet, réservation de créneau testée en pgTAP ; parcours à valider sur une stack Supabase  |
 | 13  | PWA, offline, recherche globale, accessibilité, performance (Lighthouse ≥ 90 mobile)                                         | Installable iOS/Android                                 | 🟡 code complet ; installation à valider sur iOS / Android, Lighthouse mesuré sur le déploiement     |
 | 14  | RGPD : export, suppression, docs/RGPD.md, audit log, 2FA admin, CSP                                                          | Checklist §9 cochée                                     | 🟡 code complet ; 2FA et suppression de compte à valider sur une stack Supabase                      |
-| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | 🟡 code et documents complets ; démo à jouer sur une stack Supabase avant la présentation            |
+| 15  | Guides utilisateurs (PDF + pages in-app), démo scénarisée, script de bascule staging→prod, promotion de niveau               | Démo de 15 min prête pour la direction                  | 🟡 refondus en session 21 (43 articles par rôle, recherche, garde-fou de fraîcheur) ; démo à jouer   |
 
 ## Session 1 — détail
 
@@ -634,6 +634,47 @@ Les trois que la session 19 avait chiffrés et retenus, livrés d'un bloc (ADR-0
 Restent écartés, comme évalué en session 19 : le **trombinoscope** (cher là où on ne le voit pas, tant
 que les droits à l'image ne sont pas majoritairement signés), et **objets trouvés / covoiturage**, déjà
 livrés comme deux catégories des petites annonces.
+
+## Session 21 — Une aide qui s'adresse à chacun, qui se cherche, et qui ne périme plus (2026-09-11)
+
+L'aide datait de la session 15 : trois guides monolithiques pour six rôles, cinq sessions de retard, et
+aucun moyen d'y chercher quoi que ce soit. Le secrétariat était renvoyé au guide de la direction, un
+responsable en lecture seule à celui des parents, l'administrateur de plateforme à rien.
+
+- [x] **A — 43 articles courts** (`content/help/*.md`), un par question, avec un front-matter qui déclare
+      `title`, `roles`, `routes`, `topic`, `keywords`, `since` et `reviewed`. `/aide` n'affiche que les
+      articles du lecteur, rangés en cinq thèmes ; ce qui ne le concerne pas est **absent**, pas grisé.
+      Un bloc `:::roles` réserve une phrase à une partie de l'audience — un responsable en lecture seule
+      ne lit jamais « ouvrez la messagerie » (ADR-0044). Sessions 16 à 20 couvertes : `/devoirs`,
+      navigation par rôle, groupes et sondages, robinet du dialogue, pointeuse, bloc « Aujourd'hui »,
+      emploi du temps, mot d'excuse signé, retards. PDF « mon guide » par rôle (ADR-0048).
+- [x] **C — garde-fou de fraîcheur** `scripts/ops/check-help.mjs`, dans `pnpm check` et en CI
+      (ADR-0046). Il déduit l'audience de chaque écran de `app/(app)` de la garde appelée par sa page
+      (ou par le layout le plus proche) et **échoue** si un rôle qui atteint un écran n'a aucun article,
+      si un article documente une route disparue, ou si son `reviewed:` précède le dernier commit de
+      l'écran décrit (comparaison au jour près). Carte `EXEMPT` versionnée, vide aujourd'hui : les
+      68 écrans sont couverts. Règle écrite dans `CLAUDE.md` §9 et dans la checklist de PR §6. Un « ? »
+      dans chaque en-tête ouvre l'article de l'écran courant ; `/aide/quoi-de-neuf` liste les nouveautés
+      du rôle, marqueur de lecture dans le navigateur (ADR-0050).
+- [x] **B — recherche** en direct sur `/aide` (titre, mots-clés, corps), insensible aux accents et à la
+      casse, extraits surlignés, état vide qui propose une sortie plutôt qu'une impasse ; `/recherche`
+      remonte les articles à côté des annonces, sans copier un fichier en base (ADR-0045).
+- [x] Défaut réel corrigé en chemin : `position: absolute` + `fixed` + `render` est une mise en page que
+      `@react-pdf` ne sait pas faire au-delà d'une douzaine de pages. Invisible tant que les guides
+      tenaient sur une page, fatale pour « mon guide » de la direction.
+- [x] 156 tests unitaires (parseur, filtrage par rôle, recherche, rendu PDF des six rôles),
+      436 assertions pgTAP inchangées et vertes sur `pnpm db:test`, 26 e2e verts, `pnpm build` vert.
+- [ ] **Parcours à six rôles sur une stack Supabase réelle, à 390 px et 1440 px, axe-core sur `/aide`,
+      `/aide/[slug]`, `/aide/quoi-de-neuf` et le « ? »** : impossible dans l'environnement de la
+      session (aucun démon Docker, donc ni `db:start` ni `db:test:supabase`). Le filtrage par rôle est
+      vérifié en test unitaire sur le contenu réel, écran par écran ; il reste à le rejouer à l'œil.
+- [ ] **Captures d'écran dans les articles** (piste D) : principe arbitré — seed fictif, régénération en
+      CI, jamais de données réelles (ADR-0049) — mise en œuvre reportée, elle suppose une stack.
+- [ ] Écartés de la piste D, faute de valeur claire à ce stade : premier lancement guidé (l'aide
+      contextuelle répond déjà au même besoin sans ajouter d'écran à traverser), glossaire (les termes
+      sont définis là où ils servent), « cet article vous a-t-il aidé ? » (un compteur, même anonyme, sur
+      des comptes liés à des mineurs, pour un corpus que la CI relit déjà), visite guidée sur l'écran.
+      L'aide hors ligne est acquise sans travail : les articles sont statiques et partent avec la page.
 
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 

@@ -1830,7 +1830,7 @@
     "title": "Recherche",
     "placeholder": "Rechercher…",
     "submit": "Rechercher",
-    "hint": "Annonces, publications de classe, messages, événements, documents et petites annonces auxquels vous avez accès.",
+    "hint": "Annonces, publications de classe, messages, événements, documents, petites annonces et articles d'aide auxquels vous avez accès.",
     "empty": "Aucun résultat.",
     "results": "{count, plural, =0 {Aucun résultat pour « {query} »} one {# résultat pour « {query} »} other {# résultats pour « {query} »}}",
     "kinds": {
@@ -1839,9 +1839,11 @@
       "message": "Message",
       "community": "Petite annonce",
       "event": "Agenda",
-      "document": "Document"
+      "document": "Document",
+      "help": "Aide"
     },
-    "emptyHint": "Essayez un autre mot, ou le nom d'un événement, d'une annonce ou d'un document."
+    "emptyHint": "Essayez un autre mot, ou le nom d'un événement, d'une annonce ou d'un document.",
+    "helpSection": "Articles d'aide"
   },
   "pwa": {
     "install": "Installer Kesher sur cet appareil",
@@ -1901,24 +1903,57 @@
   },
   "help": {
     "title": "Aide",
-    "subtitle": "Guides pas à pas pour chaque rôle, consultables ici ou en PDF.",
-    "pdf": "Version PDF",
-    "guides": {
-      "parents": {
-        "title": "Guide des parents",
-        "hint": "Connexion, annonces, classe, messages, agenda, communauté, données."
-      },
-      "enseignants": {
-        "title": "Guide des enseignants",
-        "hint": "Publier, devoirs, évaluations, groupe de classe, rendez-vous."
-      },
-      "direction": {
-        "title": "Guide de la direction",
-        "hint": "Années, familles, annonces, modération, données personnelles."
-      }
+    "subtitle": "Des articles courts, et seulement ceux qui concernent votre rôle.",
+    "back": "Toute l'aide",
+    "pdf": "Mon guide (PDF)",
+    "pdfTitle": "Mon guide",
+    "pdfSubtitle": "Tous les articles d'aide de : {roles}",
+    "pdfFooter": "{app} · guide généré le {date}",
+    "languageNote": "Les articles d'aide sont rédigés en français ; l'application, elle, s'affiche en français comme en anglais.",
+    "empty": "Aucun article pour votre rôle",
+    "emptyHint": "C'est une anomalie : signalez-la au secrétariat.",
+    "openScreen": "Ouvrir l'écran",
+    "audience": "Pour",
+    "everyone": "Tous les rôles",
+    "reviewedOn": "Relu le {date}",
+    "topics": {
+      "signin": "Se connecter",
+      "signinHint": "Entrer dans l'application et s'y repérer.",
+      "daily": "Au quotidien",
+      "dailyHint": "Ce que vous ouvrez toutes les semaines.",
+      "publish": "Publier",
+      "publishHint": "Écrire aux familles et leur demander quelque chose.",
+      "manage": "Administrer",
+      "manageHint": "Tenir les classes, les comptes et les réglages de l'école.",
+      "data": "Mes données",
+      "dataHint": "Notifications, sécurité et données personnelles."
     },
-    "languageNote": "Les guides sont rédigés en français ; la version anglaise arrivera avec les retours des premières familles.",
-    "pdfFooter": "{app} · guide généré le {date}"
+    "contextual": {
+      "label": "Aide sur cet écran",
+      "none": "Aucun article ne décrit cet écran."
+    },
+    "whatsNew": {
+      "title": "Quoi de neuf",
+      "subtitle": "Ce qui a été ajouté à l'application et qui vous concerne.",
+      "sinceLastVisit": "Depuis votre dernière visite",
+      "earlier": "Plus tôt",
+      "nothing": "Rien de nouveau pour l'instant",
+      "nothingHint": "Les ajouts qui concernent votre rôle apparaîtront ici.",
+      "new": "Nouveau",
+      "badge": "{count, plural, one {# nouveauté} other {# nouveautés}}",
+      "seen": "Vu — cette page est à jour sur cet appareil."
+    },
+    "search": {
+      "label": "Rechercher dans l'aide",
+      "placeholder": "Une question : déclarer une absence, fermer la messagerie…",
+      "clear": "Effacer la recherche",
+      "results": "{count, plural, =0 {Aucun article pour « {query} »} one {# article pour « {query} »} other {# articles pour « {query} »}}",
+      "empty": "Aucun article ne répond à « {query} »",
+      "emptyHint": "Essayez un autre mot : l'aide décrit le logiciel, pas les décisions de l'école.",
+      "suggestions": "Par où commencer",
+      "globalSearch": "Chercher dans toute l'application",
+      "ask": "Écrire à l'école"
+    }
   },
   "forms": {
     "export": {

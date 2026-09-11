@@ -71,10 +71,16 @@ const nextConfig: NextConfig = {
   },
   // PDF rendering runs in Node.js only (report cards): keep the package out of the bundle.
   serverExternalPackages: ["@react-pdf/renderer"],
-  // Markdown guides are read at request time (content/guides): keep them in the serverless bundle.
+  // Help articles are read at request time (content/help): keep them in the serverless bundle.
   outputFileTracingIncludes: {
-    "/aide/[slug]": ["./content/guides/**/*"],
-    "/api/guides/[slug]": ["./content/guides/**/*"],
+    "/aide": ["./content/help/**/*"],
+    "/aide/[slug]": ["./content/help/**/*"],
+    "/aide/quoi-de-neuf": ["./content/help/**/*"],
+    "/api/aide/guide": ["./content/help/**/*"],
+    // The global search matches the articles on the server, beside global_search().
+    "/recherche": ["./content/help/**/*"],
+    // The "?" in every page header resolves the article for the current path.
+    "/(app)/layout": ["./content/help/**/*"],
   },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];

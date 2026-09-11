@@ -5,11 +5,14 @@ import type { ReactNode } from "react";
 
 import { AccountMenu } from "@/components/layouts/account-menu";
 import { BottomNav, TopNav } from "@/components/layouts/bottom-nav";
+import { HelpIndexProvider } from "@/components/layouts/help-hint";
 import { NotificationBell } from "@/components/layouts/notification-bell";
 import { PerspectiveSwitcher } from "@/components/layouts/perspective-switcher";
 import { InstallPrompt } from "@/components/layouts/pwa";
 import { SearchBox } from "@/components/layouts/search-box";
 import { type CurrentUser, displayName, initials } from "@/lib/auth/session";
+import { helpIndexFor } from "@/lib/help/articles";
+import { helpRolesFor } from "@/lib/help/roles";
 import { canUseMessaging } from "@/lib/permissions";
 import { appName } from "@/lib/env";
 import { getUnreadMessageCount } from "@/server/queries/messaging";
@@ -29,9 +32,10 @@ import { getUnreadMessageCount } from "@/server/queries/messaging";
  * avatar under the 44 px touch target the project mandates.
  */
 export async function AppShell({ user, children }: { user: CurrentUser; children: ReactNode }) {
-  const [tc, unreadMessages] = await Promise.all([
+  const [tc, unreadMessages, helpIndex] = await Promise.all([
     getTranslations("common"),
     getUnreadMessageCount(),
+    helpIndexFor(helpRolesFor(user.roles)),
   ]);
   const perspective = user.perspective ?? "parent";
   const isParent = user.roles.some((r) => r.role === "parent" || r.role === "guardian");
@@ -92,7 +96,8 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
         tabIndex={-1}
         className="mx-auto w-full max-w-[110rem] flex-1 px-4 pt-6 pb-[calc(var(--nav-h)+1.5rem)] outline-none md:px-6 lg:px-8 lg:pb-12 2xl:px-12"
       >
-        {children}
+        {/* The index the "?" of every page header looks the current path up in. */}
+        <HelpIndexProvider articles={helpIndex}>{children}</HelpIndexProvider>
       </main>
       <BottomNav
         perspective={perspective}
