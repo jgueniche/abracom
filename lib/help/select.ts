@@ -1,4 +1,4 @@
-import { excerpt, filterBody, HELP_TOPICS, normalize, plainText } from "@/lib/help/frontmatter.mjs";
+import { excerpt, filterBody, HELP_TOPICS, plainText } from "@/lib/help/frontmatter.mjs";
 import type { HelpRole } from "@/lib/help/roles";
 
 export type HelpTopic = (typeof HELP_TOPICS)[number];
@@ -59,25 +59,27 @@ export function groupByTopic(articles: readonly ReaderArticle[]) {
   })).filter((group) => group.articles.length > 0);
 }
 
-/** The compact index the search box works on — title, keywords and body. */
+/**
+ * The compact index the search works on. The normalised haystack is *not*
+ * shipped: it would double the payload of `/aide` for text the browser can
+ * fold in a single pass (see `lib/help/search.ts`).
+ */
 export type HelpSearchEntry = {
   slug: string;
   title: string;
   topic: HelpTopic;
   excerpt: string;
-  /** Pre-normalised (lower case, no diacritics) so the browser does it once. */
-  haystack: string;
+  keywords: string[];
   text: string;
 };
 
 export function toSearchEntry(article: ReaderArticle): HelpSearchEntry {
-  const text = plainText(article.body).replace(/\n+/g, " ");
   return {
     slug: article.slug,
     title: article.title,
     topic: article.topic,
     excerpt: article.excerpt,
-    haystack: normalize(`${article.title} ${article.keywords.join(" ")} ${text}`),
-    text,
+    keywords: article.keywords,
+    text: plainText(article.body).replace(/\n+/g, " "),
   };
 }

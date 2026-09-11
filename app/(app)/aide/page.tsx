@@ -7,9 +7,11 @@ import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { articlesFor, groupByTopic } from "@/lib/help/articles";
+import { articlesFor, groupByTopic, toSearchEntry } from "@/lib/help/articles";
 import { helpRolesFor } from "@/lib/help/roles";
+import { canUseMessaging } from "@/lib/permissions";
 
+import { HelpSearch } from "./_components/help-search";
 import { WhatsNewBadge } from "./_components/whats-new";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -35,6 +37,14 @@ export default async function HelpPage() {
     articlesFor(roles),
   ]);
   const groups = groupByTopic(articles);
+  // A dead end is not an answer: an empty search offers the first article of
+  // each shelf, the global search, and — for those who have it — a human.
+  const suggestions = groups.map((group) => {
+    const first = group.articles[0]!;
+    return { slug: first.slug, title: first.title };
+  });
+  const askHref =
+    user.school && canUseMessaging(user.roles, user.school.id) ? "/messages/nouveau" : null;
 
   return (
     <>
@@ -60,35 +70,43 @@ export default async function HelpPage() {
         }
       />
 
-      {groups.length === 0 ? (
-        <EmptyState icon={BookOpenIcon} title={t("empty")} description={t("emptyHint")} />
-      ) : (
-        <div className="flex flex-col gap-8">
-          {groups.map((group) => (
-            <section key={group.topic} aria-labelledby={`topic-${group.topic}`}>
-              <h2 id={`topic-${group.topic}`} className="mb-1 text-lg">
-                {tTopics(group.topic)}
-              </h2>
-              <p className="mb-3 text-sm text-muted-foreground">{tTopics(`${group.topic}Hint`)}</p>
-              <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                {group.articles.map((article) => (
-                  <li key={article.slug}>
-                    <Link
-                      href={`/aide/${article.slug}`}
-                      className="flex h-full min-h-11 flex-col rounded-xl border p-3 transition-colors hover:border-primary/40 hover:bg-accent/40"
-                    >
-                      <span className="font-medium">{article.title}</span>
-                      <span className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
-                        {article.excerpt}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
-      )}
+      <HelpSearch
+        entries={articles.map((article) => toSearchEntry(article))}
+        suggestions={suggestions}
+        askHref={askHref}
+      >
+        {groups.length === 0 ? (
+          <EmptyState icon={BookOpenIcon} title={t("empty")} description={t("emptyHint")} />
+        ) : (
+          <div className="flex flex-col gap-8">
+            {groups.map((group) => (
+              <section key={group.topic} aria-labelledby={`topic-${group.topic}`}>
+                <h2 id={`topic-${group.topic}`} className="mb-1 text-lg">
+                  {tTopics(group.topic)}
+                </h2>
+                <p className="mb-3 text-sm text-muted-foreground">
+                  {tTopics(`${group.topic}Hint`)}
+                </p>
+                <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                  {group.articles.map((article) => (
+                    <li key={article.slug}>
+                      <Link
+                        href={`/aide/${article.slug}`}
+                        className="flex h-full min-h-11 flex-col rounded-xl border p-3 transition-colors hover:border-primary/40 hover:bg-accent/40"
+                      >
+                        <span className="font-medium">{article.title}</span>
+                        <span className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
+                          {article.excerpt}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        )}
+      </HelpSearch>
 
       <p className="mt-8 text-sm text-muted-foreground">{t("languageNote")}</p>
     </>

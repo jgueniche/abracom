@@ -77,6 +77,8 @@ const nextConfig: NextConfig = {
     "/aide/[slug]": ["./content/help/**/*"],
     "/aide/quoi-de-neuf": ["./content/help/**/*"],
     "/api/aide/guide": ["./content/help/**/*"],
+    // The global search matches the articles on the server, beside global_search().
+    "/recherche": ["./content/help/**/*"],
     // The "?" in every page header resolves the article for the current path.
     "/(app)/layout": ["./content/help/**/*"],
   },

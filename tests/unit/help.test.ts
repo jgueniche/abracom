@@ -15,7 +15,8 @@ import {
 import { outlineArticle } from "@/lib/help/outline";
 import { type HelpRole, helpRolesFor } from "@/lib/help/roles";
 import { articleForRoute, matchesRoute } from "@/lib/help/routes";
-import { groupByTopic, type HelpArticle, selectArticles } from "@/lib/help/select";
+import { buildIndex, searchHelp } from "@/lib/help/search";
+import { groupByTopic, selectArticles, toSearchEntry } from "@/lib/help/select";
 import type { MembershipLike } from "@/lib/permissions";
 import { renderGuide } from "@/lib/pdf/guide";
 
@@ -253,7 +254,7 @@ describe("what each of the six roles actually reads", () => {
     .filter((name) => name.endsWith(".md"))
     .map((name) =>
       parseArticle(name.slice(0, -3), readFileSync(path.join(HELP_DIR, name), "utf8"), name),
-    ) as HelpArticle[];
+    );
 
   const slugsFor = (roles: HelpRole[]) => selectArticles(articles, roles).map((a) => a.slug);
 
@@ -331,4 +332,60 @@ describe("what each of the six roles actually reads", () => {
       expect(buffer.byteLength, role).toBeGreaterThan(5_000);
     }
   }, 60_000);
+});
+
+describe("searching the help", () => {
+  const articles = readdirSync(HELP_DIR)
+    .filter((name) => name.endsWith(".md"))
+    .map((name) =>
+      parseArticle(name.slice(0, -3), readFileSync(path.join(HELP_DIR, name), "utf8"), name),
+    );
+
+  const indexFor = (roles: HelpRole[]) =>
+    buildIndex(selectArticles(articles, roles).map(toSearchEntry));
+
+  it("answers the questions people actually ask", () => {
+    const parent = indexFor(["parent"]);
+    expect(searchHelp(parent, "déclarer une absence")[0]?.entry.slug).toBe(
+      "absences-et-mot-dexcuse",
+    );
+    expect(searchHelp(parent, "qui récupère l'enfant")[0]?.entry.slug).toBe("pointage");
+
+    const direction = indexFor(["school_admin"]);
+    expect(searchHelp(direction, "fermer la messagerie")[0]?.entry.slug).toBe(
+      "ouvrir-et-fermer-le-dialogue",
+    );
+  });
+
+  it("ignores accents and case", () => {
+    const parent = indexFor(["parent"]);
+    for (const query of ["declarer une absence", "DÉCLARER UNE ABSENCE", "Declarer Absence"]) {
+      expect(searchHelp(parent, query)[0]?.entry.slug, query).toBe("absences-et-mot-dexcuse");
+    }
+  });
+
+  it("never returns an article the reader may not read", () => {
+    const guardian = indexFor(["guardian"]);
+    for (const query of ["messagerie", "évaluations", "import CSV", "journal"]) {
+      const slugs = searchHelp(guardian, query).map((match) => match.entry.slug);
+      expect(slugs, query).not.toContain("messagerie");
+      expect(slugs, query).not.toContain("evaluations-et-livret");
+      expect(slugs, query).not.toContain("import-csv");
+      expect(slugs, query).not.toContain("journal");
+    }
+  });
+
+  it("highlights the words it found, inside the passage it shows", () => {
+    const [match] = searchHelp(indexFor(["parent"]), "mot d'excuse");
+    expect(match).toBeDefined();
+    expect(match!.ranges.length).toBeGreaterThan(0);
+    for (const [from, to] of match!.ranges) {
+      expect(normalize(match!.snippet.slice(from, to))).toMatch(/^(mot|excuse)$/);
+    }
+  });
+
+  it("says nothing rather than everything on a one-letter query", () => {
+    expect(searchHelp(indexFor(["parent"]), "a")).toEqual([]);
+    expect(searchHelp(indexFor(["parent"]), "   ")).toEqual([]);
+  });
 });

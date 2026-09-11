@@ -1830,7 +1830,7 @@
     "title": "Search",
     "placeholder": "Search…",
     "submit": "Search",
-    "hint": "Announcements, class posts, messages, events, documents and classifieds you have access to.",
+    "hint": "Announcements, class posts, messages, events, documents, classified ads and help articles you have access to.",
     "empty": "No result.",
     "results": "{count, plural, =0 {No result for “{query}”} one {# result for “{query}”} other {# results for “{query}”}}",
     "kinds": {
@@ -1839,9 +1839,11 @@
       "message": "Message",
       "community": "Classified",
       "event": "Calendar",
-      "document": "Document"
+      "document": "Document",
+      "help": "Help"
     },
-    "emptyHint": "Try another word, or the name of an event, an announcement or a document."
+    "emptyHint": "Try another word, or the name of an event, an announcement or a document.",
+    "helpSection": "Help articles"
   },
   "pwa": {
     "install": "Install Kesher on this device",
@@ -1940,6 +1942,17 @@
       "new": "New",
       "badge": "{count, plural, one {# new item} other {# new items}}",
       "seen": "Seen — this page is up to date on this device."
+    },
+    "search": {
+      "label": "Search the help",
+      "placeholder": "A question: report an absence, close the messaging…",
+      "clear": "Clear the search",
+      "results": "{count, plural, =0 {No article for “{query}”} one {# article for “{query}”} other {# articles for “{query}”}}",
+      "empty": "No article answers “{query}”",
+      "emptyHint": "Try another word: the help describes the software, not the school's decisions.",
+      "suggestions": "Where to start",
+      "globalSearch": "Search the whole application",
+      "ask": "Write to the school"
     }
   },
   "forms": {

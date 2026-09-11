@@ -1830,7 +1830,7 @@
     "title": "Recherche",
     "placeholder": "Rechercher…",
     "submit": "Rechercher",
-    "hint": "Annonces, publications de classe, messages, événements, documents et petites annonces auxquels vous avez accès.",
+    "hint": "Annonces, publications de classe, messages, événements, documents, petites annonces et articles d'aide auxquels vous avez accès.",
     "empty": "Aucun résultat.",
     "results": "{count, plural, =0 {Aucun résultat pour « {query} »} one {# résultat pour « {query} »} other {# résultats pour « {query} »}}",
     "kinds": {
@@ -1839,9 +1839,11 @@
       "message": "Message",
       "community": "Petite annonce",
       "event": "Agenda",
-      "document": "Document"
+      "document": "Document",
+      "help": "Aide"
     },
-    "emptyHint": "Essayez un autre mot, ou le nom d'un événement, d'une annonce ou d'un document."
+    "emptyHint": "Essayez un autre mot, ou le nom d'un événement, d'une annonce ou d'un document.",
+    "helpSection": "Articles d'aide"
   },
   "pwa": {
     "install": "Installer Kesher sur cet appareil",
@@ -1940,6 +1942,17 @@
       "new": "Nouveau",
       "badge": "{count, plural, one {# nouveauté} other {# nouveautés}}",
       "seen": "Vu — cette page est à jour sur cet appareil."
+    },
+    "search": {
+      "label": "Rechercher dans l'aide",
+      "placeholder": "Une question : déclarer une absence, fermer la messagerie…",
+      "clear": "Effacer la recherche",
+      "results": "{count, plural, =0 {Aucun article pour « {query} »} one {# article pour « {query} »} other {# articles pour « {query} »}}",
+      "empty": "Aucun article ne répond à « {query} »",
+      "emptyHint": "Essayez un autre mot : l'aide décrit le logiciel, pas les décisions de l'école.",
+      "suggestions": "Par où commencer",
+      "globalSearch": "Chercher dans toute l'application",
+      "ask": "Écrire à l'école"
     }
   },
   "forms": {

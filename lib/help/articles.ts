@@ -24,7 +24,7 @@ export async function readAllArticles(): Promise<HelpArticle[]> {
   return Promise.all(
     names.map(async (name) => {
       const source = await readFile(path.join(HELP_DIR, name), "utf8");
-      return parseArticle(name.slice(0, -3), source, name) as HelpArticle;
+      return parseArticle(name.slice(0, -3), source, name);
     }),
   );
 }
