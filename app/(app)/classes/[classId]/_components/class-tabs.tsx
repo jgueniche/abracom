@@ -11,10 +11,15 @@ import { cn } from "@/lib/utils";
 // twice, in a seventh tab that pushed the row past the width of a phone.
 const TABS = [
   { segment: "devoirs", key: "homework" },
+  // The weekly grid: the first of the three reasons a family kept Educartable
+  // open beside Kesher (session 20).
+  { segment: "emploi-du-temps", key: "timetable" },
   { segment: "cahier", key: "journal" },
   { segment: "mots", key: "notes" },
   { segment: "evaluations", key: "assessments" },
   { segment: "absences", key: "absences" },
+  // Staff reading only: lateness across a class is not a family view.
+  { segment: "retards", key: "late" },
   { segment: "rdv", key: "appointments" },
 ] as const;
 
@@ -28,9 +33,12 @@ const TABS = [
 export function ClassTabs({
   classId,
   showAssessments,
+  showLate,
 }: {
   classId: string;
   showAssessments: boolean;
+  /** Lateness adds up two registers across the whole class: a staff reading. */
+  showLate: boolean;
 }) {
   const t = useTranslations("classSpace.tabs");
   const pathname = usePathname();
@@ -43,7 +51,10 @@ export function ClassTabs({
     activeRef.current?.scrollIntoView({ block: "nearest", inline: "center" });
   }, [pathname]);
 
-  const tabs = TABS.filter((tab) => tab.segment !== "evaluations" || showAssessments);
+  const tabs = TABS.filter(
+    (tab) =>
+      (tab.segment !== "evaluations" || showAssessments) && (tab.segment !== "retards" || showLate),
+  );
 
   return (
     <nav className="-mx-4 mb-6 overflow-x-auto px-4">

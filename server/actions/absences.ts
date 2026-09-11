@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
@@ -19,6 +20,8 @@ const absenceSchema = z
     startsOn: z.iso.date(),
     endsOn: z.iso.date(),
     reason: z.string().trim().max(500).nullable(),
+    // Session 20: the excuse note signed from the phone, instead of a scan.
+    signedName: z.string().trim().min(2).max(120).nullable(),
   })
   .refine((v) => v.endsOn >= v.startsOn, { path: ["endsOn"] });
 
@@ -28,14 +31,19 @@ export async function declareAbsence(_prev: ActionState, formData: FormData): Pr
     const t = await getTranslations("classSpace.absences");
     const user = await requireCurrentUser();
     const startsOn = field(formData, "startsOn");
+    const signing = formData.get("sign") === "on";
     const parsed = absenceSchema.safeParse({
       studentId: field(formData, "studentId"),
       kind: field(formData, "kind") || "absence",
       startsOn,
       endsOn: field(formData, "endsOn") || startsOn,
       reason: optional(formData, "reason"),
+      signedName: signing ? optional(formData, "signedName") : null,
     });
     if (!parsed.success) return { status: "error", message: t("invalid") };
+    if (signing && !parsed.data.signedName)
+      return { status: "error", message: t("signatureNameRequired") };
+    if (signing && !parsed.data.reason) return { status: "error", message: t("statementRequired") };
 
     const supabase = await createClient();
     const { data: student } = await supabase
@@ -55,6 +63,30 @@ export async function declareAbsence(_prev: ActionState, formData: FormData): Pr
         .from(BUCKETS.justifications)
         .upload(justificationPath, file, { contentType: file.type, upsert: false });
       if (error) return { status: "error", message: t("uploadError") };
+    }
+
+    // A signed note is written with its absence in one transaction: a note
+    // without its absence, or the reverse, is worse than neither.
+    if (signing) {
+      const h = await headers();
+      const { error: signError } = await supabase.rpc("declare_and_sign_absence", {
+        student_: parsed.data.studentId,
+        kind_: parsed.data.kind,
+        starts_on_: parsed.data.startsOn,
+        ends_on_: parsed.data.endsOn,
+        statement_: parsed.data.reason!,
+        signed_name_: parsed.data.signedName!,
+        ip_: h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? undefined,
+        user_agent_: h.get("user-agent")?.slice(0, 300) ?? undefined,
+      });
+      if (signError) {
+        if (justificationPath)
+          await supabase.storage.from(BUCKETS.justifications).remove([justificationPath]);
+        return { status: "error", message: t("saveError") };
+      }
+      revalidatePath("/famille", "layout");
+      revalidatePath("/classes", "layout");
+      return { status: "success", message: t("signedAndDeclared") };
     }
 
     const { error } = await supabase.from("absences").insert({

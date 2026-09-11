@@ -188,6 +188,21 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   **file hors ligne** rejouée dans l'ordre, liste d'une sortie créée depuis l'agenda, export CSV,
   rétention 12 mois. (C) **rabot** — bloc « Aujourd'hui » sur l'accueil du parent (la carte d'accusés
   de lecture y est repliée), « Bravo » d'une tape. 405 assertions pgTAP vertes sur les deux chemins.
+- **Session 20 — code complet, joué à la main sur une stack Supabase réelle** : les trois écarts avec
+  Educartable retenus et chiffrés en session 19, livrés d'un bloc. (1) **Emploi du temps**
+  (`class_timetable`, `class_week`, onglet de classe) : une semaine type — jour, deux heures, matière,
+  intervenant, salle — lue comme une liste de jours, écrite par l'équipe de la classe et le
+  secrétariat, un créneau ne pouvant nommer qu'un intervenant de la classe (ADR-0040).
+  (2) **Mot d'excuse signé du téléphone** (`absence_justifications`, `declare_and_sign_absence`) :
+  le mot et l'absence dans une seule transaction, nom tapé, horodatage imposé par la base, signature
+  jamais réécrite ; **signer soumet une justification, l'école l'accorde** — `absences.status` reste
+  hors de portée de la famille (ADR-0041). (3) **Suivi des retards** (`late_report`) : addition des
+  deux registres, le déclaré et le constaté, gardés distincts, onglet réservé à l'équipe, export CSV,
+  aucune table nouvelle (ADR-0042). 436 assertions pgTAP vertes sur les deux chemins.
+- **Correctif du 2026-09-11** : la pointeuse était introuvable en production — `/pointage` renvoyait à
+  l'accueil sans un mot tant qu'aucune liste n'existait, et les listes de démonstration ne vivent que
+  dans le seed. La page dit maintenant ce qui manque, la carte d'accueil laisse une route au téléphone,
+  et `/admin` affiche un chiffre à côté de Pointage.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
@@ -195,7 +210,8 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   référencés par `/connexion`, où l'origine Supabase n'a aucune raison de figurer. Le garde-fou
   `check-bundle` balaie tout `.next/static` et arrêtera un build de ce genre s'il se produit un jour.
 - **Suite** : brancher Resend et décommenter les modèles d'e-mails de `config.toml`, chronométrer
-  l'import CSV, valider l'upload Storage et le push VAPID, dérouler la démo. Trois écarts avec
-  Educartable retenus et chiffrés (emploi du temps, mot d'excuse signable, suivi des retards) :
-  voir `docs/ROADMAP.md`, section « Écarts avec Educartable ».
+  l'import CSV, valider l'upload Storage et le push VAPID, dérouler la démo. Les trois écarts avec
+  Educartable retenus sont livrés (session 20) ; le trombinoscope reste écarté tant que les droits à
+  l'image ne sont pas majoritairement signés, et objets trouvés / covoiturage existent déjà comme
+  catégories des petites annonces — voir `docs/ROADMAP.md`, section « Écarts avec Educartable ».
 - Questions ouvertes (§15 du brief) : voir `docs/ROADMAP.md`, section « Questions ouvertes ».

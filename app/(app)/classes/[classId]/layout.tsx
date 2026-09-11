@@ -78,7 +78,11 @@ export default async function ClassLayout({
           </>
         }
       />
-      <ClassTabs classId={classId} showAssessments={showAssessments} />
+      <ClassTabs
+        classId={classId}
+        showAssessments={showAssessments}
+        showLate={isTeacher || isStaff}
+      />
       {children}
     </>
   );

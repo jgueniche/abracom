@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { ActionMessage } from "@/components/forms/action-message";
 import { SubmitButton } from "@/components/forms/submit-button";
@@ -11,9 +11,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { idle } from "@/server/actions/admin/_shared-client";
 import { declareAbsence } from "@/server/actions/absences";
 
-export function AbsenceForm({ students }: { students: Array<{ id: string; name: string }> }) {
+export function AbsenceForm({
+  students,
+  canSign = false,
+  defaultName = "",
+}: {
+  students: Array<{ id: string; name: string }>;
+  /** A guardian signs their own note; the office records what it was told. */
+  canSign?: boolean;
+  defaultName?: string;
+}) {
   const t = useTranslations("classSpace.absences");
   const [state, action] = useActionState(declareAbsence, idle);
+  const [signing, setSigning] = useState(false);
   const today = new Date().toISOString().slice(0, 10);
   return (
     <form action={action} className="grid gap-4 sm:grid-cols-2">
@@ -60,9 +70,52 @@ export function AbsenceForm({ students }: { students: Array<{ id: string; name: 
         <Input id="endsOn" name="endsOn" type="date" defaultValue={today} className="min-h-11" />
       </div>
       <div className="flex flex-col gap-2 sm:col-span-2">
-        <Label htmlFor="reason">{t("reason")}</Label>
-        <Textarea id="reason" name="reason" rows={2} maxLength={500} />
+        <Label htmlFor="reason">{signing ? t("statement") : t("reason")}</Label>
+        <Textarea
+          id="reason"
+          name="reason"
+          rows={2}
+          maxLength={500}
+          required={signing}
+          placeholder={signing ? t("statementPlaceholder") : undefined}
+        />
       </div>
+
+      {/* Session 20: the note is written and signed on the phone, at 7 a.m.,
+          without a printer. The school still decides whether it justifies the
+          absence — signing submits, it does not grant. */}
+      {canSign && (
+        <div className="flex flex-col gap-3 rounded-xl border border-border p-3 sm:col-span-2">
+          <label className="flex min-h-11 cursor-pointer items-start gap-3 text-sm">
+            <input
+              type="checkbox"
+              name="sign"
+              checked={signing}
+              onChange={(event) => setSigning(event.target.checked)}
+              className="mt-1 size-5 shrink-0 accent-primary"
+            />
+            <span className="flex flex-col gap-0.5">
+              <span className="font-medium">{t("signLabel")}</span>
+              <span className="text-xs text-muted-foreground">{t("signHint")}</span>
+            </span>
+          </label>
+          {signing && (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="signedName">{t("signedName")}</Label>
+              <Input
+                id="signedName"
+                name="signedName"
+                defaultValue={defaultName}
+                required
+                minLength={2}
+                maxLength={120}
+                className="min-h-11"
+              />
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="flex flex-col gap-2 sm:col-span-2">
         <Label htmlFor="justification">{t("justification")}</Label>
         <Input

@@ -611,6 +611,30 @@ Signalé depuis le déploiement réel : la pointeuse était introuvable pour les
 - Les deux fonctionnalités jouées à la main sur une stack Supabase réelle, à 390 px et 1440 px,
   sous six identités ; pointeuse testée réseau coupé ; axe-core propre sur chaque écran nouveau.
 
+## Session 20 — Les trois écarts Educartable retenus (2026-09-11)
+
+Les trois que la session 19 avait chiffrés et retenus, livrés d'un bloc (ADR-0040 à ADR-0042).
+
+- [x] **Emploi du temps de la classe** : `class_timetable` (jour ISO, deux heures, matière, intervenant,
+      salle), onglet dans l'espace de classe, lu par les familles et par un responsable en lecture seule,
+      écrit par l'équipe de la classe et le secrétariat. Lu comme une liste de jours, pas comme un
+      tableau croisé — illisible à 390 px. Un créneau ne peut nommer qu'un intervenant de la classe.
+- [x] **Mot d'excuse signé depuis le téléphone** : `absence_justifications` et
+      `declare_and_sign_absence()` — le mot et l'absence dans une seule transaction, le nom tapé,
+      l'horodatage imposé par la base. Signer **soumet** une justification, l'école l'**accorde** :
+      `absences.status` reste hors de portée de la famille. Le justificatif scanné reste possible.
+- [x] **Suivi des retards** : `late_report()` additionne les deux registres — le déclaré et le constaté —
+      en les gardant distincts, onglet « Retards » réservé à l'équipe, fenêtres 30 j / 3 mois / année,
+      export CSV. Aucune table nouvelle : le manque était arithmétique.
+- [x] 31 assertions pgTAP ajoutées (436 au total), vertes sur `pnpm db:test` **et**
+      `pnpm db:test:supabase`. Les trois écrans joués à la main sur une stack Supabase réelle à 390 px et
+      1440 px ; axe-core propre sur chacun. Un défaut d'affichage corrigé en chemin : à 390 px le nom de
+      l'élève s'enroulait et les compteurs de retard se glissaient au milieu.
+
+Restent écartés, comme évalué en session 19 : le **trombinoscope** (cher là où on ne le voit pas, tant
+que les droits à l'image ne sont pas majoritairement signés), et **objets trouvés / covoiturage**, déjà
+livrés comme deux catégories des petites annonces.
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

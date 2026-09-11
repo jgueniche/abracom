@@ -9,6 +9,57 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      absence_justifications: {
+        Row: {
+          absence_id: string
+          created_at: string
+          id: string
+          ip: unknown
+          signed_at: string
+          signed_name: string
+          statement: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          absence_id: string
+          created_at?: string
+          id?: string
+          ip?: unknown
+          signed_at?: string
+          signed_name: string
+          statement: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          absence_id?: string
+          created_at?: string
+          id?: string
+          ip?: unknown
+          signed_at?: string
+          signed_name?: string
+          statement?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "absence_justifications_absence_id_fkey"
+            columns: ["absence_id"]
+            isOneToOne: false
+            referencedRelation: "absences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "absence_justifications_user_profile_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       absences: {
         Row: {
           created_at: string
@@ -1034,6 +1085,76 @@ export type Database = {
           {
             foreignKeyName: "class_teachers_user_profile_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      class_timetable: {
+        Row: {
+          class_id: string
+          created_at: string
+          created_by: string | null
+          ends_at: string
+          id: string
+          note: string | null
+          room: string | null
+          school_id: string
+          starts_at: string
+          subject: string
+          teacher_id: string | null
+          updated_at: string
+          weekday: number
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          created_by?: string | null
+          ends_at: string
+          id?: string
+          note?: string | null
+          room?: string | null
+          school_id: string
+          starts_at: string
+          subject: string
+          teacher_id?: string | null
+          updated_at?: string
+          weekday: number
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string
+          id?: string
+          note?: string | null
+          room?: string | null
+          school_id?: string
+          starts_at?: string
+          subject?: string
+          teacher_id?: string | null
+          updated_at?: string
+          weekday?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_timetable_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "class_timetable_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "class_timetable_teacher_profile_fkey"
+            columns: ["teacher_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -3296,6 +3417,20 @@ export type Database = {
         Returns: string[]
       }
       class_school_id: { Args: { class_: string }; Returns: string }
+      class_week: {
+        Args: { class_: string }
+        Returns: {
+          ends_at: string
+          id: string
+          note: string
+          room: string
+          starts_at: string
+          subject: string
+          teacher_id: string
+          teacher_name: string
+          weekday: number
+        }[]
+      }
       classified_contact: {
         Args: { post: string }
         Returns: {
@@ -3329,6 +3464,19 @@ export type Database = {
           options_: string[]
           question_: string
           thread_: string
+        }
+        Returns: string
+      }
+      declare_and_sign_absence: {
+        Args: {
+          ends_on_: string
+          ip_?: unknown
+          kind_: Database["public"]["Enums"]["absence_kind"]
+          signed_name_: string
+          starts_on_: string
+          statement_: string
+          student_: string
+          user_agent_?: string
         }
         Returns: string
       }
@@ -3498,6 +3646,19 @@ export type Database = {
       is_thread_moderator: {
         Args: { thread: string; uid?: string }
         Returns: boolean
+      }
+      late_report: {
+        Args: { class_?: string; from_: string; school_: string; to_: string }
+        Returns: {
+          class_id: string
+          class_name: string
+          declared_late: number
+          first_name: string
+          last_late: string
+          last_name: string
+          observed_late: number
+          student_id: string
+        }[]
       }
       log_audit: {
         Args: {

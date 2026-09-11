@@ -920,7 +920,9 @@
       "absences": "Absences",
       "team": "Team",
       "assessments": "Assessments",
-      "appointments": "Appointments"
+      "appointments": "Appointments",
+      "timetable": "Timetable",
+      "late": "Late"
     },
     "type": {
       "homework": "To prepare",
@@ -1045,7 +1047,16 @@
       "period": "{from} → {to}",
       "readOnly": "Declarations are reserved for parents.",
       "record": "Record an absence",
-      "emptyHint": "Absences reported by families and those recorded by the office appear here."
+      "emptyHint": "Absences reported by families and those recorded by the office appear here.",
+      "statement": "The note",
+      "statementPlaceholder": "Ethan has had a fever since last night.",
+      "signLabel": "I sign this note",
+      "signHint": "Counts as a written excuse note: timestamped and kept. The school alone decides whether the absence is justified.",
+      "signedName": "Your name",
+      "signedBy": "Signed by {name} on {date}",
+      "signedAndDeclared": "The note is signed and sent to the school.",
+      "signatureNameRequired": "Enter the name signing the note.",
+      "statementRequired": "Write the note before signing it."
     },
     "seenByTotal": "Seen by {count} / {total}",
     "readMore": "Read more",
@@ -2035,5 +2046,51 @@
     "noListGrantedHint": "The direction grants attendance list by list. Ask to be added to the one you run.",
     "createFirstList": "Create a list",
     "nothingTodaySeeLists": "{count, plural, one {Attendance · # list} other {Attendance · # lists}}"
+  },
+  "timetable": {
+    "title": "Timetable",
+    "day": "Day",
+    "days": {
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday",
+      "7": "Sunday"
+    },
+    "subject": "Subject",
+    "subjectPlaceholder": "Language",
+    "startsAt": "Start",
+    "endsAt": "End",
+    "teacher": "Taught by",
+    "noTeacher": "The class team",
+    "room": "Room",
+    "addSlot": "Add the slot",
+    "addTitle": "Add a slot",
+    "remove": "Remove",
+    "nothing": "Nothing scheduled.",
+    "empty": "No timetable yet",
+    "emptyHint": "It appears here as soon as the class team enters it.",
+    "emptyHintTeacher": "Add the week's slots below: a day, two times, a subject.",
+    "saved": "The slot is added.",
+    "invalid": "Check the day, the times and the subject: the end must follow the start.",
+    "saveError": "Saving did not go through. Try again in a moment."
+  },
+  "late": {
+    "title": "Late arrivals",
+    "windows": {
+      "30": "30 days",
+      "90": "3 months",
+      "365": "The year"
+    },
+    "empty": "No late arrival over the period",
+    "emptyHint": "Lateness reported by families and lateness seen at check-in will appear here.",
+    "summary": "{count, plural, one {# late arrival} other {# late arrivals}} · {pupils, plural, one {# pupil} other {# pupils}}",
+    "declared": "{count, plural, one {# reported} other {# reported}}",
+    "observed": "{count, plural, one {# seen} other {# seen}}",
+    "lastOn": "last on {date}",
+    "sources": "“Reported” comes from families, “seen” from check-in. One late arrival may appear in both.",
+    "exportCsv": "CSV export"
   }
 }
