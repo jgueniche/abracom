@@ -13,9 +13,11 @@ import {
   plainText,
 } from "@/lib/help/frontmatter.mjs";
 import { outlineArticle } from "@/lib/help/outline";
-import { helpRolesFor } from "@/lib/help/roles";
+import { type HelpRole, helpRolesFor } from "@/lib/help/roles";
 import { articleForRoute, matchesRoute } from "@/lib/help/routes";
+import { groupByTopic, type HelpArticle, selectArticles } from "@/lib/help/select";
 import type { MembershipLike } from "@/lib/permissions";
+import { renderGuide } from "@/lib/pdf/guide";
 
 const SCHOOL = "school-neuilly";
 const HELP_DIR = path.join(process.cwd(), "content", "help");
@@ -244,4 +246,89 @@ describe("the articles shipped with the application", () => {
       }
     }
   });
+});
+
+describe("what each of the six roles actually reads", () => {
+  const articles = readdirSync(HELP_DIR)
+    .filter((name) => name.endsWith(".md"))
+    .map((name) =>
+      parseArticle(name.slice(0, -3), readFileSync(path.join(HELP_DIR, name), "utf8"), name),
+    ) as HelpArticle[];
+
+  const slugsFor = (roles: HelpRole[]) => selectArticles(articles, roles).map((a) => a.slug);
+
+  it("gives every role a full set, ordered by topic", () => {
+    for (const role of HELP_ROLES) {
+      const selected = selectArticles(articles, [role]);
+      expect(selected.length, role).toBeGreaterThan(3);
+      const topics = selected.map((a) => a.topic);
+      const sorted = [...topics].sort((a, b) => HELP_TOPICS.indexOf(a) - HELP_TOPICS.indexOf(b));
+      expect(topics, role).toEqual(sorted);
+    }
+  });
+
+  it("keeps the read-only guardian away from what they cannot do", () => {
+    const slugs = slugsFor(["guardian"]);
+    // ADR-0035: no messaging, no assessments — and session 18 found the tabs
+    // were being offered anyway. The help must not repeat the mistake.
+    expect(slugs).not.toContain("messagerie");
+    expect(slugs).not.toContain("groupes-et-sondages");
+    expect(slugs).not.toContain("evaluations-et-livret");
+    expect(slugs).not.toContain("retards");
+    // But everything they do have is there.
+    expect(slugs).toContain("annonces-et-accuses-de-lecture");
+    expect(slugs).toContain("agenda-et-inscriptions");
+    expect(slugs).toContain("cahier-de-vie-et-photos");
+  });
+
+  it("keeps the secretariat out of the direction's reserved screens", () => {
+    const slugs = slugsFor(["staff"]);
+    // The old help sent the secretariat to the direction guide wholesale.
+    expect(slugs).not.toContain("evaluations-et-livret");
+    expect(slugs).not.toContain("import-csv");
+    expect(slugs).not.toContain("journal");
+    expect(slugs).not.toContain("ouvrir-et-fermer-le-dialogue");
+    expect(slugs).not.toContain("listes-de-pointage");
+    expect(slugs).toContain("familles-et-eleves");
+    expect(slugs).toContain("moderation");
+  });
+
+  it("gives the platform administrator their own article and the direction's", () => {
+    const slugs = slugsFor(
+      helpRolesFor([{ schoolId: SCHOOL, role: "super_admin", status: "active" }]),
+    );
+    expect(slugs).toContain("role-super-admin");
+    expect(slugs).toContain("import-csv");
+    expect(slugs).toContain("journal");
+  });
+
+  it("does not offer a parent the administration", () => {
+    const slugs = slugsFor(["parent"]);
+    expect(slugs).not.toContain("familles-et-eleves");
+    expect(slugs).not.toContain("publier-une-annonce");
+    expect(slugs).toContain("absences-et-mot-dexcuse");
+    expect(slugs).toContain("cahier-de-texte");
+    expect(slugs).toContain("messagerie");
+  });
+
+  it("renders « mon guide » for every role", async () => {
+    for (const role of HELP_ROLES) {
+      const selected = selectArticles(articles, [role]);
+      const buffer = await renderGuide({
+        appName: "Kesher",
+        title: "Mon guide",
+        subtitle: role,
+        topics: groupByTopic(selected).map((group) => ({
+          heading: group.topic,
+          articles: group.articles.map((article) => ({
+            title: article.title,
+            blocks: outlineArticle(article.body),
+          })),
+        })),
+        footer: "test",
+      });
+      expect(buffer.subarray(0, 5).toString("latin1"), role).toBe("%PDF-");
+      expect(buffer.byteLength, role).toBeGreaterThan(5_000);
+    }
+  }, 60_000);
 });

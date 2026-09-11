@@ -84,7 +84,8 @@ docs/           ROADMAP.md · DECISIONS.md (ADR) · RGPD.md · guides (sessions 
 - Messages d'erreur utilisateur en français, jamais de stack trace.
 - Mobile-first, tailles tactiles ≥ 44 px (`min-h-11` / `size-11`), WCAG AA, dark mode.
 - Commits **Conventional Commits** (`feat:`, `fix:`, `chore:`, `docs:`…), vérifiés par commitlint.
-- Chaque PR : description, captures mobile, checklist RLS si nouvelle table.
+- Chaque PR : description, captures mobile, checklist RLS si nouvelle table, **article d'aide écrit ou
+  relu et `reviewed:` remonté** pour chaque écran touché (`pnpm ops:check-help` vert).
 
 ## 7. Rôles (rappel)
 
@@ -109,8 +110,12 @@ durées de conservation dans `docs/RGPD.md` (session 14).
    choisir l'option la plus simple et la consigner dans `docs/DECISIONS.md` (ADR court).
 3. **Ne jamais fabriquer de contenu institutionnel** (textes de la direction, vrais noms d'enseignants) :
    données de seed clairement fictives (§14 du brief, comptes `*@demo.local`).
-4. Avant de committer : `pnpm check` puis `pnpm build` ; e2e si l'UI change.
-5. Mettre à jour `CLAUDE.md` (état) et `docs/ROADMAP.md` (cases) à chaque fin de session.
+4. **Toute session qui ajoute ou modifie un écran met à jour l'article d'aide correspondant
+   (`content/help/*.md`) et son `reviewed:`** — `pnpm check` le vérifie : un écran qu'aucun article
+   n'adresse à un rôle qui l'atteint, une route disparue encore documentée, ou un article plus vieux
+   que le dernier commit de l'écran qu'il décrit font échouer `ops:check-help` (ADR-0046).
+5. Avant de committer : `pnpm check` puis `pnpm build` ; e2e si l'UI change.
+6. Mettre à jour `CLAUDE.md` (état) et `docs/ROADMAP.md` (cases) à chaque fin de session.
 
 ## 10. État d'avancement
 
