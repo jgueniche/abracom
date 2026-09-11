@@ -589,6 +589,22 @@ parent pressé. Huit arbitrages posés au porteur avant la première ligne de SQ
 - [ ] Premier lancement du parent en trois écrans : écarté pour l'instant — découper un formulaire en
       trois étapes ajoute des écrans là où le chantier demandait d'en retirer.
 
+### Correctif de découvrabilité (2026-09-11)
+
+Signalé depuis le déploiement réel : la pointeuse était introuvable pour les trois rôles. Les migrations
+étaient bien passées (`2 applied, 36 already present`) ; ce sont les écrans qui se cachaient.
+
+- [x] `/pointage` renvoyait à l'accueil **sans un mot** quand le lecteur ne détenait aucune liste — le
+      renvoi silencieux que la session 18 avait supprimé partout ailleurs, réintroduit. Comme les listes
+      de démonstration ne vivent que dans le seed, jamais rejoué en production, tous les comptes en
+      détenaient zéro : il fallait une liste pour voir la pointeuse, et la pointeuse était l'endroit où
+      l'on apprenait que les listes existent.
+- [x] La page dit désormais ce qui manque : « Aucune liste de pointage » et un bouton de création pour la
+      direction, « Aucune liste ne vous est confiée » et pourquoi pour les autres.
+- [x] La carte d'accueil ne rendait rien quand la personne détenait des listes mais qu'aucune n'était
+      prévue du jour, ce qui privait le téléphone de toute route ; une ligne discrète y mène.
+- [x] `/admin` affiche un chiffre vivant à côté de Pointage.
+
 ### Recette
 
 - 405 assertions pgTAP vertes sur les deux chemins (`pnpm db:test` **et** `pnpm db:test:supabase`).
