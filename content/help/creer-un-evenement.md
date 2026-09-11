@@ -5,7 +5,7 @@ routes: [/agenda/nouveau, /agenda/[id]/modifier, /admin/evenements]
 topic: publish
 keywords: [événement, agenda, RSVP, jauge, liste d'attente, bénévolat, sortie, réunion, rappel]
 since: 9
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Un événement se crée depuis l'agenda ou depuis Publier → Événement.

@@ -5,7 +5,7 @@ routes: [/admin/messagerie]
 topic: manage
 keywords: [messagerie, fermer, ouvrir, période, dialogue, canal, charge, dérogation, urgence]
 since: 19
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Gestion → **Messagerie** règle si les familles peuvent écrire à l'équipe. C'est un robinet, pas un module qu'on désactive : l'historique reste toujours lisible, seule l'écriture s'arrête.

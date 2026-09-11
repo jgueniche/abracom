@@ -5,7 +5,7 @@ routes: [/messages, /messages/[threadId], /messages/nouveau]
 topic: daily
 keywords: [messages, messagerie, écrire, conversation, pièce jointe, silencieux, signaler, fermé]
 since: 19
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 L'onglet **Messages** liste vos conversations : le canal officiel de la classe en tête, puis les messages directs et les fils de classe.

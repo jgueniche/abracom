@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -66,7 +67,7 @@ export default async function ClassesPage() {
   }
 
   return (
-    <>
+    <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {entries.size === 0 ? (
         <EmptyState
@@ -76,7 +77,7 @@ export default async function ClassesPage() {
           action={staff ? { href: "/admin/classes", label: t("manageClasses") } : undefined}
         />
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <ul className="grid gap-3 sm:grid-cols-2">
           {[...entries.entries()].map(([id, entry]) => (
             <li key={id}>
               <Link
@@ -96,6 +97,6 @@ export default async function ClassesPage() {
           ))}
         </ul>
       )}
-    </>
+    </Column>
   );
 }

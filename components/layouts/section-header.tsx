@@ -21,6 +21,12 @@ export function SectionHeader({
   count,
   hint,
   action,
+  /**
+   * The rule that carries the eye to the far edge. It is what gives a page its
+   * structure — and what turns into a two-pixel stub in a narrow rail, so a
+   * rail asks for `rule={false}` and gets a plain label and its action.
+   */
+  rule = true,
   id,
   className,
 }: {
@@ -31,6 +37,7 @@ export function SectionHeader({
   hint?: ReactNode;
   /** The way out of the section: a link, a small button. */
   action?: ReactNode;
+  rule?: boolean;
   id?: string;
   className?: string;
 }) {
@@ -43,7 +50,11 @@ export function SectionHeader({
         {count !== undefined && count !== null && (
           <span className="meta shrink-0 tabular-nums">{count}</span>
         )}
-        <span aria-hidden className="h-px min-w-4 flex-1 bg-rule" />
+        {rule ? (
+          <span aria-hidden className="h-px min-w-4 flex-1 bg-rule" />
+        ) : (
+          <span aria-hidden className="flex-1" />
+        )}
         {action && <div className="flex shrink-0 items-center gap-1">{action}</div>}
       </div>
       {hint && <p className="mt-1.5 text-xs text-pretty text-muted-foreground">{hint}</p>}

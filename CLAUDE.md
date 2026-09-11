@@ -237,6 +237,22 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   (neuf listes écrites à la main), `FilterChip` / `FilterChips` (six rangées de pilules bleues pleines).
   Les onglets se marquent d'un trait, plus d'un aplat. `/dev/ui` gagne une section **Anatomie d'écran**
   et un spécimen de l'échelle. Aucune route, aucun libellé et aucun droit ne bougent.
+- **Session 23 — audit de composition sur stack Supabase réelle, code complet** (ADR-0052). La
+  session 22 n'avait jamais vu les écrans connectés ; montée cette fois (Docker + `supabase start` +
+  seed), elle a montré que le défaut restant était la **composition**, pas le détail : aucune colonne de
+  lecture (tout s'étalait sur 1 760 px), la grille de cartes comme réponse à tout (66 élèves en 66
+  cartes, 11 152 px), et une icône par ligne (sept dans la barre du haut). Trois largeurs choisies par
+  le genre de l'écran (`Column` : `text` 42 rem, `index` 58 rem, `full` pour les consoles) ; `IndexList`
+  pour les publications, `Table` pour les registres, les hubs en sommaires, le tableau de bord en
+  planche de chiffres ; une circulaire composée comme une lettre, avec l'accusé et les pièces jointes en
+  appareil à côté du texte ; icônes décoratives et pastilles retirées (la marque « ceci vous attend »
+  devient une barre dans la marge). **Défauts trouvés en regardant** : le marqueur d'urgence était
+  dessiné hors d'une carte qui coupe ce qui déborde — invisible partout ; la description de l'accueil
+  parent répétait le libellé de la section juste dessous ; un article d'aide décrivait une carte
+  fusionnée depuis la session 19. **Vérifications inédites ici** : 28 e2e verts _invitation comprise_,
+  436 assertions pgTAP, `check-bundle` confirmé sur un vrai bundle, axe à 0 violation sérieuse sur neuf
+  écrans connectés en clair et en sombre. Au passage, `015_attendance.sql` échouait toutes les nuits
+  entre 22 h et minuit UTC (occurrence datée à Paris, comparée à un `current_date` serveur) — corrigé.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

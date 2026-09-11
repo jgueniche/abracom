@@ -5,7 +5,7 @@ routes: [/admin/import]
 topic: manage
 keywords: [import, CSV, familles, rentrée, modèle, colonnes, invitations, lots]
 since: 5
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 L'import se fait en deux temps, et le premier ne modifie rien.

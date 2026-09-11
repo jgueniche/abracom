@@ -16,14 +16,16 @@ test.describe("invitation → first login", () => {
     page,
     request,
     baseURL,
-  }) => {
+  }, testInfo) => {
     const { createClient } = await import("@supabase/supabase-js");
     const admin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       { auth: { persistSession: false, autoRefreshToken: false } },
     );
-    const email = `e2e-${Date.now()}@demo.local`;
+    // Both projects run this test at once: `Date.now()` alone collides, and the
+    // two runs then race for the same message in the shared inbox.
+    const email = `e2e-${Date.now()}-${testInfo.project.name}-${testInfo.workerIndex}@demo.local`;
 
     const { data: invited, error } = await admin.auth.admin.inviteUserByEmail(email, {
       data: { first_name: "", last_name: "", locale: "fr" },

@@ -697,6 +697,22 @@ change — les 43 articles d'aide restent donc exacts.
       sur une vraie page plutôt que sur une planche de composants
 - [ ] Validation visuelle par le porteur
 
+## Session 23 — La forme suit le contenu (ADR-0052)
+
+Premier audit de design mené sur une **stack Supabase réelle** (Docker + seed) : six rôles, écrans
+connectés, 390 px et 1 440 px, clair et sombre. Le registre typographique de la session 22 tenait ; la
+composition, non.
+
+- [x] Trois largeurs choisies par le genre de l'écran (`Column` : `text`, `index`, `full`)
+- [x] `IndexList` / `IndexEntry` : les publications se composent comme un index, pas comme une grille
+- [x] `Table` : un registre est tabulaire (66 élèves, 11 152 px → 6 374 px)
+- [x] Une circulaire composée comme une lettre ; accusé et pièces jointes en appareil
+- [x] Hubs en sommaires, tableau de bord en planche de chiffres, semaine de devoirs en liste continue
+- [x] Icônes décoratives et pastilles retirées ; « ceci vous attend » devient une barre dans la marge
+- [x] Mouvement réduit, barres de défilement fines, feuille d'impression
+- [x] 28 e2e verts (invitation comprise), 436 assertions pgTAP, axe à 0 sur neuf écrans connectés
+- [ ] Validation visuelle par le porteur
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

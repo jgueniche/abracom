@@ -5,7 +5,7 @@ routes: [/classes/[classId]/evaluations]
 topic: daily
 keywords: [évaluations, compétences, livret, PDF, période, appréciation, bulletin, notes]
 since: 11
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Les évaluations sont organisées **par période** et par compétences, avec quatre niveaux : non acquis, en cours d'acquisition, acquis, maîtrisé.

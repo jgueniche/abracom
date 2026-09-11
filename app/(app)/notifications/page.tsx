@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -28,7 +29,7 @@ export default async function NotificationsPage() {
   ]);
 
   return (
-    <>
+    <Column>
       <PageHeader
         title={t("title")}
         actions={
@@ -85,6 +86,6 @@ export default async function NotificationsPage() {
           })}
         </ul>
       )}
-    </>
+    </Column>
   );
 }

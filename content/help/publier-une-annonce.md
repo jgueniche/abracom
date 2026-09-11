@@ -5,7 +5,7 @@ routes: [/admin/annonces, /admin/annonces/nouvelle, /admin/annonces/[id]]
 topic: publish
 keywords: [annonce, circulaire, ciblage, audience, planifier, accusé de lecture, relance, épingler, export]
 since: 6
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Une annonce est le canal officiel de la direction vers les familles. Elle se rédige depuis Publier → Annonce, ou depuis Gestion → Annonces.

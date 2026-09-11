@@ -1,18 +1,11 @@
-import { BackpackIcon } from "lucide-react";
-import {
-  BookOpenIcon,
-  CalendarXIcon,
-  ChevronRightIcon,
-  GraduationCapIcon,
-  ImagesIcon,
-  MessageSquareTextIcon,
-} from "lucide-react";
+import { BackpackIcon, ChevronRightIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { ChildAttendance } from "@/components/domain/child-attendance";
 import { StudentCard } from "@/components/domain/student-card";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { EmptyState } from "@/components/domain/empty-state";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -26,11 +19,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** Sections of a child's file, in the order a parent actually asks for them. */
 const SECTIONS = [
-  { segment: "devoirs", key: "homework", icon: BookOpenIcon },
-  { segment: "cahier", key: "journal", icon: ImagesIcon },
-  { segment: "mots", key: "notes", icon: MessageSquareTextIcon },
-  { segment: "evaluations", key: "assessments", icon: GraduationCapIcon },
-  { segment: "absences", key: "absences", icon: CalendarXIcon },
+  { segment: "devoirs", key: "homework" },
+  { segment: "cahier", key: "journal" },
+  { segment: "mots", key: "notes" },
+  { segment: "evaluations", key: "assessments" },
+  { segment: "absences", key: "absences" },
 ] as const;
 
 /**
@@ -53,13 +46,13 @@ export default async function FamilyPage() {
   const sections = SECTIONS.filter((s) => s.segment !== "evaluations" || showAssessments);
 
   return (
-    <>
+    <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {readOnly && <p className="mb-4 text-sm text-muted-foreground">{t("readOnly")}</p>}
       {children.length === 0 ? (
         <EmptyState icon={BackpackIcon} title={t("noChildren")} description={t("noChildrenHint")} />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-2 2xl:grid-cols-3">
+        <div className="grid items-start gap-8 lg:grid-cols-2">
           {children.map((child) => {
             const classId = child.student.enrollments[0]?.class?.id;
             return (
@@ -67,17 +60,20 @@ export default async function FamilyPage() {
                 <StudentCard child={child} />
                 <ChildAttendance studentId={child.student.id} />
                 {classId && (
-                  <ul className="overflow-hidden rounded-xl border border-border bg-card shadow-soft">
-                    {sections.map(({ segment, key, icon: Icon }) => (
-                      <li key={segment} className="border-b border-rule last:border-b-0">
+                  // Five destinations, five names. The glyph that used to sit
+                  // before each one said nothing the word did not, and a column
+                  // of little pictures beside a column of words is the shape
+                  // this interface is trying to leave behind.
+                  <ul className="border-t border-rule">
+                    {sections.map(({ segment, key }) => (
+                      <li key={segment} className="border-b border-rule">
                         <Link
                           href={`/classes/${classId}/${segment}`}
-                          className="flex min-h-12 items-center gap-3 px-4 text-sm font-medium hover:bg-muted hover:text-foreground"
+                          className="-mx-2 flex min-h-11 items-center gap-3 rounded-md px-2 text-[0.8125rem] font-medium transition-colors hover:bg-muted/60"
                         >
-                          <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                           {tSpace(key)}
                           <ChevronRightIcon
-                            className="ml-auto size-4 text-muted-foreground"
+                            className="ml-auto size-3.5 text-muted-foreground/50"
                             aria-hidden
                           />
                         </Link>
@@ -90,6 +86,6 @@ export default async function FamilyPage() {
           })}
         </div>
       )}
-    </>
+    </Column>
   );
 }

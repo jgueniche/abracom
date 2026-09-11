@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
-import type { ComponentType, ReactNode, SVGProps } from "react";
+import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -38,18 +38,16 @@ export function RowList({
 
 export function Row({
   href,
-  icon: Icon,
   /** Small muted word before the title — the kind of thing this row is. */
   kind,
   title,
   detail,
   trailing,
-  /** Something here is waiting on the reader; the icon takes the brick. */
+  /** Something here is waiting on the reader: a dot in the margin. */
   urgent = false,
   className,
 }: {
   href?: string;
-  icon?: ComponentType<SVGProps<SVGSVGElement>>;
   kind?: ReactNode;
   title: ReactNode;
   detail?: ReactNode;
@@ -59,12 +57,6 @@ export function Row({
 }) {
   const body = (
     <>
-      {Icon && (
-        <Icon
-          className={cn("size-4 shrink-0", urgent ? "text-brick" : "text-muted-foreground")}
-          aria-hidden
-        />
-      )}
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-sm">
           {kind && <span className="text-muted-foreground">{kind} · </span>}
@@ -79,10 +71,15 @@ export function Row({
     </>
   );
 
-  const inner = "flex min-h-12 items-center gap-2.5 px-3.5 py-2";
+  const inner = "flex min-h-12 items-center gap-2.5 px-3.5 py-2.5";
 
   return (
-    <li className={className}>
+    // What waits on the reader is marked by a bar at the edge of the row —
+    // the way a change is marked in a margin — rather than by a coloured glyph
+    // repeating, in a picture, the word already written on the line. Inside the
+    // plane, because the plane clips what leaves it.
+    <li className={cn("relative", className)}>
+      {urgent && <span aria-hidden className="absolute inset-y-0 left-0 w-[2px] bg-brick" />}
       {href ? (
         <Link href={href} className={cn(inner, "transition-colors hover:bg-muted/70")}>
           {body}

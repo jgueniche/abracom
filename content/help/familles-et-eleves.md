@@ -5,7 +5,7 @@ routes: [/admin/familles, /admin/familles/[studentId]]
 topic: manage
 keywords: [élève, famille, responsable, inscription, classe, allergies, PAI, restriction judiciaire, droits]
 since: 5
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Gestion → **Familles** cherche un élève ou un parent par nom, prénom ou classe, et ouvre sa fiche.

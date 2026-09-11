@@ -5,7 +5,7 @@ routes: [/classes/[classId]/rdv]
 topic: daily
 keywords: [rendez-vous, créneau, réserver, entretien, rencontre]
 since: 12
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Classe → **Rendez-vous** affiche les créneaux ouverts par l'enseignant·e, groupés par jour.

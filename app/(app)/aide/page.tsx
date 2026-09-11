@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
@@ -48,7 +49,7 @@ export default async function HelpPage() {
     user.school && canUseMessaging(user.roles, user.school.id) ? "/messages/nouveau" : null;
 
   return (
-    <>
+    <Column>
       <PageHeader
         title={t("title")}
         description={t("subtitle")}
@@ -79,7 +80,7 @@ export default async function HelpPage() {
         {groups.length === 0 ? (
           <EmptyState icon={BookOpenIcon} title={t("empty")} description={t("emptyHint")} />
         ) : (
-          <div className="flex flex-col gap-9">
+          <div className="flex flex-col gap-10">
             {groups.map((group) => (
               <section key={group.topic} aria-labelledby={`topic-${group.topic}`}>
                 <SectionHeader
@@ -88,7 +89,7 @@ export default async function HelpPage() {
                   count={group.articles.length}
                   hint={tTopics(`${group.topic}Hint`)}
                 />
-                <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                <ul className="grid gap-2 sm:grid-cols-2">
                   {group.articles.map((article) => (
                     <li key={article.slug}>
                       <Link
@@ -110,6 +111,6 @@ export default async function HelpPage() {
       </HelpSearch>
 
       <p className="mt-8 text-sm text-muted-foreground">{t("languageNote")}</p>
-    </>
+    </Column>
   );
 }

@@ -5,6 +5,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
 import { Highlighted } from "@/components/domain/highlight";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
@@ -46,7 +47,7 @@ export default async function SearchPage({
   const helpMatches = searchHelp(buildIndex(helpArticles.map(toSearchEntry)), q, 3);
 
   return (
-    <>
+    <Column>
       <PageHeader title={t("title")} description={t("hint")} />
       <form action="/recherche" role="search" className="mb-6 flex gap-2">
         <label className="relative flex-1">
@@ -135,7 +136,7 @@ export default async function SearchPage({
           ))}
         </ul>
       )}
-    </>
+    </Column>
   );
 }
 

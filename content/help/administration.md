@@ -5,7 +5,7 @@ routes: [/admin]
 topic: manage
 keywords: [gestion, administration, rubriques, direction, secrétariat, droits]
 since: 16
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 L'onglet **Gestion** rassemble les douze rubriques d'administration en quatre familles : Publications, Personnes, Modération, Année et journal. Chaque entrée porte son propre chiffre — ce qui est en stock, ou ce qui attend une décision, en couleur d'alerte dans ce second cas.

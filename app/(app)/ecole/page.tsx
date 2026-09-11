@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { HubCard, HubGrid } from "@/components/domain/hub-card";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { getPendingAcknowledgements } from "@/server/queries/announcements";
@@ -36,7 +37,7 @@ export default async function SchoolPage() {
   const toAnswer = forms.filter((form) => form.responses.length === 0).length;
 
   return (
-    <>
+    <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
       <HubGrid>
         <HubCard
@@ -75,6 +76,6 @@ export default async function SchoolPage() {
           hint={t("communityHint")}
         />
       </HubGrid>
-    </>
+    </Column>
   );
 }

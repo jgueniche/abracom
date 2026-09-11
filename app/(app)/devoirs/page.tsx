@@ -7,6 +7,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { MetaChip } from "@/components/domain/content-card";
 import { NewHomeworkButton } from "@/components/domain/new-homework-button";
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -122,7 +123,7 @@ export default async function DiaryPage({
   };
 
   return (
-    <>
+    <Column>
       <PageHeader
         eyebrow={t("week", {
           from: format.dateTime(monday, { day: "numeric", month: "long" }),
@@ -178,7 +179,14 @@ export default async function DiaryPage({
           {entries.length === 0 ? (
             <EmptyState icon={BookOpenIcon} title={t("empty")} description={t("emptyHint")} />
           ) : (
-            <ol className="flex flex-col gap-3 2xl:grid 2xl:grid-cols-2 2xl:gap-4">
+            /*
+             * A week reads as a week: one continuous list, a rule between the
+             * days, the day that has nothing saying so on a single line. Each
+             * day used to be a rounded box — and an empty day a *dashed* box,
+             * the placeholder idiom of a mock-up — so five days with nothing to
+             * prepare took as much of the screen as the two that mattered.
+             */
+            <ol className="border-t border-rule">
               {days.map((day) => {
                 const items = byDay.get(day) ?? [];
                 const isToday = day === todayIso;
@@ -189,13 +197,9 @@ export default async function DiaryPage({
                   <li
                     key={day}
                     className={cn(
-                      "rounded-xl border",
-                      empty ? "border-dashed border-rule px-4 py-2.5" : "bg-card p-4 shadow-soft",
-                      isToday && !empty && "border-primary/60 ring-1 ring-primary/25",
-                      isToday && empty && "border-primary/40",
-                      !isToday && !empty && "border-border",
-                      // `opacity-55` over muted text failed the AA contrast ratio
-                      isPast && empty && "border-rule",
+                      "relative border-b border-rule py-3.5",
+                      isToday &&
+                        "before:absolute before:inset-y-3 before:-left-3 before:w-[2px] before:rounded-full before:bg-primary sm:before:-left-4",
                     )}
                   >
                     <p
@@ -206,8 +210,8 @@ export default async function DiaryPage({
                     >
                       <span
                         className={cn(
-                          "font-heading tracking-tight first-letter:uppercase",
-                          empty ? "text-base text-muted-foreground" : "text-lg",
+                          "font-heading text-base first-letter:uppercase",
+                          empty && "text-muted-foreground",
                           isToday && "text-primary",
                         )}
                       >
@@ -315,6 +319,6 @@ export default async function DiaryPage({
           )}
         </>
       )}
-    </>
+    </Column>
   );
 }

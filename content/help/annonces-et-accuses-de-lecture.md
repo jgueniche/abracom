@@ -5,7 +5,7 @@ routes: [/annonces, /annonces/[id]]
 topic: daily
 keywords: [annonce, circulaire, accusé de lecture, j'ai lu, confirmer, épinglé, direction]
 since: 6
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Les annonces sont le canal officiel de la direction. On les trouve dans l'onglet **École → Annonces et circulaires**, et les non lues remontent aussi sur l'accueil.

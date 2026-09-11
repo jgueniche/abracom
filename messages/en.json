@@ -189,7 +189,11 @@
       "hubAgendaHint": "School calendar and Jewish holidays.",
       "emptyTitle": "No messages yet",
       "emptyDescription": "Conversations with the team will appear here from the first message.",
-      "emptyAction": "Write to the team"
+      "emptyAction": "Write to the team",
+      "register": "Register",
+      "columnPupil": "Pupil",
+      "columnClass": "Class",
+      "columnSeen": "Seen by"
     }
   },
   "auth": {
@@ -254,7 +258,7 @@
   "appHome": {
     "greeting": "Hello {name}",
     "parent": {
-      "title": "Today",
+      "title": "What the school needs from you, then what is coming.",
       "children": "My children",
       "pendingAcks": "{count, plural, =0 {No announcement to confirm} one {# announcement to confirm} other {# announcements to confirm}}",
       "pendingHint": "Open the announcements to confirm.",
@@ -284,7 +288,11 @@
       "classes": "Classes",
       "activation": "Activated parent accounts",
       "activationHint": "{active} active out of {total} invited",
-      "classesTitle": "This year's classes"
+      "classesTitle": "This year's classes",
+      "columnClass": "Class",
+      "columnLevel": "Level",
+      "columnPupils": "Pupils",
+      "columnTeacher": "Teacher"
     }
   },
   "family": {
@@ -488,7 +496,10 @@
       "imageRightsRevoke": "Withdraw the consent",
       "imageRightsMark": "Record a paper consent",
       "imageRightsRevoked": "Consent withdrawn; the pupil no longer appears on any tagged photo.",
-      "imageRightsMarked": "Consent recorded."
+      "imageRightsMarked": "Consent recorded.",
+      "columnPupil": "Pupil",
+      "columnClass": "Class",
+      "columnGuardians": "Guardians"
     },
     "members": {
       "title": "Users",
@@ -765,7 +776,10 @@
     "notFound": "Announcement not found.",
     "morePhotos": "+{count}",
     "emptyHint": "Announcements from the direction and the teaching team will arrive here.",
-    "write": "Write an announcement"
+    "write": "Write an announcement",
+    "pinnedSection": "Pinned",
+    "allOthers": "All announcements",
+    "ackTitle": "Read receipt"
   },
   "documents": {
     "title": "Documents",

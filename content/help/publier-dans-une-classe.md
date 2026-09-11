@@ -5,7 +5,7 @@ routes: [/publier, /classes/[classId]/publier]
 topic: publish
 keywords: [publier, devoir, cahier de vie, info, rappel, brouillon, photos, composeur]
 since: 16
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 **Publier** répond à une seule question : que voulez-vous publier ? Si vous n'avez qu'une classe, l'application vous amène directement à son composeur.

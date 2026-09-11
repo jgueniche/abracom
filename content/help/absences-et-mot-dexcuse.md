@@ -5,7 +5,7 @@ routes: [/classes/[classId]/absences]
 topic: daily
 keywords: [absence, retard, déclarer, justificatif, mot d'excuse, signer, maladie, justifiée]
 since: 20
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Classe → **Absences** porte les absences et les retards de l'enfant.

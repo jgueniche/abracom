@@ -206,7 +206,7 @@ export function TopNav({
 
   return (
     <nav aria-label={t("home")} className="hidden items-stretch gap-0.5 self-stretch lg:flex">
-      {[...items, ...extra].map(({ href, label, icon: Icon, badge }) => {
+      {[...items, ...extra].map(({ href, label, badge }) => {
         const active = isActive(href);
         const count = badge ? unreadMessages : 0;
         return (
@@ -219,12 +219,17 @@ export function TopNav({
               // A rule sitting on the header's own bottom edge, not a filled
               // pill: the bar held five blue lozenges, which read as five
               // buttons rather than as one place you currently are.
+              //
+              // And no icon. A glyph before every label is what a phone bar
+              // needs — a 78 px column has to say "messages" without the word
+              // — and what a desktop bar of named destinations does not: seven
+              // little pictures in a row read as decoration, and decoration in
+              // the top bar is the first thing that dates an interface.
               "relative flex items-center gap-1.5 rounded-md px-2.5 text-[0.8125rem] font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground xl:px-3",
               "after:absolute after:inset-x-2 after:-bottom-px after:h-[2px] after:rounded-full after:bg-primary after:opacity-0 xl:after:inset-x-2.5",
               active && "text-foreground after:opacity-100",
             )}
           >
-            <Icon className="size-[0.9375rem]" aria-hidden />
             {t(label)}
             {count > 0 && (
               <span

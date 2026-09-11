@@ -5,7 +5,7 @@ routes: [/admin/journal]
 topic: manage
 keywords: [journal, audit, traçabilité, historique, qui a fait quoi, RGPD]
 since: 5
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Le **Journal** consigne toutes les actions d'administration et de modération, horodatées, avec leur auteur, l'objet concerné et le détail.

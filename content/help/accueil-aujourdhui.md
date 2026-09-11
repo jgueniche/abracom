@@ -5,7 +5,7 @@ routes: [/accueil]
 topic: daily
 keywords: [accueil, aujourd'hui, tableau de bord, à faire, enfants, classes]
 since: 19
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 :::roles parent, guardian
@@ -13,7 +13,7 @@ En haut de l'accueil, le bloc **Aujourd'hui** rassemble ce qui attend quelque ch
 
 Sous ce bloc, **Mes enfants** : une carte par enfant, qui ouvre directement l'espace de sa classe (devoirs, cahier de vie, mots, absences). La fiche de l'enfant elle-même — allergies, responsables, droit à l'image — est dans Ma famille, sous votre photo.
 
-La carte des accusés de lecture en attente est repliée sous le bloc Aujourd'hui : elle ne prend la place que quand elle a quelque chose à dire.
+Une annonce dont l'école attend votre confirmation est un point du bloc Aujourd'hui comme un autre, en tête de liste et marquée d'un trait rouge dans la marge : il n'y a pas de second endroit où la chercher.
 :::
 
 :::roles teacher

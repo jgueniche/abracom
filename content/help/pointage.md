@@ -5,7 +5,7 @@ routes: [/pointage, /pointage/[sessionId]]
 topic: daily
 keywords: [pointage, présence, appel, périscolaire, cantine, sortie, qui récupère, départ, arrivée]
 since: 19
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Le pointage constate une présence : une arrivée, un départ, et qui récupère l'enfant. Il ne sert ni à la facturation ni à la tarification.

@@ -5,7 +5,7 @@ routes: [/aide, /aide/[slug], /aide/quoi-de-neuf]
 topic: daily
 keywords: [aide, articles, guide, PDF, quoi de neuf, nouveautés, question]
 since: 21
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 La page **Aide** ne contient que les articles qui concernent votre rôle : ce qui ne vous concerne pas n'est pas grisé, il n'est pas là. Les articles sont rangés par thème — Se connecter, Au quotidien, Publier, Administrer, Mes données.

@@ -60,11 +60,11 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
       {/* Desktop: a real column — every destination readable at a glance. */}
       <nav
         aria-label={tAdmin("title")}
-        className="sticky top-20 hidden h-fit flex-col gap-5 rounded-xl border border-border bg-card p-3.5 lg:flex"
+        className="sticky top-20 hidden h-fit flex-col gap-6 lg:flex"
       >
         {groups.map((group) => (
           <div key={group.key}>
-            <p className="eyebrow mb-2">{tg(group.key)}</p>
+            <p className="eyebrow mb-2 border-b border-rule pb-1.5">{tg(group.key)}</p>
             <ul className="flex flex-col gap-0.5">
               {group.items.map((item) => (
                 <li key={item.href}>

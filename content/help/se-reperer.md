@@ -5,7 +5,7 @@ routes: [/ecole]
 topic: signin
 keywords: [navigation, onglets, menu, avatar, perspective, rôle, école, se repérer, où trouver]
 since: 17
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 La barre du bas sur téléphone — la barre du haut sur ordinateur — porte cinq destinations, et elles ne sont pas les mêmes pour tout le monde : elles dépendent de votre rôle.

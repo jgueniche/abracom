@@ -189,7 +189,11 @@
       "hubAgendaHint": "Calendrier scolaire et fêtes juives.",
       "emptyTitle": "Aucun message pour l'instant",
       "emptyDescription": "Les échanges avec l'équipe apparaîtront ici dès le premier message.",
-      "emptyAction": "Écrire à l'équipe"
+      "emptyAction": "Écrire à l'équipe",
+      "register": "Registre",
+      "columnPupil": "Élève",
+      "columnClass": "Classe",
+      "columnSeen": "Vu par"
     }
   },
   "auth": {
@@ -254,7 +258,7 @@
   "appHome": {
     "greeting": "Bonjour {name}",
     "parent": {
-      "title": "Aujourd'hui",
+      "title": "Ce que l'école attend de vous, puis ce qui vient.",
       "children": "Mes enfants",
       "pendingAcks": "{count, plural, =0 {Aucune annonce à confirmer} one {# annonce à confirmer} other {# annonces à confirmer}}",
       "pendingHint": "Ouvrir les annonces à confirmer.",
@@ -284,7 +288,11 @@
       "classes": "Classes",
       "activation": "Comptes parents activés",
       "activationHint": "{active} actifs sur {total} invités",
-      "classesTitle": "Classes de l'année"
+      "classesTitle": "Classes de l'année",
+      "columnClass": "Classe",
+      "columnLevel": "Niveau",
+      "columnPupils": "Élèves",
+      "columnTeacher": "Enseignant·e"
     }
   },
   "family": {
@@ -488,7 +496,10 @@
       "imageRightsRevoke": "Retirer l'autorisation",
       "imageRightsMark": "Enregistrer une autorisation papier",
       "imageRightsRevoked": "Autorisation retirée ; l'élève n'apparaît plus sur aucune photo identifiée.",
-      "imageRightsMarked": "Autorisation enregistrée."
+      "imageRightsMarked": "Autorisation enregistrée.",
+      "columnPupil": "Élève",
+      "columnClass": "Classe",
+      "columnGuardians": "Responsables"
     },
     "members": {
       "title": "Utilisateurs",
@@ -765,7 +776,10 @@
     "notFound": "Annonce introuvable.",
     "morePhotos": "+{count}",
     "emptyHint": "Les annonces de la direction et de l'équipe enseignante arriveront ici.",
-    "write": "Rédiger une annonce"
+    "write": "Rédiger une annonce",
+    "pinnedSection": "Épinglées",
+    "allOthers": "Toutes les annonces",
+    "ackTitle": "Accusé de lecture"
   },
   "documents": {
     "title": "Documents",

@@ -869,3 +869,52 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   — et un spécimen de l'échelle cran par cran, pour que la validation visuelle du porteur porte sur
   l'anatomie réelle et non sur une planche de composants isolés. Aucune route, aucun libellé, aucun droit
   ne bouge : les 43 articles d'aide restent exacts et ne sont donc pas réécrits.
+
+## ADR-0052 — Trois largeurs, un index, un tableau : la forme suit le contenu
+
+- **Contexte** : la session 22 avait recoupé la typographie, la géométrie et le relief (ADR-0051), mais
+  sans jamais voir les écrans connectés — aucune stack Supabase n'était disponible. Montée cette fois
+  (Docker, `supabase start`, seed de 137 comptes), elle a montré que le défaut restant n'était pas dans
+  les détails mais dans la **composition**, et qu'il tenait à trois réflexes appliqués partout :
+  1. **Aucune colonne.** Le plafond de page est passé de 1 024 px à 1 760 px en session 16, pour la
+     bonne raison (la moitié d'un grand écran ne peignait rien) et avec la mauvaise conclusion : _tous_
+     les écrans ont pris toute la largeur. Une liste d'annonces étalait donc ses titres sur un mètre de
+     verre avec la date à une main du titre qu'elle date.
+  2. **La grille de cartes comme réponse à tout.** Neuf annonces en deux colonnes de 950 px, chacune
+     d'une hauteur différente parce que sa voisine avait un pied ; cinq liens d'un hub en cinq boîtes
+     sur deux rangs avec mille pixels de page vide dessous ; **soixante-six élèves en soixante-six
+     cartes empilées**, soit onze mille pixels pour trois faits par élève, sans qu'on puisse lire une
+     colonne.
+  3. **Une icône par ligne.** Sept pictogrammes dans la barre du haut, cinq dans un menu de cinq noms,
+     un fichier devant chaque document, une médaille de 40 px devant chaque destination.
+- **Décision** :
+  - **Trois largeurs, choisies par le genre de l'écran**, pas par une préférence globale (`Column`) :
+    `text` (~42 rem) pour ce qui se lit d'un bout à l'autre — une circulaire, un article d'aide ;
+    `index` (~58 rem) pour ce qui se parcourt ; `full` pour une console — un registre, une grille de
+    compétences, un mois d'agenda, deux volets de messagerie. Une colonne est **alignée à gauche**, pas
+    centrée : une interface a un bord gauche où l'œil revient.
+  - **`IndexList` / `IndexEntry`** : une liste de publications se compose comme un index — surtitre,
+    titre, une ligne de résumé, un filet — et ce qui attend le lecteur est marqué **d'une barre dans la
+    marge**, comme on marque un passage dans un livre.
+  - **`Table`** : un registre est tabulaire. Les 66 élèves passent de 11 152 px à 6 374 px et
+    redeviennent lisibles en colonnes.
+  - **Une circulaire est une lettre** : date, titre, filet, texte à 42 rem ; l'accusé de lecture et les
+    pièces jointes deviennent un appareil posé à côté du texte, jamais dedans.
+  - **Les hubs deviennent des sommaires** (`HubCard` est une ligne, `HubGrid` une liste) et le tableau
+    de bord une planche de chiffres entre deux filets.
+  - **Les icônes décoratives disparaissent** : barre du haut, menus de noms, listes de documents,
+    médailles de section. Elles restent là où elles travaillent — la barre d'onglets du téléphone, où
+    une colonne de 78 px doit dire « messages » sans le mot.
+  - **Les pastilles cèdent au mot** : réponse à une invitation, droit à l'image, signature, fêtes
+    juives de l'agenda (un mois de Tichri sortait en trente capsules colorées). La distinction qui
+    compte — un jour où l'école ferme _versus_ un nom pour la semaine — survit dans la graisse et la
+    couleur des mots eux-mêmes.
+- **Conséquences** : `/dev/ui` documente l'index et le tableau à côté de l'anatomie de page.
+  Trois défauts réels ont été trouvés en regardant les écrans plutôt que le code : le marqueur « ceci
+  vous attend » était un point dessiné **hors** d'une carte qui coupe ce qui déborde, donc invisible
+  partout ; la description de l'accueil parent répétait mot pour mot le libellé de la section juste
+  dessous ; et l'article d'aide de l'accueil décrivait une « carte des accusés de lecture » fusionnée
+  dans le bloc Aujourd'hui depuis la session 19. Enfin, la stack a permis de jouer ce qu'aucune session
+  précédente n'avait pu jouer ici : **28 tests e2e verts, invitation → première connexion comprise**, et
+  436 assertions pgTAP — au passage, `015_attendance.sql` comparait une occurrence datée dans le fuseau
+  de l'école à un `current_date` serveur, et échouait donc **toutes les nuits entre 22 h et minuit UTC**.

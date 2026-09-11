@@ -1,17 +1,10 @@
-import {
-  BellRingIcon,
-  BookOpenIcon,
-  CalendarDaysIcon,
-  CheckCircle2Icon,
-  ChevronRightIcon,
-  FileSignatureIcon,
-  MessageSquareTextIcon,
-} from "lucide-react";
+import { CheckCircle2Icon, ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { ChildClassCard } from "@/components/domain/child-class-card";
 import { Row, RowList } from "@/components/domain/row-list";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
@@ -21,15 +14,6 @@ import { UpcomingEvents } from "@/app/(app)/agenda/_components/upcoming-events";
 import { getPendingAcknowledgements } from "@/server/queries/announcements";
 import { getMyChildren } from "@/server/queries/family";
 import { type TodayItem, getTodayForParent } from "@/server/queries/today";
-
-const TODAY_ICONS = {
-  ack: BellRingIcon,
-  homework: BookOpenIcon,
-  note: MessageSquareTextIcon,
-  signature: FileSignatureIcon,
-  event: CalendarDaysIcon,
-  attendance: CheckCircle2Icon,
-} as const;
 
 export async function ParentHome({ user }: { user: CurrentUser }) {
   const [t, format, children, pending, today] = await Promise.all([
@@ -55,7 +39,7 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
   ];
 
   return (
-    <>
+    <Column rail={<UpcomingEvents userId={user.id} />}>
       <PageHeader
         eyebrow={format.dateTime(new Date(), { weekday: "long", day: "numeric", month: "long" })}
         title={t("greeting", { name: user.profile.first_name })}
@@ -79,7 +63,6 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
               <Row
                 key={item.key}
                 href={item.href}
-                icon={TODAY_ICONS[item.kind]}
                 urgent={item.urgent}
                 kind={t(`parent.todayKinds.${item.kind}`)}
                 title={item.title}
@@ -90,28 +73,24 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
         )}
       </section>
 
-      <div className="grid gap-10 2xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <section>
-          <SectionHeader
-            label={t("parent.children")}
-            hint={t("parent.childrenHint")}
-            action={
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/famille">
-                  {t("parent.seeFamily")}
-                  <ChevronRightIcon aria-hidden />
-                </Link>
-              </Button>
-            }
-          />
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-2">
-            {children.map((child) => (
-              <ChildClassCard key={child.student.id} child={child} />
-            ))}
-          </div>
-        </section>
-        <UpcomingEvents userId={user.id} />
-      </div>
-    </>
+      <section>
+        <SectionHeader
+          label={t("parent.children")}
+          action={
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/famille">
+                {t("parent.seeFamily")}
+                <ChevronRightIcon aria-hidden />
+              </Link>
+            </Button>
+          }
+        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          {children.map((child) => (
+            <ChildClassCard key={child.student.id} child={child} />
+          ))}
+        </div>
+      </section>
+    </Column>
   );
 }

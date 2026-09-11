@@ -5,7 +5,7 @@ routes: [/admin/annees, /admin/annees/promotion]
 topic: manage
 keywords: [année scolaire, courante, promotion, passage, niveau suivant, clôture, archive, rentrée]
 since: 15
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Une école a **une seule année courante** : c'est elle qui porte les classes, les inscriptions et les périodes d'évaluation. Le libellé suit la forme `AAAA-AAAA`.

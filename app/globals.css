@@ -303,3 +303,81 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+/*
+ * Motion. Every transition in this interface is a colour or a two-pixel travel,
+ * so there is nothing to degrade gracefully: a reader who asks for less motion
+ * gets none.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Scrollbars inside the consoles — a register, a competency grid, a month of
+ * agenda. Thin, in the page's own greys, so a horizontal scrollbar under a
+ * table stops being the loudest line on the screen.
+ */
+@supports (scrollbar-width: thin) {
+  .overflow-x-auto,
+  .overflow-y-auto,
+  .overflow-auto {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+}
+
+/*
+ * Print. A directrice prints the register, a family prints a circular, and a
+ * teacher prints the week — so the sheet drops the chrome, flattens the planes
+ * and lets the text take the page. Nothing here changes the screen.
+ */
+@media print {
+  :root {
+    --background: #fff;
+    --card: #fff;
+    --foreground: #000;
+    --card-foreground: #000;
+    --muted-foreground: #444;
+    --border: #999;
+    --rule: #ccc;
+  }
+  header[class*="sticky"],
+  nav[aria-label],
+  [data-slot="button"],
+  .no-print {
+    display: none !important;
+  }
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  body {
+    background: #fff;
+  }
+  [data-slot="card"] {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+  tr,
+  li {
+    break-inside: avoid;
+  }
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #444;
+  }
+}

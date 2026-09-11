@@ -2,8 +2,8 @@ import { ClipboardCheckIcon } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { openAttendanceSession } from "@/server/actions/attendance";
 import { getMyAttendanceLists } from "@/server/queries/attendance";
 
@@ -37,18 +37,17 @@ export async function AttendanceToday() {
   }
 
   return (
-    <section className="mb-6 flex flex-col gap-3">
-      <h2 className="section-label">{t("todayTitle")}</h2>
+    // A medallion in front of each line said "attendance" a third time, after
+    // the section label and the name of the list. The line is the object.
+    <section className="mb-10">
+      <SectionHeader label={t("todayTitle")} count={today.length} />
       {today.map((list) => (
-        <Card key={list.list_id}>
-          <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div key={list.list_id} className="border-b border-rule last:border-b-0">
+          <div className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 items-center gap-3">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary">
-                <ClipboardCheckIcon className="size-5" aria-hidden />
-              </span>
               <div className="min-w-0">
-                <p className="truncate text-base font-semibold">{list.name}</p>
-                <p className="text-sm text-muted-foreground tabular-nums">
+                <p className="truncate text-sm font-semibold">{list.name}</p>
+                <p className="meta">
                   {list.session_id
                     ? t("counterShort", {
                         present: Number(list.present),
@@ -59,19 +58,19 @@ export async function AttendanceToday() {
               </div>
             </div>
             {list.session_id ? (
-              <Button asChild className="min-h-12 sm:min-w-40">
+              <Button asChild className="shrink-0 sm:min-w-36">
                 <Link href={`/pointage/${list.session_id}`}>{t("continue")}</Link>
               </Button>
             ) : (
               <form action={openAttendanceSession}>
                 <input type="hidden" name="listId" value={list.list_id} />
-                <Button type="submit" className="min-h-12 sm:min-w-40">
+                <Button type="submit" className="shrink-0 sm:min-w-36">
                   {t("start")}
                 </Button>
               </form>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ))}
     </section>
   );

@@ -5,7 +5,7 @@ routes: [/admin/formulaires, /admin/formulaires/nouveau, /admin/formulaires/[id]
 topic: publish
 keywords: [formulaire, sondage, champ, réponses, export, CSV, autorisation, fiche de rentrée]
 since: 12
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Gestion → **Formulaires** construit une fiche à remplir par les familles : fiche de rentrée, autorisation, sondage.

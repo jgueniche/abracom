@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireClassAccess } from "@/lib/auth/class-access";
@@ -43,10 +44,15 @@ export default async function ClassLayout({
     .join(" · ");
 
   return (
-    <>
+    <Column>
+      {/* The team used to run on inside the page description, five names and
+          five roles across the full width, level ahead of them. Level and room
+          are what names the class, so they take the dateline; the team is
+          apparatus and sits under it, quieter. */}
       <PageHeader
+        eyebrow={`${levelLabel(cls.level, locale)}${cls.room ? ` · ${cls.room}` : ""}`}
         title={cls.name}
-        description={`${levelLabel(cls.level, locale)}${cls.room ? ` · ${cls.room}` : ""}${team ? ` · ${team}` : ""}`}
+        description={team || undefined}
         actions={
           <>
             {/* a read-only guardian has no messaging: the button led to an empty list */}
@@ -84,6 +90,6 @@ export default async function ClassLayout({
         showLate={isTeacher || isStaff}
       />
       {children}
-    </>
+    </Column>
   );
 }

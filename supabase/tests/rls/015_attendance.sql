@@ -105,9 +105,13 @@ select lives_ok(
   'and the record is cleared again for what follows');
 
 -- the roster carries a family-declared absence, without creating one (arbitrage 8)
+-- The occurrence is dated in the school's timezone, not the server's: between
+-- 22:00 UTC and midnight, `current_date` here is still yesterday in Paris, and
+-- this assertion failed every night for two hours.
 select pg_temp.login(:guardian_ok);
 insert into public.absences (school_id, student_id, declared_by, kind, starts_on, ends_on)
-values (:school, :child, :guardian_ok, 'absence', current_date, current_date);
+select :school, :child, :guardian_ok, 'absence', day_, day_
+from (select (now() at time zone public.school_timezone(:school))::date as day_) as d;
 select pg_temp.login(:staff);
 select ok(
   (select declared_absent from public.attendance_roster((select id from t_session)) where student_id = :child),

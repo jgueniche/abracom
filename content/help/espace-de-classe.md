@@ -5,7 +5,7 @@ routes: [/classes, /classes/[classId]]
 topic: daily
 keywords: [classe, fil, publications, onglets, équipe, info, rappel]
 since: 17
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 L'onglet **Classe** ouvre l'espace de la classe. Son fil rassemble les publications de l'équipe, les plus récentes en premier, avec une étiquette par nature : à préparer, cahier de vie, info, rappel.

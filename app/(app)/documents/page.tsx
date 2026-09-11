@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -33,7 +33,7 @@ export default async function DocumentsPage() {
   const groups = groupByFolder(documents);
 
   return (
-    <>
+    <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {documents.length === 0 && (
         <EmptyState
@@ -43,7 +43,7 @@ export default async function DocumentsPage() {
           action={canPublish ? { href: "/admin/documents", label: t("deposit") } : undefined}
         />
       )}
-      <div className="flex flex-col gap-9">
+      <div className="flex flex-col gap-10">
         {groups.map((group) => (
           <section key={group.name || "none"} className="flex flex-col">
             <SectionHeader label={group.name || t("noFolder")} count={group.items.length} />
@@ -54,11 +54,14 @@ export default async function DocumentsPage() {
                 <Card key={doc.id}>
                   <CardContent className="flex flex-col gap-3">
                     <div className="flex flex-wrap items-start justify-between gap-3">
+                      {/* Every row on this page is a document: the file glyph
+                          in front of each title was saying so a fourth time,
+                          after the page title, the section label and the kind
+                          printed on the line below. */}
                       <div className="flex min-w-0 items-start gap-3">
-                        <FileTextIcon className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
                         <div className="min-w-0">
-                          <p className="font-medium">{doc.title}</p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm font-semibold">{doc.title}</p>
+                          <p className="meta">
                             {t(`purpose.${doc.purpose}`)} · {t("version", { version: doc.version })}
                             {doc.published_at
                               ? ` · ${format.dateTime(new Date(doc.published_at), { dateStyle: "medium" })}`
@@ -66,7 +69,7 @@ export default async function DocumentsPage() {
                           </p>
                         </div>
                       </div>
-                      <Button asChild variant="outline" size="sm" className="min-h-11">
+                      <Button asChild variant="outline" size="sm" className="shrink-0">
                         <a href={`/documents/${doc.id}/fichier`}>
                           <DownloadIcon aria-hidden />
                           {t("download")}
@@ -74,7 +77,7 @@ export default async function DocumentsPage() {
                       </Button>
                     </div>
                     {doc.requires_signature && (
-                      <div className="flex flex-col gap-3 border-t pt-3">
+                      <div className="flex flex-col gap-3 border-t border-rule pt-3">
                         {!isParent ? (
                           <p className="text-sm text-muted-foreground">{t("readOnlyGuardian")}</p>
                         ) : doc.signature_per_student ? (
@@ -84,15 +87,21 @@ export default async function DocumentsPage() {
                             );
                             const name = `${child.student.first_name} ${child.student.last_name}`;
                             return signed ? (
-                              <Badge key={child.student.id} variant="secondary" className="w-fit">
-                                <CheckCircle2Icon aria-hidden />
+                              <p
+                                key={child.student.id}
+                                className="flex items-start gap-1.5 text-xs text-success"
+                              >
+                                <CheckCircle2Icon
+                                  className="mt-0.5 size-3.5 shrink-0"
+                                  aria-hidden
+                                />
                                 {t("signedFor", {
                                   name,
                                   date: format.dateTime(new Date(signed.signed_at), {
                                     dateStyle: "medium",
                                   }),
                                 })}
-                              </Badge>
+                              </p>
                             ) : (
                               <SignForm
                                 key={child.student.id}
@@ -103,14 +112,14 @@ export default async function DocumentsPage() {
                             );
                           })
                         ) : familySigned ? (
-                          <Badge variant="secondary" className="w-fit">
-                            <CheckCircle2Icon aria-hidden />
+                          <p className="flex items-start gap-1.5 text-xs text-success">
+                            <CheckCircle2Icon className="mt-0.5 size-3.5 shrink-0" aria-hidden />
                             {t("signedOn", {
                               date: format.dateTime(new Date(familySigned.signed_at), {
                                 dateStyle: "medium",
                               }),
                             })}
-                          </Badge>
+                          </p>
                         ) : (
                           <SignForm documentId={doc.id} label={t("sign")} />
                         )}
@@ -123,6 +132,6 @@ export default async function DocumentsPage() {
           </section>
         ))}
       </div>
-    </>
+    </Column>
   );
 }

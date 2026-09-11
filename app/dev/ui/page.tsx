@@ -1,11 +1,9 @@
 import {
-  BellRingIcon,
   BookOpenIcon,
   CalendarDaysIcon,
   CheckIcon,
   FolderIcon,
   MegaphoneIcon,
-  MessageSquareTextIcon,
   PlusIcon,
   SearchIcon,
 } from "lucide-react";
@@ -13,7 +11,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import { ContentCard, EyebrowDot, MetaChip } from "@/components/domain/content-card";
+import { EyebrowDot } from "@/components/domain/content-card";
+import { IndexEntry, IndexList } from "@/components/domain/index-entry";
 import { EmptyState } from "@/components/domain/empty-state";
 import { HubCard, HubGrid } from "@/components/domain/hub-card";
 import { Row, RowList } from "@/components/domain/row-list";
@@ -61,6 +60,14 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -150,7 +157,6 @@ export default async function DevUiPage() {
               <RowList>
                 <Row
                   href="#anatomy"
-                  icon={BellRingIcon}
                   urgent
                   kind={t("anatomy.kindAck")}
                   title={t("anatomy.rowAck")}
@@ -158,14 +164,12 @@ export default async function DevUiPage() {
                 />
                 <Row
                   href="#anatomy"
-                  icon={BookOpenIcon}
                   kind={t("anatomy.kindHomework")}
                   title={t("anatomy.rowHomework")}
                   detail={t("anatomy.rowHomeworkDetail")}
                 />
                 <Row
                   href="#anatomy"
-                  icon={MessageSquareTextIcon}
                   kind={t("anatomy.kindNote")}
                   title={t("anatomy.rowNote")}
                   detail={t("anatomy.rowNoteDetail")}
@@ -208,8 +212,10 @@ export default async function DevUiPage() {
                   </Button>
                 }
               />
-              <div className="grid gap-3 lg:grid-cols-2">
-                <ContentCard
+              {/* An index: what a run of published things looks like when it
+                  is set as an index rather than as a grid of cards. */}
+              <IndexList>
+                <IndexEntry
                   href="#anatomy"
                   accent
                   unread
@@ -220,11 +226,11 @@ export default async function DevUiPage() {
                       {t("anatomy.eyebrow")}
                     </>
                   }
+                  marker={<span className="text-brick">{t("feedback.tooltipText")}</span>}
                   title={t("mock.announcementTitle")}
                   excerpt={t("mock.announcementBody")}
-                  footer={<MetaChip tone="brick">{t("feedback.tooltipText")}</MetaChip>}
                 />
-                <ContentCard
+                <IndexEntry
                   href="#anatomy"
                   eyebrow={
                     <>
@@ -233,20 +239,43 @@ export default async function DevUiPage() {
                       {t("mock.homeworkDue")}
                     </>
                   }
+                  marker={<span className="text-success">{t("mock.seen")}</span>}
                   title={t("mock.homeworkTitle")}
                   excerpt={t("mock.announcementBody")}
-                  footer={
-                    <MetaChip tone="success">
-                      <CheckIcon className="size-3" aria-hidden />
-                      {t("mock.seen")}
-                    </MetaChip>
-                  }
                 />
-              </div>
+              </IndexList>
+            </div>
+
+            <div className="mb-8">
+              {/* A register is tabular. */}
+              <SectionHeader label={t("anatomy.register")} count={3} />
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead>{t("anatomy.columnPupil")}</TableHead>
+                    <TableHead>{t("anatomy.columnClass")}</TableHead>
+                    <TableHead className="text-right">{t("anatomy.columnSeen")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {[
+                    [t("mock.studentName"), t("mock.className"), "12 / 27"],
+                    [t("mock.studentName"), t("mock.className"), "27 / 27"],
+                    [t("mock.studentName"), t("mock.className"), "3 / 27"],
+                  ].map(([name, klass, seen], i) => (
+                    <TableRow key={i}>
+                      <TableCell className="font-medium">{name}</TableCell>
+                      <TableCell className="text-muted-foreground">{klass}</TableCell>
+                      <TableCell className="text-right text-muted-foreground tabular-nums">
+                        {seen}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
 
             <EmptyState
-              icon={MessageSquareTextIcon}
               title={t("anatomy.emptyTitle")}
               description={t("anatomy.emptyDescription")}
               action={{ href: "#anatomy", label: t("anatomy.emptyAction") }}

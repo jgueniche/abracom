@@ -5,7 +5,7 @@ routes: []
 topic: manage
 keywords: [super admin, plateforme, multi-établissement, école, technique, support]
 since: 3
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 L'administrateur de plateforme est un rôle **technique**, au-dessus des écoles : il existe parce que l'application est prévue pour plusieurs établissements dès son schéma de données, et non pour donner un droit de regard sur les familles.

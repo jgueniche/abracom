@@ -5,7 +5,7 @@ routes: [/recherche]
 topic: daily
 keywords: [recherche, chercher, trouver, loupe, retrouver]
 since: 21
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 La loupe de l'en-tête cherche en une fois dans les annonces, les publications de classe, les messages, les petites annonces et les **articles de cette aide**.

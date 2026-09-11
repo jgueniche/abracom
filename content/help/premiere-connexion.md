@@ -5,7 +5,7 @@ routes: [/connexion, /bienvenue]
 topic: signin
 keywords: [connexion, invitation, mot de passe, lien magique, identifiant, première fois, oublié]
 since: 17
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 L'école crée votre compte : on ne s'inscrit pas soi-même. Vous recevez une invitation par courriel ; le lien qu'elle contient ouvre votre accès et vous connecte directement.
