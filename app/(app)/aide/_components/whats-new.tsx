@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
  * Deliberately not a table: a read marker is a per-device convenience, not a
  * fact the school needs about a family. Storing it would mean a row, a policy
  * and a pgTAP assertion for something whose worst failure is a badge showing up
- * twice (ADR-0047). `localStorage` can throw — private window, blocked storage
+ * twice (ADR-0050). `localStorage` can throw — private window, blocked storage
  * — so every access is guarded and the page renders correctly without it.
  */
 const KEY = "kesher-help-seen";

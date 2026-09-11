@@ -75,7 +75,7 @@ function Blocks({ blocks }: { blocks: HelpBlock[] }) {
 /**
  * "My guide": every article this reader sees on `/aide`, in the same order,
  * under the same topic headings — one document per person rather than one per
- * file, since the articles are now cut by question and not by role (ADR-0044).
+ * file, since the articles are now cut by question and not by role (ADR-0048).
  */
 export function GuideDocument({ data }: { data: GuideData }) {
   return (

@@ -10,7 +10,7 @@ export type HelpArticle = {
   routes: string[];
   topic: HelpTopic;
   keywords: string[];
-  /** The session that introduced the screen — feeds « Quoi de neuf » (ADR-0044). */
+  /** The session that introduced the screen — feeds « Quoi de neuf » (ADR-0050). */
   since: number;
   /** Last time a human read this article against the screen (ADR-0046). */
   reviewed: string;

@@ -54,6 +54,7 @@ Realtime, Edge Functions) avec **RLS obligatoire sur toutes les tables** · migr
 | `pnpm db:test`                            | Migrations + seed + tests pgTAP sur un PostgreSQL local (sans Docker)       |
 | `pnpm db:test:supabase`                   | Rejoue les tests pgTAP sur une stack Supabase déjà démarrée (`db:start`)    |
 | `pnpm ops:check-bundle`                   | Origine Supabase présente dans les bundles client (auto en `postbuild`)     |
+| `pnpm ops:check-help`                     | Couverture et fraîcheur de l'aide (inclus dans `pnpm check`)                |
 
 Variables : copier `.env.example` vers `.env.local` ; sans Supabase, l'app démarre et ses clients lèvent une erreur explicite.
 
@@ -67,6 +68,7 @@ server/         actions/ (zod + rôle) · queries/ · jobs/
 supabase/       config.toml · migrations/ · seed/ · functions/ (edge, Deno) · tests/rls/
 messages/       fr.json · en.json (mêmes clés, test de parité dans tests/unit/i18n.test.ts)
 tests/          unit/ (Vitest) · e2e/ (Playwright)
+content/help/   articles d'aide (front-matter : roles, routes, topic, since, reviewed)
 docs/           ROADMAP.md · DECISIONS.md (ADR) · RGPD.md · guides (sessions 14–15)
 ```
 
@@ -208,6 +210,21 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   l'accueil sans un mot tant qu'aucune liste n'existait, et les listes de démonstration ne vivent que
   dans le seed. La page dit maintenant ce qui manque, la carte d'accueil laisse une route au téléphone,
   et `/admin` affiche un chiffre à côté de Pointage.
+- **Session 21 — code complet ; parcours à six rôles rejoué en test, pas encore sur une stack Supabase** :
+  l'aide passe de trois guides monolithiques (session 15, cinq sessions de retard, trois rôles sur six)
+  à **43 articles courts** (`content/help/*.md`) à front-matter — `title`, `roles`, `routes`, `topic`,
+  `keywords`, `since`, `reviewed`. `/aide` ne montre que ce qui concerne le lecteur, rangé par thème
+  (Se connecter · Au quotidien · Publier · Administrer · Mes données) ; un bloc `:::roles` réserve une
+  phrase à une partie de l'audience, si bien qu'un responsable en lecture seule ne lit jamais « ouvrez
+  la messagerie » (ADR-0043 à ADR-0045). Tout ce qu'ont ajouté les sessions 16 à 20 est couvert.
+  **Garde-fou de fraîcheur** `pnpm ops:check-help`, dans `pnpm check` et en CI (ADR-0046) : il déduit
+  l'audience de chaque écran de la garde appelée par sa page, et **échoue** si un rôle qui atteint un
+  écran n'a aucun article, si un article documente une route disparue, ou si son `reviewed:` précède le
+  dernier commit de l'écran décrit. Un « ? » dans chaque en-tête ouvre l'article de l'écran courant ;
+  `/aide/quoi-de-neuf` liste les nouveautés du rôle (ADR-0050). **Recherche** en direct sur `/aide`,
+  sans accents ni casse, extraits surlignés, état vide qui propose une sortie ; `/recherche` remonte les
+  articles à côté des annonces. PDF « mon guide » par rôle (ADR-0048) — au passage, un vrai défaut de
+  mise en page `@react-pdf` corrigé. 156 tests unitaires, 436 assertions pgTAP inchangées et vertes.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
