@@ -45,7 +45,7 @@ export function PromotionForm({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-muted-foreground">
+            <tr className="text-left text-sm text-muted-foreground">
               <th className="py-2 pr-3 font-medium">{t("currentClass")}</th>
               <th className="py-2 pr-3 font-medium">{t("students")}</th>
               <th className="py-2 pr-3 font-medium">{t("targetLevel")}</th>
@@ -62,7 +62,7 @@ export function PromotionForm({
                 <td className="py-2 pr-3">{row.students}</td>
                 <td className="py-2 pr-3">
                   <span className="flex items-center gap-2">
-                    <ArrowRightIcon className="size-4 text-muted-foreground" aria-hidden />
+                    <ArrowRightIcon className="size-4 text-sm text-muted-foreground" aria-hidden />
                     <select
                       name={`target:${row.classId}`}
                       defaultValue={row.proposedLevelId ?? "leave"}

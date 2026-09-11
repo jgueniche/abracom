@@ -23,13 +23,16 @@ export default async function LoginPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <p className="font-heading text-lg font-semibold text-primary">{appName}</p>
-        <h1 className="text-3xl font-semibold">{t("title")}</h1>
-        <p className="text-pretty text-muted-foreground">{t("subtitle")}</p>
+      <div className="flex flex-col">
+        <p className="eyebrow mb-2 text-primary/85">{appName}</p>
+        <h1>{t("title")}</h1>
+        <p className="mt-1.5 text-sm text-pretty text-muted-foreground">{t("subtitle")}</p>
       </div>
       {!configured && (
-        <p role="status" className="rounded-xl bg-muted p-3 text-sm text-muted-foreground">
+        <p
+          role="status"
+          className="rounded-lg border border-border bg-muted/60 px-3 py-2.5 text-xs text-muted-foreground"
+        >
           {t("notConfigured")}
         </p>
       )}
@@ -39,12 +42,12 @@ export default async function LoginPage({
       />
       {/* Accounts are created by the school, never self-served: this says so
           where someone without one looks, instead of leaving them to guess. */}
-      <details className="rounded-2xl border border-border bg-card">
-        <summary className="flex min-h-12 cursor-pointer list-none items-center gap-2 px-4 text-sm font-medium">
-          <InfoIcon className="size-4 shrink-0 text-primary" aria-hidden />
+      <details className="rounded-lg border border-border bg-card">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 px-3.5 text-[0.8125rem] font-medium">
+          <InfoIcon className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
           {t("noAccountCta")}
         </summary>
-        <p className="border-t border-border px-4 py-3 text-sm text-pretty text-muted-foreground">
+        <p className="border-t border-rule px-3.5 py-2.5 text-xs text-pretty text-muted-foreground">
           {t("noAccount")}
         </p>
       </details>

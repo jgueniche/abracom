@@ -70,9 +70,9 @@ export default async function PromotionPage() {
       <Card>
         <CardContent>
           {!current ? (
-            <p className="text-muted-foreground">{t("noCurrent")}</p>
+            <p className="text-sm text-muted-foreground">{t("noCurrent")}</p>
           ) : !next ? (
-            <p className="text-muted-foreground">{t("noNext", { year: current.label })}</p>
+            <p className="text-sm text-muted-foreground">{t("noNext", { year: current.label })}</p>
           ) : (
             <>
               <p className="mb-4 text-sm">{t("fromTo", { from: current.label, to: next.label })}</p>

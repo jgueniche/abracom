@@ -142,7 +142,7 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ i
                           {file.filename}
                         </a>
                       ) : (
-                        <span className="flex items-center gap-2 text-muted-foreground">
+                        <span className="flex items-center gap-2 text-sm text-muted-foreground">
                           <PaperclipIcon className="size-4" aria-hidden />
                           {file.filename}
                         </span>

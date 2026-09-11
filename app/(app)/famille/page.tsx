@@ -69,10 +69,10 @@ export default async function FamilyPage() {
                 {classId && (
                   <ul className="overflow-hidden rounded-xl border border-border bg-card shadow-soft">
                     {sections.map(({ segment, key, icon: Icon }) => (
-                      <li key={segment} className="border-b border-border/70 last:border-b-0">
+                      <li key={segment} className="border-b border-rule last:border-b-0">
                         <Link
                           href={`/classes/${classId}/${segment}`}
-                          className="flex min-h-12 items-center gap-3 px-4 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                          className="flex min-h-12 items-center gap-3 px-4 text-sm font-medium hover:bg-muted hover:text-foreground"
                         >
                           <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                           {tSpace(key)}

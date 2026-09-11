@@ -80,7 +80,7 @@ export default async function AdminFormPage({ params }: { params: Promise<{ id: 
               <ScrollRegion label={t("responses")} className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-left text-muted-foreground">
+                    <tr className="text-left text-sm text-muted-foreground">
                       <th className="py-1 pr-3 font-medium">{t("respondent")}</th>
                       {form.per_student && (
                         <th className="py-1 pr-3 font-medium">{t("student")}</th>

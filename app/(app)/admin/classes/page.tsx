@@ -31,7 +31,7 @@ export default async function ClassesPage() {
             <li key={c.id}>
               <Link
                 href={`/admin/classes/${c.id}`}
-                className="flex items-center gap-4 rounded-2xl border p-4 hover:bg-accent/60"
+                className="flex items-center gap-4 rounded-xl border p-4 hover:bg-muted/60"
               >
                 <Badge variant="secondary">{c.level?.code}</Badge>
                 <div className="min-w-0 flex-1">

@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 import { AttendanceToday } from "@/components/domain/attendance-today";
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -90,10 +91,10 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
         description={tDash("subtitle")}
         actions={
           <>
-            <Button asChild variant="outline" className="min-h-11">
+            <Button asChild variant="outline">
               <Link href="/admin/familles">{tAdmin("families")}</Link>
             </Button>
-            <Button asChild className="min-h-11">
+            <Button asChild>
               {/* labelled "Annonces" while it opened the publishing hub */}
               <Link href="/publier">{tPublish("title")}</Link>
             </Button>
@@ -102,8 +103,8 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
       />
       <AttendanceToday />
 
-      <section className="mb-8">
-        <h2 className="mb-3">{tDash("queue")}</h2>
+      <section className="mb-10">
+        <SectionHeader label={tDash("queue")} count={queue.length || undefined} />
         {queue.length === 0 ? (
           <Card>
             <CardContent className="flex items-center gap-3 py-2 text-muted-foreground">
@@ -117,13 +118,16 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
               <li key={row.id}>
                 <Link
                   href={row.href}
-                  className="flex h-full min-h-16 items-center gap-3 rounded-xl border border-brick/35 bg-card p-4 shadow-soft transition-colors hover:bg-accent/40"
+                  className="flex h-full min-h-14 items-center gap-2.5 rounded-xl border border-l-2 border-border border-l-brick bg-card px-3.5 py-2.5 transition-colors hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_16%)] hover:bg-muted/50"
                 >
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brick/10 text-sm font-semibold text-brick tabular-nums">
+                  <span className="text-base font-semibold text-brick tabular-nums">
                     {row.count}
                   </span>
                   <span className="min-w-0 flex-1 text-sm font-medium">{row.label}</span>
-                  <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                  <ChevronRightIcon
+                    className="size-3.5 shrink-0 text-muted-foreground/60"
+                    aria-hidden
+                  />
                 </Link>
               </li>
             ))}
@@ -131,12 +135,12 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
         )}
       </section>
 
-      <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {tiles.map((tile) => (
           <Card key={tile.label}>
             <CardHeader>
-              <CardDescription>{tile.label}</CardDescription>
-              <CardTitle className="font-sans text-3xl font-semibold tabular-nums">
+              <CardDescription className="eyebrow">{tile.label}</CardDescription>
+              <CardTitle className="font-sans text-2xl leading-none font-semibold tabular-nums">
                 {tile.value}
               </CardTitle>
             </CardHeader>
@@ -144,8 +148,8 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
         ))}
         <Card>
           <CardHeader>
-            <CardDescription>{t("admin.activation")}</CardDescription>
-            <CardTitle className="font-sans text-3xl font-semibold tabular-nums">
+            <CardDescription className="eyebrow">{t("admin.activation")}</CardDescription>
+            <CardTitle className="font-sans text-2xl leading-none font-semibold tabular-nums">
               {stats.parentsTotal
                 ? Math.round((stats.parentsActive / stats.parentsTotal) * 100)
                 : 0}{" "}
@@ -158,15 +162,15 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
         </Card>
       </div>
 
-      <h2 className="mb-3">{t("admin.classesTitle")}</h2>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+      <SectionHeader label={t("admin.classesTitle")} count={classes.length || undefined} />
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {/* six inert cards on the opening screen of the direction, while the
             same cards open the class space from a teacher's home */}
         {classes.map((c) => (
           <Link key={c.id} href={`/classes/${c.id}`} className="block">
-            <Card className="h-full transition-colors hover:bg-accent/40">
+            <Card className="h-full transition-colors hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_16%)] hover:bg-muted/50">
               <CardHeader>
-                <div className="flex items-center gap-2">
+                <div className="mb-0.5 flex items-center gap-2">
                   <Badge variant="secondary">{c.level?.code}</Badge>
                   <span className="text-xs text-muted-foreground">
                     {t("teacher.students", { count: c.enrollments[0]?.count ?? 0 })}

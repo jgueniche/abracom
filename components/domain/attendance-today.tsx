@@ -38,7 +38,7 @@ export async function AttendanceToday() {
 
   return (
     <section className="mb-6 flex flex-col gap-3">
-      <h2 className="eyebrow">{t("todayTitle")}</h2>
+      <h2 className="section-label">{t("todayTitle")}</h2>
       {today.map((list) => (
         <Card key={list.list_id}>
           <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

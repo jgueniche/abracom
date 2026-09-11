@@ -32,14 +32,14 @@ export default async function AdminEventsPage() {
         }
       />
       {events.length === 0 ? (
-        <p className="text-muted-foreground">{t("upcoming.empty")}</p>
+        <p className="text-sm text-muted-foreground">{t("upcoming.empty")}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {events.map((event) => (
             <li key={event.id}>
               <Link
                 href={`/agenda/${event.id}`}
-                className="flex items-center gap-3 rounded-xl border p-3 hover:bg-accent/60"
+                className="flex items-center gap-3 rounded-xl border p-3 hover:bg-muted/60"
               >
                 <Badge variant={event.kind === "holiday" ? "outline" : "secondary"}>
                   {t(`kinds.${event.kind}`)}
@@ -68,7 +68,10 @@ export default async function AdminEventsPage() {
                       : t("admin.noRsvp")}
                   </p>
                 </div>
-                <ChevronRightIcon className="size-5 shrink-0 text-muted-foreground" aria-hidden />
+                <ChevronRightIcon
+                  className="size-5 shrink-0 text-sm text-muted-foreground"
+                  aria-hidden
+                />
               </Link>
             </li>
           ))}

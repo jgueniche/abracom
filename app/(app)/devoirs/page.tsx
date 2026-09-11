@@ -1,4 +1,5 @@
 import { BookOpenIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -155,27 +156,16 @@ export default async function DiaryPage({
       />
 
       {allChildren.length > 1 && (
-        <nav aria-label={t("title")} className="-mt-2 mb-4 flex flex-wrap gap-2">
+        <FilterChips label={t("title")} className="-mt-1">
           {[null, ...allChildren.map((child) => child.id)].map((id) => {
             const child = allChildren.find((item) => item.id === id);
-            const active = selected === id;
             return (
-              <Link
-                key={id ?? "all"}
-                href={childHref(id)}
-                aria-current={active ? "true" : undefined}
-                className={cn(
-                  "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
-                  active
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                )}
-              >
+              <FilterChip key={id ?? "all"} href={childHref(id)} active={selected === id}>
                 {child ? child.first_name : t("allChildren")}
-              </Link>
+              </FilterChip>
             );
           })}
-        </nav>
+        </FilterChips>
       )}
 
       {classIds.length === 0 ? (
@@ -199,15 +189,13 @@ export default async function DiaryPage({
                   <li
                     key={day}
                     className={cn(
-                      "rounded-2xl border",
-                      empty
-                        ? "border-dashed border-border/70 px-4 py-2.5"
-                        : "bg-card p-4 shadow-soft",
+                      "rounded-xl border",
+                      empty ? "border-dashed border-rule px-4 py-2.5" : "bg-card p-4 shadow-soft",
                       isToday && !empty && "border-primary/60 ring-1 ring-primary/25",
                       isToday && empty && "border-primary/40",
                       !isToday && !empty && "border-border",
                       // `opacity-55` over muted text failed the AA contrast ratio
-                      isPast && empty && "border-border/50",
+                      isPast && empty && "border-rule",
                     )}
                   >
                     <p

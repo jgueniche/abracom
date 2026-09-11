@@ -39,7 +39,7 @@ export async function PraiseRow({
               <input type="hidden" name="classId" value={classId} />
               <Button type="submit" variant="outline" size="sm" className="min-h-11">
                 {student.firstName}
-                <span className="text-muted-foreground">{student.lastName.charAt(0)}.</span>
+                <span className="text-sm text-muted-foreground">{student.lastName.charAt(0)}.</span>
               </Button>
             </form>
           ))}

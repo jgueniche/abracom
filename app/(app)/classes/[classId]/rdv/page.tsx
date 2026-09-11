@@ -2,6 +2,7 @@ import { CalendarCheckIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -94,12 +95,10 @@ export default async function AppointmentsPage({
       ) : (
         [...days.entries()].map(([day, list]) => (
           <section key={day}>
-            <h2 className="mb-2 font-semibold capitalize">
-              {format.dateTime(new Date(`${day}T12:00:00Z`), { dateStyle: "full" })}
-              <span className="ml-2 text-sm font-normal text-muted-foreground">
-                {t("slots", { count: list.length })}
-              </span>
-            </h2>
+            <SectionHeader
+              label={format.dateTime(new Date(`${day}T12:00:00Z`), { dateStyle: "full" })}
+              count={t("slots", { count: list.length })}
+            />
             <ul className="flex flex-col gap-2">
               {list.map((slot) => {
                 const mine = slot.booked_by === user.id;

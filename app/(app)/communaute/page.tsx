@@ -110,7 +110,7 @@ export default async function CommunityPage() {
                 <Link
                   key={id}
                   href={`/classes/${id}/rdv`}
-                  className="flex min-h-11 items-center rounded-full border px-4 text-sm font-medium hover:bg-accent"
+                  className="flex min-h-11 items-center rounded-md border border-border bg-card px-2.5 text-[0.8125rem] font-medium text-muted-foreground transition-colors hover:text-foreground md:min-h-9"
                 >
                   {name}
                 </Link>

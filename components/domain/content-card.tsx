@@ -8,9 +8,15 @@ import { cn } from "@/lib/utils";
  * The one anatomy every piece of published content uses:
  * eyebrow · title · excerpt · media · footer, with at most one primary action.
  *
- * The same class post was previously rendered three different ways depending on
- * the page, and announcements had no component at all — their card was written
- * by hand inside the list, with the body either missing or printed in full.
+ * This is where the serif speaks. A card that carries something a person at the
+ * school wrote — an announcement, a post, a note home — sets its title in the
+ * editorial face; a card that carries an interface object (a destination, a
+ * setting, a figure) sets it in the sans, through `CardTitle`. That distinction
+ * is the whole job of having two families, and it dies the moment every heading
+ * in the application is a display serif.
+ *
+ * The excerpt runs two lines, not three: in a grid, the third line was what
+ * made every card a different height and none of them scannable.
  */
 export function ContentCard({
   eyebrow,
@@ -21,7 +27,7 @@ export function ContentCard({
   media,
   footer,
   menu,
-  /** Something is waiting on the reader: a brick rule, used sparingly. */
+  /** Something is waiting on the reader: a brick rule down the edge. */
   accent = false,
   unread = false,
   muted = false,
@@ -41,7 +47,7 @@ export function ContentCard({
   className?: string;
 }) {
   const heading = (
-    <h3 className="font-heading text-lg leading-snug font-normal tracking-tight text-balance sm:text-xl">
+    <h3 className="font-heading text-[1.0625rem] leading-[1.32] font-normal tracking-[-0.008em] text-balance sm:text-[1.125rem]">
       {title}
     </h3>
   );
@@ -50,9 +56,12 @@ export function ContentCard({
     <Card
       className={cn(
         "relative h-full",
-        href && "transition-colors focus-within:bg-accent/40 hover:bg-accent/40",
-        accent && "border-t-[3px] border-t-brick",
-        muted && "border-dashed",
+        href &&
+          "transition-colors focus-within:border-[color-mix(in_oklch,var(--border),var(--foreground)_16%)] focus-within:bg-muted/40 hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_16%)] hover:bg-muted/40",
+        // A marked passage rather than a banner across the top: it says "this
+        // one is for you" without repainting a sixth of the card.
+        accent && "border-l-2 border-l-brick",
+        muted && "border-rule bg-card/60",
         className,
       )}
     >
@@ -60,8 +69,8 @@ export function ContentCard({
         <div className="flex items-start gap-2">
           <div className="min-w-0 flex-1">
             {eyebrow && (
-              <p className="eyebrow mb-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
-                {unread && <span className="size-2 shrink-0 rounded-full bg-brick" aria-hidden />}
+              <p className="eyebrow mb-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                {unread && <span className="size-1.5 shrink-0 rounded-full bg-brick" aria-hidden />}
                 {eyebrow}
               </p>
             )}
@@ -71,7 +80,7 @@ export function ContentCard({
               // The overlay makes the whole card the target, as a card should be.
               <Link
                 href={href}
-                className="group/title block after:absolute after:inset-0 hover:underline"
+                className="group/title block after:absolute after:inset-0 hover:underline hover:decoration-foreground/25 hover:underline-offset-[3px]"
               >
                 {heading}
               </Link>
@@ -79,7 +88,7 @@ export function ContentCard({
               heading
             )}
           </div>
-          {menu && <div className="relative z-10 shrink-0">{menu}</div>}
+          {menu && <div className="relative z-10 -mt-1 shrink-0">{menu}</div>}
         </div>
       </CardHeader>
       {(excerpt || body || media) && (
@@ -88,14 +97,16 @@ export function ContentCard({
         // makes the rest of the card a target. A plain excerpt does not.
         <CardContent className={cn("flex flex-col gap-3", (body || media) && "relative z-10")}>
           {excerpt && (
-            <p className="prose-kesher line-clamp-3 text-[0.9375rem] text-pretty">{excerpt}</p>
+            <p className="line-clamp-2 font-serif text-[0.9375rem] leading-[1.55] text-pretty text-muted-foreground">
+              {excerpt}
+            </p>
           )}
           {body}
           {media}
         </CardContent>
       )}
       {footer && (
-        <CardContent className="relative z-10 flex flex-wrap items-center gap-2 border-t border-border/70 pt-3">
+        <CardContent className="relative z-10 flex flex-wrap items-center gap-1.5 border-t border-rule pt-2.5">
           {footer}
         </CardContent>
       )}
@@ -105,7 +116,7 @@ export function ContentCard({
 
 /** Separator between eyebrow segments. */
 export function EyebrowDot() {
-  return <span className="size-1 rounded-full bg-border" aria-hidden />;
+  return <span className="size-[3px] rounded-full bg-muted-foreground/45" aria-hidden />;
 }
 
 /** Small factual chip — "Accusé requis", "Vu par 19 / 27". Never an action. */
@@ -119,9 +130,9 @@ export function MetaChip({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
+        "inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-[0.6875rem] leading-4 font-semibold tracking-[0.01em] tabular-nums",
         tone === "brick" && "bg-brick/10 text-brick",
-        tone === "success" && "bg-success/12 text-success",
+        tone === "success" && "bg-success/10 text-success",
         tone === "neutral" && "bg-muted text-muted-foreground",
       )}
     >

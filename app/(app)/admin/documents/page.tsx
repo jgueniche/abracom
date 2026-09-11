@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireSchoolStaff } from "@/lib/auth/guards";
@@ -30,13 +31,13 @@ export default async function AdminDocumentsPage() {
         <div className="flex flex-col gap-6">
           {groups.map((group) => (
             <section key={group.name || "none"}>
-              <h2 className="mb-2 text-lg font-semibold">{group.name || tDocs("noFolder")}</h2>
+              <SectionHeader label={group.name || tDocs("noFolder")} count={group.items.length} />
               <ul className="flex flex-col gap-2">
                 {group.items.map((doc) => (
                   <li key={doc.id}>
                     <Link
                       href={`/admin/documents/${doc.id}`}
-                      className="flex items-center gap-3 rounded-xl border p-3 hover:bg-accent/60"
+                      className="flex items-center gap-3 rounded-xl border p-3 hover:bg-muted/60"
                     >
                       <FileTextIcon className="size-5 shrink-0 text-primary" aria-hidden />
                       <div className="min-w-0 flex-1">

@@ -16,7 +16,7 @@ function Result({ match }: { match: HelpMatch }) {
     <li>
       <Link
         href={`/aide/${match.entry.slug}`}
-        className="flex min-h-11 flex-col rounded-xl border p-3 transition-colors hover:border-primary/40 hover:bg-accent/40"
+        className="flex min-h-11 flex-col rounded-xl border p-3 transition-colors hover:border-primary/40 hover:bg-muted/50"
       >
         <span className="mb-1 flex flex-wrap items-baseline gap-2">
           <span className="font-medium">{match.entry.title}</span>
@@ -116,7 +116,7 @@ export function HelpSearch({
           </ul>
         </>
       ) : (
-        <div className="rounded-2xl border border-dashed p-6">
+        <div className="rounded-xl border border-border bg-card/60 px-5 py-6">
           <p className="font-heading text-lg tracking-tight">
             {t("empty", { query: deferred.trim() })}
           </p>
@@ -127,7 +127,7 @@ export function HelpSearch({
               <li key={article.slug}>
                 <Link
                   href={`/aide/${article.slug}`}
-                  className="inline-flex min-h-11 items-center rounded-lg border px-3 text-sm hover:bg-accent"
+                  className="inline-flex min-h-11 items-center rounded-lg border px-3 text-sm hover:bg-muted"
                 >
                   {article.title}
                 </Link>

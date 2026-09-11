@@ -13,11 +13,11 @@ export async function NotificationBell({ userId }: { userId: string }) {
     <Link
       href="/notifications"
       aria-label={t("bell", { count })}
-      className="relative inline-flex size-11 items-center justify-center rounded-lg hover:bg-accent hover:text-accent-foreground"
+      className="relative inline-flex size-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:size-9"
     >
-      <BellIcon className="size-5" aria-hidden />
+      <BellIcon className="size-[1.0625rem]" aria-hidden />
       {count > 0 && (
-        <span className="absolute top-1.5 right-1.5 min-w-4 rounded-full bg-destructive px-1 text-center text-[10px] leading-4 font-semibold text-white">
+        <span className="absolute top-1 right-1 min-w-[15px] rounded-full bg-brick px-1 text-center text-[0.625rem] leading-[15px] font-semibold text-brick-foreground md:top-0.5 md:right-0.5">
           {count > 99 ? "99+" : count}
         </span>
       )}

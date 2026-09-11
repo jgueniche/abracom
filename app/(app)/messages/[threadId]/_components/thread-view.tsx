@@ -353,7 +353,7 @@ export function ThreadView({
               return (
                 <li key={row.key} className="my-3 flex items-center gap-3">
                   <span className="h-px flex-1 bg-border" />
-                  <span className="text-[0.6875rem] font-semibold tracking-wide text-muted-foreground uppercase">
+                  <span className="text-[0.6875rem] font-medium tracking-[0.085em] text-muted-foreground uppercase">
                     {row.day === today
                       ? t("today")
                       : row.day === yesterday
@@ -367,7 +367,7 @@ export function ThreadView({
               return (
                 <li key={row.key} className="my-3 flex items-center gap-3">
                   <span className="h-px flex-1 bg-brick/40" />
-                  <span className="text-[0.6875rem] font-bold tracking-wide text-brick uppercase">
+                  <span className="text-[0.6875rem] font-semibold tracking-[0.085em] text-brick uppercase">
                     {t("newMessages")}
                   </span>
                   <span className="h-px flex-1 bg-brick/40" />
@@ -426,7 +426,7 @@ export function ThreadView({
           <Button
             type="button"
             size="sm"
-            className="pointer-events-auto min-h-11 rounded-full shadow-lift"
+            className="pointer-events-auto min-h-11 rounded-md shadow-lift"
             onClick={jumpToBottom}
           >
             <ChevronDownIcon aria-hidden />
@@ -469,7 +469,7 @@ export function ThreadView({
         />
       ) : (
         closedReason && (
-          <div className="mt-4 rounded-xl border border-border bg-muted p-3 text-sm text-muted-foreground">
+          <div className="mt-4 rounded-lg border border-border bg-muted/60 px-3 py-2.5 text-xs text-muted-foreground">
             <p>{closedReason}</p>
             {closedNote && <p className="mt-1 font-medium text-foreground">{closedNote}</p>}
           </div>
@@ -553,7 +553,7 @@ function MessageItem({
           <p className="mb-1 flex flex-wrap items-baseline gap-x-2 text-xs text-muted-foreground">
             <span className="text-[0.8125rem] font-semibold text-foreground">{name}</span>
             {author?.role === "moderator" && (
-              <span className="rounded-sm bg-accent px-1.5 py-px text-[0.625rem] font-bold tracking-wide text-accent-foreground uppercase">
+              <span className="rounded-sm bg-muted px-1 py-px text-[0.625rem] font-semibold tracking-[0.06em] text-muted-foreground uppercase">
                 {t("message.staff")}
               </span>
             )}
@@ -564,10 +564,10 @@ function MessageItem({
         <div className="flex items-start gap-1">
           <div
             className={cn(
-              "max-w-[min(85%,42rem)] min-w-0 rounded-2xl px-3 py-2 text-sm",
+              "max-w-[min(85%,42rem)] min-w-0 rounded-lg px-3 py-2 text-sm leading-[1.5]",
               mine
-                ? "bg-primary text-primary-foreground"
-                : "border border-border bg-card text-card-foreground",
+                ? "rounded-br-sm bg-primary text-primary-foreground"
+                : "rounded-bl-sm border border-border bg-card text-card-foreground",
             )}
           >
             {replyTarget && (
@@ -633,7 +633,7 @@ function MessageItem({
                 <button
                   type="button"
                   aria-label={t("message.actions")}
-                  className="mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground opacity-60 transition-opacity hover:bg-accent hover:text-accent-foreground hover:opacity-100 focus-visible:opacity-100 md:size-8 md:opacity-0 md:group-focus-within/message:opacity-100 md:group-hover/message:opacity-100"
+                  className="mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-60 transition-opacity hover:bg-muted hover:text-foreground hover:opacity-100 focus-visible:opacity-100 md:size-8 md:opacity-0 md:group-focus-within/message:opacity-100 md:group-hover/message:opacity-100"
                 >
                   <MoreHorizontalIcon className="size-4" aria-hidden />
                 </button>
@@ -649,7 +649,7 @@ function MessageItem({
                           <button
                             type="submit"
                             aria-label={emoji}
-                            className="flex size-9 items-center justify-center rounded-md text-base hover:bg-accent"
+                            className="flex size-9 items-center justify-center rounded-md text-base hover:bg-muted"
                           >
                             {emoji}
                           </button>
@@ -696,10 +696,10 @@ function MessageItem({
                   type="submit"
                   aria-pressed={entry.mine}
                   className={cn(
-                    "flex h-7 items-center gap-1 rounded-full border px-2 text-xs font-semibold",
+                    "flex h-6 items-center gap-1 rounded-sm border px-1.5 text-[0.6875rem] font-semibold",
                     entry.mine
-                      ? "border-primary/50 bg-primary/12 text-primary"
-                      : "border-border bg-card text-muted-foreground hover:bg-accent",
+                      ? "border-primary/40 bg-primary/10 text-primary"
+                      : "border-border bg-card text-muted-foreground hover:bg-muted",
                   )}
                   disabled={!canWrite}
                 >
@@ -713,7 +713,7 @@ function MessageItem({
                   <button
                     type="button"
                     aria-label={t("message.react")}
-                    className="flex size-7 items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:bg-accent"
+                    className="flex size-6 items-center justify-center rounded-sm border border-border bg-card text-muted-foreground hover:bg-muted"
                   >
                     <SmilePlusIcon className="size-3.5" aria-hidden />
                   </button>
@@ -726,7 +726,7 @@ function MessageItem({
                       <button
                         type="submit"
                         aria-label={emoji}
-                        className="flex size-9 items-center justify-center rounded-md text-base hover:bg-accent"
+                        className="flex size-9 items-center justify-center rounded-md text-base hover:bg-muted"
                       >
                         {emoji}
                       </button>
@@ -878,7 +878,7 @@ function Composer({
       action={action}
       // `bottom-16` was 64 px against a tab bar of 56 px plus 34 px of iPhone
       // safe area: 26 px of the composer, the Send button included, sat under it.
-      className="sticky bottom-[calc(var(--nav-h)+0.5rem)] mt-4 flex flex-col gap-2 rounded-2xl border border-border bg-card p-3 shadow-lift lg:bottom-2"
+      className="sticky bottom-[calc(var(--nav-h)+0.5rem)] mt-4 flex flex-col gap-2 rounded-xl border border-border bg-card p-3 shadow-lift lg:bottom-2"
     >
       <input type="hidden" name="threadId" value={threadId} />
       {replyTo && (
@@ -891,7 +891,7 @@ function Composer({
             type="button"
             onClick={onCancelReply}
             aria-label={t("composer.cancel")}
-            className="flex size-6 shrink-0 items-center justify-center rounded-md hover:bg-accent"
+            className="flex size-6 shrink-0 items-center justify-center rounded-sm hover:bg-muted"
           >
             <XIcon className="size-4" />
           </button>

@@ -1,4 +1,5 @@
 import { ArrowLeftIcon } from "lucide-react";
+import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -10,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { canWriteInSchool } from "@/lib/permissions";
-import { cn } from "@/lib/utils";
 import { formStatus, getForm, getMyFormResponses } from "@/server/queries/community";
 import { getMyChildren } from "@/server/queries/family";
 
@@ -93,27 +93,21 @@ export default async function FormPage({
           {kids.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t("childRequired")}</p>
           ) : (
-            <nav className="flex flex-wrap gap-2">
+            <FilterChips>
               {kids.map((kid) => {
                 const done = responses.some((r) => r.student_id === kid.id);
                 return (
-                  <Link
+                  <FilterChip
                     key={kid.id}
                     href={`/communaute/formulaires/${form.id}?s=${kid.id}`}
-                    aria-current={kid.id === studentId ? "page" : undefined}
-                    className={cn(
-                      "flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-medium",
-                      kid.id === studentId
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "hover:bg-accent",
-                    )}
+                    active={kid.id === studentId}
                   >
                     {kid.name}
                     {done ? " ✓" : ""}
-                  </Link>
+                  </FilterChip>
                 );
               })}
-            </nav>
+            </FilterChips>
           )}
         </div>
       )}

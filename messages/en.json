@@ -73,7 +73,8 @@
       "forms": "Forms",
       "feedback": "Feedback and overlays",
       "cards": "Domain cards",
-      "icons": "PWA icons"
+      "icons": "PWA icons",
+      "anatomy": "Screen anatomy"
     },
     "palette": {
       "brand": "Brand colours (constant)",
@@ -84,11 +85,19 @@
       "onBackground": "on page background"
     },
     "typography": {
-      "heading": "Headings · Fraunces",
-      "body": "Body · Inter",
+      "heading": "Headings · Newsreader",
+      "body": "Body copy",
       "sample": "The quick brown fox jumps over the lazy dog",
       "lead": "A lead paragraph, slightly larger, for important announcements from the school office.",
-      "muted": "Secondary text for metadata, hints and timestamps."
+      "muted": "Secondary text for metadata, hints and timestamps.",
+      "scale": "One scale, eight steps",
+      "page": "Page title",
+      "section": "Section label",
+      "card": "Card title (interface)",
+      "content": "Content title (editorial)",
+      "meta": "Metadata",
+      "eyebrow": "Eyebrow",
+      "prose": "Institutional prose"
     },
     "buttons": {
       "default": "Primary",
@@ -151,6 +160,36 @@
     },
     "icons": {
       "description": "Generated from the official logo, unaltered, by scripts/brand/generate-icons.ts (favicon, iOS, standard and maskable PWA icons)."
+    },
+    "anatomy": {
+      "eyebrow": "Thursday 11 September",
+      "title": "Hello Fictional name",
+      "description": "What the school needs from you today, then everything else.",
+      "action": "New homework",
+      "today": "Today",
+      "todayHint": "Three things are waiting, the most urgent first.",
+      "destinations": "The school",
+      "publications": "Latest posts",
+      "seeAll": "See all",
+      "kindAck": "Receipt",
+      "kindHomework": "Homework",
+      "kindNote": "Note",
+      "rowAck": "Back-to-school meeting for nursery classes",
+      "rowHomework": "Bring a family photo",
+      "rowNote": "Park outing moved to Tuesday",
+      "rowAckDetail": "Read receipt due before Friday",
+      "rowHomeworkDetail": "PS Tournesols · due Thursday",
+      "rowNoteDetail": "From the teacher",
+      "hubAnnouncements": "Announcements",
+      "hubAnnouncementsHint": "What the school office sends to families.",
+      "hubAnnouncementsMeta": "1 receipt pending",
+      "hubDocuments": "Documents",
+      "hubDocumentsHint": "Circulars, permissions, school rules.",
+      "hubAgenda": "Calendar",
+      "hubAgendaHint": "School calendar and Jewish holidays.",
+      "emptyTitle": "No messages yet",
+      "emptyDescription": "Conversations with the team will appear here from the first message.",
+      "emptyAction": "Write to the team"
     }
   },
   "auth": {

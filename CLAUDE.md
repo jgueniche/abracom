@@ -225,6 +225,18 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   sans accents ni casse, extraits surlignés, état vide qui propose une sortie ; `/recherche` remonte les
   articles à côté des annonces. PDF « mon guide » par rôle (ADR-0048) — au passage, un vrai défaut de
   mise en page `@react-pdf` corrigé. 156 tests unitaires, 436 assertions pgTAP inchangées et vertes.
+- **Session 22 — code complet, validation visuelle en attente** : refonte purement graphique
+  (ADR-0051), « le trait plutôt que la boîte ». Fraunces cède la place à **Newsreader** (une seule serif
+  éditoriale, à axe optique, pour les titres et la prose ; Source Serif 4 supprimée) et la serif devient
+  **la voix de l'école** quand le sans reste **l'interface**. L'échelle typographique est recoupée dans
+  `@theme` : les crans de titre perdent 20 à 30 %, le texte courant ne bouge pas, chaque cran porte son
+  interligne et son approche. `--radius` passe de 14 px à 8 px, l'ombre cède au filet (jeton `--rule`
+  pour les séparateurs internes), et `--surface` / `--secondary` / `--accent` / `--input` perdent de la
+  chroma à luminance identique — le SC 1.4.11 tient, le bleu ne crie plus. Trois composants partagés
+  absorbent ce qui était recopié : `SectionHeader` (vingt et un `<h2>` à six tailles), `RowList` / `Row`
+  (neuf listes écrites à la main), `FilterChip` / `FilterChips` (six rangées de pilules bleues pleines).
+  Les onglets se marquent d'un trait, plus d'un aplat. `/dev/ui` gagne une section **Anatomie d'écran**
+  et un spécimen de l'échelle. Aucune route, aucun libellé et aucun droit ne bougent.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

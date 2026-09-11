@@ -21,7 +21,7 @@ export default async function AuditPage() {
       {entries.length === 0 ? (
         <EmptyState icon={HistoryIcon} title={t("empty")} description={t("emptyHint")} />
       ) : (
-        <ScrollRegion label={t("title")} className="overflow-x-auto rounded-2xl border">
+        <ScrollRegion label={t("title")} className="overflow-x-auto rounded-xl border">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>

@@ -94,7 +94,7 @@ export function InstallPrompt() {
     <div
       role="region"
       aria-label={t("install")}
-      className="fixed inset-x-3 bottom-[calc(var(--nav-h)+0.75rem)] z-50 mx-auto flex max-w-md items-center gap-3 rounded-2xl border bg-popover p-3 shadow-lift lg:bottom-4"
+      className="fixed inset-x-3 bottom-[calc(var(--nav-h)+0.75rem)] z-50 mx-auto flex max-w-md items-center gap-3 rounded-xl border bg-popover p-3 shadow-lift lg:bottom-4"
     >
       <div className="min-w-0 flex-1 text-sm">
         <p className="font-medium">{t("install")}</p>

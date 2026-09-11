@@ -41,10 +41,10 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
                       href={item.href}
                       aria-current={isActive(item.href) ? "page" : undefined}
                       className={cn(
-                        "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
+                        "flex min-h-11 items-center rounded-md border px-2.5 text-[0.8125rem] font-medium transition-colors",
                         isActive(item.href)
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "hover:bg-accent hover:text-accent-foreground",
+                          ? "border-primary/45 bg-primary/10 text-primary"
+                          : "border-border bg-card text-muted-foreground hover:text-foreground",
                       )}
                     >
                       {t(item.key)}
@@ -60,7 +60,7 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
       {/* Desktop: a real column — every destination readable at a glance. */}
       <nav
         aria-label={tAdmin("title")}
-        className="sticky top-20 hidden h-fit flex-col gap-5 rounded-2xl border border-border bg-surface/60 p-4 lg:flex"
+        className="sticky top-20 hidden h-fit flex-col gap-5 rounded-xl border border-border bg-card p-3.5 lg:flex"
       >
         {groups.map((group) => (
           <div key={group.key}>
@@ -72,10 +72,10 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
                     href={item.href}
                     aria-current={isActive(item.href) ? "page" : undefined}
                     className={cn(
-                      "flex min-h-9 items-center rounded-lg px-3 text-sm font-medium",
+                      "relative flex min-h-8 items-center rounded-md px-2.5 text-[0.8125rem] font-medium transition-colors",
                       isActive(item.href)
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                        ? "bg-muted font-semibold text-foreground before:absolute before:inset-y-1.5 before:left-0 before:w-[2px] before:rounded-full before:bg-primary"
+                        : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
                     )}
                   >
                     {t(item.key)}

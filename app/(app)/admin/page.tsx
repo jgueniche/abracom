@@ -72,13 +72,13 @@ export default async function AdminIndexPage() {
   return (
     <>
       <PageHeader title={t("title")} description={t("nav.subtitle")} />
-      <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
         {groups.map((group) => (
           <Card key={group.key}>
             <CardHeader>
-              <CardTitle>{tGroups(group.key)}</CardTitle>
+              <CardTitle className="eyebrow">{tGroups(group.key)}</CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col gap-1">
+            <CardContent className="-mx-1 flex flex-col">
               {group.items.map((item) => {
                 const Icon = ICONS[item.key] ?? FileTextIcon;
                 const count = counts[item.key];
@@ -87,16 +87,16 @@ export default async function AdminIndexPage() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                    className="flex min-h-11 items-center gap-2.5 rounded-md px-2 text-[0.8125rem] font-medium transition-colors hover:bg-muted hover:text-foreground md:min-h-9"
                   >
-                    <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                    <Icon className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
                     <span className="min-w-0 flex-1 truncate">{tNav(item.key)}</span>
                     {count !== undefined && (
                       <span
                         className={
                           waiting
-                            ? "text-sm font-semibold text-brick tabular-nums"
-                            : "text-sm text-muted-foreground tabular-nums"
+                            ? "text-xs font-semibold text-brick tabular-nums"
+                            : "text-xs text-muted-foreground tabular-nums"
                         }
                       >
                         {count}

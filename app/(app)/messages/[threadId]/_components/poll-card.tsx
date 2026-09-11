@@ -131,7 +131,7 @@ export function PollCard({
                   className={cn(
                     "relative flex min-h-11 w-full items-center gap-2 overflow-hidden rounded-lg border px-3 text-left text-sm",
                     isPicked ? "border-primary" : "border-border",
-                    closed ? "cursor-default" : "hover:bg-accent/50",
+                    closed ? "cursor-default" : "hover:bg-muted/50",
                   )}
                 >
                   <span

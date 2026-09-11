@@ -4,6 +4,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,10 +43,10 @@ export default async function DocumentsPage() {
           action={canPublish ? { href: "/admin/documents", label: t("deposit") } : undefined}
         />
       )}
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-9">
         {groups.map((group) => (
-          <section key={group.name || "none"} className="flex flex-col gap-3">
-            <h2 className="text-xl font-semibold">{group.name || t("noFolder")}</h2>
+          <section key={group.name || "none"} className="flex flex-col">
+            <SectionHeader label={group.name || t("noFolder")} count={group.items.length} />
             {group.items.map((doc) => {
               const mine = doc.signatures.filter((s) => s.user_id === user.id);
               const familySigned = mine.find((s) => s.student_id === null);

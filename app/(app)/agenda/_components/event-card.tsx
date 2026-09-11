@@ -33,9 +33,9 @@ export async function EventCard({
   return (
     <Link
       href={`/agenda/${event.id}`}
-      className="flex min-h-11 flex-col gap-1 rounded-2xl border p-3 hover:bg-accent/60"
+      className="flex min-h-11 flex-col gap-1 rounded-xl border border-border bg-card px-3.5 py-3 transition-colors hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_16%)] hover:bg-muted/50"
     >
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-1.5">
         <Badge variant={event.kind === "holiday" ? "outline" : "secondary"}>
           {t(`kinds.${event.kind}`)}
         </Badge>
@@ -47,10 +47,10 @@ export async function EventCard({
           </Badge>
         )}
       </div>
-      <p className="font-heading font-semibold">
+      <p className="font-heading text-base leading-snug font-normal">
         {event.title} {continued && <span className="text-muted-foreground">{t("continued")}</span>}
       </p>
-      <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+      <p className="meta flex flex-wrap items-center gap-x-3 gap-y-1">
         <span className="inline-flex items-center gap-1">
           <ClockIcon className="size-3.5" aria-hidden />
           {showDate ? `${format.dateTime(start, { dateStyle: "medium" })} · ${time}` : time}

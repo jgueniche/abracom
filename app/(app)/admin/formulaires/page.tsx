@@ -31,7 +31,7 @@ export default async function AdminFormsPage() {
         }
       />
       {forms.length === 0 ? (
-        <p className="text-muted-foreground">{tf("empty")}</p>
+        <p className="text-sm text-muted-foreground">{tf("empty")}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {forms.map((form) => {
@@ -40,7 +40,7 @@ export default async function AdminFormsPage() {
               <li key={form.id}>
                 <Link
                   href={`/admin/formulaires/${form.id}`}
-                  className="flex items-center gap-3 rounded-xl border p-3 hover:bg-accent/60"
+                  className="flex items-center gap-3 rounded-xl border p-3 hover:bg-muted/60"
                 >
                   <Badge variant={status === "open" ? "default" : "outline"}>
                     {tf(`status.${status}`)}
@@ -54,7 +54,10 @@ export default async function AdminFormsPage() {
                         : ""}
                     </p>
                   </div>
-                  <ChevronRightIcon className="size-5 shrink-0 text-muted-foreground" aria-hidden />
+                  <ChevronRightIcon
+                    className="size-5 shrink-0 text-sm text-muted-foreground"
+                    aria-hidden
+                  />
                 </Link>
               </li>
             );

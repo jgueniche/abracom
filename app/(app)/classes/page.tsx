@@ -81,7 +81,7 @@ export default async function ClassesPage() {
             <li key={id}>
               <Link
                 href={`/classes/${id}`}
-                className="flex min-h-16 items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft transition-colors hover:bg-accent/40"
+                className="flex min-h-16 items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-soft transition-colors hover:bg-muted/50"
               >
                 {entry.level && <Badge variant="secondary">{entry.level}</Badge>}
                 <div className="min-w-0 flex-1">

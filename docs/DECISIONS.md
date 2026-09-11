@@ -819,3 +819,53 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   À la première visite, le marqueur est posé au niveau courant : on n'annonce pas quarante-trois
   nouveautés à quelqu'un qui n'a jamais ouvert l'aide. La page ne nomme jamais un numéro de session :
   elle dit « depuis votre dernière visite », ce qui est la seule chose qui intéresse une famille.
+
+## ADR-0051 — Le trait plutôt que la boîte : registre typographique et géométrique
+
+- **Contexte** : à la revue de la refonte des sessions 16 et 17, le porteur ne conteste ni la palette
+  (ADR-0032, blancs et bleus) ni la navigation, mais le **registre** : « l'app est très _Claude like_ »,
+  « beaucoup de textes et d'encarts sont trop gros, les titres aussi », « des sous-titres n'ont pas de
+  cohérence de place, de taille ou de position ». Les mesures lui donnent raison. Un titre de page était
+  posé à 36 px, un titre de section à 24 px et un titre de carte à 20 px : trois niveaux qui se
+  disputaient un écran de 390 px. Le rayon unique valait 0,875 rem, ce qui transformait un champ tactile
+  de 44 px en losange et un bouton de 32 px en pilule. Les jetons `text-sm` et `text-xs` portaient 423
+  des 500 déclarations de taille du dépôt, donc l'échelle n'avait en réalité que deux crans utiles et un
+  gouffre au-dessus. Vingt et un `<h2>` écrits à la main se partageaient six tailles et quatre marges.
+  Et surtout, la fonte de titre était **Fraunces**, avec ses axes `SOFT` et `WONK` poussés : la signature
+  typographique exacte du genre d'interface que le porteur décrit, qu'aucune sobriété ailleurs ne pouvait
+  compenser tant qu'elle composait tous les titres de l'application.
+- **Décision** : cinq gestes, tous à la source plutôt que fichier par fichier.
+  1. **Une serif éditoriale à la place de Fraunces** — **Newsreader**, à axe optique, qui sert à la fois
+     les titres et la prose longue ; Source Serif 4 disparaît. Deux familles au total (Inter pour
+     l'interface, Newsreader pour ce que l'école écrit), et une règle de partage : **la serif est la voix
+     de l'école** (annonce, mot, cahier de vie, circulaire), **le sans est l'interface** (une destination,
+     un réglage, un chiffre). `CardTitle` passe donc au sans, `ContentCard` garde la serif.
+  2. **L'échelle est recoupée dans `@theme`**, pas dans les pages : les crans de titre perdent de 20 à
+     30 % (30 → 22, 36 → 26, 24 → 19, 20 → 17, 18 → 16), les tailles de texte courant ne bougent pas
+     — 14 px reste 14 px, un parent doit lire — et chaque cran porte enfin son interligne et son
+     approche. Deux cents fichiers sont corrigés sans être touchés.
+  3. **`--radius` passe de 0,875 rem à 0,5 rem.** Contrôles à 6,4 px, plans à 11,2 px, la pilule
+     réservée à ce qui est réellement rond (pastille de compte, avatar).
+  4. **L'ombre cède la place au filet.** Une carte au repos ne porte presque rien ; le relief est réservé
+     à ce qui flotte vraiment (dialogue, menu, composeur). Un jeton `--rule` est ajouté pour le filet
+     _intérieur_ d'un plan, que vingt fichiers improvisaient en `border-border/70`, `/60` ou `/50`.
+  5. **Trois composants partagés** absorbent ce qui était recopié : `SectionHeader` (libellé en petites
+     capitales, compteur, filet jusqu'au bord, action à droite) remplace les vingt et un `<h2>` ;
+     `RowList` / `Row` remplace neuf listes en cartes écrites à la main ; `FilterChip` / `FilterChips`
+     remplace six rangées de pilules bleues pleines.
+- **Pourquoi pas seulement réduire les tailles** : parce que le défaut n'était pas une taille, c'était
+  l'absence d'échelle. Redescendre un titre sans recouper les crans aurait laissé le même écart arbitraire
+  entre un `text-sm` et un `text-3xl`, et la session suivante aurait rouvert le même arbitrage.
+- **Conséquences** : la palette d'ADR-0032 est conservée au pixel près, à trois nuances de saturation
+  près — `--surface`, `--secondary`, `--accent` et surtout `--input` perdent de un tiers à deux tiers de
+  leur chroma à luminance **identique**, si bien que le contraste non textuel de 3:1 exigé par le
+  SC 1.4.11 est intact (le test le vérifie) mais qu'un champ est dessiné par un gris fin et non par un
+  trait bleu qui criait plus fort que son étiquette. L'état actif d'un onglet devient un trait de 2 px
+  posé sur l'arête de la barre, plus un aplat bleu : la barre du haut portait cinq losanges qui se
+  lisaient comme cinq boutons. Le survol ne teinte plus en bleu (`bg-accent`) mais en gris (`bg-muted`).
+  `EmptyState` cesse d'être un panneau pointillé de 200 px avec un médaillon de 48 px : une absence ne
+  doit pas être l'objet le plus voyant de l'écran. Le guide de style `/dev/ui` gagne une section
+  **Anatomie d'écran** — en-tête de page, section, liste, cartes, état vide, rendue comme une vraie page
+  — et un spécimen de l'échelle cran par cran, pour que la validation visuelle du porteur porte sur
+  l'anatomie réelle et non sur une planche de composants isolés. Aucune route, aucun libellé, aucun droit
+  ne bouge : les 43 articles d'aide restent exacts et ne sont donc pas réécrits.

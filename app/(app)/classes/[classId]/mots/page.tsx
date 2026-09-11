@@ -2,6 +2,7 @@ import { CheckIcon, MessageSquareTextIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Markdown } from "@/components/domain/markdown";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -64,10 +65,8 @@ export default async function NotesPage({ params }: { params: Promise<{ classId:
       {notesByStudent
         .filter((s) => s.notes.length > 0)
         .map(({ student, notes }) => (
-          <section key={student.id} className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold">
-              {student.first_name} {student.last_name}
-            </h2>
+          <section key={student.id} className="flex flex-col">
+            <SectionHeader label={`${student.first_name} ${student.last_name}`} />
             {notes.map((note) => {
               const mine = note.reads.find((r) => r.user_id === user.id);
               return (

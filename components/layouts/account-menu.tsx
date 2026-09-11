@@ -72,7 +72,7 @@ export function AccountMenu({
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={tm("account")}
-        className="ml-1 flex min-h-11 items-center gap-1 rounded-full pr-1 pl-0.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-none"
+        className="ml-0.5 flex min-h-11 items-center gap-0.5 rounded-md px-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none md:min-h-9"
       >
         <UserAvatar name={name} initials={initials} />
         <ChevronDownIcon className="size-4" aria-hidden />

@@ -41,7 +41,7 @@ export default async function AdminAnnouncementsPage() {
           <li key={a.id}>
             <Link
               href={`/admin/annonces/${a.id}`}
-              className="flex min-h-16 items-center gap-3 rounded-xl border border-border bg-card p-3 shadow-soft transition-colors hover:bg-accent/40"
+              className="flex min-h-16 items-center gap-3 rounded-xl border border-border bg-card p-3 shadow-soft transition-colors hover:bg-muted/50"
             >
               <Badge variant={variant[a.status]}>{t(`status.${a.status}`)}</Badge>
               <div className="min-w-0 flex-1">

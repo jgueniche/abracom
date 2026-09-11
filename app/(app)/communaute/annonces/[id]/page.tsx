@@ -91,7 +91,7 @@ export default async function ClassifiedPage({ params }: { params: Promise<{ id:
                   </a>
                 )}
                 {!post.contact?.phone && !post.contact?.email && (
-                  <p className="text-muted-foreground">{t("noContact")}</p>
+                  <p className="text-sm text-muted-foreground">{t("noContact")}</p>
                 )}
               </CardContent>
             </Card>

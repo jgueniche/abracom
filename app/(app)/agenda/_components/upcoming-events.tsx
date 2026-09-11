@@ -1,4 +1,5 @@
 import { ChevronRightIcon } from "lucide-react";
+import { SectionHeader } from "@/components/layouts/section-header";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
@@ -14,16 +15,18 @@ export async function UpcomingEvents({ userId }: { userId: string }) {
     getUpcomingEvents(userId, new Date().toISOString(), 3),
   ]);
   return (
-    <section className="mt-8">
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-xl font-semibold">{t("title")}</h2>
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/agenda">
-            {t("seeAll")}
-            <ChevronRightIcon aria-hidden />
-          </Link>
-        </Button>
-      </div>
+    <section className="mt-2">
+      <SectionHeader
+        label={t("title")}
+        action={
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/agenda">
+              {t("seeAll")}
+              <ChevronRightIcon aria-hidden />
+            </Link>
+          </Button>
+        }
+      />
       {events.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("empty")}</p>
       ) : (

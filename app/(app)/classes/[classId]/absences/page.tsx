@@ -2,6 +2,7 @@ import { CalendarXIcon, PaperclipIcon, PenLineIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,7 +64,7 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
           </CardContent>
         </Card>
       )}
-      <h2 className="text-lg font-semibold">{t("title")}</h2>
+      <SectionHeader label={t("title")} count={absences.length || undefined} />
       {absences.length === 0 ? (
         <EmptyState icon={CalendarXIcon} title={t("empty")} description={t("emptyHint")} />
       ) : (
@@ -97,11 +98,11 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
                 {notes.get(a.id) && (
                   <p className="mt-1 inline-flex items-start gap-1 text-sm">
                     <PenLineIcon
-                      className="mt-0.5 size-3 shrink-0 text-muted-foreground"
+                      className="mt-0.5 size-3 shrink-0 text-sm text-muted-foreground"
                       aria-hidden
                     />
                     <span>
-                      <span className="text-muted-foreground">
+                      <span className="text-sm text-muted-foreground">
                         {t("signedBy", {
                           name: notes.get(a.id)!.signedName,
                           date: format.dateTime(new Date(notes.get(a.id)!.signedAt), {

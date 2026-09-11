@@ -53,9 +53,9 @@ export function HelpHint() {
       href={`/aide/${article.slug}`}
       aria-label={`${t("label")} — ${article.title}`}
       title={article.title}
-      className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+      className="-my-2 inline-flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground/70 transition-colors hover:bg-muted hover:text-foreground md:size-8"
     >
-      <CircleQuestionMarkIcon className="size-5" aria-hidden />
+      <CircleQuestionMarkIcon className="size-4" aria-hidden />
     </Link>
   );
 }

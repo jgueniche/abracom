@@ -203,7 +203,7 @@ export function AttendanceGrid({
   return (
     <div className="flex flex-col gap-4">
       {/* Readable from across the hall, and it never scrolls away. */}
-      <div className="sticky top-[calc(var(--nav-h)+0.5rem)] z-10 flex flex-col gap-3 rounded-2xl border border-border bg-card/95 p-3 backdrop-blur">
+      <div className="sticky top-[calc(var(--nav-h)+0.5rem)] z-10 flex flex-col gap-3 rounded-xl border border-border bg-card/95 p-3 backdrop-blur">
         <p className="text-lg font-semibold tabular-nums sm:text-xl">
           {t("counter", {
             present: present.length,
@@ -260,7 +260,7 @@ export function AttendanceGrid({
                 className={cn(
                   // Far beyond the 44 px of the design system: this is used
                   // standing, one-handed.
-                  "flex min-h-[8.5rem] w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 p-3 text-center transition disabled:opacity-50",
+                  "flex min-h-[8.5rem] w-full flex-col items-center justify-center gap-2 rounded-xl border-2 p-3 text-center transition disabled:opacity-50",
                   gone
                     ? "border-border bg-muted"
                     : here
@@ -308,7 +308,7 @@ export function AttendanceGrid({
         })}
       </ul>
       {shown.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+        <p className="rounded-xl border border-border bg-card/60 px-5 py-6 text-center text-sm text-muted-foreground">
           {missingOnly ? t("nobodyMissing") : t("emptyRoster")}
         </p>
       )}

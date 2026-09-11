@@ -1,5 +1,5 @@
 import { FileDownIcon, GraduationCapIcon } from "lucide-react";
-import Link from "next/link";
+import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
@@ -10,7 +10,6 @@ import { requireClassAccess } from "@/lib/auth/class-access";
 import { localDateKey } from "@/lib/calendar/dates";
 import { TIME_ZONE } from "@/lib/i18n/config";
 import { canSeeAssessments, isSchoolAdmin } from "@/lib/permissions";
-import { cn } from "@/lib/utils";
 import type { AssessmentLevel } from "@/lib/assessments";
 import {
   currentPeriod,
@@ -73,23 +72,17 @@ export default async function AssessmentsPage({
       true;
 
   const selector = (
-    <nav className="flex flex-wrap gap-2" aria-label={t("period")}>
+    <FilterChips label={t("period")}>
       {periods.map((x) => (
-        <Link
+        <FilterChip
           key={x.id}
           href={`/classes/${classId}/evaluations?p=${x.id}`}
-          aria-current={x.id === period.id ? "page" : undefined}
-          className={cn(
-            "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
-            x.id === period.id
-              ? "border-primary bg-primary text-primary-foreground"
-              : "hover:bg-accent",
-          )}
+          active={x.id === period.id}
         >
           {x.label}
-        </Link>
+        </FilterChip>
       ))}
-    </nav>
+    </FilterChips>
   );
 
   if (editor) {

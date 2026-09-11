@@ -1,4 +1,5 @@
 import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "lucide-react";
+import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
@@ -166,23 +167,13 @@ export default async function AgendaPage({
             </Link>
           </Button>
         </div>
-        <nav className="flex gap-2">
+        <FilterChips className="-mx-0 mb-0 px-0">
           {FILTERS.map((key) => (
-            <Link
-              key={key}
-              href={link({ f: key })}
-              aria-current={filter === key ? "page" : undefined}
-              className={cn(
-                "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
-                filter === key
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "hover:bg-accent",
-              )}
-            >
+            <FilterChip key={key} href={link({ f: key })} active={filter === key}>
               {t(`filters.${key}`)}
-            </Link>
+            </FilterChip>
           ))}
-        </nav>
+        </FilterChips>
       </div>
 
       {keys.length === 0 ? (
@@ -205,7 +196,7 @@ export default async function AgendaPage({
                 key={key}
                 className={cn(
                   "grid gap-2 sm:grid-cols-[8rem_1fr]",
-                  key === today && "-m-2 rounded-2xl bg-primary/5 p-2",
+                  key === today && "-m-2 rounded-xl bg-primary/5 p-2",
                 )}
               >
                 <div className="flex flex-wrap items-baseline gap-x-2 sm:flex-col sm:gap-0">

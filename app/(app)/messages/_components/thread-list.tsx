@@ -68,18 +68,18 @@ export async function ThreadList({
           href={`/messages/${thread.thread_id}`}
           aria-current={active ? "page" : undefined}
           className={cn(
-            "flex items-center gap-3 rounded-xl border border-transparent p-2.5 hover:bg-accent/50",
-            active && "border-border bg-card shadow-soft",
+            "flex items-center gap-2.5 rounded-lg border border-transparent px-2.5 py-2 transition-colors hover:bg-muted/60",
+            active && "border-border bg-card",
           )}
         >
           <UserAvatar
             initials={monogram(thread, title)}
             name={title}
-            className={cn("size-10", thread.kind !== "dm" && "text-[0.625rem]")}
+            className={cn("size-9", thread.kind !== "dm" && "text-[0.625rem]")}
           />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <p className={cn("truncate text-sm", unread ? "font-bold" : "font-medium")}>
+              <p className={cn("truncate text-sm", unread ? "font-semibold" : "font-medium")}>
                 {title}
               </p>
               {thread.muted && (
@@ -95,7 +95,7 @@ export async function ThreadList({
                 />
               )}
               {thread.last_message_at && (
-                <span className="ml-auto shrink-0 text-[0.6875rem] text-muted-foreground">
+                <span className="ml-auto shrink-0 text-[0.6875rem] text-muted-foreground tabular-nums">
                   {format.relativeTime(new Date(thread.last_message_at))}
                 </span>
               )}
@@ -112,7 +112,7 @@ export async function ThreadList({
                   : "—"}
               </p>
               {unread && (
-                <span className="ml-auto min-w-5 shrink-0 rounded-full bg-brick px-1.5 text-center text-[0.625rem] leading-5 font-bold text-brick-foreground tabular-nums">
+                <span className="ml-auto min-w-[17px] shrink-0 rounded-full bg-brick px-1 text-center text-[0.625rem] leading-[17px] font-semibold text-brick-foreground tabular-nums">
                   {thread.unread_count > 99 ? "99+" : thread.unread_count}
                 </span>
               )}
@@ -124,7 +124,7 @@ export async function ThreadList({
   };
 
   return (
-    <div className={cn("flex flex-col gap-5", className)}>
+    <div className={cn("flex flex-col gap-6", className)}>
       {sections.map((section) => (
         <div key={section.key}>
           <p className="eyebrow mb-1.5 px-2.5">{t(section.key)}</p>
@@ -133,7 +133,7 @@ export async function ThreadList({
       ))}
       {archived.length > 0 && (
         <details>
-          <summary className="cursor-pointer px-2.5 text-sm text-muted-foreground">
+          <summary className="cursor-pointer px-2.5 text-[0.8125rem] text-muted-foreground">
             {t("archived")} ({archived.length})
           </summary>
           <ul className="mt-1 flex flex-col gap-0.5">{archived.map(item)}</ul>

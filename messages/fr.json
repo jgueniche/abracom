@@ -73,7 +73,8 @@
       "forms": "Formulaires",
       "feedback": "Retours et superpositions",
       "cards": "Cartes métier",
-      "icons": "Icônes PWA"
+      "icons": "Icônes PWA",
+      "anatomy": "Anatomie d'écran"
     },
     "palette": {
       "brand": "Couleurs de marque (constantes)",
@@ -84,11 +85,19 @@
       "onBackground": "sur fond de page"
     },
     "typography": {
-      "heading": "Titres · Fraunces",
-      "body": "Texte · Inter",
+      "heading": "Titres · Newsreader",
+      "body": "Texte courant",
       "sample": "Portez ce vieux whisky au juge blond qui fume",
       "lead": "Un texte d'introduction, un peu plus grand, pour les annonces importantes de la direction.",
-      "muted": "Texte secondaire pour les métadonnées, les aides et les horodatages."
+      "muted": "Texte secondaire pour les métadonnées, les aides et les horodatages.",
+      "scale": "Une échelle, huit crans",
+      "page": "Titre de page",
+      "section": "Libellé de section",
+      "card": "Titre de carte (interface)",
+      "content": "Titre de contenu (éditorial)",
+      "meta": "Métadonnée",
+      "eyebrow": "Surtitre",
+      "prose": "Prose institutionnelle"
     },
     "buttons": {
       "default": "Principal",
@@ -151,6 +160,36 @@
     },
     "icons": {
       "description": "Générées depuis le logo officiel, sans altération, par scripts/brand/generate-icons.ts (favicon, iOS, PWA standard et maskable)."
+    },
+    "anatomy": {
+      "eyebrow": "Jeudi 11 septembre",
+      "title": "Bonjour Prénom fictif",
+      "description": "Ce que l'école vous demande aujourd'hui, puis le reste.",
+      "action": "Nouveau devoir",
+      "today": "Aujourd'hui",
+      "todayHint": "Trois choses vous attendent, la plus urgente en tête.",
+      "destinations": "L'école",
+      "publications": "Dernières publications",
+      "seeAll": "Tout voir",
+      "kindAck": "Accusé",
+      "kindHomework": "Devoir",
+      "kindNote": "Mot",
+      "rowAck": "Réunion de rentrée des classes maternelles",
+      "rowHomework": "Apporter une photo de famille",
+      "rowNote": "Sortie au parc reportée à mardi",
+      "rowAckDetail": "Accusé de lecture demandé avant vendredi",
+      "rowHomeworkDetail": "PS Tournesols · pour jeudi",
+      "rowNoteDetail": "De la part de l'enseignante",
+      "hubAnnouncements": "Annonces",
+      "hubAnnouncementsHint": "Ce que la direction adresse aux familles.",
+      "hubAnnouncementsMeta": "1 accusé en attente",
+      "hubDocuments": "Documents",
+      "hubDocumentsHint": "Circulaires, autorisations, règlement.",
+      "hubAgenda": "Agenda",
+      "hubAgendaHint": "Calendrier scolaire et fêtes juives.",
+      "emptyTitle": "Aucun message pour l'instant",
+      "emptyDescription": "Les échanges avec l'équipe apparaîtront ici dès le premier message.",
+      "emptyAction": "Écrire à l'équipe"
     }
   },
   "auth": {

@@ -44,7 +44,7 @@ export default async function FormsPage() {
               <li key={form.id}>
                 <Link
                   href={`/communaute/formulaires/${form.id}`}
-                  className="flex items-center gap-3 rounded-xl border p-3 hover:bg-accent/60"
+                  className="flex items-center gap-3 rounded-xl border p-3 hover:bg-muted/60"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex flex-wrap items-center gap-2">

@@ -57,8 +57,11 @@ export function ClassTabs({
   );
 
   return (
+    // Tabs, drawn as tabs: a rule under the row and a mark under the one you
+    // are on. The row used to be eight filled pills, which read as eight
+    // buttons competing with the page's actual action.
     <nav className="-mx-4 mb-6 overflow-x-auto px-4">
-      <ul className="flex gap-2">
+      <ul className="flex min-w-max gap-0.5 border-b border-rule">
         {tabs.map((tab) => {
           const href = `${base}/${tab.segment}`;
           const active = pathname.startsWith(href);
@@ -69,10 +72,10 @@ export function ClassTabs({
                 ref={active ? activeRef : undefined}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
+                  "relative flex min-h-11 items-center px-2.5 text-[0.8125rem] font-medium whitespace-nowrap transition-colors",
                   active
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "hover:bg-accent hover:text-accent-foreground",
+                    ? "text-foreground after:absolute after:inset-x-1.5 after:-bottom-px after:h-[2px] after:rounded-full after:bg-primary"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 {t(tab.key)}

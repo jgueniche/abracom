@@ -10,6 +10,10 @@ import { cn } from "@/lib/utils";
  * Twenty-six files wrote their own empty state by hand, almost all of them a
  * bare `<p class="text-sm text-muted-foreground">` with no explanation of what
  * would make content appear and no way out.
+ *
+ * It is deliberately small. An empty state describes an absence: when it is
+ * built as a 200 px dashed panel with a 48 px medallion in it, the absence ends
+ * up the loudest thing on the screen.
  */
 function isLinkAction(action: unknown): action is { href: string; label: string } {
   return typeof action === "object" && action !== null && "href" in action && "label" in action;
@@ -32,22 +36,18 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center rounded-2xl border border-dashed border-border bg-card/50 px-6 py-10 text-center",
+        "flex flex-col items-center rounded-xl border border-border bg-card/60 px-6 py-8 text-center",
         className,
       )}
     >
-      {Icon && (
-        <span className="mb-3 flex size-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
-          <Icon className="size-5" aria-hidden />
-        </span>
-      )}
-      <p className="font-heading text-lg tracking-tight">{title}</p>
+      {Icon && <Icon className="mb-2.5 size-5 text-muted-foreground/60" aria-hidden />}
+      <p className="text-sm font-semibold text-foreground">{title}</p>
       {description && (
-        <p className="mt-1 max-w-prose text-sm text-balance text-muted-foreground">{description}</p>
+        <p className="mt-1 max-w-[46ch] text-xs text-pretty text-muted-foreground">{description}</p>
       )}
       {action &&
         (isLinkAction(action) ? (
-          <Button asChild className="mt-4 min-h-11">
+          <Button asChild variant="outline" className="mt-4">
             <Link href={action.href}>{action.label}</Link>
           </Button>
         ) : (

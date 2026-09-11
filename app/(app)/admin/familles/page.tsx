@@ -49,7 +49,7 @@ export default async function StudentsPage({
               <li key={s.id}>
                 <Link
                   href={`/admin/familles/${s.id}`}
-                  className="flex items-center gap-3 rounded-xl border p-3 hover:bg-accent/60"
+                  className="flex items-center gap-3 rounded-xl border p-3 hover:bg-muted/60"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">

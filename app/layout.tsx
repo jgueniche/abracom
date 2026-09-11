@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, Source_Serif_4 } from "next/font/google";
+import { Inter, Newsreader } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { headers } from "next/headers";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -17,20 +17,22 @@ const inter = Inter({
   display: "swap",
 });
 
-// SOFT and WONK are what make Fraunces look like Fraunces rather than a
-// generic serif; loading only `opsz` disabled its personality (audit, §3).
-const fraunces = Fraunces({
+/*
+ * One editorial serif for both jobs — the title of a screen and the body of a
+ * circular — instead of two faces that never met. Newsreader carries an
+ * optical-size axis, so `font-optical-sizing: auto` gives a sturdy cut at
+ * 15 px and a fine one at 26 px from a single file.
+ *
+ * It replaces Fraunces (ADR-0051): a soft, flared display face whose SOFT and
+ * WONK axes are precisely the signature of the generic product look the owner
+ * asked us to leave behind, and which no amount of restraint elsewhere could
+ * outweigh while it set every heading in the application.
+ */
+const newsreader = Newsreader({
   subsets: ["latin"],
   variable: "--font-heading",
   display: "swap",
-  axes: ["SOFT", "WONK", "opsz"],
-});
-
-// Long-form institutional copy: circulars, announcements, cahier de vie.
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
-  variable: "--font-serif",
-  display: "swap",
+  axes: ["opsz"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -63,7 +65,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html
       lang={locale}
-      className={`${inter.variable} ${fraunces.variable} ${sourceSerif.variable}`}
+      className={`${inter.variable} ${newsreader.variable}`}
       suppressHydrationWarning
     >
       <body className="min-h-dvh font-sans antialiased">

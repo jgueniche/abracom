@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -67,17 +68,19 @@ export default async function NewMessagePage() {
         </Link>
       </Button>
       <PageHeader title={t("contacts.title")} description={t("contacts.subtitle")} />
-      {contacts.length === 0 && <p className="text-muted-foreground">{t("contacts.empty")}</p>}
+      {contacts.length === 0 && (
+        <p className="text-sm text-muted-foreground">{t("contacts.empty")}</p>
+      )}
       <div className="flex flex-col gap-6">
         {team.length > 0 && (
           <section>
-            <h2 className="mb-2 text-lg font-semibold">{t("contacts.team")}</h2>
+            <SectionHeader label={t("contacts.team")} count={team.length} />
             {list(team)}
           </section>
         )}
         {parents.length > 0 && (
           <section>
-            <h2 className="mb-2 text-lg font-semibold">{t("contacts.parents")}</h2>
+            <SectionHeader label={t("contacts.parents")} count={parents.length} />
             {list(parents)}
           </section>
         )}

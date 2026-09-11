@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { contrastRatio, parseColor, rgbToHex, WCAG_AA_TEXT } from "@/lib/design/color";
-import { cn } from "@/lib/utils";
 
 /** `fg: "white"` compares against literal white (buttons with `text-white`). */
 export type TokenPair = { bg: string; fg: string; label?: string };
@@ -73,21 +72,22 @@ export function TokenSwatches({ pairs }: { pairs: TokenPair[] }) {
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="truncate font-medium">{label ?? bg}</p>
-                  <p className="truncate font-mono text-xs opacity-80">
+                  <p className="truncate font-mono text-xs">
                     --{bg} / --{fg}
                   </p>
                 </div>
+                {/* The badge keeps its own token pair rather than borrowing the
+                    swatch's colours: `bg-white/70 text-current` put white on
+                    translucent white over every dark swatch, which axe flagged
+                    — on the very page whose job is contrast. */}
                 {pass !== undefined && (
-                  <Badge
-                    variant={pass ? "secondary" : "destructive"}
-                    className={cn("shrink-0", pass && "bg-white/70 text-current")}
-                  >
+                  <Badge variant={pass ? "secondary" : "destructive"} className="shrink-0">
                     {pass ? t("pass") : t("fail")}
                   </Badge>
                 )}
               </div>
               {info && (
-                <p className="font-mono text-xs opacity-80">
+                <p className="font-mono text-xs">
                   {info.bgHex} · {info.fgHex} · {t("contrast")} {info.ratio.toFixed(2)}:1
                 </p>
               )}

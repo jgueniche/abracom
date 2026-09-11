@@ -96,7 +96,7 @@ export default async function ProfilePage() {
                         {tOnboarding(`kind.${d.kind as "terms" | "charter" | "privacy"}`)} ·{" "}
                         {tOnboarding("version", { version: d.version })}
                       </span>
-                      <span className="text-muted-foreground">
+                      <span className="text-sm text-muted-foreground">
                         {when
                           ? t("acceptedOn", {
                               date: format.dateTime(new Date(when), {

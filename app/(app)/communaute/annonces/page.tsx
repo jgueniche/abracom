@@ -1,15 +1,16 @@
 import { MegaphoneIcon, PlusIcon } from "lucide-react";
+import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { canWriteInSchool } from "@/lib/permissions";
-import { cn } from "@/lib/utils";
 import {
   COMMUNITY_CATEGORIES,
   type CommunityCategory,
@@ -66,24 +67,18 @@ export default async function ClassifiedsPage({
           ) : undefined
         }
       />
-      {!enabled && <p className="mb-4 text-muted-foreground">{t("disabled")}</p>}
-      <nav className="mb-4 flex flex-wrap gap-2">
+      {!enabled && <p className="mb-4 text-sm text-muted-foreground">{t("disabled")}</p>}
+      <FilterChips label={t("title")}>
         {[null, ...COMMUNITY_CATEGORIES].map((key) => (
-          <Link
+          <FilterChip
             key={key ?? "all"}
             href={key ? `/communaute/annonces?c=${key}` : "/communaute/annonces"}
-            aria-current={category === key ? "page" : undefined}
-            className={cn(
-              "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
-              category === key
-                ? "border-primary bg-primary text-primary-foreground"
-                : "hover:bg-accent",
-            )}
+            active={category === key}
           >
             {key ? t(`categories.${key}`) : t("all")}
-          </Link>
+          </FilterChip>
         ))}
-      </nav>
+      </FilterChips>
       {posts.length === 0 ? (
         <EmptyState
           icon={MegaphoneIcon}
@@ -97,7 +92,7 @@ export default async function ClassifiedsPage({
             <li key={post.id}>
               <Link
                 href={`/communaute/annonces/${post.id}`}
-                className="block rounded-2xl border p-4 hover:bg-accent/60"
+                className="block rounded-xl border p-4 hover:bg-muted/60"
               >
                 <div className="mb-1 flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">{t(`categories.${post.category}`)}</Badge>
@@ -118,14 +113,14 @@ export default async function ClassifiedsPage({
         </ul>
       )}
       {mine.length > 0 && (
-        <section className="mt-8">
-          <h2 className="mb-3 text-xl font-semibold">{t("mine")}</h2>
+        <section className="mt-10">
+          <SectionHeader label={t("mine")} count={mine.length} />
           <ul className="flex flex-col gap-2">
             {mine.map((post) => (
               <li key={post.id}>
                 <Link
                   href={`/communaute/annonces/${post.id}`}
-                  className="flex items-center gap-3 rounded-xl border p-3 hover:bg-accent/60"
+                  className="flex items-center gap-3 rounded-xl border p-3 hover:bg-muted/60"
                 >
                   <Badge variant={STATUS_VARIANT[post.status]}>{t(`status.${post.status}`)}</Badge>
                   <span className="min-w-0 flex-1 truncate font-medium">{post.title}</span>

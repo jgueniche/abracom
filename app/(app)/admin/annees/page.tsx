@@ -45,7 +45,7 @@ export default async function YearsPage() {
         <Card>
           <CardContent>
             {years.length === 0 ? (
-              <p className="text-muted-foreground">{t("none")}</p>
+              <p className="text-sm text-muted-foreground">{t("none")}</p>
             ) : (
               <ul className="divide-y">
                 {years.map((year) => (

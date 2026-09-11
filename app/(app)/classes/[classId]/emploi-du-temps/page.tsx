@@ -2,6 +2,7 @@ import { CalendarClockIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireClassAccess } from "@/lib/auth/class-access";
@@ -44,11 +45,8 @@ export default async function TimetablePage({ params }: { params: Promise<{ clas
           {days.map((day) => {
             const ofDay = slots.filter((slot) => slot.weekday === day);
             return (
-              <section
-                key={day}
-                className="rounded-2xl border border-border bg-card p-4 shadow-soft"
-              >
-                <h2 className="mb-3 font-heading text-lg font-normal">{t(`days.${day}`)}</h2>
+              <section key={day} className="rounded-xl border border-border bg-card p-4">
+                <SectionHeader label={t(`days.${day}`)} count={ofDay.length || undefined} />
                 {ofDay.length === 0 ? (
                   <p className="text-sm text-muted-foreground">{t("nothing")}</p>
                 ) : (

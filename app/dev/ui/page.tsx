@@ -1,8 +1,11 @@
 import {
+  BellRingIcon,
   BookOpenIcon,
   CalendarDaysIcon,
   CheckIcon,
+  FolderIcon,
   MegaphoneIcon,
+  MessageSquareTextIcon,
   PlusIcon,
   SearchIcon,
 } from "lucide-react";
@@ -10,8 +13,13 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
+import { ContentCard, EyebrowDot, MetaChip } from "@/components/domain/content-card";
+import { EmptyState } from "@/components/domain/empty-state";
+import { HubCard, HubGrid } from "@/components/domain/hub-card";
+import { Row, RowList } from "@/components/domain/row-list";
 import { ToastDemo } from "@/components/dev/toast-demo";
 import { TokenSwatches, type TokenPair } from "@/components/dev/token-swatches";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { SiteHeader } from "@/components/layouts/site-header";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +51,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -68,10 +75,11 @@ const THEME_PAIRS: TokenPair[] = [
   { bg: "accent", fg: "accent-foreground" },
   { bg: "muted", fg: "muted-foreground" },
   { bg: "background", fg: "muted-foreground", label: "muted-foreground" },
-  { bg: "destructive", fg: "white", label: "destructive" },
+  { bg: "destructive", fg: "background", label: "destructive" },
 ];
 
 const SECTIONS = [
+  "anatomy",
   "palette",
   "typography",
   "buttons",
@@ -98,10 +106,12 @@ export default async function DevUiPage() {
     <>
       <SiteHeader />
       <main className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 py-10">
-        <header className="flex flex-col gap-3">
-          <h1 className="text-3xl font-semibold sm:text-4xl">{t("title")}</h1>
-          <p className="max-w-2xl text-pretty text-muted-foreground">{t("subtitle")}</p>
-          <nav aria-label={t("title")} className="flex flex-wrap gap-2">
+        <header className="flex flex-col">
+          <h1>{t("title")}</h1>
+          <p className="measure mt-1.5 text-sm text-pretty text-muted-foreground">
+            {t("subtitle")}
+          </p>
+          <nav aria-label={t("title")} className="mt-4 flex flex-wrap gap-1.5">
             {SECTIONS.map((section) => (
               <Button key={section} asChild variant="outline" size="sm">
                 <a href={`#${section}`}>{t(`sections.${section}`)}</a>
@@ -110,13 +120,145 @@ export default async function DevUiPage() {
           </nav>
         </header>
 
+        {/* ── Screen anatomy ──────────────────────────────────────────── */}
+        <section id="anatomy" className="flex scroll-mt-20 flex-col gap-6">
+          <SectionHeader label={t("sections.anatomy")} className="mb-0" />
+          <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+              <div className="flex min-w-0 flex-col">
+                <p className="eyebrow mb-1.5">{t("anatomy.eyebrow")}</p>
+                {/* Looks like the page title it demonstrates, but is not a
+                    second `<h1>`: the guide has one, and the outline of a page
+                    is not something a style guide gets to break. */}
+                <p className="font-heading text-3xl leading-[1.22] tracking-[-0.014em] text-balance sm:text-4xl">
+                  {t("anatomy.title")}
+                </p>
+                <p className="measure mt-1.5 text-sm text-pretty text-muted-foreground">
+                  {t("anatomy.description")}
+                </p>
+              </div>
+              <div className="mt-3 flex shrink-0 gap-2 sm:mt-1">
+                <Button>
+                  <PlusIcon aria-hidden />
+                  {t("anatomy.action")}
+                </Button>
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <SectionHeader label={t("anatomy.today")} count={3} hint={t("anatomy.todayHint")} />
+              <RowList>
+                <Row
+                  href="#anatomy"
+                  icon={BellRingIcon}
+                  urgent
+                  kind={t("anatomy.kindAck")}
+                  title={t("anatomy.rowAck")}
+                  detail={t("anatomy.rowAckDetail")}
+                />
+                <Row
+                  href="#anatomy"
+                  icon={BookOpenIcon}
+                  kind={t("anatomy.kindHomework")}
+                  title={t("anatomy.rowHomework")}
+                  detail={t("anatomy.rowHomeworkDetail")}
+                />
+                <Row
+                  href="#anatomy"
+                  icon={MessageSquareTextIcon}
+                  kind={t("anatomy.kindNote")}
+                  title={t("anatomy.rowNote")}
+                  detail={t("anatomy.rowNoteDetail")}
+                />
+              </RowList>
+            </div>
+
+            <div className="mb-8">
+              <SectionHeader label={t("anatomy.destinations")} />
+              <HubGrid>
+                <HubCard
+                  href="#anatomy"
+                  icon={MegaphoneIcon}
+                  title={t("anatomy.hubAnnouncements")}
+                  hint={t("anatomy.hubAnnouncementsHint")}
+                  meta={t("anatomy.hubAnnouncementsMeta")}
+                  urgent
+                />
+                <HubCard
+                  href="#anatomy"
+                  icon={FolderIcon}
+                  title={t("anatomy.hubDocuments")}
+                  hint={t("anatomy.hubDocumentsHint")}
+                />
+                <HubCard
+                  href="#anatomy"
+                  icon={CalendarDaysIcon}
+                  title={t("anatomy.hubAgenda")}
+                  hint={t("anatomy.hubAgendaHint")}
+                />
+              </HubGrid>
+            </div>
+
+            <div className="mb-8">
+              <SectionHeader
+                label={t("anatomy.publications")}
+                action={
+                  <Button asChild variant="ghost" size="sm">
+                    <a href="#anatomy">{t("anatomy.seeAll")}</a>
+                  </Button>
+                }
+              />
+              <div className="grid gap-3 lg:grid-cols-2">
+                <ContentCard
+                  href="#anatomy"
+                  accent
+                  unread
+                  eyebrow={
+                    <>
+                      {t("mock.announcementBadge")}
+                      <EyebrowDot />
+                      {t("anatomy.eyebrow")}
+                    </>
+                  }
+                  title={t("mock.announcementTitle")}
+                  excerpt={t("mock.announcementBody")}
+                  footer={<MetaChip tone="brick">{t("feedback.tooltipText")}</MetaChip>}
+                />
+                <ContentCard
+                  href="#anatomy"
+                  eyebrow={
+                    <>
+                      {t("mock.className")}
+                      <EyebrowDot />
+                      {t("mock.homeworkDue")}
+                    </>
+                  }
+                  title={t("mock.homeworkTitle")}
+                  excerpt={t("mock.announcementBody")}
+                  footer={
+                    <MetaChip tone="success">
+                      <CheckIcon className="size-3" aria-hidden />
+                      {t("mock.seen")}
+                    </MetaChip>
+                  }
+                />
+              </div>
+            </div>
+
+            <EmptyState
+              icon={MessageSquareTextIcon}
+              title={t("anatomy.emptyTitle")}
+              description={t("anatomy.emptyDescription")}
+              action={{ href: "#anatomy", label: t("anatomy.emptyAction") }}
+            />
+          </div>
+        </section>
+
         {/* ── Palette ─────────────────────────────────────────────────── */}
         <section id="palette" className="flex scroll-mt-20 flex-col gap-6">
-          <h2 className="text-2xl font-semibold">{t("sections.palette")}</h2>
+          <SectionHeader label={t("sections.palette")} className="mb-0" />
           <div className="flex flex-col gap-3">
-            <h3 className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
-              {t("palette.brand")}
-            </h3>
+            <p className="eyebrow">{t("palette.brand")}</p>
             <ul className="grid grid-cols-2 gap-3 sm:grid-cols-5">
               {Object.entries(brand).map(([name, hex]) => (
                 <li key={name} className="flex flex-col gap-2">
@@ -128,37 +270,72 @@ export default async function DevUiPage() {
             </ul>
           </div>
           <div className="flex flex-col gap-3">
-            <h3 className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
-              {t("palette.themeTokens")}
-            </h3>
+            <p className="eyebrow">{t("palette.themeTokens")}</p>
             <TokenSwatches pairs={THEME_PAIRS} />
           </div>
         </section>
 
         {/* ── Typography ──────────────────────────────────────────────── */}
         <section id="typography" className="flex scroll-mt-20 flex-col gap-6">
-          <h2 className="text-2xl font-semibold">{t("sections.typography")}</h2>
+          <SectionHeader label={t("sections.typography")} className="mb-0" />
           <Card>
             <CardHeader>
               <CardTitle>{t("typography.heading")}</CardTitle>
               <CardDescription>{t("typography.body")}</CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <p className="text-5xl font-semibold">{t("typography.sample")}</p>
-              <p className="text-3xl font-semibold">{t("typography.sample")}</p>
-              <p className="text-xl font-semibold">{t("typography.sample")}</p>
-              <Separator />
-              <p className="font-sans text-lg">{t("typography.lead")}</p>
-              <p className="font-sans">{t("typography.sample")}</p>
-              <p className="font-sans text-sm text-muted-foreground">{t("typography.muted")}</p>
-              <p className="font-mono text-sm">0123456789 · Europe/Paris · 18:30</p>
+            <CardContent className="flex flex-col divide-y divide-rule">
+              {[
+                {
+                  name: "page",
+                  node: (
+                    <p className="font-heading text-3xl leading-[1.22] tracking-[-0.014em] sm:text-4xl">
+                      {t("typography.sample")}
+                    </p>
+                  ),
+                },
+                {
+                  name: "content",
+                  node: (
+                    <p className="font-heading text-[1.0625rem] leading-[1.32] tracking-[-0.008em] sm:text-[1.125rem]">
+                      {t("typography.sample")}
+                    </p>
+                  ),
+                },
+                {
+                  name: "card",
+                  node: (
+                    <p className="text-base font-semibold tracking-[-0.006em]">
+                      {t("typography.sample")}
+                    </p>
+                  ),
+                },
+                {
+                  name: "section",
+                  node: <p className="section-label">{t("typography.sample")}</p>,
+                },
+                { name: "eyebrow", node: <p className="eyebrow">{t("typography.sample")}</p> },
+                { name: "body", node: <p className="text-sm">{t("typography.sample")}</p> },
+                { name: "meta", node: <p className="meta">{t("typography.muted")}</p> },
+                {
+                  name: "prose",
+                  node: <p className="prose-kesher measure">{t("typography.lead")}</p>,
+                },
+              ].map(({ name, node }) => (
+                <div
+                  key={name}
+                  className="grid gap-1 py-3 first:pt-0 last:pb-0 sm:grid-cols-[9rem_minmax(0,1fr)] sm:items-baseline sm:gap-4"
+                >
+                  <p className="meta">{t(`typography.${name}`)}</p>
+                  <div className="min-w-0">{node}</div>
+                </div>
+              ))}
             </CardContent>
           </Card>
         </section>
 
         {/* ── Buttons ─────────────────────────────────────────────────── */}
         <section id="buttons" className="flex scroll-mt-20 flex-col gap-6">
-          <h2 className="text-2xl font-semibold">{t("sections.buttons")}</h2>
+          <SectionHeader label={t("sections.buttons")} className="mb-0" />
           <div className="flex flex-wrap items-center gap-3">
             <Button>{t("buttons.default")}</Button>
             <Button variant="secondary">{t("buttons.secondary")}</Button>
@@ -183,7 +360,7 @@ export default async function DevUiPage() {
 
         {/* ── Forms ───────────────────────────────────────────────────── */}
         <section id="forms" className="flex scroll-mt-20 flex-col gap-6">
-          <h2 className="text-2xl font-semibold">{t("sections.forms")}</h2>
+          <SectionHeader label={t("sections.forms")} className="mb-0" />
           <Card>
             <CardContent className="grid gap-6 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
@@ -224,7 +401,7 @@ export default async function DevUiPage() {
 
         {/* ── Feedback & overlays ─────────────────────────────────────── */}
         <section id="feedback" className="flex scroll-mt-20 flex-col gap-6">
-          <h2 className="text-2xl font-semibold">{t("sections.feedback")}</h2>
+          <SectionHeader label={t("sections.feedback")} className="mb-0" />
           <div className="flex flex-wrap gap-3">
             <Dialog>
               <DialogTrigger asChild>
@@ -303,9 +480,9 @@ export default async function DevUiPage() {
 
         {/* ── Domain cards (static previews) ──────────────────────────── */}
         <section id="cards" className="flex scroll-mt-20 flex-col gap-6">
-          <h2 className="text-2xl font-semibold">{t("sections.cards")}</h2>
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card className="shadow-soft">
+          <SectionHeader label={t("sections.cards")} className="mb-0" />
+          <div className="grid gap-3 md:grid-cols-3">
+            <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <Badge>
@@ -327,7 +504,7 @@ export default async function DevUiPage() {
               </CardFooter>
             </Card>
 
-            <Card className="shadow-soft">
+            <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">
@@ -353,7 +530,7 @@ export default async function DevUiPage() {
               </CardFooter>
             </Card>
 
-            <Card className="shadow-soft">
+            <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">
@@ -375,7 +552,7 @@ export default async function DevUiPage() {
 
         {/* ── PWA icons ───────────────────────────────────────────────── */}
         <section id="icons" className="flex scroll-mt-20 flex-col gap-6">
-          <h2 className="text-2xl font-semibold">{t("sections.icons")}</h2>
+          <SectionHeader label={t("sections.icons")} className="mb-0" />
           <p className="text-sm text-muted-foreground">{t("icons.description")}</p>
           <div className="flex flex-wrap items-end gap-6">
             <Image
@@ -384,7 +561,7 @@ export default async function DevUiPage() {
               width={96}
               height={96}
               loading="eager"
-              className="rounded-2xl border"
+              className="rounded-xl border"
             />
             <Image
               src="/icons/icon-maskable-192.png"

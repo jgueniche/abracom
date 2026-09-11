@@ -6,6 +6,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { EmptyState } from "@/components/domain/empty-state";
 import { Highlighted } from "@/components/domain/highlight";
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -69,16 +70,22 @@ export default async function SearchPage({
       </form>
       {helpMatches.length > 0 && (
         <section aria-labelledby="help-results" className="mb-6">
-          <h2 id="help-results" className="mb-2 flex items-center gap-2 text-lg">
-            <BookOpenIcon className="size-4 text-muted-foreground" aria-hidden />
-            {t("helpSection")}
-          </h2>
+          <SectionHeader
+            id="help-results"
+            label={
+              <span className="flex items-center gap-1.5">
+                <BookOpenIcon className="size-3.5 text-muted-foreground" aria-hidden />
+                {t("helpSection")}
+              </span>
+            }
+            count={helpMatches.length}
+          />
           <ul className="flex flex-col gap-2">
             {helpMatches.map((match) => (
               <li key={match.entry.slug}>
                 <Link
                   href={`/aide/${match.entry.slug}`}
-                  className="block rounded-xl border p-3 hover:bg-accent/60"
+                  className="block rounded-xl border p-3 hover:bg-muted/60"
                 >
                   <Badge variant="secondary" className="mb-1">
                     {t("kinds.help")}
@@ -106,7 +113,7 @@ export default async function SearchPage({
             <li key={`${row.kind}-${row.id}`}>
               <Link
                 href={hrefForResult(row)}
-                className="block rounded-xl border p-3 hover:bg-accent/60"
+                className="block rounded-xl border p-3 hover:bg-muted/60"
               >
                 <div className="mb-1 flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">{t(`kinds.${row.kind}`)}</Badge>

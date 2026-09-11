@@ -676,6 +676,27 @@ responsable en lecture seule à celui des parents, l'administrateur de plateform
       des comptes liés à des mineurs, pour un corpus que la CI relit déjà), visite guidée sur l'écran.
       L'aide hors ligne est acquise sans travail : les articles sont statiques et partent avec la page.
 
+## Session 22 — Le trait plutôt que la boîte (ADR-0051)
+
+Refonte purement graphique demandée par le porteur à la revue des sessions 16–17 : « l'app est très
+_Claude like_ », « beaucoup de textes et d'encarts sont trop gros, les titres aussi », « des sous-titres
+n'ont pas de cohérence de place, de taille ou de position ». Aucune route, aucun libellé, aucun droit ne
+change — les 43 articles d'aide restent donc exacts.
+
+- [x] Fonte : **Newsreader** remplace Fraunces, Source Serif 4 est supprimée ; deux familles, et une
+      règle de partage — la serif est la voix de l'école, le sans est l'interface
+- [x] Échelle : les crans de titre recoupés dans `@theme` (−20 à −30 %), texte courant inchangé,
+      interligne et approche portés par chaque cran
+- [x] Géométrie : `--radius` de 14 px à 8 px, la pilule réservée à ce qui est rond
+- [x] Relief : l'ombre cède au filet, jeton `--rule` pour les séparateurs internes
+- [x] Couleur : `--surface` / `--secondary` / `--accent` / `--input` désaturés à luminance identique
+      (SC 1.4.11 tenu), survols en gris et non plus en bleu, onglet actif marqué d'un trait
+- [x] Composants partagés : `SectionHeader` (21 `<h2>` à six tailles), `RowList` / `Row` (neuf listes
+      écrites à la main), `FilterChip` / `FilterChips` (six rangées de pilules pleines)
+- [x] `/dev/ui` : section **Anatomie d'écran** et spécimen de l'échelle, pour une validation visuelle
+      sur une vraie page plutôt que sur une planche de composants
+- [ ] Validation visuelle par le porteur
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle
@@ -711,7 +732,10 @@ entrées nommées depuis le pôle Communauté suffiraient, et cela ne coûte rie
 Bloquantes pour la session 2 :
 
 1. **Palette** : le logo est-il monochrome ? Si oui, choix entre bleu profond / or doux et bleu nuit / sable.
-2. **Typographie des titres** : Fraunces ou Newsreader (Inter pour l'UI dans les deux cas).
+2. ~~**Typographie des titres** : Fraunces ou Newsreader~~ — **tranchée en session 22** : Newsreader.
+   Fraunces a composé les titres des sessions 2 à 21 ; à la revue, ses axes `SOFT` / `WONK` se sont
+   révélés être exactement ce que le porteur voulait quitter. Newsreader, à axe optique, sert désormais
+   les titres **et** la prose longue, et Source Serif 4 disparaît (ADR-0051). Inter reste l'interface.
 
 Non bloquantes avant la session 3 (à trancher pour les sessions 3–10) :
 
