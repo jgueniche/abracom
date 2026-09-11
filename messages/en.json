@@ -2027,6 +2027,13 @@
     "saveError": "Saving did not go through. The check-in is still waiting to be sent.",
     "createFromEvent": "Create the attendance list",
     "openList": "Attendance list",
-    "familyTitle": "After-school and outings"
+    "familyTitle": "After-school and outings",
+    "noListSubtitle": "The school's attendance lists.",
+    "noListAdmin": "No attendance list",
+    "noListAdminHint": "Create a class roll call or a recurring service — morning club, after-school, canteen. An outing's list is created from the event in the agenda.",
+    "noListGranted": "No list is yours yet",
+    "noListGrantedHint": "The direction grants attendance list by list. Ask to be added to the one you run.",
+    "createFirstList": "Create a list",
+    "nothingTodaySeeLists": "{count, plural, one {Attendance · # list} other {Attendance · # lists}}"
   }
 }

@@ -1,7 +1,6 @@
 import { ClipboardCheckIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
@@ -9,8 +8,8 @@ import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { APP_HOME_PATH } from "@/lib/auth/routes";
 import { requireCurrentUser } from "@/lib/auth/session";
+import { isSchoolAdmin } from "@/lib/permissions";
 import { openAttendanceSession } from "@/server/actions/attendance";
 import { getMyAttendanceLists } from "@/server/queries/attendance";
 
@@ -21,14 +20,30 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** The lists this person may point today, scheduled ones first. */
 export default async function AttendancePage() {
-  await requireCurrentUser();
+  const user = await requireCurrentUser();
   const [t, format, lists] = await Promise.all([
     getTranslations("attendance"),
     getFormatter(),
     getMyAttendanceLists(),
   ]);
-  // Nobody was granted a list: this destination has nothing to say to them.
-  if (lists.length === 0) redirect(APP_HOME_PATH);
+  // This page used to redirect home when the reader held no list — the exact
+  // silent bounce session 18 spent a day removing everywhere else. Before the
+  // first list exists nobody could reach the feature at all, and the one screen
+  // that creates a list was the hardest to find. It says what is missing now.
+  const canCreate = user.school ? isSchoolAdmin(user.roles, user.school.id) : false;
+  if (lists.length === 0) {
+    return (
+      <>
+        <PageHeader title={t("title")} description={t("noListSubtitle")} />
+        <EmptyState
+          icon={ClipboardCheckIcon}
+          title={canCreate ? t("noListAdmin") : t("noListGranted")}
+          description={canCreate ? t("noListAdminHint") : t("noListGrantedHint")}
+          action={canCreate ? { href: "/admin/pointage", label: t("createFirstList") } : undefined}
+        />
+      </>
+    );
+  }
 
   const today = lists.filter((list) => list.scheduled_today || list.session_id);
   const others = lists.filter((list) => !list.scheduled_today && !list.session_id);

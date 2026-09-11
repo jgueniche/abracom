@@ -14,9 +14,27 @@ import { getMyAttendanceLists } from "@/server/queries/attendance";
  */
 export async function AttendanceToday() {
   const lists = await getMyAttendanceLists().catch(() => []);
-  const today = lists.filter((list) => list.scheduled_today || list.session_id);
-  if (today.length === 0) return null;
+  // Someone who holds no list at all has nothing to see here.
+  if (lists.length === 0) return null;
   const t = await getTranslations("attendance");
+  const today = lists.filter((list) => list.scheduled_today || list.session_id);
+
+  // Holding lists but none scheduled today used to render nothing, which left a
+  // phone with no route to the pointeuse at all: five tabs are full and the
+  // desktop bar is the only place that names it. One quiet line fixes that.
+  if (today.length === 0) {
+    return (
+      <p className="mb-6">
+        <Link
+          href="/pointage"
+          className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline"
+        >
+          <ClipboardCheckIcon className="size-4" aria-hidden />
+          {t("nothingTodaySeeLists", { count: lists.length })}
+        </Link>
+      </p>
+    );
+  }
 
   return (
     <section className="mb-6 flex flex-col gap-3">

@@ -70,6 +70,7 @@ export async function getAdminCounts(schoolId: string): Promise<AdminCounts> {
     years,
     audit,
     messaging,
+    attendance,
   ] = await Promise.all([
     supabase
       .from("announcements")
@@ -101,6 +102,11 @@ export async function getAdminCounts(schoolId: string): Promise<AdminCounts> {
       .eq("school_id", schoolId)
       .lte("opens_at", new Date().toISOString())
       .gt("closes_at", new Date().toISOString()),
+    supabase
+      .from("attendance_lists")
+      .select("id", head)
+      .eq("school_id", schoolId)
+      .eq("archived", false),
   ]);
 
   return {
@@ -116,5 +122,6 @@ export async function getAdminCounts(schoolId: string): Promise<AdminCounts> {
     years: years.count ?? 0,
     audit: audit.count ?? 0,
     messaging: messaging.count ?? 0,
+    attendance: attendance.count ?? 0,
   };
 }
