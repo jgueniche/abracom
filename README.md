@@ -66,7 +66,7 @@ Le guide de style est disponible sur `/dev/ui` (développement et previews Verce
 - [`supabase/jobs/README.md`](./supabase/jobs/README.md) — notifications, cron
 - `supabase/templates/` — modèles d'e-mails Auth en français, appliqués par `supabase config push`
 - `.github/workflows/deploy-db.yml` — migrations et configuration Auth vers le projet Supabase
-- Guides utilisateurs : `content/guides/*.md`, servis dans l'application (`/aide`) et en PDF
+- Aide en ligne : `content/help/*.md` (articles à front-matter), servie dans l'application (`/aide`, `/aide/quoi-de-neuf`) et en PDF par rôle ; couverture et fraîcheur vérifiées par `pnpm ops:check-help`
 
 ## Stack
 

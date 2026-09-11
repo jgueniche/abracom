@@ -1901,24 +1901,46 @@
   },
   "help": {
     "title": "Aide",
-    "subtitle": "Guides pas à pas pour chaque rôle, consultables ici ou en PDF.",
-    "pdf": "Version PDF",
-    "guides": {
-      "parents": {
-        "title": "Guide des parents",
-        "hint": "Connexion, annonces, classe, messages, agenda, communauté, données."
-      },
-      "enseignants": {
-        "title": "Guide des enseignants",
-        "hint": "Publier, devoirs, évaluations, groupe de classe, rendez-vous."
-      },
-      "direction": {
-        "title": "Guide de la direction",
-        "hint": "Années, familles, annonces, modération, données personnelles."
-      }
+    "subtitle": "Des articles courts, et seulement ceux qui concernent votre rôle.",
+    "back": "Toute l'aide",
+    "pdf": "Mon guide (PDF)",
+    "pdfTitle": "Mon guide",
+    "pdfSubtitle": "Tous les articles d'aide de : {roles}",
+    "pdfFooter": "{app} · guide généré le {date}",
+    "languageNote": "Les articles d'aide sont rédigés en français ; l'application, elle, s'affiche en français comme en anglais.",
+    "empty": "Aucun article pour votre rôle",
+    "emptyHint": "C'est une anomalie : signalez-la au secrétariat.",
+    "openScreen": "Ouvrir l'écran",
+    "audience": "Pour",
+    "everyone": "Tous les rôles",
+    "reviewedOn": "Relu le {date}",
+    "topics": {
+      "signin": "Se connecter",
+      "signinHint": "Entrer dans l'application et s'y repérer.",
+      "daily": "Au quotidien",
+      "dailyHint": "Ce que vous ouvrez toutes les semaines.",
+      "publish": "Publier",
+      "publishHint": "Écrire aux familles et leur demander quelque chose.",
+      "manage": "Administrer",
+      "manageHint": "Tenir les classes, les comptes et les réglages de l'école.",
+      "data": "Mes données",
+      "dataHint": "Notifications, sécurité et données personnelles."
     },
-    "languageNote": "Les guides sont rédigés en français ; la version anglaise arrivera avec les retours des premières familles.",
-    "pdfFooter": "{app} · guide généré le {date}"
+    "contextual": {
+      "label": "Aide sur cet écran",
+      "none": "Aucun article ne décrit cet écran."
+    },
+    "whatsNew": {
+      "title": "Quoi de neuf",
+      "subtitle": "Ce qui a été ajouté à l'application et qui vous concerne.",
+      "sinceLastVisit": "Depuis votre dernière visite",
+      "earlier": "Plus tôt",
+      "nothing": "Rien de nouveau pour l'instant",
+      "nothingHint": "Les ajouts qui concernent votre rôle apparaîtront ici.",
+      "new": "Nouveau",
+      "badge": "{count, plural, one {# nouveauté} other {# nouveautés}}",
+      "seen": "Vu — cette page est à jour sur cet appareil."
+    }
   },
   "forms": {
     "export": {

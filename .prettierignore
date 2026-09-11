@@ -12,3 +12,6 @@ supabase/.branches
 lib/supabase/database.types.ts
 public/
 *.min.*
+# Help articles: prose with a `:::roles` directive Prettier does not know,
+# and a front matter whose long lists it wraps onto a second line.
+content/help
