@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ export default async function AdminCommunityPage() {
   ]);
 
   return (
-    <>
+    <Column>
       <PageHeader title={t("moderation")} description={t("moderationSubtitle")} />
       {posts.length === 0 ? (
         <EmptyState icon={ShieldCheckIcon} title={t("empty")} description={t("emptyHint")} />
@@ -100,6 +101,6 @@ export default async function AdminCommunityPage() {
           ))}
         </ul>
       )}
-    </>
+    </Column>
   );
 }

@@ -5,7 +5,7 @@ routes: [/classes/[classId]/retards]
 topic: daily
 keywords: [retards, suivi, déclarés, constatés, export, pointage]
 since: 20
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 L'onglet **Retards** d'une classe additionne deux registres qui existaient déjà, sans en créer un troisième :

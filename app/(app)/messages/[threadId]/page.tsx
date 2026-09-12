@@ -121,13 +121,13 @@ export default async function ThreadPage({
 
       <div className="flex min-h-0 flex-col">
         {/* One conversation bar instead of five stacked header blocks. */}
-        <div className="mb-3 flex items-center gap-2 border-b border-border pb-3">
+        <div className="mb-4 flex items-center gap-2 border-b border-rule pb-3">
           <Link
             href="/messages"
             aria-label={t("backToList")}
-            className="flex size-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground lg:hidden"
+            className="-ml-1.5 flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden"
           >
-            <ArrowLeftIcon className="size-5" aria-hidden />
+            <ArrowLeftIcon className="size-4" aria-hidden />
           </Link>
           <UserAvatar
             name={title}
@@ -136,10 +136,10 @@ export default async function ThreadPage({
                 ? (other?.initials ?? "?")
                 : (thread.class?.name ?? title).slice(0, 3).toUpperCase()
             }
-            className={thread.kind === "dm" ? "size-10" : "size-10 text-[0.625rem]"}
+            className={thread.kind === "dm" ? "size-9" : "size-9 text-[0.625rem]"}
           />
           <div className="min-w-0 flex-1">
-            <h1 className="truncate font-heading text-lg leading-tight font-normal tracking-tight sm:text-xl">
+            <h1 className="truncate font-sans text-base leading-tight font-semibold tracking-[-0.006em]">
               {title}
             </h1>
             <p className="truncate text-xs text-muted-foreground">
@@ -212,7 +212,7 @@ export default async function ThreadPage({
                       <li key={result.id}>
                         <a
                           href={`#m-${result.id}`}
-                          className="flex flex-col rounded-lg px-2 py-1.5 hover:bg-accent"
+                          className="flex flex-col rounded-md px-2 py-1.5 transition-colors hover:bg-muted"
                         >
                           <span className="text-xs text-muted-foreground">
                             {author?.name ?? t("message.unknown")} ·{" "}

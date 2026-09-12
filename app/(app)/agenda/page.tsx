@@ -1,14 +1,14 @@
 import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "lucide-react";
+import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
 import {
   addDays,
@@ -123,7 +123,7 @@ export default async function AgendaPage({
   };
 
   return (
-    <>
+    <Column>
       <PageHeader
         title={t("title")}
         description={t("subtitle")}
@@ -139,18 +139,18 @@ export default async function AgendaPage({
         }
       />
 
-      <Card className="mb-6">
-        <CardContent className="flex flex-col gap-1">
-          <p className="text-sm text-muted-foreground">{t("today")}</p>
-          <p className="font-heading text-lg font-semibold capitalize">
-            {format.dateTime(noon(today), { dateStyle: "full" })}
-          </p>
-          <p className="text-sm">
-            {hebrewDate(today, hebcalLocale)}
-            {parasha ? ` · ${t("parashaOfWeek", { name: parasha })}` : ""}
-          </p>
-        </CardContent>
-      </Card>
+      {/* Today's date is a dateline, not a banner: three lines in a box across
+          the top of the page announced the day the reader is already living. */}
+      <p className="mb-7 flex flex-wrap items-baseline gap-x-2.5 gap-y-1 border-b border-rule pb-4">
+        <span className="eyebrow">{t("today")}</span>
+        <span className="font-heading text-base capitalize">
+          {format.dateTime(noon(today), { dateStyle: "full" })}
+        </span>
+        <span className="meta">
+          {hebrewDate(today, hebcalLocale)}
+          {parasha ? ` · ${t("parashaOfWeek", { name: parasha })}` : ""}
+        </span>
+      </p>
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-1">
@@ -166,23 +166,13 @@ export default async function AgendaPage({
             </Link>
           </Button>
         </div>
-        <nav className="flex gap-2">
+        <FilterChips className="-mx-0 mb-0 px-0">
           {FILTERS.map((key) => (
-            <Link
-              key={key}
-              href={link({ f: key })}
-              aria-current={filter === key ? "page" : undefined}
-              className={cn(
-                "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
-                filter === key
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "hover:bg-accent",
-              )}
-            >
+            <FilterChip key={key} href={link({ f: key })} active={filter === key}>
               {t(`filters.${key}`)}
-            </Link>
+            </FilterChip>
           ))}
-        </nav>
+        </FilterChips>
       </div>
 
       {keys.length === 0 ? (
@@ -193,7 +183,7 @@ export default async function AgendaPage({
           action={canEdit ? { href: "/agenda/nouveau", label: t("new") } : undefined}
         />
       ) : (
-        <ol className="flex flex-col gap-5">
+        <ol className="-mx-2 flex flex-col border-t border-rule">
           {keys.map((key) => {
             const day = days.get(key)!;
             const shabbat = isoWeekday(key) === 6;
@@ -204,48 +194,61 @@ export default async function AgendaPage({
               <li
                 key={key}
                 className={cn(
-                  "grid gap-2 sm:grid-cols-[8rem_1fr]",
-                  key === today && "-m-2 rounded-2xl bg-primary/5 p-2",
+                  // One rule per day, always: it is the day that is the unit of
+                  // this list. The rule used to belong to the event list, so a
+                  // day carrying only a candle-lighting time drew a line with
+                  // nothing under it and then the gap of a whole day.
+                  "grid gap-2 border-b border-rule px-2 py-3.5 sm:grid-cols-[8rem_1fr]",
+                  key === today && "bg-primary/5",
                 )}
               >
                 <div className="flex flex-wrap items-baseline gap-x-2 sm:flex-col sm:gap-0">
                   <p className="font-semibold capitalize">
                     {format.dateTime(noon(key), { weekday: "short", day: "numeric" })}
                   </p>
-                  <p className="text-xs text-muted-foreground">{hebrewDate(key, hebcalLocale)}</p>
-                  {shabbat && (
-                    <Badge variant="outline" className="mt-1">
-                      {t("shabbat")}
-                    </Badge>
-                  )}
+                  <p className="meta">{hebrewDate(key, hebcalLocale)}</p>
+                  {shabbat && <p className="eyebrow sm:mt-0.5">{t("shabbat")}</p>}
                 </div>
                 <div className="flex flex-col gap-2">
                   {(holidays.length > 0 ||
                     parashaItem ||
                     times.length > 0 ||
                     day.publicHolidays.length > 0) && (
-                    <div className="flex flex-wrap items-center gap-2">
+                    /* The Jewish calendar is the cultural spine of this agenda
+                       and it was set in capsules — a solid one for a yom tov, a
+                       filled one for the rest — so a month of Tishri came out as
+                       thirty coloured pills. The distinction that matters (a day
+                       the school closes versus a name for the week) survives in
+                       the weight and the colour of the words themselves. */
+                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                       {day.publicHolidays.map((name) => (
-                        <Badge key={name} variant="outline">
+                        <span key={name} className="eyebrow">
                           {name} · {t("publicHoliday")}
-                        </Badge>
+                        </span>
                       ))}
                       {holidays.map((item) => (
-                        <Badge
+                        <span
                           key={`${item.category}-${item.title}`}
-                          variant={item.yomTov ? "default" : "secondary"}
                           title={item.category ? t(`categories.${item.category}`) : undefined}
+                          className={cn(
+                            "text-[0.6875rem] tracking-[0.085em] uppercase",
+                            item.yomTov
+                              ? "font-semibold text-primary"
+                              : "font-medium text-muted-foreground",
+                          )}
                         >
                           {item.category === "isruChag"
                             ? t("isruChagTitle", { name: item.title })
                             : item.title}
-                        </Badge>
+                        </span>
                       ))}
                       {parashaItem && (
-                        <Badge variant="outline">{t("parasha", { name: parashaItem.title })}</Badge>
+                        <span className="meta italic">
+                          {t("parasha", { name: parashaItem.title })}
+                        </span>
                       )}
                       {times.map((item) => (
-                        <span key={item.kind} className="text-xs text-muted-foreground">
+                        <span key={item.kind} className="meta">
                           {item.kind === "candles"
                             ? t("candles", { time: item.time ?? "" })
                             : t("havdalah", { time: item.time ?? "" })}
@@ -253,9 +256,15 @@ export default async function AgendaPage({
                       ))}
                     </div>
                   )}
-                  {day.events.map(({ event, continued }) => (
-                    <EventCard key={event.id} event={event} continued={continued} />
-                  ))}
+                  {day.events.length > 0 && (
+                    <ul className="flex flex-col divide-y divide-rule">
+                      {day.events.map(({ event, continued }) => (
+                        <li key={event.id}>
+                          <EventCard event={event} continued={continued} />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </li>
             );
@@ -266,6 +275,6 @@ export default async function AgendaPage({
       <div className="mt-8">
         <CalendarFeedCard feed={feed} origin={`${protocol}://${host}`} />
       </div>
-    </>
+    </Column>
   );
 }

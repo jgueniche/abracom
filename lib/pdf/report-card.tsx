@@ -34,7 +34,6 @@ export type ReportCardData = {
   generatedAt: string;
   labels: {
     title: string;
-    period: string;
     born: string | null;
     classLabel: string;
     teacher: string;
@@ -51,7 +50,18 @@ export type ReportCardData = {
   };
 };
 
-const TEAL = "#01525e";
+/*
+ * The booklet is the one thing of this application a family keeps on paper, and
+ * it was still printed in the teal of the first two sessions — the charter
+ * changed to the blues of the flag in session 16 (ADR-0032) and nothing here
+ * followed, because nobody opens a PDF twice. Times-Roman carries the titles:
+ * @react-pdf ships it, it costs no font file, and the serif is the school's
+ * voice in the application.
+ */
+const INK = "#0f1e33";
+const BLUE = "#0038b8";
+const MUTED = "#55657c";
+const RULE = "#becadc";
 const LEVEL_INDEX: Record<ReportLevel, number> = {
   not_yet: 1,
   in_progress: 2,
@@ -60,47 +70,75 @@ const LEVEL_INDEX: Record<ReportLevel, number> = {
 };
 
 const styles = StyleSheet.create({
-  page: { padding: 36, fontSize: 10, fontFamily: "Helvetica", color: "#1b1b1b" },
-  header: { borderBottomWidth: 2, borderBottomColor: TEAL, paddingBottom: 8, marginBottom: 14 },
-  school: { fontSize: 9, color: "#555" },
-  title: { fontSize: 18, fontFamily: "Helvetica-Bold", color: TEAL, marginTop: 2 },
-  student: { fontSize: 13, fontFamily: "Helvetica-Bold", marginTop: 6 },
-  meta: { fontSize: 9, color: "#444", marginTop: 2 },
-  periodTitle: { fontSize: 12, fontFamily: "Helvetica-Bold", color: TEAL, marginBottom: 6 },
-  draft: { fontSize: 9, color: "#852624", marginBottom: 6 },
-  domain: {
-    fontSize: 10,
+  page: { padding: 40, fontSize: 10, fontFamily: "Helvetica", color: INK },
+  header: { borderBottomWidth: 1, borderBottomColor: RULE, paddingBottom: 10, marginBottom: 16 },
+  school: { fontSize: 8, color: BLUE, letterSpacing: 1, textTransform: "uppercase" },
+  title: { fontSize: 22, fontFamily: "Times-Roman", color: INK, marginTop: 4 },
+  student: { fontSize: 13, fontFamily: "Helvetica-Bold", marginTop: 10 },
+  meta: { fontSize: 9, color: MUTED, marginTop: 2 },
+  periodTitle: {
+    fontSize: 9,
     fontFamily: "Helvetica-Bold",
-    backgroundColor: "#eef4f4",
-    padding: 4,
-    marginTop: 8,
+    color: INK,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+    marginBottom: 8,
+  },
+  draft: { fontSize: 9, color: "#852624", marginBottom: 6 },
+  // a rule, not a tinted block: the same choice the screens made in session 22
+  domain: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: MUTED,
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    borderBottomWidth: 1,
+    borderBottomColor: RULE,
+    paddingBottom: 3,
+    marginTop: 14,
+    marginBottom: 2,
   },
   row: {
     flexDirection: "row",
     borderBottomWidth: 0.5,
-    borderBottomColor: "#ddd",
-    paddingVertical: 3,
+    borderBottomColor: RULE,
+    paddingVertical: 4,
   },
-  skill: { flex: 1, paddingRight: 6 },
+  skill: { flex: 1, paddingRight: 8 },
   levelCell: { width: 150, flexDirection: "row", alignItems: "center" },
-  boxes: { flexDirection: "row", marginRight: 6 },
-  box: { width: 9, height: 9, marginRight: 2, borderWidth: 0.5, borderColor: TEAL },
-  boxOn: { backgroundColor: TEAL },
-  levelText: { fontSize: 8, color: "#333" },
-  comment: { fontSize: 8, color: "#555", marginTop: 1 },
-  section: { marginTop: 10 },
-  sectionTitle: { fontSize: 10, fontFamily: "Helvetica-Bold", marginBottom: 3 },
-  legend: { fontSize: 8, color: "#555", marginTop: 12 },
+  boxes: { flexDirection: "row", marginRight: 8 },
+  box: { width: 9, height: 9, marginRight: 2, borderWidth: 0.5, borderColor: BLUE },
+  boxOn: { backgroundColor: BLUE },
+  levelText: { fontSize: 8, color: MUTED },
+  comment: { fontSize: 8, color: MUTED, marginTop: 1 },
+  section: { marginTop: 14 },
+  sectionTitle: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: MUTED,
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+  legend: { fontSize: 8, color: MUTED, marginTop: 14 },
   footer: {
     position: "absolute",
-    bottom: 20,
-    left: 36,
-    right: 36,
+    bottom: 24,
+    left: 40,
+    right: 40,
     fontSize: 7,
-    color: "#777",
+    color: MUTED,
     textAlign: "center",
   },
 });
+
+/** A catalogue that repeats the domain in every label — the seed did, and an
+ * imported one may — printed "Mobiliser le langage · Comprendre les consignes"
+ * under a heading already reading "Mobiliser le langage". */
+function withoutDomain(label: string, domain: string): string {
+  const prefix = `${domain} · `;
+  return label.startsWith(prefix) ? label.slice(prefix.length) : label;
+}
 
 function LevelBoxes({ level }: { level: ReportLevel | null }) {
   const filled = level ? LEVEL_INDEX[level] : 0;
@@ -139,7 +177,9 @@ export function ReportCardDocument({ data }: { data: ReportCardData }) {
           {period ? (
             <>
               <Text style={styles.periodTitle}>
-                {labels.period} : {period.label} ({period.range})
+                {/* "Période : Période 1" — the label repeated the name of the
+                    thing it labels. The period already says what it is. */}
+                {period.label} · {period.range}
               </Text>
               {period.hasDraft && <Text style={styles.draft}>{labels.draft}</Text>}
               {period.domains.length === 0 && <Text>{labels.noData}</Text>}
@@ -149,7 +189,7 @@ export function ReportCardDocument({ data }: { data: ReportCardData }) {
                   {group.skills.map((skill, skillIndex) => (
                     <View key={skillIndex} style={styles.row}>
                       <View style={styles.skill}>
-                        <Text>{skill.label}</Text>
+                        <Text>{withoutDomain(skill.label, group.domain)}</Text>
                         {skill.comment && <Text style={styles.comment}>{skill.comment}</Text>}
                       </View>
                       <View style={styles.levelCell}>

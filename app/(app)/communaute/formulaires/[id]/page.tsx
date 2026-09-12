@@ -1,16 +1,17 @@
 import { ArrowLeftIcon } from "lucide-react";
+import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { Markdown } from "@/components/domain/markdown";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { canWriteInSchool } from "@/lib/permissions";
-import { cn } from "@/lib/utils";
 import { formStatus, getForm, getMyFormResponses } from "@/server/queries/community";
 import { getMyChildren } from "@/server/queries/family";
 
@@ -47,7 +48,7 @@ export default async function FormPage({
   );
 
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/communaute/formulaires">
           <ArrowLeftIcon aria-hidden />
@@ -83,7 +84,7 @@ export default async function FormPage({
       {form.description_md && (
         <Card className="mb-6">
           <CardContent>
-            <Markdown>{form.description_md}</Markdown>
+            <Markdown size="compact">{form.description_md}</Markdown>
           </CardContent>
         </Card>
       )}
@@ -93,27 +94,21 @@ export default async function FormPage({
           {kids.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t("childRequired")}</p>
           ) : (
-            <nav className="flex flex-wrap gap-2">
+            <FilterChips>
               {kids.map((kid) => {
                 const done = responses.some((r) => r.student_id === kid.id);
                 return (
-                  <Link
+                  <FilterChip
                     key={kid.id}
                     href={`/communaute/formulaires/${form.id}?s=${kid.id}`}
-                    aria-current={kid.id === studentId ? "page" : undefined}
-                    className={cn(
-                      "flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-medium",
-                      kid.id === studentId
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "hover:bg-accent",
-                    )}
+                    active={kid.id === studentId}
                   >
                     {kid.name}
                     {done ? " ✓" : ""}
-                  </Link>
+                  </FilterChip>
                 );
               })}
-            </nav>
+            </FilterChips>
           )}
         </div>
       )}
@@ -133,6 +128,6 @@ export default async function FormPage({
           </CardContent>
         </Card>
       )}
-    </>
+    </Column>
   );
 }

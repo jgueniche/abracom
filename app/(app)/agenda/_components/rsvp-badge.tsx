@@ -1,10 +1,17 @@
 "use client";
 
-import { CheckIcon, HelpCircleIcon, HourglassIcon, XIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
+/**
+ * The reader's own answer to an invitation.
+ *
+ * A marker, not a badge: it lives inside a dateline already set in small caps,
+ * next to the kind of the event, and a filled capsule with a glyph in it there
+ * weighed more than the title underneath. Colour carries the four states —
+ * accepted, waitlisted, undecided, declined — and the word carries the meaning.
+ */
 export function RsvpBadge({
   rsvp,
 }: {
@@ -12,34 +19,19 @@ export function RsvpBadge({
 }) {
   const t = useTranslations("agenda.rsvp");
   if (!rsvp) return null;
-  if (rsvp.status === "yes" && rsvp.waitlisted) {
-    return (
-      <Badge variant="outline">
-        <HourglassIcon aria-hidden />
-        {t("waitlistedBadge")}
-      </Badge>
-    );
-  }
-  if (rsvp.status === "yes") {
-    return (
-      <Badge>
-        <CheckIcon aria-hidden />
-        {t("confirmedBadge")}
-      </Badge>
-    );
-  }
-  if (rsvp.status === "maybe") {
-    return (
-      <Badge variant="secondary">
-        <HelpCircleIcon aria-hidden />
-        {t("maybeBadge")}
-      </Badge>
-    );
-  }
+
+  const [label, tone] =
+    rsvp.status === "yes" && rsvp.waitlisted
+      ? [t("waitlistedBadge"), "text-warning"]
+      : rsvp.status === "yes"
+        ? [t("confirmedBadge"), "text-success"]
+        : rsvp.status === "maybe"
+          ? [t("maybeBadge"), "text-muted-foreground"]
+          : [t("noBadge"), "text-muted-foreground"];
+
   return (
-    <Badge variant="outline">
-      <XIcon aria-hidden />
-      {t("noBadge")}
-    </Badge>
+    <span className={cn("text-[0.6875rem] font-semibold tracking-[0.085em] uppercase", tone)}>
+      {label}
+    </span>
   );
 }

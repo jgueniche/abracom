@@ -5,7 +5,7 @@ routes: [/notifications, /notifications/preferences]
 topic: data
 keywords: [notifications, push, e-mail, résumé, heures calmes, chabbat, silencieux, alertes]
 since: 10
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 La cloche de l'en-tête ouvre vos notifications dans l'application, avec un compteur des non lues et un bouton « tout marquer comme lu ».

@@ -819,3 +819,277 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   À la première visite, le marqueur est posé au niveau courant : on n'annonce pas quarante-trois
   nouveautés à quelqu'un qui n'a jamais ouvert l'aide. La page ne nomme jamais un numéro de session :
   elle dit « depuis votre dernière visite », ce qui est la seule chose qui intéresse une famille.
+
+## ADR-0051 — Le trait plutôt que la boîte : registre typographique et géométrique
+
+- **Contexte** : à la revue de la refonte des sessions 16 et 17, le porteur ne conteste ni la palette
+  (ADR-0032, blancs et bleus) ni la navigation, mais le **registre** : « l'app est très _Claude like_ »,
+  « beaucoup de textes et d'encarts sont trop gros, les titres aussi », « des sous-titres n'ont pas de
+  cohérence de place, de taille ou de position ». Les mesures lui donnent raison. Un titre de page était
+  posé à 36 px, un titre de section à 24 px et un titre de carte à 20 px : trois niveaux qui se
+  disputaient un écran de 390 px. Le rayon unique valait 0,875 rem, ce qui transformait un champ tactile
+  de 44 px en losange et un bouton de 32 px en pilule. Les jetons `text-sm` et `text-xs` portaient 423
+  des 500 déclarations de taille du dépôt, donc l'échelle n'avait en réalité que deux crans utiles et un
+  gouffre au-dessus. Vingt et un `<h2>` écrits à la main se partageaient six tailles et quatre marges.
+  Et surtout, la fonte de titre était **Fraunces**, avec ses axes `SOFT` et `WONK` poussés : la signature
+  typographique exacte du genre d'interface que le porteur décrit, qu'aucune sobriété ailleurs ne pouvait
+  compenser tant qu'elle composait tous les titres de l'application.
+- **Décision** : cinq gestes, tous à la source plutôt que fichier par fichier.
+  1. **Une serif éditoriale à la place de Fraunces** — **Newsreader**, à axe optique, qui sert à la fois
+     les titres et la prose longue ; Source Serif 4 disparaît. Deux familles au total (Inter pour
+     l'interface, Newsreader pour ce que l'école écrit), et une règle de partage : **la serif est la voix
+     de l'école** (annonce, mot, cahier de vie, circulaire), **le sans est l'interface** (une destination,
+     un réglage, un chiffre). `CardTitle` passe donc au sans, `ContentCard` garde la serif.
+  2. **L'échelle est recoupée dans `@theme`**, pas dans les pages : les crans de titre perdent de 20 à
+     30 % (30 → 22, 36 → 26, 24 → 19, 20 → 17, 18 → 16), les tailles de texte courant ne bougent pas
+     — 14 px reste 14 px, un parent doit lire — et chaque cran porte enfin son interligne et son
+     approche. Deux cents fichiers sont corrigés sans être touchés.
+  3. **`--radius` passe de 0,875 rem à 0,5 rem.** Contrôles à 6,4 px, plans à 11,2 px, la pilule
+     réservée à ce qui est réellement rond (pastille de compte, avatar).
+  4. **L'ombre cède la place au filet.** Une carte au repos ne porte presque rien ; le relief est réservé
+     à ce qui flotte vraiment (dialogue, menu, composeur). Un jeton `--rule` est ajouté pour le filet
+     _intérieur_ d'un plan, que vingt fichiers improvisaient en `border-border/70`, `/60` ou `/50`.
+  5. **Trois composants partagés** absorbent ce qui était recopié : `SectionHeader` (libellé en petites
+     capitales, compteur, filet jusqu'au bord, action à droite) remplace les vingt et un `<h2>` ;
+     `RowList` / `Row` remplace neuf listes en cartes écrites à la main ; `FilterChip` / `FilterChips`
+     remplace six rangées de pilules bleues pleines.
+- **Pourquoi pas seulement réduire les tailles** : parce que le défaut n'était pas une taille, c'était
+  l'absence d'échelle. Redescendre un titre sans recouper les crans aurait laissé le même écart arbitraire
+  entre un `text-sm` et un `text-3xl`, et la session suivante aurait rouvert le même arbitrage.
+- **Conséquences** : la palette d'ADR-0032 est conservée au pixel près, à trois nuances de saturation
+  près — `--surface`, `--secondary`, `--accent` et surtout `--input` perdent de un tiers à deux tiers de
+  leur chroma à luminance **identique**, si bien que le contraste non textuel de 3:1 exigé par le
+  SC 1.4.11 est intact (le test le vérifie) mais qu'un champ est dessiné par un gris fin et non par un
+  trait bleu qui criait plus fort que son étiquette. L'état actif d'un onglet devient un trait de 2 px
+  posé sur l'arête de la barre, plus un aplat bleu : la barre du haut portait cinq losanges qui se
+  lisaient comme cinq boutons. Le survol ne teinte plus en bleu (`bg-accent`) mais en gris (`bg-muted`).
+  `EmptyState` cesse d'être un panneau pointillé de 200 px avec un médaillon de 48 px : une absence ne
+  doit pas être l'objet le plus voyant de l'écran. Le guide de style `/dev/ui` gagne une section
+  **Anatomie d'écran** — en-tête de page, section, liste, cartes, état vide, rendue comme une vraie page
+  — et un spécimen de l'échelle cran par cran, pour que la validation visuelle du porteur porte sur
+  l'anatomie réelle et non sur une planche de composants isolés. Aucune route, aucun libellé, aucun droit
+  ne bouge : les 43 articles d'aide restent exacts et ne sont donc pas réécrits.
+
+## ADR-0052 — Trois largeurs, un index, un tableau : la forme suit le contenu
+
+- **Contexte** : la session 22 avait recoupé la typographie, la géométrie et le relief (ADR-0051), mais
+  sans jamais voir les écrans connectés — aucune stack Supabase n'était disponible. Montée cette fois
+  (Docker, `supabase start`, seed de 137 comptes), elle a montré que le défaut restant n'était pas dans
+  les détails mais dans la **composition**, et qu'il tenait à trois réflexes appliqués partout :
+  1. **Aucune colonne.** Le plafond de page est passé de 1 024 px à 1 760 px en session 16, pour la
+     bonne raison (la moitié d'un grand écran ne peignait rien) et avec la mauvaise conclusion : _tous_
+     les écrans ont pris toute la largeur. Une liste d'annonces étalait donc ses titres sur un mètre de
+     verre avec la date à une main du titre qu'elle date.
+  2. **La grille de cartes comme réponse à tout.** Neuf annonces en deux colonnes de 950 px, chacune
+     d'une hauteur différente parce que sa voisine avait un pied ; cinq liens d'un hub en cinq boîtes
+     sur deux rangs avec mille pixels de page vide dessous ; **soixante-six élèves en soixante-six
+     cartes empilées**, soit onze mille pixels pour trois faits par élève, sans qu'on puisse lire une
+     colonne.
+  3. **Une icône par ligne.** Sept pictogrammes dans la barre du haut, cinq dans un menu de cinq noms,
+     un fichier devant chaque document, une médaille de 40 px devant chaque destination.
+- **Décision** :
+  - **Trois largeurs, choisies par le genre de l'écran**, pas par une préférence globale (`Column`) :
+    `text` (~42 rem) pour ce qui se lit d'un bout à l'autre — une circulaire, un article d'aide ;
+    `index` (~58 rem) pour ce qui se parcourt ; `full` pour une console — un registre, une grille de
+    compétences, un mois d'agenda, deux volets de messagerie. Une colonne est **alignée à gauche**, pas
+    centrée : une interface a un bord gauche où l'œil revient.
+  - **`IndexList` / `IndexEntry`** : une liste de publications se compose comme un index — surtitre,
+    titre, une ligne de résumé, un filet — et ce qui attend le lecteur est marqué **d'une barre dans la
+    marge**, comme on marque un passage dans un livre.
+  - **`Table`** : un registre est tabulaire. Les 66 élèves passent de 11 152 px à 6 374 px et
+    redeviennent lisibles en colonnes.
+  - **Une circulaire est une lettre** : date, titre, filet, texte à 42 rem ; l'accusé de lecture et les
+    pièces jointes deviennent un appareil posé à côté du texte, jamais dedans.
+  - **Les hubs deviennent des sommaires** (`HubCard` est une ligne, `HubGrid` une liste) et le tableau
+    de bord une planche de chiffres entre deux filets.
+  - **Les icônes décoratives disparaissent** : barre du haut, menus de noms, listes de documents,
+    médailles de section. Elles restent là où elles travaillent — la barre d'onglets du téléphone, où
+    une colonne de 78 px doit dire « messages » sans le mot.
+  - **Les pastilles cèdent au mot** : réponse à une invitation, droit à l'image, signature, fêtes
+    juives de l'agenda (un mois de Tichri sortait en trente capsules colorées). La distinction qui
+    compte — un jour où l'école ferme _versus_ un nom pour la semaine — survit dans la graisse et la
+    couleur des mots eux-mêmes.
+- **Conséquences** : `/dev/ui` documente l'index et le tableau à côté de l'anatomie de page.
+  Trois défauts réels ont été trouvés en regardant les écrans plutôt que le code : le marqueur « ceci
+  vous attend » était un point dessiné **hors** d'une carte qui coupe ce qui déborde, donc invisible
+  partout ; la description de l'accueil parent répétait mot pour mot le libellé de la section juste
+  dessous ; et l'article d'aide de l'accueil décrivait une « carte des accusés de lecture » fusionnée
+  dans le bloc Aujourd'hui depuis la session 19. Enfin, la stack a permis de jouer ce qu'aucune session
+  précédente n'avait pu jouer ici : **28 tests e2e verts, invitation → première connexion comprise**, et
+  436 assertions pgTAP — au passage, `015_attendance.sql` comparait une occurrence datée dans le fuseau
+  de l'école à un `current_date` serveur, et échouait donc **toutes les nuits entre 22 h et minuit UTC**.
+
+## ADR-0053 — Un onglet, une destination : l'espace de classe ouvre sur le cahier de vie
+
+- **Contexte** : revue de l'architecture après la refonte visuelle. Sur le téléphone d'un parent d'un
+  seul enfant, **deux des cinq onglets ouvraient le même écran** : « Devoirs » (le cahier de texte,
+  tous les enfants fusionnés) et « Ma classe », qui redirigeait vers l'onglet Devoirs de la classe.
+  Quarante pour cent de la barre pour une destination. Ce n'était la décision de personne : la
+  session 16 avait fait atterrir l'espace de classe sur les devoirs parce que l'onglet « Fil » qu'elle
+  supprimait rejouait Devoirs et Cahier de vie, et la session 17 a ensuite donné aux devoirs un onglet
+  à eux dans la barre principale sans revenir sur l'atterrissage. Deux autres doublons du même
+  genre : « Formulaires » figurait dans École **et** dans Communauté, qui est elle-même une entrée
+  d'École ; l'agenda était classé quatrième dans École alors qu'il s'y consulte plus souvent que les
+  documents.
+- **Décision** : `/classes/[classId]` ouvre sur le **cahier de vie**, et les onglets de l'espace sont
+  rangés par fréquence réelle d'ouverture — Cahier de vie, Devoirs, Mots, Absences, Évaluations,
+  Emploi du temps, (Retards), Rendez-vous — le premier onglet étant l'atterrissage. « Formulaires »
+  sort du pôle Communauté et reste dans École, où il appartient : un formulaire est ce que **l'école**
+  vous demande, Communauté est ce que les familles échangent entre elles. École est rangée par
+  fréquence : Annonces, Agenda, Documents, Formulaires, Communauté.
+- **Pourquoi le cahier de vie** : c'est la vie de la classe, ce pour quoi une famille ouvre
+  l'application en dehors d'une échéance — et c'est l'écran d'accueil de tous les produits de ce
+  domaine (Klassly, Educartable, TouteMonAnnée, Seesaw, ClassDojo mènent avec le fil de la classe, pas
+  avec une liste de devoirs). Les devoirs ne perdent rien : ils gardent leur onglet, où toutes les
+  classes du lecteur sont fusionnées, ce qui vaut mieux qu'une vue par classe pour un parent de deux
+  enfants.
+- **Conséquences** : le déplacement a révélé que le cahier de vie **ne montrait que les billets
+  portant une photo, et n'affichait jamais leur texte** — il ne gardait que le titre et la grille
+  d'images. Une enseignante qui écrivait « belle sortie au parc » sans photo publiait donc dans le
+  vide, et avec une photo ses mots étaient jetés ; il n'existe aucun autre écran où un billet du
+  cahier apparaît depuis la suppression de l'onglet « Fil ». Un cahier de vie est un journal, les
+  photos l'illustrent : tous les billets publiés s'affichent désormais, texte compris. Deux autres
+  défauts corrigés au passage : le compteur « N formulaires à remplir » d'École comptait, pour
+  l'équipe qui voit toutes les réponses, les formulaires que **personne** n'avait remplis — il ne
+  compte plus que ceux du lecteur, et ne s'affiche qu'à une famille ; et l'accueil de l'enseignante
+  répétait en description le libellé de la section juste dessous, avec la ligne du pointage flottant
+  au-dessus de tout sans section.
+
+## ADR-0054 — Deux couches : la structure plus forte que le contenu
+
+- **Contexte** : première passe de la refonte visuelle (ADR-0051) prise à l'envers. Ayant reçu
+  « beaucoup de textes et d'encarts sont trop gros », j'ai rapetissé **tout** de la même main —
+  navigation comprise. Sur l'espace de classe, le résultat était une hiérarchie inversée : le titre
+  d'une carte du cahier de vie sortait à 18 px en serif tandis que les onglets qui mènent aux devoirs,
+  aux mots et aux absences tenaient en 13 px gris à 60 % ; l'équipe enseignante, passée par le slot
+  « description », occupait trois lignes de corps de texte au-dessus de ces onglets. Autrement dit :
+  ce qui _déplace_ le lecteur était plus discret que ce qu'il lit une fois arrivé.
+- **Décision** : une interface se lit en **deux couches**, et c'est la structure qui parle le plus
+  fort.
+  - **Structure** — barre principale, onglets d'espace, libellés de section, filtres : 15 px
+    (`text-[0.9375rem]`) pour un onglet, 13 px en capitales espacées pour un libellé de section,
+    `font-medium` au repos et `font-semibold` + un filet de 2 px à l'état actif, `text-foreground/70`
+    au repos (jamais moins : en dessous le contraste AA tombe).
+  - **Contenu** — titre de carte 15 px, texte courant 14 px, métadonnée 11–12 px, prose éditoriale en
+    serif. Le corps d'une publication passe par `<Markdown size="compact">` : sans, 14 px,
+    interligne 1,6 — la serif de lecture reste pour ce qui **est** un document (une circulaire, un
+    article d'aide), pas pour un billet de trois lignes dans une carte.
+  - Un en-tête de page porte au plus une phrase de description (13 px) ; un **fait** sur l'écran —
+    l'équipe d'une classe, les membres d'un groupe — passe par `caption`, une seule ligne coupée à la
+    largeur disponible, l'intégralité au survol.
+- **Largeur** : la mesure décidée en ADR-0052 n'était appliquée que par une poignée d'écrans ; les 53
+  autres s'étalaient sur les 1 760 px de la coquille. Chaque page porte désormais sa `Column` —
+  `text` pour un formulaire ou un document, `index` pour une liste, `full` pour une console — et les
+  pages d'aide, jusqu'ici centrées sur 48 rem, rejoignent la marge de gauche commune.
+- **Conséquences** : six listes de cartes bordées redeviennent des index ou des `RowList` (annonces
+  d'administration, documents, formulaires des deux côtés, événements, choix de classe) ; la page
+  d'aide passe de vingt-six encadrés à un sommaire ; un statut n'est plus une pastille bleue pleine
+  répétée à chaque ligne mais un mot, et seulement quand il fait exception. Deux régressions de
+  contraste introduites par cette même passe (onglets au repos à 4,38:1, `caption` à 4,02:1) ont été
+  trouvées par axe et corrigées. Enfin, un `not-found` propre au groupe `(app)` : un lecteur qui
+  ouvrait une classe qui n'est pas la sienne se retrouvait sur une page nue, sans barre ni onglets —
+  l'application disparaissait autour de lui au moment précis où il s'était trompé de porte.
+
+## ADR-0055 — Une liste de contrôle tierce, arbitrée par les ADR
+
+- **Contexte** : le porteur demande si une compétence d'UI/UX publiée sur GitHub ferait mieux que
+  nos propres passes. Lecture faite (`nextlevelbuilder/ui-ux-pro-max-skill`, MIT), c'est un corpus
+  CSV — styles, palettes par type de produit, appariements de polices, lignes directrices UX — plus
+  un moteur de recherche BM25 et un **générateur de design system**, et deux listes de contrôle.
+- **Décision** : on la vendorise dans `.claude/skills/ui-ux-pro-max/` **sans ses scripts Python**,
+  et on écrit `.claude/skills/design-review/SKILL.md` qui pose la doctrine de Kesher (deux couches,
+  trois largeurs, la forme suit le contenu, le trait plutôt que la boîte) et **arbitre** : quand le
+  corpus contredit un ADR, l'ADR gagne. Son générateur de design system n'est jamais lancé sur ce
+  dépôt — Kesher a déjà le sien, et un second document « Master » serait une seconde source de
+  vérité, c'est-à-dire aucune.
+- **Pourquoi sans les scripts** : la valeur du dépôt est le corpus et les listes, pas un classement
+  BM25 sur vingt CSV qu'un `grep` fait aussi bien. Vendoriser une centaine de kilo-octets de Python
+  tiers dans une application qui traite des données de mineurs, exécuté par toutes les sessions à
+  venir, n'est pas un risque qui se justifie pour une fonction de recherche.
+- **Ce que la liste a réellement trouvé**, dès la première passe, et qu'aucune de nos quatre sessions
+  de design n'avait vu : (1) Tailwind v4 a retiré le `cursor: pointer` des `<button>` — **tous** les
+  contrôles de l'application répondaient au pointeur comme un paragraphe de texte pendant que les
+  liens voisins montraient une main ; (2) **SC 2.4.11 « Focus Not Obscured »** échouait sur tout le
+  téléphone — tabuler fait défiler l'élément au ras du bord, donc sous la barre du bas : 57 px d'une
+  ligne de 63 px disparaissaient, anneau de focus compris ; (3) les deux barres translucides
+  laissaient lire le contenu au travers, ce que la règle de « scrim » du corpus nomme exactement.
+  Le reste de la liste (cibles 24×24, collage dans les champs d'authentification, hiérarchie des
+  titres, lien d'évitement) est passé — vérifié, pas supposé.
+- **Ce que la même passe a trouvé en regardant les écrans**, ce qu'aucune liste ne fait à notre
+  place : la grille d'évaluations d'une classe sans référentiel affichait une colonne de noms, une
+  légende et un bouton « Enregistrer la grille » sous une grille vide (le seed ne remplit que PS, MS
+  et GS : six niveaux sur neuf, tout l'élémentaire, avaient l'air cassés) ; chaque colonne de la
+  matrice répétait le nom du domaine déjà porté par l'en-tête qui la chapeaute, puis tronquait les
+  mots qui distinguent les colonnes ; la matrice — une console de vingt et une colonnes — était
+  enfermée dans la colonne de lecture de 58 rem imposée par la coquille de classe ; et la fiche
+  élève étirait sa carte de gauche sur sept cents pixels de blanc pour atteindre la hauteur de la
+  colonne des responsables.
+- **Conséquences** : les onglets de classe portent chacun leur `Column` (la coquille garde la sienne
+  pour l'en-tête et les onglets, qui doivent rester alignés d'un onglet à l'autre) ; les grilles à
+  deux panneaux de l'administration passent en `items-start` ; le seed cesse de préfixer chaque
+  intitulé de compétence par son domaine, et l'écran retire le préfixe de toute façon, pour un
+  référentiel importé qui ferait la même chose.
+
+## ADR-0056 — Le balayage terminé : les écrans que personne n'avait ouverts
+
+- **Contexte** : la session 26 avait corrigé huit défauts mais n'avait regardé qu'une trentaine
+  d'écrans sur soixante-huit. Le porteur demande de finir avant de valider lui-même. Première
+  confirmation que la passe était incomplète : deux barres translucides identiques à celles déjà
+  rendues opaques dormaient encore dans l'en-tête public et dans le bandeau de la pointeuse.
+- **Ce que la fin du balayage a trouvé** — six défauts, tous invisibles pour axe :
+  1. **`/famille`** : la liste des destinations de chaque enfant était rendue _hors_ de sa carte.
+     Deux enfants dont les équipes n'ont pas le même nombre d'intervenants donnaient deux cartes de
+     hauteurs différentes, donc deux listes qui commençaient à deux hauteurs différentes : la page
+     avait l'air décousue. Les destinations deviennent le pied de la carte.
+  2. **L'éditeur Markdown** : `field-sizing: content` sur le `Textarea` partagé prend le pas sur
+     l'attribut `rows`, si bien que le corps d'une circulaire — le champ le plus important du
+     formulaire — s'ouvrait sur quatre lignes quand le code en demandait dix. Le plancher est
+     désormais exprimé dans l'unité que l'auteur avait en tête.
+  3. **La promotion de niveau** disait ce qui manque (« créez d'abord l'année suivante ») sans
+     offrir la porte : les deux états sans issue deviennent des `EmptyState` avec leur action.
+  4. **L'agenda** dessinait un filet sous chaque jour _sans_ événement — la bordure haute d'une
+     liste vide — suivi du blanc d'une journée entière. Le filet appartient maintenant au **jour**,
+     qui est l'unité de cette liste, et le mois se lit comme un registre.
+  5. **Le tableau de bord du secrétariat** : « Pointage · 1 liste » était un lien peint comme du
+     texte gris. Un lien qui ressemble à du texte statique est un lien que personne ne clique ; il
+     prend la place d'action de sa section, comme tous les autres « voir tout » de la page.
+  6. **L'échec de connexion** — « Adresse e-mail ou mot de passe incorrect. » — était une impasse
+     sur l'écran le plus utilisé de l'application, pour une population qui oubliera son mot de
+     passe. Il n'existe pas de réinitialisation (ADR-0028, volontaire) : le message nomme donc le
+     lien par e-mail, qui est la sortie.
+- **Ce qui a été vérifié sans rien trouver**, et qui vaut d'être écrit : le mode sombre regardé à
+  l'œil et non plus seulement passé à axe (la matrice de compétences, l'agenda, les accueils — les
+  quatre niveaux d'acquisition restent distinguables, les filets tiennent) ; les rôles `staff` et
+  `super_admin`, jamais parcourus depuis la session 22 ; `/profil/securite`, `/publier`,
+  `/pointage/[sessionId]`, les formulaires de création. Le lien d'évitement et les cibles de 24 px,
+  soupçonnés par une sonde géométrique, se sont révélés corrects en les regardant.
+
+## ADR-0057 — Ce que les familles reçoivent : e-mails et PDF sur la charte de l'application
+
+- **Contexte** : sept e-mails et deux PDF sortent de cette application vers les familles, et aucune
+  des six sessions de design ne les avait ouverts. Ils étaient restés peints en **sarcelle
+  `#01525e`** sur fond crème — la charte des sessions 1–2, remplacée par les bleus du drapeau en
+  session 16 (ADR-0032). Un parent recevait donc, dans sa boîte, une application qui n'existe plus.
+- **Décision** : une seule anatomie pour tout ce qui sort de l'application — un **surtitre bleu** qui
+  nomme l'expéditeur, un **titre en serif** (la voix de l'école), le texte en sans, un filet, et le
+  pied en gris muet. Les jetons sont ceux de l'application : `#0038b8`, `#0f1e33`, `#55657c`,
+  `#becadc`, fond `#f3f8fe`, carte blanche à 12 px de rayon, contrôle à 6 px.
+- **La serif sans fichier de police** : Georgia dans les e-mails, Times-Roman dans les PDF. L'une est
+  présente dans tous les clients de messagerie, l'autre est livrée avec `@react-pdf` ; aucune police
+  téléchargée ne vaut son poids dans une boîte de réception, et Newsreader n'a pas d'équivalent sûr.
+- **Défauts de contenu, plus graves que les couleurs** :
+  - L'**e-mail d'invitation** — le tout premier message qu'une famille reçoit — affirmait « Vous
+    n'avez pas de mot de passe à retenir : vous recevrez un nouveau lien à chaque connexion. » Faux
+    depuis la session 17 : l'école communique un mot de passe et le lien magique est la seconde voie.
+  - Le **livret** répétait le domaine dans chaque ligne de compétence, sous un titre de section qui
+    le portait déjà — le même défaut que l'écran, corrigé de la même façon (`withoutDomain`), pour
+    les référentiels déjà en base comme pour ceux qu'une école importera.
+  - Le livret imprimait « **Période : Période 1 (…)** » : le libellé répétait le nom de la chose
+    qu'il désigne. Le libellé disparaît, la période se nomme elle-même.
+  - Le **guide PDF** imprimait son sous-titre **à travers les jambages de son titre** : la page pose
+    `lineHeight: 1.4`, dont une ligne de 22 points hérite une boîte plus courte que ses propres
+    descendantes. Une ligne d'affichage déclare son interligne.
+- **Conséquences** : les bandes teintées des sections du livret deviennent des filets en capitales,
+  comme les écrans depuis la session 22 ; la liste du digest s'aligne sur un seul bord gauche avec
+  une barre dans la marge, comme les entrées d'index de l'application. Les modèles d'e-mails de
+  `config.toml` restent commentés — les activer est une décision d'exploitation, pas de design.

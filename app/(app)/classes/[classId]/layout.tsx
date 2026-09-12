@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireClassAccess } from "@/lib/auth/class-access";
@@ -43,46 +44,63 @@ export default async function ClassLayout({
     .join(" · ");
 
   return (
+    /*
+     * The header and the tabs keep the reading column — they are the spine of
+     * the space and must line up with it from tab to tab. What each tab *puts*
+     * under them does not: the competency matrix is a console, twenty-one
+     * columns wide, and it was being squeezed into 58 rem and cut off at the
+     * edge. Every tab therefore carries its own `Column`, as everywhere else
+     * in the application.
+     */
     <>
-      <PageHeader
-        title={cls.name}
-        description={`${levelLabel(cls.level, locale)}${cls.room ? ` · ${cls.room}` : ""}${team ? ` · ${team}` : ""}`}
-        actions={
-          <>
-            {/* a read-only guardian has no messaging: the button led to an empty list */}
-            {canMessage &&
-              (canOpenClassGroup ? (
-                <form action={openClassGroup}>
-                  <input type="hidden" name="classId" value={classId} />
-                  <Button type="submit" variant="outline" className="min-h-11">
-                    <MessageCircleIcon aria-hidden />
-                    {tMessaging("classDiscussion")}
+      <Column>
+        {/* The team used to run on inside the page description — four names with
+          their roles, wrapping three lines between the class name and the tabs,
+          which pushed the navigation down and read as a paragraph. Level and
+          room name the class, so they take the dateline; the team is a caption:
+          one clipped line, the whole of it on hover, and laid out properly in
+          Ma famille where a parent goes to read it. */}
+        <PageHeader
+          eyebrow={`${levelLabel(cls.level, locale)}${cls.room ? ` · ${cls.room}` : ""}`}
+          title={cls.name}
+          caption={team || undefined}
+          actions={
+            <>
+              {/* a read-only guardian has no messaging: the button led to an empty list */}
+              {canMessage &&
+                (canOpenClassGroup ? (
+                  <form action={openClassGroup}>
+                    <input type="hidden" name="classId" value={classId} />
+                    <Button type="submit" variant="outline" className="min-h-11">
+                      <MessageCircleIcon aria-hidden />
+                      {tMessaging("classDiscussion")}
+                    </Button>
+                  </form>
+                ) : belongsToClassGroup ? (
+                  <Button asChild variant="outline" className="min-h-11">
+                    <Link href="/messages">
+                      <MessageCircleIcon aria-hidden />
+                      {tMessaging("classDiscussion")}
+                    </Link>
                   </Button>
-                </form>
-              ) : belongsToClassGroup ? (
-                <Button asChild variant="outline" className="min-h-11">
-                  <Link href="/messages">
-                    <MessageCircleIcon aria-hidden />
-                    {tMessaging("classDiscussion")}
+                ) : null)}
+              {(isTeacher || isStaff) && (
+                <Button asChild className="min-h-11">
+                  <Link href={`/classes/${classId}/publier`}>
+                    <PlusIcon aria-hidden />
+                    {t("post.new")}
                   </Link>
                 </Button>
-              ) : null)}
-            {(isTeacher || isStaff) && (
-              <Button asChild className="min-h-11">
-                <Link href={`/classes/${classId}/publier`}>
-                  <PlusIcon aria-hidden />
-                  {t("post.new")}
-                </Link>
-              </Button>
-            )}
-          </>
-        }
-      />
-      <ClassTabs
-        classId={classId}
-        showAssessments={showAssessments}
-        showLate={isTeacher || isStaff}
-      />
+              )}
+            </>
+          }
+        />
+        <ClassTabs
+          classId={classId}
+          showAssessments={showAssessments}
+          showLate={isTeacher || isStaff}
+        />
+      </Column>
       {children}
     </>
   );

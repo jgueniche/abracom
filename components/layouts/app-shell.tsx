@@ -48,25 +48,30 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
     <div className="flex min-h-dvh flex-col">
       <a
         href="#contenu"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:shadow"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:border focus:border-border focus:bg-popover focus:px-3 focus:py-2 focus:text-sm focus:shadow-lift"
       >
         {tc("skipToContent")}
       </a>
-      <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/65">
-        <div className="mx-auto flex h-16 w-full max-w-[110rem] items-center gap-3 px-4 md:px-6 lg:px-8 2xl:px-12">
-          <Link href="/accueil" className="flex min-h-11 min-w-0 shrink-0 items-center gap-2.5">
+      <header className="sticky top-0 z-40 border-b border-border/80 bg-background">
+        <div className="mx-auto flex h-14 w-full max-w-[110rem] items-stretch gap-3 px-4 md:px-6 lg:h-16 lg:px-8 2xl:px-12">
+          <Link
+            href="/accueil"
+            className="flex min-w-0 shrink-0 items-center gap-2.5 rounded-md py-2"
+          >
             <Image
               src="/icons/icon-192.png"
               alt=""
               width={36}
               height={36}
-              className="size-9 rounded-lg border border-border/70 object-cover"
+              className="size-8 rounded-md border border-rule object-cover"
               priority
             />
             <span className="flex min-w-0 flex-col leading-tight">
-              <span className="font-heading text-lg font-normal tracking-tight">{appName}</span>
+              <span className="font-heading text-lg leading-tight font-normal tracking-[-0.012em]">
+                {appName}
+              </span>
               {user.school && (
-                <span className="hidden truncate text-xs text-muted-foreground sm:inline">
+                <span className="hidden truncate text-[0.6875rem] leading-tight text-muted-foreground sm:inline">
                   {user.school.name}
                 </span>
               )}
@@ -77,7 +82,7 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
             unreadMessages={unreadMessages}
             canMessage={canMessage}
           />
-          <div className="ml-auto flex shrink-0 items-center gap-1">
+          <div className="ml-auto flex shrink-0 items-center gap-0.5">
             <SearchBox />
             <SearchBox compact />
             <PerspectiveSwitcher current={perspective} available={user.perspectives} />
@@ -94,7 +99,7 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
       <main
         id="contenu"
         tabIndex={-1}
-        className="mx-auto w-full max-w-[110rem] flex-1 px-4 pt-6 pb-[calc(var(--nav-h)+1.5rem)] outline-none md:px-6 lg:px-8 lg:pb-12 2xl:px-12"
+        className="mx-auto w-full max-w-[110rem] flex-1 px-4 pt-6 pb-[calc(var(--nav-h)+1.5rem)] outline-none md:px-6 lg:px-8 lg:pt-8 lg:pb-14 2xl:px-12"
       >
         {/* The index the "?" of every page header looks the current path up in. */}
         <HelpIndexProvider articles={helpIndex}>{children}</HelpIndexProvider>

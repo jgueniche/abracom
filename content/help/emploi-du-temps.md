@@ -5,7 +5,7 @@ routes: [/classes/[classId]/emploi-du-temps]
 topic: daily
 keywords: [emploi du temps, horaires, semaine, matière, salle, intervenant, créneau]
 since: 20
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 L'onglet **Emploi du temps** décrit une semaine type : pour chaque jour, les créneaux avec leur horaire de début et de fin, la matière, éventuellement l'intervenant·e et la salle.

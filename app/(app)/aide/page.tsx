@@ -4,7 +4,9 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { articlesFor, groupByTopic, toSearchEntry } from "@/lib/help/articles";
@@ -47,7 +49,7 @@ export default async function HelpPage() {
     user.school && canUseMessaging(user.roles, user.school.id) ? "/messages/nouveau" : null;
 
   return (
-    <>
+    <Column>
       <PageHeader
         title={t("title")}
         description={t("subtitle")}
@@ -78,24 +80,27 @@ export default async function HelpPage() {
         {groups.length === 0 ? (
           <EmptyState icon={BookOpenIcon} title={t("empty")} description={t("emptyHint")} />
         ) : (
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-10">
             {groups.map((group) => (
               <section key={group.topic} aria-labelledby={`topic-${group.topic}`}>
-                <h2 id={`topic-${group.topic}`} className="mb-1 text-lg">
-                  {tTopics(group.topic)}
-                </h2>
-                <p className="mb-3 text-sm text-muted-foreground">
-                  {tTopics(`${group.topic}Hint`)}
-                </p>
-                <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                <SectionHeader
+                  id={`topic-${group.topic}`}
+                  label={tTopics(group.topic)}
+                  count={group.articles.length}
+                  hint={tTopics(`${group.topic}Hint`)}
+                />
+                {/* A table of contents, not twenty-six boxes: the help index
+                    is the one screen whose whole job is to let the eye run down
+                    a list of titles. */}
+                <ul className="border-t border-rule">
                   {group.articles.map((article) => (
-                    <li key={article.slug}>
+                    <li key={article.slug} className="border-b border-rule">
                       <Link
                         href={`/aide/${article.slug}`}
-                        className="flex h-full min-h-11 flex-col rounded-xl border p-3 transition-colors hover:border-primary/40 hover:bg-accent/40"
+                        className="-mx-3 flex min-h-11 flex-col justify-center rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50"
                       >
-                        <span className="font-medium">{article.title}</span>
-                        <span className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
+                        <span className="text-sm font-medium">{article.title}</span>
+                        <span className="mt-0.5 line-clamp-1 text-[0.8125rem] text-muted-foreground">
                           {article.excerpt}
                         </span>
                       </Link>
@@ -109,6 +114,6 @@ export default async function HelpPage() {
       </HelpSearch>
 
       <p className="mt-8 text-sm text-muted-foreground">{t("languageNote")}</p>
-    </>
+    </Column>
   );
 }

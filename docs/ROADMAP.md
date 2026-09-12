@@ -676,6 +676,117 @@ responsable en lecture seule à celui des parents, l'administrateur de plateform
       des comptes liés à des mineurs, pour un corpus que la CI relit déjà), visite guidée sur l'écran.
       L'aide hors ligne est acquise sans travail : les articles sont statiques et partent avec la page.
 
+## Session 22 — Le trait plutôt que la boîte (ADR-0051)
+
+Refonte purement graphique demandée par le porteur à la revue des sessions 16–17 : « l'app est très
+_Claude like_ », « beaucoup de textes et d'encarts sont trop gros, les titres aussi », « des sous-titres
+n'ont pas de cohérence de place, de taille ou de position ». Aucune route, aucun libellé, aucun droit ne
+change — les 43 articles d'aide restent donc exacts.
+
+- [x] Fonte : **Newsreader** remplace Fraunces, Source Serif 4 est supprimée ; deux familles, et une
+      règle de partage — la serif est la voix de l'école, le sans est l'interface
+- [x] Échelle : les crans de titre recoupés dans `@theme` (−20 à −30 %), texte courant inchangé,
+      interligne et approche portés par chaque cran
+- [x] Géométrie : `--radius` de 14 px à 8 px, la pilule réservée à ce qui est rond
+- [x] Relief : l'ombre cède au filet, jeton `--rule` pour les séparateurs internes
+- [x] Couleur : `--surface` / `--secondary` / `--accent` / `--input` désaturés à luminance identique
+      (SC 1.4.11 tenu), survols en gris et non plus en bleu, onglet actif marqué d'un trait
+- [x] Composants partagés : `SectionHeader` (21 `<h2>` à six tailles), `RowList` / `Row` (neuf listes
+      écrites à la main), `FilterChip` / `FilterChips` (six rangées de pilules pleines)
+- [x] `/dev/ui` : section **Anatomie d'écran** et spécimen de l'échelle, pour une validation visuelle
+      sur une vraie page plutôt que sur une planche de composants
+- [ ] Validation visuelle par le porteur
+
+## Session 23 — La forme suit le contenu (ADR-0052)
+
+Premier audit de design mené sur une **stack Supabase réelle** (Docker + seed) : six rôles, écrans
+connectés, 390 px et 1 440 px, clair et sombre. Le registre typographique de la session 22 tenait ; la
+composition, non.
+
+- [x] Trois largeurs choisies par le genre de l'écran (`Column` : `text`, `index`, `full`)
+- [x] `IndexList` / `IndexEntry` : les publications se composent comme un index, pas comme une grille
+- [x] `Table` : un registre est tabulaire (66 élèves, 11 152 px → 6 374 px)
+- [x] Une circulaire composée comme une lettre ; accusé et pièces jointes en appareil
+- [x] Hubs en sommaires, tableau de bord en planche de chiffres, semaine de devoirs en liste continue
+- [x] Icônes décoratives et pastilles retirées ; « ceci vous attend » devient une barre dans la marge
+- [x] Mouvement réduit, barres de défilement fines, feuille d'impression
+- [x] 28 e2e verts (invitation comprise), 436 assertions pgTAP, axe à 0 sur neuf écrans connectés
+- [ ] Validation visuelle par le porteur
+
+## Session 24 — Un onglet, une destination (ADR-0053)
+
+Revue de l'architecture — onglets, sections, logique du clic, ce qui est mis en avant — appuyée sur ce
+que font Klassly, Educartable, TouteMonAnnée, Pronote et ParentSquare.
+
+- [x] L'espace de classe ouvre sur le **cahier de vie** : deux des cinq onglets du téléphone ouvraient
+      le même écran pour un parent d'un enfant
+- [x] Onglets de classe rangés par fréquence d'ouverture ; le premier est l'atterrissage
+- [x] « Formulaires » sort de Communauté (doublon avec École, qui contient Communauté)
+- [x] École rangée par fréquence : Annonces, Agenda, Documents, Formulaires, Communauté
+- [x] **Défaut de fond** : le cahier de vie ne montrait que les billets avec photo et n'affichait
+      jamais leur texte — un billet sans photo n'existait nulle part
+- [x] Le compteur « formulaires à remplir » est un fait de famille, pas un chiffre d'équipe
+- [x] Accueil de l'enseignante : colonne, rail, description qui ne répète plus sa première section
+- [ ] Un bloc « Aujourd'hui » pour l'enseignante (nouvelles requêtes : session de fonctionnalité)
+- [ ] Validation par le porteur
+
+## Session 25 — Deux couches : la structure plus forte que le contenu (ADR-0054)
+
+La navigation doit être ce qu'on voit en premier ; le contenu d'une carte, ce qu'on lit ensuite.
+
+- [x] Structure remontée : onglets de classe 15 px, `semibold` + filet de 2 px à l'actif, barre
+      principale et barre du bas au même registre, libellés de section 13 px en capitales pleines
+- [x] Contenu descendu : titre de carte 15 px, texte courant 14 px sans serif
+      (`<Markdown size="compact">`), métadonnée 11–12 px
+- [x] `PageHeader` : description 13 px, et une `caption` d'une ligne coupée pour un fait (l'équipe
+      d'une classe passait par la description et prenait trois lignes au-dessus des onglets)
+- [x] **53 écrans sans mesure** ramenés à leur colonne : `text` (formulaire, document), `index`
+      (liste), `full` (console) ; les pages d'aide rejoignent la marge de gauche commune
+- [x] Six listes de cartes bordées redeviennent index ou `RowList` ; la page d'aide devient un sommaire
+- [x] Un statut n'est écrit que lorsqu'il fait exception (plus dix « Publiée » bleus d'affilée)
+- [x] `not-found` propre au groupe `(app)` : la coquille reste autour du lecteur égaré
+- [x] Deux régressions de contraste de cette passe trouvées par axe et corrigées
+- [ ] Validation visuelle par le porteur
+
+## Session 26 — Une liste de contrôle tierce, arbitrée par les ADR (ADR-0055)
+
+- [x] `ui-ux-pro-max` vendorisée (corpus et listes seulement, pas les scripts Python)
+- [x] `.claude/skills/design-review/SKILL.md` : la doctrine Kesher arbitre, la liste tierce assiste
+- [x] **Curseur des contrôles** : Tailwind v4 avait retiré `cursor: pointer` des `<button>`
+- [x] **SC 2.4.11** : `scroll-padding` pour que le focus ne passe jamais sous les barres collantes
+- [x] Barres du haut et du bas opaques : on lisait le contenu au travers
+- [x] **Évaluations sans référentiel** : dire ce qui manque au lieu d'une grille vide
+- [x] Colonnes de la matrice : ne plus répéter le domaine porté par l'en-tête
+- [x] Les onglets de classe portent chacun leur colonne ; la matrice reprend toute la largeur
+- [x] Fiche élève et neuf grilles d'administration : `items-start`, plus de carte étirée à vide
+- [ ] Validation visuelle par le porteur
+
+## Session 27 — Le balayage terminé (ADR-0056)
+
+- [x] Les écrans jamais ouverts : formulaires de création, promotion, profil, publier, famille,
+      documents, pointage en session, détails
+- [x] Mode sombre regardé à l'œil, pas seulement passé à axe
+- [x] Rôles `staff` et `super_admin` parcourus
+- [x] Deux barres translucides oubliées (en-tête public, bandeau de pointage)
+- [x] `/famille` : les destinations rentrent dans la carte de l'enfant
+- [x] `field-sizing: content` neutralisait `rows` — le corps d'une circulaire s'ouvrait à quatre lignes
+- [x] Promotion de niveau : les états sans issue offrent leur porte
+- [x] Agenda : le filet appartient au jour, plus à la liste d'événements
+- [x] Tableau de bord du secrétariat : le lien ressemble à un lien
+- [x] Échec de connexion : nommer le lien par e-mail plutôt que laisser sans issue
+- [ ] **Validation visuelle par le porteur — le seul point restant**
+
+## Session 28 — Ce que les familles reçoivent (ADR-0057)
+
+- [x] Les sept e-mails (six gabarits d'authentification + le transactionnel) sur la charte actuelle
+- [x] Les deux PDF (livret, « mon guide ») sur la charte actuelle, serif sans fichier de police
+- [x] **Invitation** : la phrase sur le mot de passe était fausse depuis la session 17
+- [x] **Livret** : le domaine répété dans chaque ligne, et « Période : Période 1 »
+- [x] **Guide** : le sous-titre imprimé à travers les jambages du titre
+- [x] Bandes teintées → filets en capitales, liste du digest alignée sur un seul bord
+- [ ] Brancher Resend et décommenter les modèles de `config.toml` (exploitation, pas design)
+- [ ] Validation visuelle par le porteur
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle
@@ -711,7 +822,10 @@ entrées nommées depuis le pôle Communauté suffiraient, et cela ne coûte rie
 Bloquantes pour la session 2 :
 
 1. **Palette** : le logo est-il monochrome ? Si oui, choix entre bleu profond / or doux et bleu nuit / sable.
-2. **Typographie des titres** : Fraunces ou Newsreader (Inter pour l'UI dans les deux cas).
+2. ~~**Typographie des titres** : Fraunces ou Newsreader~~ — **tranchée en session 22** : Newsreader.
+   Fraunces a composé les titres des sessions 2 à 21 ; à la revue, ses axes `SOFT` / `WONK` se sont
+   révélés être exactement ce que le porteur voulait quitter. Newsreader, à axe optique, sert désormais
+   les titres **et** la prose longue, et Source Serif 4 disparaît (ADR-0051). Inter reste l'interface.
 
 Non bloquantes avant la session 3 (à trancher pour les sessions 3–10) :
 

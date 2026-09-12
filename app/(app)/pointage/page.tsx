@@ -4,7 +4,9 @@ import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,7 +35,7 @@ export default async function AttendancePage() {
   const canCreate = user.school ? isSchoolAdmin(user.roles, user.school.id) : false;
   if (lists.length === 0) {
     return (
-      <>
+      <Column>
         <PageHeader title={t("title")} description={t("noListSubtitle")} />
         <EmptyState
           icon={ClipboardCheckIcon}
@@ -41,7 +43,7 @@ export default async function AttendancePage() {
           description={canCreate ? t("noListAdminHint") : t("noListGrantedHint")}
           action={canCreate ? { href: "/admin/pointage", label: t("createFirstList") } : undefined}
         />
-      </>
+      </Column>
     );
   }
 
@@ -53,7 +55,7 @@ export default async function AttendancePage() {
       <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-base font-semibold">{list.name}</h2>
+            <h2 className="text-base font-semibold tracking-[-0.006em]">{list.name}</h2>
             <Badge variant="outline">{t(`kinds.${list.kind}`)}</Badge>
             {list.session_id && list.closed_at && (
               <Badge variant="secondary">{t("closedBadge")}</Badge>
@@ -86,11 +88,8 @@ export default async function AttendancePage() {
   );
 
   return (
-    <>
-      <PageHeader
-        title={t("title")}
-        description={format.dateTime(new Date(), { dateStyle: "full" })}
-      />
+    <Column>
+      <PageHeader eyebrow={format.dateTime(new Date(), { dateStyle: "full" })} title={t("title")} />
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-3">
           {today.length === 0 ? (
@@ -105,11 +104,11 @@ export default async function AttendancePage() {
         </div>
         {others.length > 0 && (
           <section className="flex flex-col gap-3">
-            <h2 className="eyebrow">{t("otherLists")}</h2>
+            <SectionHeader label={t("otherLists")} count={others.length} className="mb-0" />
             {others.map(card)}
           </section>
         )}
       </div>
-    </>
+    </Column>
   );
 }

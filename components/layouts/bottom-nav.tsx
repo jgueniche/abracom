@@ -124,7 +124,10 @@ function useActive() {
 
 function Count({ value }: { value: number }) {
   return (
-    <span className="absolute top-0 -right-2 min-w-4 rounded-full bg-brick px-1 text-center text-[10px] leading-4 font-semibold text-brick-foreground">
+    <span
+      data-slot="count"
+      className="absolute -top-1 -right-2.5 min-w-[15px] rounded-full bg-brick px-1 text-center text-[0.625rem] leading-[15px] font-semibold text-brick-foreground"
+    >
       {value > 99 ? "99+" : value}
     </span>
   );
@@ -146,7 +149,7 @@ export function BottomNav({
   return (
     <nav
       aria-label={t("home")}
-      className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       <ul className="mx-auto grid max-w-lg grid-cols-5">
         {itemsFor(perspective, canMessage).map(({ href, label, short, icon: Icon, badge }) => {
@@ -159,8 +162,12 @@ export function BottomNav({
                 aria-current={active ? "page" : undefined}
                 aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
                 className={cn(
-                  "flex min-h-14 flex-col items-center justify-center gap-0.5 px-0.5 text-[11px] font-medium text-muted-foreground",
-                  active && "text-primary",
+                  // The active tab is marked by a rule on the bar's own edge,
+                  // the way a tab is marked; the colour alone left two tabs
+                  // looking alike at a glance on a 390 px bar.
+                  "relative flex min-h-14 flex-col items-center justify-center gap-1 px-0.5 text-xs leading-none font-medium text-foreground/70 transition-colors",
+                  active &&
+                    "font-semibold text-primary after:absolute after:top-0 after:h-[2px] after:w-7 after:rounded-full after:bg-primary",
                 )}
               >
                 <span className="relative">
@@ -198,8 +205,8 @@ export function TopNav({
   );
 
   return (
-    <nav aria-label={t("home")} className="hidden items-center gap-0.5 lg:flex">
-      {[...items, ...extra].map(({ href, label, icon: Icon, badge }) => {
+    <nav aria-label={t("home")} className="hidden items-stretch gap-0.5 self-stretch lg:flex">
+      {[...items, ...extra].map(({ href, label, badge }) => {
         const active = isActive(href);
         const count = badge ? unreadMessages : 0;
         return (
@@ -209,14 +216,26 @@ export function TopNav({
             aria-current={active ? "page" : undefined}
             aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
             className={cn(
-              "flex min-h-11 items-center gap-2 rounded-lg px-2.5 text-sm font-medium whitespace-nowrap text-muted-foreground hover:bg-accent hover:text-accent-foreground xl:px-3",
-              active && "bg-accent text-accent-foreground",
+              // A rule sitting on the header's own bottom edge, not a filled
+              // pill: the bar held five blue lozenges, which read as five
+              // buttons rather than as one place you currently are.
+              //
+              // And no icon. A glyph before every label is what a phone bar
+              // needs — a 78 px column has to say "messages" without the word
+              // — and what a desktop bar of named destinations does not: seven
+              // little pictures in a row read as decoration, and decoration in
+              // the top bar is the first thing that dates an interface.
+              "relative flex items-center gap-1.5 rounded-md px-2.5 text-sm font-medium whitespace-nowrap text-foreground/70 transition-colors hover:text-foreground xl:px-3",
+              "after:absolute after:inset-x-2 after:-bottom-px after:h-[2px] after:rounded-full after:bg-primary after:opacity-0 xl:after:inset-x-2.5",
+              active && "font-semibold text-foreground after:opacity-100",
             )}
           >
-            <Icon className="size-4" aria-hidden />
             {t(label)}
             {count > 0 && (
-              <span className="min-w-4 rounded-full bg-brick px-1 text-center text-[10px] leading-4 font-semibold text-brick-foreground">
+              <span
+                data-slot="count"
+                className="min-w-[15px] rounded-full bg-brick px-1 text-center text-[0.625rem] leading-[15px] font-semibold text-brick-foreground"
+              >
                 {count > 99 ? "99+" : count}
               </span>
             )}

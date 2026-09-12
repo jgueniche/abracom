@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -79,15 +81,13 @@ export default async function ReportsPage() {
   );
 
   return (
-    <>
+    <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      {reports.length === 0 && <p className="text-muted-foreground">{t("none")}</p>}
+      {reports.length === 0 && <p className="text-sm text-muted-foreground">{t("none")}</p>}
       <div className="flex flex-col gap-6">
         {open.length > 0 && (
-          <section className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold">
-              {t("open")} ({open.length})
-            </h2>
+          <section className="flex flex-col">
+            <SectionHeader label={t("open")} count={open.length} />
             {open.map(card)}
           </section>
         )}
@@ -100,6 +100,6 @@ export default async function ReportsPage() {
           </details>
         )}
       </div>
-    </>
+    </Column>
   );
 }

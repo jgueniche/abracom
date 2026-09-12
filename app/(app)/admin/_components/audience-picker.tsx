@@ -61,7 +61,7 @@ export function AudiencePicker({
         {kinds.map((kind) => (
           <label
             key={kind}
-            className={`flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-3 text-sm ${audience === kind ? "border-primary bg-primary text-primary-foreground" : ""}`}
+            className={`flex min-h-11 cursor-pointer items-center gap-2 rounded-md border px-2.5 text-[0.8125rem] font-medium transition-colors md:min-h-9 ${audience === kind ? "border-primary/45 bg-primary/10 text-primary" : "border-border bg-card text-muted-foreground hover:text-foreground"}`}
           >
             <input
               type="radio"

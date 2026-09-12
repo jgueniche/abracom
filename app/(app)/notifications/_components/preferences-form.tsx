@@ -34,7 +34,7 @@ export function PreferencesForm({ initial }: { initial: PreferencesInitial }) {
       <div className="overflow-x-auto" tabIndex={0} role="group" aria-label={t("group")}>
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-muted-foreground">
+            <tr className="text-left text-sm text-muted-foreground">
               <th className="py-2 pr-2 font-medium">{t("group")}</th>
               {CHANNELS.map((channel) => (
                 <th key={channel} className="py-2 pr-2 text-center font-medium">

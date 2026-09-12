@@ -1,10 +1,13 @@
-import { CheckCircle2Icon, MegaphoneIcon, PinIcon } from "lucide-react";
+import { MegaphoneIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
-import { ContentCard, EyebrowDot, MetaChip } from "@/components/domain/content-card";
+import { EyebrowDot } from "@/components/domain/content-card";
 import { EmptyState } from "@/components/domain/empty-state";
+import { IndexEntry, IndexList } from "@/components/domain/index-entry";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { isSchoolStaff } from "@/lib/permissions";
 import { plainExcerpt } from "@/lib/text";
@@ -25,8 +28,48 @@ export default async function AnnouncementsPage() {
   ]);
   const canPublish = user.school ? isSchoolStaff(user.roles, user.school.id) : false;
 
+  const pinned = announcements.filter((a) => a.pinned);
+  const rest = announcements.filter((a) => !a.pinned);
+
+  const entry = (a: (typeof announcements)[number]) => {
+    const title = locale === "en" && a.title_en ? a.title_en : a.title;
+    const body = locale === "en" && a.body_md_en ? a.body_md_en : a.body_md;
+    const needsAck = a.requires_ack && !a.isAcked;
+    return (
+      <IndexEntry
+        key={a.id}
+        href={`/annonces/${a.id}`}
+        // Red used to mean "unread", so a routine notice arrived looking like
+        // an alert. It is now reserved for the one thing that genuinely needs
+        // the reader: a receipt still to give.
+        accent={needsAck}
+        unread={!a.isRead}
+        eyebrow={
+          <>
+            {a.author ? `${a.author.first_name} ${a.author.last_name}` : t("by", { name: "" })}
+            {a.published_at && (
+              <>
+                <EyebrowDot />
+                {format.dateTime(new Date(a.published_at), { dateStyle: "medium" })}
+              </>
+            )}
+          </>
+        }
+        marker={
+          needsAck ? (
+            <span className="text-brick">{t("requiresAck")}</span>
+          ) : a.requires_ack && a.isAcked ? (
+            <span className="text-success">{t("acked")}</span>
+          ) : undefined
+        }
+        title={title}
+        excerpt={plainExcerpt(body, 140)}
+      />
+    );
+  };
+
   return (
-    <>
+    <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {announcements.length === 0 ? (
         <EmptyState
@@ -36,61 +79,19 @@ export default async function AnnouncementsPage() {
           action={canPublish ? { href: "/admin/annonces/nouvelle", label: t("write") } : undefined}
         />
       ) : (
-        <ul className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-          {announcements.map((a) => {
-            const title = locale === "en" && a.title_en ? a.title_en : a.title;
-            const body = locale === "en" && a.body_md_en ? a.body_md_en : a.body_md;
-            const needsAck = a.requires_ack && !a.isAcked;
-            return (
-              <li key={a.id}>
-                <ContentCard
-                  href={`/annonces/${a.id}`}
-                  // Red used to mean "unread", so a routine notice arrived
-                  // looking like an alert. It is now reserved for the one thing
-                  // that genuinely needs the reader: a receipt still to give.
-                  accent={needsAck}
-                  unread={!a.isRead}
-                  eyebrow={
-                    <>
-                      {a.pinned && (
-                        <>
-                          <PinIcon className="size-3.5" aria-hidden />
-                          {t("pinned")}
-                          <EyebrowDot />
-                        </>
-                      )}
-                      {a.author
-                        ? `${a.author.first_name} ${a.author.last_name}`
-                        : t("by", { name: "" })}
-                      {a.published_at && (
-                        <>
-                          <EyebrowDot />
-                          {format.dateTime(new Date(a.published_at), { dateStyle: "medium" })}
-                        </>
-                      )}
-                    </>
-                  }
-                  title={title}
-                  excerpt={plainExcerpt(body, 190)}
-                  footer={
-                    needsAck || (a.requires_ack && a.isAcked) ? (
-                      <>
-                        {needsAck && <MetaChip tone="brick">{t("requiresAck")}</MetaChip>}
-                        {a.requires_ack && a.isAcked && (
-                          <MetaChip tone="success">
-                            <CheckCircle2Icon className="size-3.5" aria-hidden />
-                            {t("acked")}
-                          </MetaChip>
-                        )}
-                      </>
-                    ) : undefined
-                  }
-                />
-              </li>
-            );
-          })}
-        </ul>
+        <>
+          {pinned.length > 0 && (
+            <section className="mb-10">
+              <SectionHeader label={t("pinnedSection")} count={pinned.length} />
+              <IndexList>{pinned.map(entry)}</IndexList>
+            </section>
+          )}
+          <section>
+            {pinned.length > 0 && <SectionHeader label={t("allOthers")} count={rest.length} />}
+            <IndexList>{rest.map(entry)}</IndexList>
+          </section>
+        </>
       )}
-    </>
+    </Column>
   );
 }

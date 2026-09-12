@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,7 @@ export default async function StudentDetailPage({
   const admin = isSchoolAdmin(user.roles, schoolId);
 
   return (
-    <>
+    <Column>
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/admin/familles">
           <ArrowLeftIcon aria-hidden />
@@ -46,54 +47,99 @@ export default async function StudentDetailPage({
         title={`${student.first_name} ${student.last_name}`}
         description={`${student.currentEnrollment?.class?.name ?? t("noClass")}${student.family ? ` · ${student.family.name}` : ""}`}
       />
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("save")}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-6">
-            <StudentForm
-              classes={[]}
-              initial={{
-                id: student.id,
-                firstName: student.first_name,
-                lastName: student.last_name,
-                birthDate: student.birth_date,
-                allergiesNote: student.allergies_note,
-                status: student.status,
-              }}
-            />
-            <form action={enrollStudent} className="flex flex-col gap-2 border-t pt-4">
-              <input type="hidden" name="studentId" value={student.id} />
-              <label htmlFor="classId" className="text-sm font-medium">
-                {t("enroll")}
-              </label>
-              <div className="flex gap-2">
-                <select
-                  id="classId"
-                  name="classId"
-                  defaultValue={student.currentEnrollment?.class?.id ?? ""}
-                  className="min-h-11 flex-1 rounded-lg border border-input bg-background px-3 text-sm"
-                >
-                  <option value="" disabled>
-                    {t("noClass")}
-                  </option>
-                  {classes
-                    .filter((c) => !c.archived)
-                    .map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                </select>
-                <Button type="submit" variant="outline" className="min-h-11">
-                  {t("enrollAction")}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-
+      {/* `items-start`: the two columns hold unrelated things of unrelated
+          lengths — the pupil on the left, the guardians on the right — and a
+          grid stretches its cells by default, so the left card was padded out
+          with seven hundred pixels of white to match the right one. */}
+      <div className="grid items-start gap-6 lg:grid-cols-2">
+        {/* The left column is the pupil — the record and the image right that
+            belongs to it; the right column is the guardians. Three cards in one
+            two-column grid put the image right in a second row, which the tall
+            guardians card pushed seven hundred pixels down the page. */}
+        <div className="flex flex-col gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("save")}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-6">
+              <StudentForm
+                classes={[]}
+                initial={{
+                  id: student.id,
+                  firstName: student.first_name,
+                  lastName: student.last_name,
+                  birthDate: student.birth_date,
+                  allergiesNote: student.allergies_note,
+                  status: student.status,
+                }}
+              />
+              <form action={enrollStudent} className="flex flex-col gap-2 border-t pt-4">
+                <input type="hidden" name="studentId" value={student.id} />
+                <label htmlFor="classId" className="text-sm font-medium">
+                  {t("enroll")}
+                </label>
+                <div className="flex gap-2">
+                  <select
+                    id="classId"
+                    name="classId"
+                    defaultValue={student.currentEnrollment?.class?.id ?? ""}
+                    className="min-h-11 flex-1 rounded-lg border border-input bg-background px-3 text-sm"
+                  >
+                    <option value="" disabled>
+                      {t("noClass")}
+                    </option>
+                    {classes
+                      .filter((c) => !c.archived)
+                      .map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                  </select>
+                  <Button type="submit" variant="outline" className="min-h-11">
+                    {t("enrollAction")}
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CameraIcon className="size-4" aria-hidden />
+                {t("imageRights")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <p className="text-sm">
+                {student.image_rights_signed_at
+                  ? t("imageRightsSigned", {
+                      date: format.dateTime(new Date(student.image_rights_signed_at), {
+                        dateStyle: "long",
+                      }),
+                    })
+                  : t("imageRightsMissing")}
+              </p>
+              {admin && (
+                <form action={setImageRights}>
+                  <input type="hidden" name="studentId" value={student.id} />
+                  <input
+                    type="hidden"
+                    name="signed"
+                    value={student.image_rights_signed_at ? "false" : "true"}
+                  />
+                  <Button
+                    type="submit"
+                    variant={student.image_rights_signed_at ? "destructive" : "outline"}
+                    className="min-h-11"
+                  >
+                    {student.image_rights_signed_at ? t("imageRightsRevoke") : t("imageRightsMark")}
+                  </Button>
+                </form>
+              )}
+            </CardContent>
+          </Card>
+        </div>
         <Card>
           <CardHeader>
             <CardTitle>{t("guardians")}</CardTitle>
@@ -161,43 +207,7 @@ export default async function StudentDetailPage({
             )}
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CameraIcon className="size-4" aria-hidden />
-              {t("imageRights")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            <p className="text-sm">
-              {student.image_rights_signed_at
-                ? t("imageRightsSigned", {
-                    date: format.dateTime(new Date(student.image_rights_signed_at), {
-                      dateStyle: "long",
-                    }),
-                  })
-                : t("imageRightsMissing")}
-            </p>
-            {admin && (
-              <form action={setImageRights}>
-                <input type="hidden" name="studentId" value={student.id} />
-                <input
-                  type="hidden"
-                  name="signed"
-                  value={student.image_rights_signed_at ? "false" : "true"}
-                />
-                <Button
-                  type="submit"
-                  variant={student.image_rights_signed_at ? "destructive" : "outline"}
-                  className="min-h-11"
-                >
-                  {student.image_rights_signed_at ? t("imageRightsRevoke") : t("imageRightsMark")}
-                </Button>
-              </form>
-            )}
-          </CardContent>
-        </Card>
       </div>
-    </>
+    </Column>
   );
 }

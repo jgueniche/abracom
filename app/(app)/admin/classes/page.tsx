@@ -2,6 +2,7 @@ import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,15 +24,15 @@ export default async function ClassesPage() {
   const admin = isSchoolAdmin(user.roles, schoolId);
 
   return (
-    <>
+    <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
         <ul className="flex flex-col gap-3">
           {classes.map((c) => (
             <li key={c.id}>
               <Link
                 href={`/admin/classes/${c.id}`}
-                className="flex items-center gap-4 rounded-2xl border p-4 hover:bg-accent/60"
+                className="flex items-center gap-4 rounded-xl border p-4 hover:bg-muted/60"
               >
                 <Badge variant="secondary">{c.level?.code}</Badge>
                 <div className="min-w-0 flex-1">
@@ -70,6 +71,6 @@ export default async function ClassesPage() {
           </Card>
         )}
       </div>
-    </>
+    </Column>
   );
 }

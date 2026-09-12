@@ -2,6 +2,8 @@ import { CalendarXIcon, PaperclipIcon, PenLineIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,101 +43,103 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
   } as const;
 
   return (
-    <div className="flex flex-col gap-6">
-      {showDeclareCard && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{isStaff ? t("record") : t("declare")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {canDeclare ? (
-              <AbsenceForm
-                students={declareFor.map((s) => ({
-                  id: s.id,
-                  name: `${s.first_name} ${s.last_name}`,
-                }))}
-                canSign={!staffView}
-                defaultName={`${user.profile.first_name} ${user.profile.last_name}`.trim()}
-              />
-            ) : (
-              <p className="text-sm text-muted-foreground">{t("readOnly")}</p>
-            )}
-          </CardContent>
-        </Card>
-      )}
-      <h2 className="text-lg font-semibold">{t("title")}</h2>
-      {absences.length === 0 ? (
-        <EmptyState icon={CalendarXIcon} title={t("empty")} description={t("emptyHint")} />
-      ) : (
-        <ul className="flex flex-col gap-2">
-          {absences.map((a) => (
-            <li
-              key={a.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3"
-            >
-              <div>
-                <p className="font-medium">
-                  {a.student ? `${a.student.first_name} ${a.student.last_name} · ` : ""}
-                  {t(`kinds.${a.kind}`)}
-                  <Badge variant={variant[a.status]} className="ml-2">
-                    {t(`status.${a.status}`)}
-                  </Badge>
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {t("period", {
-                    from: format.dateTime(new Date(a.starts_on), { dateStyle: "medium" }),
-                    to: format.dateTime(new Date(a.ends_on), { dateStyle: "medium" }),
-                  })}
-                  {a.reason ? ` · ${a.reason}` : ""}
-                  {a.justification_path ? (
-                    <span className="ml-2 inline-flex items-center gap-1">
-                      <PaperclipIcon className="size-3" aria-hidden />
-                      {t("withFile")}
-                    </span>
-                  ) : null}
-                </p>
-                {notes.get(a.id) && (
-                  <p className="mt-1 inline-flex items-start gap-1 text-sm">
-                    <PenLineIcon
-                      className="mt-0.5 size-3 shrink-0 text-muted-foreground"
-                      aria-hidden
-                    />
-                    <span>
-                      <span className="text-muted-foreground">
-                        {t("signedBy", {
-                          name: notes.get(a.id)!.signedName,
-                          date: format.dateTime(new Date(notes.get(a.id)!.signedAt), {
-                            dateStyle: "medium",
-                            timeStyle: "short",
-                          }),
-                        })}
-                      </span>
-                    </span>
-                  </p>
-                )}
-              </div>
-              {isStaff && a.status === "declared" && (
-                <div className="flex gap-2">
-                  <form action={reviewAbsence}>
-                    <input type="hidden" name="absenceId" value={a.id} />
-                    <input type="hidden" name="status" value="justified" />
-                    <Button type="submit" variant="outline" size="sm" className="min-h-11">
-                      {t("justify")}
-                    </Button>
-                  </form>
-                  <form action={reviewAbsence}>
-                    <input type="hidden" name="absenceId" value={a.id} />
-                    <input type="hidden" name="status" value="unjustified" />
-                    <Button type="submit" variant="ghost" size="sm" className="min-h-11">
-                      {t("unjustify")}
-                    </Button>
-                  </form>
-                </div>
+    <Column>
+      <div className="flex flex-col gap-6">
+        {showDeclareCard && (
+          <Card>
+            <CardHeader>
+              <CardTitle>{isStaff ? t("record") : t("declare")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {canDeclare ? (
+                <AbsenceForm
+                  students={declareFor.map((s) => ({
+                    id: s.id,
+                    name: `${s.first_name} ${s.last_name}`,
+                  }))}
+                  canSign={!staffView}
+                  defaultName={`${user.profile.first_name} ${user.profile.last_name}`.trim()}
+                />
+              ) : (
+                <p className="text-sm text-muted-foreground">{t("readOnly")}</p>
               )}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+            </CardContent>
+          </Card>
+        )}
+        <SectionHeader label={t("title")} count={absences.length || undefined} />
+        {absences.length === 0 ? (
+          <EmptyState icon={CalendarXIcon} title={t("empty")} description={t("emptyHint")} />
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {absences.map((a) => (
+              <li
+                key={a.id}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3"
+              >
+                <div>
+                  <p className="font-medium">
+                    {a.student ? `${a.student.first_name} ${a.student.last_name} · ` : ""}
+                    {t(`kinds.${a.kind}`)}
+                    <Badge variant={variant[a.status]} className="ml-2">
+                      {t(`status.${a.status}`)}
+                    </Badge>
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("period", {
+                      from: format.dateTime(new Date(a.starts_on), { dateStyle: "medium" }),
+                      to: format.dateTime(new Date(a.ends_on), { dateStyle: "medium" }),
+                    })}
+                    {a.reason ? ` · ${a.reason}` : ""}
+                    {a.justification_path ? (
+                      <span className="ml-2 inline-flex items-center gap-1">
+                        <PaperclipIcon className="size-3" aria-hidden />
+                        {t("withFile")}
+                      </span>
+                    ) : null}
+                  </p>
+                  {notes.get(a.id) && (
+                    <p className="mt-1 inline-flex items-start gap-1 text-sm">
+                      <PenLineIcon
+                        className="mt-0.5 size-3 shrink-0 text-sm text-muted-foreground"
+                        aria-hidden
+                      />
+                      <span>
+                        <span className="text-sm text-muted-foreground">
+                          {t("signedBy", {
+                            name: notes.get(a.id)!.signedName,
+                            date: format.dateTime(new Date(notes.get(a.id)!.signedAt), {
+                              dateStyle: "medium",
+                              timeStyle: "short",
+                            }),
+                          })}
+                        </span>
+                      </span>
+                    </p>
+                  )}
+                </div>
+                {isStaff && a.status === "declared" && (
+                  <div className="flex gap-2">
+                    <form action={reviewAbsence}>
+                      <input type="hidden" name="absenceId" value={a.id} />
+                      <input type="hidden" name="status" value="justified" />
+                      <Button type="submit" variant="outline" size="sm" className="min-h-11">
+                        {t("justify")}
+                      </Button>
+                    </form>
+                    <form action={reviewAbsence}>
+                      <input type="hidden" name="absenceId" value={a.id} />
+                      <input type="hidden" name="status" value="unjustified" />
+                      <Button type="submit" variant="ghost" size="sm" className="min-h-11">
+                        {t("unjustify")}
+                      </Button>
+                    </form>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </Column>
   );
 }

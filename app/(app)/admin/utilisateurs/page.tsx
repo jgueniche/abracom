@@ -1,5 +1,6 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -100,9 +101,9 @@ export default async function MembersPage({
   );
 
   return (
-    <>
+    <Column width="full">
       <PageHeader title={t("title")} description={t("subtitle")} />
-      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
@@ -160,6 +161,6 @@ export default async function MembersPage({
           </Card>
         )}
       </div>
-    </>
+    </Column>
   );
 }

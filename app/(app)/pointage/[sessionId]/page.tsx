@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -59,7 +60,7 @@ export default async function AttendanceSessionPage({
   const closed = session.closed_at !== null;
 
   return (
-    <>
+    <Column width="full">
       <PageHeader
         eyebrow={
           <Link href="/pointage" className="inline-flex items-center gap-1 hover:underline">
@@ -95,6 +96,6 @@ export default async function AttendanceSessionPage({
         recordsPickup={session.list.records_pickup}
         closed={closed}
       />
-    </>
+    </Column>
   );
 }

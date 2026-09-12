@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -29,21 +30,21 @@ export default async function MessagesPage() {
   const canCreateGroup = canWriteInSchool(user.roles, user.school.id);
 
   return (
-    <>
+    <Column width="text">
       <PageHeader
         title={t("title")}
         description={t("subtitle")}
         actions={
           <>
             {canCreateGroup && (
-              <Button asChild variant="outline" className="min-h-11">
+              <Button asChild variant="outline">
                 <Link href="/messages/nouveau-groupe">
                   <UsersRoundIcon aria-hidden />
                   {t("group.new")}
                 </Link>
               </Button>
             )}
-            <Button asChild className="min-h-11">
+            <Button asChild>
               <Link href="/messages/nouveau">
                 <PlusIcon aria-hidden />
                 {t("new")}
@@ -60,8 +61,8 @@ export default async function MessagesPage() {
           action={{ href: "/messages/nouveau", label: t("new") }}
         />
       ) : (
-        <ThreadList threads={threads} className="max-w-3xl" />
+        <ThreadList threads={threads} />
       )}
-    </>
+    </Column>
   );
 }

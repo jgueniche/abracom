@@ -73,7 +73,8 @@
       "forms": "Formulaires",
       "feedback": "Retours et superpositions",
       "cards": "Cartes métier",
-      "icons": "Icônes PWA"
+      "icons": "Icônes PWA",
+      "anatomy": "Anatomie d'écran"
     },
     "palette": {
       "brand": "Couleurs de marque (constantes)",
@@ -84,11 +85,20 @@
       "onBackground": "sur fond de page"
     },
     "typography": {
-      "heading": "Titres · Fraunces",
-      "body": "Texte · Inter",
+      "heading": "Deux couches : la structure, puis le contenu",
+      "scale": "La serif porte la voix de l'école, le sans porte l'interface.",
       "sample": "Portez ce vieux whisky au juge blond qui fume",
       "lead": "Un texte d'introduction, un peu plus grand, pour les annonces importantes de la direction.",
-      "muted": "Texte secondaire pour les métadonnées, les aides et les horodatages."
+      "muted": "Texte secondaire pour les métadonnées, les aides et les horodatages.",
+      "page": "Titre de page",
+      "nav": "Onglet, destination",
+      "section": "Libellé de section",
+      "content": "Titre de contenu (éditorial)",
+      "card": "Titre de carte (interface)",
+      "body": "Texte courant",
+      "eyebrow": "Surtitre",
+      "meta": "Métadonnée",
+      "prose": "Prose institutionnelle"
     },
     "buttons": {
       "default": "Principal",
@@ -151,6 +161,40 @@
     },
     "icons": {
       "description": "Générées depuis le logo officiel, sans altération, par scripts/brand/generate-icons.ts (favicon, iOS, PWA standard et maskable)."
+    },
+    "anatomy": {
+      "eyebrow": "Jeudi 11 septembre",
+      "title": "Bonjour Prénom fictif",
+      "description": "Ce que l'école vous demande aujourd'hui, puis le reste.",
+      "action": "Nouveau devoir",
+      "today": "Aujourd'hui",
+      "todayHint": "Trois choses vous attendent, la plus urgente en tête.",
+      "destinations": "L'école",
+      "publications": "Dernières publications",
+      "seeAll": "Tout voir",
+      "kindAck": "Accusé",
+      "kindHomework": "Devoir",
+      "kindNote": "Mot",
+      "rowAck": "Réunion de rentrée des classes maternelles",
+      "rowHomework": "Apporter une photo de famille",
+      "rowNote": "Sortie au parc reportée à mardi",
+      "rowAckDetail": "Accusé de lecture demandé avant vendredi",
+      "rowHomeworkDetail": "PS Tournesols · pour jeudi",
+      "rowNoteDetail": "De la part de l'enseignante",
+      "hubAnnouncements": "Annonces",
+      "hubAnnouncementsHint": "Ce que la direction adresse aux familles.",
+      "hubAnnouncementsMeta": "1 accusé en attente",
+      "hubDocuments": "Documents",
+      "hubDocumentsHint": "Circulaires, autorisations, règlement.",
+      "hubAgenda": "Agenda",
+      "hubAgendaHint": "Calendrier scolaire et fêtes juives.",
+      "emptyTitle": "Aucun message pour l'instant",
+      "emptyDescription": "Les échanges avec l'équipe apparaîtront ici dès le premier message.",
+      "emptyAction": "Écrire à l'équipe",
+      "register": "Registre",
+      "columnPupil": "Élève",
+      "columnClass": "Classe",
+      "columnSeen": "Vu par"
     }
   },
   "auth": {
@@ -174,7 +218,7 @@
       "password": "Mot de passe",
       "signIn": "Se connecter",
       "signingIn": "Connexion…",
-      "invalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
+      "invalidCredentials": "Adresse e-mail ou mot de passe incorrect. Vous pouvez aussi recevoir un lien de connexion par e-mail.",
       "unavailable": "Le service de connexion est momentanément indisponible. Réessayez dans un instant.",
       "noAccountCta": "Pas de compte ? Demandez directement à l'école de vous créer votre compte"
     },
@@ -215,7 +259,7 @@
   "appHome": {
     "greeting": "Bonjour {name}",
     "parent": {
-      "title": "Aujourd'hui",
+      "title": "Ce que l'école attend de vous, puis ce qui vient.",
       "children": "Mes enfants",
       "pendingAcks": "{count, plural, =0 {Aucune annonce à confirmer} one {# annonce à confirmer} other {# annonces à confirmer}}",
       "pendingHint": "Ouvrir les annonces à confirmer.",
@@ -236,7 +280,8 @@
       "title": "Mes classes",
       "students": "{count, plural, =0 {Aucun élève} one {# élève} other {# élèves}}",
       "noClasses": "Aucune classe ne vous est affectée pour cette année.",
-      "room": "Salle {room}"
+      "room": "Salle {room}",
+      "subtitle": "Vos classes, le pointage du jour et ce qui vient."
     },
     "admin": {
       "title": "Tableau de bord",
@@ -245,7 +290,11 @@
       "classes": "Classes",
       "activation": "Comptes parents activés",
       "activationHint": "{active} actifs sur {total} invités",
-      "classesTitle": "Classes de l'année"
+      "classesTitle": "Classes de l'année",
+      "columnClass": "Classe",
+      "columnLevel": "Niveau",
+      "columnPupils": "Élèves",
+      "columnTeacher": "Enseignant·e"
     }
   },
   "family": {
@@ -449,7 +498,10 @@
       "imageRightsRevoke": "Retirer l'autorisation",
       "imageRightsMark": "Enregistrer une autorisation papier",
       "imageRightsRevoked": "Autorisation retirée ; l'élève n'apparaît plus sur aucune photo identifiée.",
-      "imageRightsMarked": "Autorisation enregistrée."
+      "imageRightsMarked": "Autorisation enregistrée.",
+      "columnPupil": "Élève",
+      "columnClass": "Classe",
+      "columnGuardians": "Responsables"
     },
     "members": {
       "title": "Utilisateurs",
@@ -550,7 +602,9 @@
       "done": "Promotion terminée : {classes} classes créées, {students} élèves inscrits, {left} élèves sortis.",
       "invalid": "Correspondance invalide.",
       "forbidden": "Réservé à la direction.",
-      "error": "La promotion a échoué ; aucune modification n'a été appliquée."
+      "error": "La promotion a échoué ; aucune modification n'a été appliquée.",
+      "noNextTitle": "L'année suivante n'existe pas encore",
+      "createNextYear": "Créer l'année suivante"
     },
     "groups": {
       "publications": "Publications",
@@ -726,7 +780,10 @@
     "notFound": "Annonce introuvable.",
     "morePhotos": "+{count}",
     "emptyHint": "Les annonces de la direction et de l'équipe enseignante arriveront ici.",
-    "write": "Rédiger une annonce"
+    "write": "Rédiger une annonce",
+    "pinnedSection": "Épinglées",
+    "allOthers": "Toutes les annonces",
+    "ackTitle": "Accusé de lecture"
   },
   "documents": {
     "title": "Documents",
@@ -982,11 +1039,11 @@
       "newHomework": "Nouveau devoir"
     },
     "journal": {
-      "empty": "Pas encore de photos.",
+      "empty": "Le cahier de vie est encore vide.",
       "month": "{month}",
       "download": "Téléchargement désactivé par l'école",
       "photos": "{count, plural, one {# photo} other {# photos}}",
-      "emptyHint": "Les photos et les billets du cahier de vie s'afficheront ici, mois par mois."
+      "emptyHint": "Les billets et les photos du cahier de vie s'afficheront ici, mois par mois."
     },
     "notes": {
       "title": "Mots individuels",
@@ -1616,7 +1673,6 @@
     },
     "pdfLabels": {
       "title": "Livret de compétences",
-      "period": "Période",
       "born": "Né·e le {date}",
       "class": "Classe",
       "teacher": "Enseignant·e",
@@ -1628,7 +1684,9 @@
       "noData": "Aucune évaluation pour cette période.",
       "generatedOn": "Généré le {date} par {app}",
       "confidentiality": "Document confidentiel destiné à la famille de l'élève."
-    }
+    },
+    "noSkills": "Aucune compétence n'est définie pour ce niveau",
+    "noSkillsHint": "Le référentiel de compétences est installé par l'école, niveau par niveau. Tant qu'il est vide pour {level}, il n'y a rien à évaluer ici — signalez-le à la direction."
   },
   "community": {
     "title": "Communauté",
@@ -2080,7 +2138,8 @@
     "noListGranted": "Aucune liste ne vous est confiée",
     "noListGrantedHint": "La direction accorde le pointage liste par liste. Demandez-lui de vous ajouter à celle que vous tenez.",
     "createFirstList": "Créer une liste",
-    "nothingTodaySeeLists": "{count, plural, one {Pointage · # liste} other {Pointage · # listes}}"
+    "nothingTodaySeeLists": "{count, plural, one {Pointage · # liste} other {Pointage · # listes}}",
+    "seeLists": "Voir les listes"
   },
   "timetable": {
     "title": "Emploi du temps",

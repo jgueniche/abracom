@@ -5,7 +5,7 @@ routes: [/profil/donnees]
 topic: data
 keywords: [données, RGPD, export, suppression, compte, effacement, anonymisation, conservation]
 since: 14
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Mon profil → **Mes données** met en œuvre vos droits sans avoir à écrire à personne.

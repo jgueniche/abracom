@@ -68,7 +68,7 @@ export async function MediaGrid({
               </a>
             )}
             {isLast && (
-              <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-foreground/55 text-lg font-bold text-background">
+              <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-foreground/55 text-base font-semibold text-background tabular-nums">
                 +{remaining}
               </span>
             )}

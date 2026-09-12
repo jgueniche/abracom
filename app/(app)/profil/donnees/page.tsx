@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +20,7 @@ export default async function DataRightsPage() {
   await requireCurrentUser();
   const [t, tp] = await Promise.all([getTranslations("dataRights"), getTranslations("profile")]);
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/profil">
           <ArrowLeftIcon aria-hidden />
@@ -51,6 +52,6 @@ export default async function DataRightsPage() {
           </CardContent>
         </Card>
       </div>
-    </>
+    </Column>
   );
 }

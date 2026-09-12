@@ -225,6 +225,112 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   sans accents ni casse, extraits surlignés, état vide qui propose une sortie ; `/recherche` remonte les
   articles à côté des annonces. PDF « mon guide » par rôle (ADR-0048) — au passage, un vrai défaut de
   mise en page `@react-pdf` corrigé. 156 tests unitaires, 436 assertions pgTAP inchangées et vertes.
+- **Session 22 — code complet, validation visuelle en attente** : refonte purement graphique
+  (ADR-0051), « le trait plutôt que la boîte ». Fraunces cède la place à **Newsreader** (une seule serif
+  éditoriale, à axe optique, pour les titres et la prose ; Source Serif 4 supprimée) et la serif devient
+  **la voix de l'école** quand le sans reste **l'interface**. L'échelle typographique est recoupée dans
+  `@theme` : les crans de titre perdent 20 à 30 %, le texte courant ne bouge pas, chaque cran porte son
+  interligne et son approche. `--radius` passe de 14 px à 8 px, l'ombre cède au filet (jeton `--rule`
+  pour les séparateurs internes), et `--surface` / `--secondary` / `--accent` / `--input` perdent de la
+  chroma à luminance identique — le SC 1.4.11 tient, le bleu ne crie plus. Trois composants partagés
+  absorbent ce qui était recopié : `SectionHeader` (vingt et un `<h2>` à six tailles), `RowList` / `Row`
+  (neuf listes écrites à la main), `FilterChip` / `FilterChips` (six rangées de pilules bleues pleines).
+  Les onglets se marquent d'un trait, plus d'un aplat. `/dev/ui` gagne une section **Anatomie d'écran**
+  et un spécimen de l'échelle. Aucune route, aucun libellé et aucun droit ne bougent.
+- **Session 23 — audit de composition sur stack Supabase réelle, code complet** (ADR-0052). La
+  session 22 n'avait jamais vu les écrans connectés ; montée cette fois (Docker + `supabase start` +
+  seed), elle a montré que le défaut restant était la **composition**, pas le détail : aucune colonne de
+  lecture (tout s'étalait sur 1 760 px), la grille de cartes comme réponse à tout (66 élèves en 66
+  cartes, 11 152 px), et une icône par ligne (sept dans la barre du haut). Trois largeurs choisies par
+  le genre de l'écran (`Column` : `text` 42 rem, `index` 58 rem, `full` pour les consoles) ; `IndexList`
+  pour les publications, `Table` pour les registres, les hubs en sommaires, le tableau de bord en
+  planche de chiffres ; une circulaire composée comme une lettre, avec l'accusé et les pièces jointes en
+  appareil à côté du texte ; icônes décoratives et pastilles retirées (la marque « ceci vous attend »
+  devient une barre dans la marge). **Défauts trouvés en regardant** : le marqueur d'urgence était
+  dessiné hors d'une carte qui coupe ce qui déborde — invisible partout ; la description de l'accueil
+  parent répétait le libellé de la section juste dessous ; un article d'aide décrivait une carte
+  fusionnée depuis la session 19. **Vérifications inédites ici** : 28 e2e verts _invitation comprise_,
+  436 assertions pgTAP, `check-bundle` confirmé sur un vrai bundle, axe à 0 violation sérieuse sur neuf
+  écrans connectés en clair et en sombre. Au passage, `015_attendance.sql` échouait toutes les nuits
+  entre 22 h et minuit UTC (occurrence datée à Paris, comparée à un `current_date` serveur) — corrigé.
+- **Session 24 — revue d'architecture, code complet** (ADR-0053). Un onglet doit mener quelque part
+  qu'aucun autre ne mène. Sur le téléphone d'un parent d'un enfant, **deux des cinq onglets ouvraient
+  le même écran** — « Devoirs » et « Ma classe », qui atterrissait sur les devoirs de la classe :
+  séquelle de la session 16 (l'atterrissage) que la session 17 (l'onglet Devoirs fusionné) n'avait pas
+  revue. L'espace de classe ouvre désormais sur le **cahier de vie**, ses onglets sont rangés par
+  fréquence d'ouverture, « Formulaires » sort de Communauté (il figurait aussi dans École, qui contient
+  Communauté), et École est rangée par fréquence. Le déplacement a mis au jour un défaut de fond : le
+  cahier de vie **ne montrait que les billets portant une photo et n'affichait jamais leur texte** —
+  depuis la suppression de l'onglet « Fil », un billet sans photo n'existait nulle part. Corrigés
+  aussi : le compteur « N formulaires à remplir » comptait pour l'équipe les formulaires que personne
+  n'avait remplis, et l'accueil de l'enseignante répétait en description le libellé de sa première
+  section. **Reste à faire, signalé et non fait** : l'accueil de l'enseignante n'a pas d'équivalent du
+  bloc « Aujourd'hui » du parent ni de la file d'attente de la direction — cela demande de nouvelles
+  requêtes, donc une session de fonctionnalité, pas de mise en forme.
+- **Session 25 — hiérarchie de lecture, code complet** (ADR-0054). La première passe graphique avait
+  rapetissé la navigation en même temps que le contenu : sur l'espace de classe, le titre d'une carte
+  du cahier de vie sortait plus gros que les onglets qui mènent aux devoirs et aux absences, et
+  l'équipe enseignante occupait trois lignes de corps de texte juste au-dessus d'eux. L'interface se
+  lit désormais en **deux couches** : la **structure** parle le plus fort — onglet 15 px, `semibold` +
+  filet de 2 px à l'état actif, libellé de section 13 px en capitales, jamais sous `foreground/70` ;
+  le **contenu** passe dessous — titre de carte 15 px, texte 14 px, métadonnée 11–12 px, corps des
+  publications en `<Markdown size="compact">`. Un en-tête porte au plus une phrase de description ; un
+  fait sur l'écran (l'équipe d'une classe) devient une `caption` d'une ligne coupée. La mesure de la
+  session 23 n'était appliquée que par une poignée d'écrans : **les 53 autres s'étalaient sur 1 760 px**
+  — chaque page porte maintenant sa `Column` (`text` / `index` / `full`), l'aide comprise, qui était
+  centrée. Six listes de cartes bordées redeviennent index ou `RowList`, la page d'aide passe de
+  vingt-six encadrés à un sommaire, un statut n'est nommé que s'il fait exception. Deux régressions de
+  contraste introduites par la passe elle-même (onglet au repos 4,38:1, caption 4,02:1) trouvées par
+  axe et corrigées, et un `not-found` propre au groupe `(app)` : une classe qui n'est pas la vôtre ne
+  fait plus disparaître la barre de navigation. 28 e2e verts (invitation comprise), 156 tests
+  unitaires, axe à 0 violation sérieuse sur douze écrans connectés en clair et en sombre, à 390 et
+  1 440 px.
+- **Session 26 — une liste de contrôle tierce, et ce qu'elle a trouvé** (ADR-0055). Le corpus de
+  `ui-ux-pro-max` (MIT) est vendorisé dans `.claude/skills/ui-ux-pro-max/` **sans ses scripts
+  Python**, et `.claude/skills/design-review/SKILL.md` pose la doctrine de Kesher et arbitre : en cas
+  de contradiction, l'ADR gagne, et son générateur de design system n'est jamais lancé ici. Huit
+  défauts corrigés. Trois par la liste, qu'aucune des quatre sessions de design n'avait vus :
+  **Tailwind v4 a retiré le `cursor: pointer` des boutons** (toute l'application répondait au
+  pointeur comme un paragraphe, pendant que les liens voisins montraient une main) ; **SC 2.4.11
+  « Focus Not Obscured » échouait sur tout le téléphone** (tabuler collait l'élément au bord, donc
+  sous la barre du bas : 57 px d'une ligne de 63 px, anneau de focus compris — corrigé par
+  `scroll-padding`) ; et les deux barres translucides laissaient lire le contenu au travers, devenues
+  opaques. Cinq en regardant les écrans : la **grille d'évaluations d'une classe sans référentiel**
+  affichait une colonne de noms, une légende et « Enregistrer la grille » sous une grille vide — le
+  seed ne remplit que PS, MS et GS, donc six niveaux sur neuf avaient l'air cassés ; chaque colonne
+  de la matrice répétait le domaine déjà porté par son en-tête puis tronquait ce qui distingue les
+  colonnes ; la matrice, console de vingt et une colonnes, était enfermée dans la colonne de lecture
+  de 58 rem (les onglets de classe portent désormais chacun leur `Column`) ; la fiche élève étirait
+  sa carte de gauche sur sept cents pixels de blanc ; et neuf grilles à deux panneaux de
+  l'administration faisaient la même chose. Vérifié : `pnpm check`, `pnpm build`, 28 e2e,
+  436 assertions pgTAP, axe à 0 violation sérieuse sur vingt-six écrans en clair et en sombre.
+- **Session 27 — balayage terminé** (ADR-0056). La session 26 n'avait regardé qu'une trentaine
+  d'écrans sur soixante-huit ; les autres y sont passés, plus le mode sombre à l'œil et les rôles
+  `staff` et `super_admin` jamais parcourus depuis la session 22. Deux barres translucides
+  identiques à celles déjà corrigées dormaient encore dans l'en-tête public et le bandeau de la
+  pointeuse. Six défauts de plus, tous invisibles pour axe : sur **`/famille`**, la liste des
+  destinations était rendue hors de la carte de l'enfant, si bien que deux enfants aux équipes de
+  tailles différentes donnaient deux listes décalées ; **`field-sizing: content` neutralisait
+  l'attribut `rows`**, et le corps d'une circulaire s'ouvrait sur quatre lignes au lieu de dix ; la
+  **promotion de niveau** disait ce qui manque sans offrir la porte ; l'**agenda** dessinait un filet
+  sous chaque jour sans événement, suivi du blanc d'une journée (le filet appartient maintenant au
+  jour, qui est l'unité de la liste) ; le **tableau de bord du secrétariat** peignait son seul lien
+  comme du texte gris ; et l'**échec de connexion** était une impasse sur l'écran le plus utilisé de
+  l'application — il nomme désormais le lien par e-mail, qui est la sortie puisqu'il n'y a pas de
+  réinitialisation (ADR-0028). Vérifié : `pnpm check`, `pnpm build`, 28 e2e, axe à 0 violation
+  sérieuse. **Validation visuelle par le porteur : c'est le seul point qui reste.**
+- **Session 28 — ce que les familles reçoivent** (ADR-0057). Sept e-mails et deux PDF sortent vers
+  les familles ; aucune des six sessions de design ne les avait ouverts. Tous étaient restés peints
+  en **sarcelle `#01525e` sur fond crème** — la charte des sessions 1–2, remplacée en session 16. Ils
+  portent désormais la même anatomie que l'application : surtitre bleu qui nomme l'expéditeur, titre
+  en serif (Georgia dans les e-mails, Times-Roman dans les PDF — aucune police téléchargée), texte en
+  sans, filet, pied muet. Quatre défauts de contenu, plus graves que les couleurs : l'**e-mail
+  d'invitation**, le tout premier message qu'une famille reçoit, affirmait « vous n'avez pas de mot
+  de passe à retenir », faux depuis la session 17 ; le **livret** répétait le domaine dans chaque
+  ligne de compétence sous un titre qui le portait déjà, et imprimait « Période : Période 1 » ; le
+  **guide PDF** imprimait son sous-titre à travers les jambages de son titre (une ligne de 22 points
+  héritait du `lineHeight: 1.4` de la page). Vérifié : `pnpm check`, `pnpm build`, 28 e2e, et les
+  neuf documents rendus puis regardés un par un.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

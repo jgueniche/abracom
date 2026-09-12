@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,7 @@ export default async function ClassDetailPage({
   const admin = isSchoolAdmin(user.roles, schoolId);
 
   return (
-    <>
+    <Column width="full">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/admin/classes">
           <ArrowLeftIcon aria-hidden />
@@ -47,7 +48,7 @@ export default async function ClassDetailPage({
         title={cls.name}
         description={`${cls.level?.code ?? ""} · ${levelLabel(cls.level, locale)}`}
       />
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid items-start gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>{t("team")}</CardTitle>
@@ -156,6 +157,6 @@ export default async function ClassDetailPage({
           </Card>
         )}
       </div>
-    </>
+    </Column>
   );
 }

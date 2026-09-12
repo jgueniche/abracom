@@ -66,7 +66,7 @@ export function ImportWizard() {
   const ready = preview.status === "success" && preview.csvText;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+    <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
       <div className="flex flex-col gap-6">
         <Card>
           <CardContent className="flex flex-col gap-4">
@@ -98,7 +98,7 @@ export function ImportWizard() {
             {preview.unknownClasses && preview.unknownClasses.length > 0 && (
               <div className="text-sm text-destructive">
                 <p>{t("unknownClasses", { classes: preview.unknownClasses.join(", ") })}</p>
-                <p className="text-muted-foreground">{t("unknownClassesHint")}</p>
+                <p className="text-sm text-muted-foreground">{t("unknownClassesHint")}</p>
               </div>
             )}
             {preview.issues && preview.issues.length > 0 && (
@@ -108,7 +108,7 @@ export function ImportWizard() {
                   <tbody>
                     {preview.issues.map((issue, i) => (
                       <tr key={i} className="border-b last:border-0">
-                        <td className="px-3 py-1.5 whitespace-nowrap text-muted-foreground">
+                        <td className="px-3 py-1.5 text-sm whitespace-nowrap text-muted-foreground">
                           {t("line", { line: issue.line })}
                         </td>
                         <td className="px-3 py-1.5 font-mono text-xs">{issue.column ?? ""}</td>

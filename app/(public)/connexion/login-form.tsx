@@ -38,7 +38,7 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
     return (
       <div
         role="status"
-        className="flex flex-col gap-3 rounded-2xl bg-accent p-5 text-accent-foreground"
+        className="flex flex-col gap-3 rounded-xl bg-accent p-5 text-accent-foreground"
       >
         <MailCheckIcon className="size-6" aria-hidden />
         <p className="font-semibold">{t("sentTitle")}</p>

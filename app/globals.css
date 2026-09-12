@@ -5,15 +5,18 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Kesher design tokens — derived from the Institutions Abravanel logo
- * (teal aleph, brick-red wordmark, soft gold mandala, taupe book strokes).
- * Light theme "Blanc & Techelet": white sheets on pale blue, the blue of the
- * Israeli flag as primary. Dark theme "Nuit Techelet": deep navy night, light
- * techelet for action. Brick red is kept for one job only — what is waiting on
- * the reader (a receipt still owed, a moderation flag) — never as decoration.
+ * Kesher design tokens — "Blanc & Techelet" (ADR-0032) in the register set by
+ * ADR-0051: **the rule rather than the box**.
+ *
+ * The palette is the one the project owner chose — the blue of the flag on an
+ * almost-white page — and it does not change here. What changes is everything
+ * around it: a plane is drawn by a hairline and not by a shadow, a corner is a
+ * corner and not a lozenge, a title is set at the size of a title and not of a
+ * banner, and nothing is tinted unless the tint carries meaning.
+ *
  * tests/unit/design-tokens.test.ts enforces text contrast (WCAG AA), the 3:1
- * non-text minimum for field borders and focus rings, and — the reason the old
- * palette read as flat — a minimum perceptible separation between surfaces.
+ * non-text minimum for field borders and focus rings, and a minimum perceptible
+ * separation between surfaces.
  */
 @theme inline {
   --color-background: var(--background);
@@ -38,6 +41,10 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  /* The inner separator: a filet between two rows of the same plane, always a
+     shade lighter than the edge that closes the plane itself. Twenty-odd files
+     were improvising it with `border-border/70`, `/60` or `/50`. */
+  --color-rule: var(--rule);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -62,6 +69,59 @@
   --shadow-lift: var(--lift-shadow);
 }
 
+/*
+ * One typographic scale, redefined at the source — and read in two layers.
+ *
+ * **Structure** is what a reader needs at a glance: where they are and where
+ * they can go. Tabs and the bars are set at 15 px, the section label at 13 px
+ * caps at full strength, and the one they are on is heavier than the rest.
+ * **Content** is read once they have arrived, so it sits *under* that: a card
+ * title at 15 px, its copy at 14 px, its metadata at 11–12 px.
+ *
+ * The first pass at quieting this interface got the two the wrong way round —
+ * card titles at 18 px over tabs at 13 px of muted grey — which is why a screen
+ * announced its contents more loudly than its own navigation.
+ *
+ * The audit of session 16 fixed the *bottom* of the scale (85 % of the app was
+ * set at 14 or 12 px) by adding a display serif at the top — and overshot: a
+ * page title landed at 36 px, a section title at 24, a card title at 20, so
+ * three levels of heading shouted at each other on a 390 px screen. Rather than
+ * rewrite two hundred files, the steps themselves are re-cut here: body sizes
+ * are untouched (14 px stays 14 px, a parent has to read it), every heading
+ * step is pulled down between 20 and 30 %, and each one carries the line-height
+ * and the tracking that belong to it instead of inheriting a default meant for
+ * body copy.
+ */
+@theme {
+  --text-xs: 0.75rem; /* 12 — meta, timestamps */
+  --text-xs--line-height: 1.45;
+  --text-sm: 0.875rem; /* 14 — the app's body size, unchanged */
+  --text-sm--line-height: 1.55;
+  --text-base: 0.9375rem; /* 15 — lede, list titles */
+  --text-base--line-height: 1.55;
+  --text-lg: 1rem; /* 16 — card title */
+  --text-lg--line-height: 1.4;
+  --text-lg--letter-spacing: -0.006em;
+  --text-xl: 1.0625rem; /* 17 — section title */
+  --text-xl--line-height: 1.35;
+  --text-xl--letter-spacing: -0.008em;
+  --text-2xl: 1.1875rem; /* 19 */
+  --text-2xl--line-height: 1.3;
+  --text-2xl--letter-spacing: -0.01em;
+  --text-3xl: 1.375rem; /* 22 — page title, phone */
+  --text-3xl--line-height: 1.22;
+  --text-3xl--letter-spacing: -0.014em;
+  --text-4xl: 1.625rem; /* 26 — page title, desktop */
+  --text-4xl--line-height: 1.18;
+  --text-4xl--letter-spacing: -0.016em;
+  --text-5xl: 2rem; /* 32 — the one hero, on the sign-in screen */
+  --text-5xl--line-height: 1.12;
+  --text-5xl--letter-spacing: -0.018em;
+
+  --tracking-tight: -0.012em;
+  --tracking-wide: 0.02em;
+}
+
 :root {
   /* brand (constant across themes, extracted from the logo) */
   --brand-teal: oklch(0.403 0.07 211.7);
@@ -70,16 +130,20 @@
   --brand-sand: oklch(0.918 0.09 90.2);
   --brand-taupe: oklch(0.422 0.02 32.1);
 
+  /* One editorial serif serves both the titles and the long-form copy, so the
+     two roles stay two tokens but point at the same file (app/layout.tsx). */
+  --font-serif: var(--font-heading);
+
   /* height of the mobile tab bar, safe area included — the single source of
      truth for everything that floats above it (composer, install banner, main). */
   --nav-h: calc(3.5rem + env(safe-area-inset-bottom, 0px));
 
   /* light — "Blanc & Techelet": an almost-white page, white cards, blue ink.
      The page and the card are nearly the same value on purpose; what separates
-     the planes here is the edge and the lift, not the fill. */
+     the planes here is the edge, and only the edge. */
   --background: oklch(0.977 0.01 252.8); /* #f3f8fe */
   --foreground: oklch(0.234 0.046 257); /* #0f1e33 */
-  --surface: oklch(0.926 0.024 254); /* #dce8f7 */
+  --surface: oklch(0.926 0.018 254); /* the fills lost a third of their chroma: */
   --surface-foreground: oklch(0.234 0.046 257);
   --card: oklch(1 0 0); /* #ffffff */
   --card-foreground: oklch(0.234 0.046 257);
@@ -87,11 +151,11 @@
   --popover-foreground: oklch(0.234 0.046 257);
   --primary: oklch(0.412 0.206 262.9); /* #0038b8 — techelet, the flag blue */
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.926 0.024 254); /* #dce8f7 */
+  --secondary: oklch(0.932 0.016 254);
   --secondary-foreground: oklch(0.349 0.08 257.9); /* #1e3a63 */
-  --muted: oklch(0.949 0.017 256.3); /* #e7effa */
-  --muted-foreground: oklch(0.471 0.053 258.7); /* #495c79 */
-  --accent: oklch(0.927 0.028 256.5); /* #dbe8fa */
+  --muted: oklch(0.955 0.011 256.3);
+  --muted-foreground: oklch(0.502 0.042 258.7); /* #52657f */
+  --accent: oklch(0.945 0.019 256.5); /* a hover, not a highlighter */
   --accent-foreground: oklch(0.388 0.143 259.8); /* #0b3f8f */
   --brick: oklch(0.457 0.157 27.4); /* #9c2420 — the wordmark red, for what waits */
   --brick-foreground: oklch(1 0 0);
@@ -100,31 +164,39 @@
   --warning: oklch(0.5 0.109 69.6); /* #8a5600 */
   --warning-foreground: oklch(1 0 0);
   --destructive: oklch(0.469 0.165 27.6); /* #a3231f */
-  --border: oklch(0.836 0.044 255.9); /* #b7cbe6 — 1.65:1 seen from a white card */
-  --input: oklch(0.584 0.075 257.4); /* #5f7da8 — 3.9:1 on the page (SC 1.4.11) */
+  --border: oklch(0.836 0.028 255.9); /* 1.65:1 seen from a white card */
+  --rule: oklch(0.902 0.018 255.9); /* the filet inside a plane */
+  /* Same lightness as before, a third of the chroma: SC 1.4.11 still reads 3.9:1
+     against the page, and the field is drawn by a grey hairline rather than by
+     a blue rule that shouted louder than the label above it. */
+  --input: oklch(0.584 0.026 257.4);
   --ring: oklch(0.412 0.206 262.9);
-  --radius: 0.875rem;
-  --soft-shadow: 0 1px 2px oklch(0.23 0.05 257 / 7%), 0 8px 22px -14px oklch(0.23 0.05 257 / 34%);
-  --lift-shadow: 0 2px 4px oklch(0.23 0.05 257 / 9%), 0 16px 36px -18px oklch(0.23 0.05 257 / 38%);
+  /* 8 px. The previous 14 px turned a 44 px field into a lozenge and a 32 px
+     button into a pill — the single loudest tell of the generic look. */
+  --radius: 0.5rem;
+  /* A card at rest casts almost nothing: its hairline draws it. The lift is
+     kept for what genuinely floats above the page (dialog, menu, composer). */
+  --soft-shadow: 0 1px 1.5px -1px oklch(0.23 0.05 257 / 7%);
+  --lift-shadow: 0 1px 2px oklch(0.23 0.05 257 / 6%), 0 14px 32px -16px oklch(0.23 0.05 257 / 26%);
 }
 
 .dark {
   /* dark — "Nuit Techelet": a navy night, light techelet for action */
   --background: oklch(0.194 0.035 256.5); /* #0a1524 */
   --foreground: oklch(0.931 0.02 257.5); /* #e0e9f6 — capped (halation) */
-  --surface: oklch(0.334 0.062 256.3); /* #203756 */
+  --surface: oklch(0.334 0.05 256.3);
   --surface-foreground: oklch(0.931 0.02 257.5);
-  --card: oklch(0.271 0.053 256.9); /* #152740 */
+  --card: oklch(0.271 0.045 256.9); /* #152740 */
   --card-foreground: oklch(0.931 0.02 257.5);
-  --popover: oklch(0.3 0.059 257.7); /* #1a2e4b */
+  --popover: oklch(0.3 0.05 257.7);
   --popover-foreground: oklch(0.931 0.02 257.5);
   --primary: oklch(0.769 0.117 261.6); /* #8ab4ff */
   --primary-foreground: oklch(0.194 0.035 256.5);
-  --secondary: oklch(0.346 0.074 256); /* #1e3a5f */
+  --secondary: oklch(0.346 0.06 256);
   --secondary-foreground: oklch(0.924 0.025 257.6); /* #dce7f7 */
-  --muted: oklch(0.318 0.059 255.8); /* #1d3350 */
+  --muted: oklch(0.318 0.048 255.8);
   --muted-foreground: oklch(0.771 0.037 257.4); /* #a6b6cd */
-  --accent: oklch(0.327 0.069 255.8); /* #1b3557 */
+  --accent: oklch(0.327 0.055 255.8);
   --accent-foreground: oklch(0.848 0.075 262.2); /* #b3ceff */
   --brick: oklch(0.759 0.144 26.1); /* #ff8a80 */
   --brick-foreground: oklch(0.194 0.035 256.5);
@@ -133,89 +205,223 @@
   --warning: oklch(0.837 0.125 79.4); /* #f5c064 */
   --warning-foreground: oklch(0.194 0.035 256.5);
   --destructive: oklch(0.741 0.136 26.8); /* #f5877c */
-  --border: oklch(0.405 0.064 255.6); /* #31496a — 1.64:1 seen from a card */
-  --input: oklch(0.62 0.083 256.4); /* #6588b8 — 3:1 on card and page (SC 1.4.11) */
+  --border: oklch(0.405 0.055 255.6); /* 1.64:1 seen from a card */
+  --rule: oklch(0.35 0.048 255.6);
+  --input: oklch(0.62 0.032 256.4); /* 3:1 on card and page (SC 1.4.11) */
   --ring: oklch(0.769 0.117 261.6);
-  --soft-shadow: 0 1px 0 oklch(1 0 0 / 6%) inset;
-  --lift-shadow: 0 1px 0 oklch(1 0 0 / 8%) inset, 0 18px 40px -22px oklch(0 0 0 / 65%);
+  --soft-shadow: 0 1px 0 oklch(1 0 0 / 4%) inset;
+  --lift-shadow: 0 1px 0 oklch(1 0 0 / 6%) inset, 0 22px 48px -26px oklch(0 0 0 / 72%);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/60;
   }
   html {
     @apply font-sans;
     -webkit-tap-highlight-color: transparent;
+    /*
+     * SC 2.4.11 « Focus Not Obscured ». Tabbing scrolls the focused control
+     * flush against the edge of the viewport, which on a phone put it *under*
+     * the fixed bottom bar: 57 px of a 63 px row disappeared, focus ring
+     * included. The same thing happened to every in-page anchor, which landed
+     * behind the sticky header. Both are one declaration, because the browser
+     * already knows how to leave room — it just has to be told how much.
+     */
+    scroll-padding-top: 4.5rem;
+    scroll-padding-bottom: calc(var(--nav-h) + 0.75rem);
+  }
+  /*
+   * Tailwind v4 dropped v3's opinionated `cursor: pointer` on buttons and
+   * follows the user agent instead, which shows an arrow. Nothing in the
+   * application declared it back, so every control in the interface — buttons,
+   * menu triggers, tabs, switches, checkboxes, the account menu — answered the
+   * pointer with the same cursor as a paragraph of text, while the links right
+   * next to them showed a hand. It is the kind of defect that is never *seen*,
+   * only felt as "this does not react like an application".
+   */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  select:not(:disabled),
+  label[for],
+  label:has(input:is([type="checkbox"], [type="radio"]):not(:disabled)),
+  input:is([type="checkbox"], [type="radio"], [type="range"], [type="color"]):not(:disabled) {
+    cursor: pointer;
   }
   body {
     @apply bg-background text-foreground;
     text-rendering: optimizeLegibility;
+    /* Inter's own defaults are conservative; contextual alternates and the
+       disambiguated glyphs are what make it read as a text face rather than
+       as a spec sheet. */
+    font-feature-settings:
+      "calt" 1,
+      "cv05" 1,
+      "cv08" 1;
   }
   /*
-   * One real typographic scale. The old app dimensioned 85 % of its text at
-   * 14 or 12 px and never spent Fraunces above 16 px; headings now carry the
-   * display serif at a size where its optical axis is visible.
+   * Headings. Newsreader carries an optical-size axis, so the same face is
+   * sturdy at 16 px and fine at 26 px without anyone declaring a weight per
+   * step (`font-optical-sizing: auto` does it from the font-size).
    */
   h1 {
-    @apply font-heading text-3xl leading-[1.08] font-normal tracking-tight sm:text-4xl;
+    @apply font-heading text-3xl font-normal sm:text-4xl;
   }
   h2 {
-    @apply font-heading text-xl leading-[1.15] font-normal tracking-tight sm:text-2xl;
+    @apply font-heading text-xl font-normal;
   }
   h3 {
-    @apply font-heading text-lg leading-snug font-normal tracking-tight;
+    @apply font-heading text-lg font-normal;
   }
   h4 {
-    @apply font-sans text-base leading-snug font-semibold;
+    @apply font-sans text-sm leading-snug font-semibold;
   }
   h1,
   h2,
-  h3,
+  h3 {
+    @apply text-foreground;
+    font-optical-sizing: auto;
+    text-wrap: balance;
+  }
   h4 {
     text-wrap: balance;
   }
-  /* Loading the axes is not enough — they have to be set, or Fraunces renders
-     at SOFT 0 / WONK 0 and is indistinguishable from any other serif. */
-  .font-heading {
-    font-variation-settings:
-      "SOFT" 16,
-      "WONK" 0,
-      "opsz" 18;
-  }
-  h1 {
-    font-variation-settings:
-      "SOFT" 28,
-      "WONK" 1,
-      "opsz" 48;
-  }
-  h2 {
-    font-variation-settings:
-      "SOFT" 22,
-      "WONK" 1,
-      "opsz" 28;
-  }
-  h3 {
-    font-variation-settings:
-      "SOFT" 18,
-      "WONK" 0,
-      "opsz" 20;
-  }
+  /* A ring drawn *around* the element, offset from it, instead of a 3 px halo
+     bleeding into the layout. */
   :focus-visible {
-    @apply rounded-sm ring-2 ring-ring/60 outline-none;
+    @apply outline-2 outline-offset-2 outline-ring/70;
+    border-radius: max(var(--radius-sm), 2px);
   }
   ::selection {
-    @apply bg-accent text-accent-foreground;
+    @apply bg-primary/15 text-foreground;
+  }
+  /* Numbers that sit in a column — counts, dates, grades, tables — must not
+     dance from row to row. */
+  table,
+  time,
+  [data-slot="count"] {
+    font-variant-numeric: tabular-nums;
   }
 }
 
 @layer components {
-  /* Small caps eyebrow above a title — the "who is speaking" line. */
+  /*
+   * The context line above a title — who is speaking, which class, which day.
+   * Small caps, and quiet: it used to be set semibold at 0.12em, which made a
+   * date shout louder than the title under it.
+   */
   .eyebrow {
-    @apply text-[0.6875rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase;
+    @apply text-[0.6875rem] leading-4 font-medium tracking-[0.085em] text-muted-foreground uppercase;
+  }
+  /*
+   * The one way a page names a section (SectionHeader). A label, never a third
+   * level of heading competing with the page title: twenty-one `<h2>` were
+   * written by hand at six different sizes and four different margins.
+   *
+   * It sits in the *structural* layer, with the tabs and the bars — the layer a
+   * reader needs at a glance — so it is set at full strength. The first pass at
+   * quieting the interface pushed it to 12 px at 75 % opacity, under card titles
+   * of 18 px: the page then announced its contents more loudly than its own
+   * structure, which is the wrong way round.
+   */
+  .section-label {
+    @apply font-sans text-[0.8125rem] leading-4 font-semibold tracking-[0.06em] text-foreground uppercase;
+  }
+  /* Factual secondary line — author, hour, count. Sentence case, never caps. */
+  .meta {
+    @apply text-xs text-muted-foreground;
+    font-variant-numeric: tabular-nums;
   }
   /* Long-form institutional copy: circulars, announcements, cahier de vie. */
   .prose-kesher {
-    @apply font-serif text-[1.0625rem] leading-relaxed text-foreground/90;
+    @apply font-serif text-[1.0625rem] leading-[1.7] text-foreground/90;
+    font-optical-sizing: auto;
+    text-wrap: pretty;
+  }
+  /* The measure beyond which a paragraph stops being readable. */
+  .measure {
+    max-width: 68ch;
+  }
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/*
+ * Motion. Every transition in this interface is a colour or a two-pixel travel,
+ * so there is nothing to degrade gracefully: a reader who asks for less motion
+ * gets none.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Scrollbars inside the consoles — a register, a competency grid, a month of
+ * agenda. Thin, in the page's own greys, so a horizontal scrollbar under a
+ * table stops being the loudest line on the screen.
+ */
+@supports (scrollbar-width: thin) {
+  .overflow-x-auto,
+  .overflow-y-auto,
+  .overflow-auto {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+}
+
+/*
+ * Print. A directrice prints the register, a family prints a circular, and a
+ * teacher prints the week — so the sheet drops the chrome, flattens the planes
+ * and lets the text take the page. Nothing here changes the screen.
+ */
+@media print {
+  :root {
+    --background: #fff;
+    --card: #fff;
+    --foreground: #000;
+    --card-foreground: #000;
+    --muted-foreground: #444;
+    --border: #999;
+    --rule: #ccc;
+  }
+  header[class*="sticky"],
+  nav[aria-label],
+  [data-slot="button"],
+  .no-print {
+    display: none !important;
+  }
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  body {
+    background: #fff;
+  }
+  [data-slot="card"] {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+  tr,
+  li {
+    break-inside: avoid;
+  }
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #444;
   }
 }

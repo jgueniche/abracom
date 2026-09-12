@@ -5,7 +5,7 @@ routes: [/admin/classes, /admin/classes/[classId], /admin/utilisateurs]
 topic: manage
 keywords: [classe, niveau, salle, effectif, enseignant, affectation, utilisateurs, inviter, suspendre]
 since: 5
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 **Classes** liste les classes de l'année courante avec leur effectif et leur équipe. Une classe porte un nom, un niveau, une salle et une capacité. Il faut une **année scolaire courante** avant de pouvoir en créer une.

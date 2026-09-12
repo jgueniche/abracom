@@ -24,8 +24,8 @@ export default async function OnboardingPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold">{t("title")}</h1>
-        <p className="text-pretty text-muted-foreground">{t("subtitle", { appName })}</p>
+        <h1>{t("title")}</h1>
+        <p className="text-sm text-pretty text-muted-foreground">{t("subtitle", { appName })}</p>
       </div>
       <OnboardingForm
         firstName={user.profile.first_name}

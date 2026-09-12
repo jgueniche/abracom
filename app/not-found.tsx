@@ -22,8 +22,8 @@ export default async function NotFound() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-lg flex-col items-center justify-center gap-4 px-4 text-center">
       <p className="font-mono text-sm text-muted-foreground">404</p>
-      <h1 className="font-heading text-2xl font-semibold">{t("errors.notFound.title")}</h1>
-      <p className="text-muted-foreground">{t("errors.notFound.description")}</p>
+      <h1 className="text-2xl">{t("errors.notFound.title")}</h1>
+      <p className="text-sm text-muted-foreground">{t("errors.notFound.description")}</p>
       <Button asChild className="min-h-11">
         <Link href="/">{t("common.backHome")}</Link>
       </Button>
@@ -32,7 +32,7 @@ export default async function NotFound() {
           <Link
             key={href}
             href={href}
-            className="flex min-h-11 items-center rounded-full border border-border px-4 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            className="flex min-h-11 items-center rounded-md border border-border bg-card px-3 text-[0.8125rem] font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             {t(`nav.${key}`)}
           </Link>

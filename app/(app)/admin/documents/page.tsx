@@ -1,9 +1,9 @@
-import { ChevronRightIcon, FileTextIcon } from "lucide-react";
-import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
+import { Row, RowList } from "@/components/domain/row-list";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
-import { Badge } from "@/components/ui/badge";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireSchoolStaff } from "@/lib/auth/guards";
 import { getAudienceOptions } from "@/server/queries/announcements";
@@ -24,48 +24,35 @@ export default async function AdminDocumentsPage() {
   const groups = groupByFolder(documents);
 
   return (
-    <>
+    <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
         <div className="flex flex-col gap-6">
           {groups.map((group) => (
             <section key={group.name || "none"}>
-              <h2 className="mb-2 text-lg font-semibold">{group.name || tDocs("noFolder")}</h2>
-              <ul className="flex flex-col gap-2">
+              <SectionHeader label={group.name || tDocs("noFolder")} count={group.items.length} />
+              <RowList>
                 {group.items.map((doc) => (
-                  <li key={doc.id}>
-                    <Link
-                      href={`/admin/documents/${doc.id}`}
-                      className="flex items-center gap-3 rounded-xl border p-3 hover:bg-accent/60"
-                    >
-                      <FileTextIcon className="size-5 shrink-0 text-primary" aria-hidden />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-medium">
-                          {doc.title}
-                          {!doc.published_at && (
-                            <Badge variant="outline" className="ml-2">
-                              {t("draft")}
-                            </Badge>
-                          )}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {tDocs(`purpose.${doc.purpose}`)}
-                          {doc.requires_signature
-                            ? ` · ${t("signedCount", { count: doc.signatures.length })}`
-                            : ""}
-                          {doc.published_at
-                            ? ` · ${format.dateTime(new Date(doc.published_at), { dateStyle: "medium" })}`
-                            : ""}
-                        </p>
-                      </div>
-                      <ChevronRightIcon
-                        className="size-5 shrink-0 text-muted-foreground"
-                        aria-hidden
-                      />
-                    </Link>
-                  </li>
+                  <Row
+                    key={doc.id}
+                    href={`/admin/documents/${doc.id}`}
+                    kind={doc.published_at ? undefined : t("draft")}
+                    urgent={!doc.published_at}
+                    title={doc.title}
+                    detail={[
+                      tDocs(`purpose.${doc.purpose}`),
+                      doc.requires_signature
+                        ? t("signedCount", { count: doc.signatures.length })
+                        : null,
+                      doc.published_at
+                        ? format.dateTime(new Date(doc.published_at), { dateStyle: "medium" })
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  />
                 ))}
-              </ul>
+              </RowList>
             </section>
           ))}
         </div>
@@ -78,6 +65,6 @@ export default async function AdminDocumentsPage() {
           </CardContent>
         </Card>
       </div>
-    </>
+    </Column>
   );
 }

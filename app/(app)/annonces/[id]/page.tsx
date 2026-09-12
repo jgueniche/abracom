@@ -1,13 +1,13 @@
-import { ArrowLeftIcon, CheckIcon, FileTextIcon, PaperclipIcon } from "lucide-react";
+import { ArrowLeftIcon, CheckIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { Markdown } from "@/components/domain/markdown";
-import { PageHeader } from "@/components/layouts/page-header";
-import { Badge } from "@/components/ui/badge";
+import { Column } from "@/components/layouts/column";
+import { HelpHint } from "@/components/layouts/help-hint";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { BUCKETS, createSignedUrl } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
@@ -48,113 +48,124 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ i
       ).data
     : null;
 
+  const dateline = [
+    announcement.author
+      ? t("by", { name: `${announcement.author.first_name} ${announcement.author.last_name}` })
+      : null,
+    announcement.published_at
+      ? format.dateTime(new Date(announcement.published_at), { dateStyle: "long" })
+      : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  /*
+   * A circular is a letter, so it is set as one: a dateline, a title, a rule,
+   * and the text at a width a person can actually read. It used to be a
+   * markdown block inside a card, beside a column of three more cards, across
+   * 1760 px — the composition of a dashboard, applied to the one screen in the
+   * application whose whole job is to be read.
+   *
+   * What the letter *asks* of the reader — the receipt, the attachments — is
+   * apparatus: it sits beside the text on a wide screen and under it on a
+   * narrow one, and it never interrupts the reading.
+   */
+  const apparatus = (
+    <div className="flex flex-col gap-6">
+      {announcement.requires_ack && (
+        <section>
+          <SectionHeader label={t("ackTitle")} />
+          {announcement.isAcked ? (
+            <p className="flex items-start gap-2 text-sm text-muted-foreground">
+              <CheckIcon className="mt-0.5 size-4 shrink-0 text-success" aria-hidden />
+              {t("ackedOn", {
+                date: format.dateTime(new Date(announcement.myRead!.acked_at!), {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                }),
+              })}
+            </p>
+          ) : (
+            <>
+              <p className="text-sm text-pretty text-muted-foreground">{t("ackHint")}</p>
+              <form action={acknowledgeAnnouncement} className="mt-3">
+                <input type="hidden" name="announcementId" value={announcement.id} />
+                <Button type="submit" size="lg" className="w-full">
+                  <CheckIcon aria-hidden />
+                  {t("ack")}
+                </Button>
+              </form>
+            </>
+          )}
+        </section>
+      )}
+      {(attachments.length > 0 || linkedDocument) && (
+        <section>
+          <SectionHeader
+            label={t("attachments")}
+            count={attachments.length + (linkedDocument ? 1 : 0)}
+          />
+          <ul className="flex flex-col">
+            {linkedDocument && (
+              <li className="border-b border-rule last:border-b-0">
+                <Link
+                  href="/documents"
+                  className="-mx-2 block rounded-md px-2 py-2 text-sm underline decoration-primary/35 underline-offset-[3px] transition-colors hover:bg-muted/50 hover:decoration-primary"
+                >
+                  {linkedDocument.title}
+                </Link>
+              </li>
+            )}
+            {attachments.map((file) => (
+              <li key={file.id} className="border-b border-rule last:border-b-0">
+                {file.url ? (
+                  <a
+                    href={file.url}
+                    className="-mx-2 block rounded-md px-2 py-2 text-sm break-words underline decoration-primary/35 underline-offset-[3px] transition-colors hover:bg-muted/50 hover:decoration-primary"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {file.filename}
+                  </a>
+                ) : (
+                  <span className="block px-0 py-2 text-sm break-words text-muted-foreground">
+                    {file.filename}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+  );
+
   return (
-    <>
+    <Column width="text" rail={apparatus}>
       <MarkRead id={announcement.id} alreadyRead={announcement.isRead} />
-      <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
+      <Button asChild variant="ghost" size="sm" className="mb-5 -ml-2.5">
         <Link href="/annonces">
           <ArrowLeftIcon aria-hidden />
           {t("back")}
         </Link>
       </Button>
-      <PageHeader
-        title={title}
-        description={[
-          announcement.published_at
-            ? t("publishedOn", {
-                date: format.dateTime(new Date(announcement.published_at), { dateStyle: "long" }),
-              })
-            : null,
-          announcement.author
-            ? t("by", {
-                name: `${announcement.author.first_name} ${announcement.author.last_name}`,
-              })
-            : null,
-          announcement.expires_at
-            ? t("expiresOn", {
+      <article>
+        <header className="mb-7 border-b border-rule pb-5">
+          {dateline && <p className="eyebrow mb-2">{dateline}</p>}
+          <div className="flex items-start gap-1.5">
+            <h1>{title}</h1>
+            <HelpHint />
+          </div>
+          {announcement.expires_at && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              {t("expiresOn", {
                 date: format.dateTime(new Date(announcement.expires_at), { dateStyle: "medium" }),
-              })
-            : null,
-        ]
-          .filter(Boolean)
-          .join(" · ")}
-      />
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <Card>
-          <CardContent>
-            <Markdown>{body}</Markdown>
-          </CardContent>
-        </Card>
-        <div className="flex flex-col gap-4">
-          {announcement.requires_ack && (
-            <Card className={announcement.isAcked ? "bg-muted/40" : "border-primary"}>
-              <CardContent className="flex flex-col gap-3">
-                {announcement.isAcked ? (
-                  <Badge variant="secondary" className="w-fit">
-                    <CheckIcon aria-hidden />
-                    {t("ackedOn", {
-                      date: format.dateTime(new Date(announcement.myRead!.acked_at!), {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      }),
-                    })}
-                  </Badge>
-                ) : (
-                  <>
-                    <p className="text-sm">{t("ackHint")}</p>
-                    <form action={acknowledgeAnnouncement}>
-                      <input type="hidden" name="announcementId" value={announcement.id} />
-                      <Button type="submit" className="min-h-11 w-full">
-                        <CheckIcon aria-hidden />
-                        {t("ack")}
-                      </Button>
-                    </form>
-                  </>
-                )}
-              </CardContent>
-            </Card>
+              })}
+            </p>
           )}
-          {linkedDocument && (
-            <Button asChild variant="secondary" className="min-h-11 justify-start">
-              <Link href="/documents">
-                <FileTextIcon aria-hidden />
-                {t("attachedDocument", { title: linkedDocument.title })}
-              </Link>
-            </Button>
-          )}
-          {attachments.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("attachments")}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="flex flex-col gap-2">
-                  {attachments.map((file) => (
-                    <li key={file.id}>
-                      {file.url ? (
-                        <a
-                          href={file.url}
-                          className="flex min-h-11 items-center gap-2 text-primary underline"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          <PaperclipIcon className="size-4" aria-hidden />
-                          {file.filename}
-                        </a>
-                      ) : (
-                        <span className="flex items-center gap-2 text-muted-foreground">
-                          <PaperclipIcon className="size-4" aria-hidden />
-                          {file.filename}
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
-    </>
+        </header>
+        <Markdown>{body}</Markdown>
+      </article>
+    </Column>
   );
 }

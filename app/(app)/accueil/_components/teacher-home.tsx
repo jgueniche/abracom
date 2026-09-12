@@ -1,10 +1,11 @@
-import { BookOpenIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { NewHomeworkButton } from "@/components/domain/new-homework-button";
 import { AttendanceToday } from "@/components/domain/attendance-today";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CurrentUser } from "@/lib/auth/session";
@@ -26,11 +27,11 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
   const summaries = await getWeeklySummary(classes.map((row) => row.class!.id));
 
   return (
-    <>
+    <Column rail={<UpcomingEvents userId={user.id} />}>
       <PageHeader
         eyebrow={format.dateTime(new Date(), { weekday: "long", day: "numeric", month: "long" })}
         title={t("greeting", { name: user.profile.first_name })}
-        description={t("teacher.title")}
+        description={t("teacher.subtitle")}
         actions={
           <NewHomeworkButton
             classes={classes.flatMap((row) =>
@@ -40,18 +41,19 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
         }
       />
       <AttendanceToday />
+      <SectionHeader label={t("teacher.title")} count={classes.length || undefined} />
       {classes.length === 0 ? (
-        <p className="text-muted-foreground">{t("teacher.noClasses")}</p>
+        <p className="text-sm text-muted-foreground">{t("teacher.noClasses")}</p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2">
           {classes.map((row) => {
             const cls = row.class!;
             const summary = summaries.get(cls.id) ?? { posts: 0, homework: 0 };
             return (
               <Link key={cls.id} href={`/classes/${cls.id}`} className="block">
-                <Card className="h-full shadow-soft hover:bg-accent/40">
+                <Card className="h-full transition-colors hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_16%)] hover:bg-muted/50">
                   <CardHeader>
-                    <div className="flex items-center gap-2">
+                    <div className="mb-0.5 flex items-center gap-1.5">
                       <Badge variant="secondary">{cls.level?.code}</Badge>
                       <Badge variant="outline">
                         {tFamily(`teacherRole.${row.role}`)}
@@ -65,13 +67,9 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
                       {cls.room ? cls.room : levelLabel(cls.level, locale)}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="flex flex-col gap-1 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-2">
-                      <UsersIcon className="size-4" aria-hidden />
-                      {t("teacher.students", { count: cls.enrollments[0]?.count ?? 0 })}
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <BookOpenIcon className="size-4" aria-hidden />
+                  <CardContent className="flex flex-col gap-0.5 text-xs text-muted-foreground">
+                    <span>{t("teacher.students", { count: cls.enrollments[0]?.count ?? 0 })}</span>
+                    <span>
                       {tWeek("summary", { posts: summary.posts, homework: summary.homework })}
                     </span>
                   </CardContent>
@@ -81,7 +79,6 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
           })}
         </div>
       )}
-      <UpcomingEvents userId={user.id} />
-    </>
+    </Column>
   );
 }

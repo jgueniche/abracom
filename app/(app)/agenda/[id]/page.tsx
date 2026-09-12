@@ -6,6 +6,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EventPollButton } from "@/components/domain/event-poll-button";
 import { Markdown } from "@/components/domain/markdown";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -82,7 +83,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
     : null;
 
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/agenda">
           <ArrowLeftIcon aria-hidden />
@@ -144,7 +145,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
         {event.requires_rsvp && <RsvpBadge rsvp={event.myRsvp} />}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[2fr_1fr]">
         <div className="flex flex-col gap-6">
           <Card>
             <CardContent className="flex flex-col gap-3">
@@ -236,7 +237,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-left text-muted-foreground">
+                        <tr className="text-left text-sm text-muted-foreground">
                           <th className="py-1 pr-2 font-medium">{t("attendees.name")}</th>
                           <th className="py-1 pr-2 font-medium">{t("attendees.answer")}</th>
                           <th className="py-1 pr-2 font-medium">{t("attendees.guests")}</th>
@@ -255,7 +256,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                               />
                             </td>
                             <td className="py-1 pr-2">{r.guests_count ?? 0}</td>
-                            <td className="py-1 text-muted-foreground">{r.note}</td>
+                            <td className="py-1 text-sm text-muted-foreground">{r.note}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -267,7 +268,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                     <summary className="cursor-pointer">
                       {t("attendees.showPending", { count: pending.length })}
                     </summary>
-                    <p className="mt-2 text-muted-foreground">
+                    <p className="mt-2 text-sm text-muted-foreground">
                       {pending.map((r) => `${r.first_name} ${r.last_name}`).join(", ")}
                     </p>
                   </details>
@@ -332,6 +333,6 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
           )}
         </div>
       </div>
-    </>
+    </Column>
   );
 }

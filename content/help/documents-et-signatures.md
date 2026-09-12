@@ -5,7 +5,7 @@ routes: [/documents]
 topic: daily
 keywords: [document, signature, signer, autorisation, droit à l'image, règlement, circulaire]
 since: 6
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 École → **Documents** réunit les règlements, les circulaires et les pièces à signer, rangés par dossier.

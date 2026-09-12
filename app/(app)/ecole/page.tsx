@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { HubCard, HubGrid } from "@/components/domain/hub-card";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { getPendingAcknowledgements } from "@/server/queries/announcements";
@@ -33,11 +34,24 @@ export default async function SchoolPage() {
     getPendingAcknowledgements(user.id),
     getForms(),
   ]);
-  const toAnswer = forms.filter((form) => form.responses.length === 0).length;
+  /*
+   * `form.responses` carries every response the reader is allowed to see, so
+   * for the team — who see them all — a form nobody had answered yet counted as
+   * "à remplir" and a form with one answer counted as done. The figure is a
+   * family fact: it counts the forms *this reader* has not answered, and it is
+   * only shown to someone the forms are addressed to.
+   */
+  const isFamily = user.perspective === "parent";
+  const toAnswer = isFamily
+    ? forms.filter((form) => !form.responses.some((r) => r.user_id === user.id)).length
+    : 0;
 
   return (
-    <>
+    <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
+      {/* Ordered by how often a family opens each one, not by the order the
+          features were built: the agenda is consulted every week, a form two or
+          three times a year. */}
       <HubGrid>
         <HubCard
           href="/annonces"
@@ -48,16 +62,16 @@ export default async function SchoolPage() {
           urgent={pending.length > 0}
         />
         <HubCard
-          href="/documents"
-          icon={FolderIcon}
-          title={t("documents")}
-          hint={t("documentsHint")}
-        />
-        <HubCard
           href="/agenda"
           icon={CalendarDaysIcon}
           title={t("agenda")}
           hint={t("agendaHint")}
+        />
+        <HubCard
+          href="/documents"
+          icon={FolderIcon}
+          title={t("documents")}
+          hint={t("documentsHint")}
         />
         <HubCard
           href="/communaute/formulaires"
@@ -75,6 +89,6 @@ export default async function SchoolPage() {
           hint={t("communityHint")}
         />
       </HubGrid>
-    </>
+    </Column>
   );
 }

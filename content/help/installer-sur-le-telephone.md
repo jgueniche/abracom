@@ -5,7 +5,7 @@ routes: [/hors-ligne]
 topic: signin
 keywords: [installer, écran d'accueil, application, notifications, push, hors ligne, iphone, android]
 since: 13
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Il n'y a rien à télécharger sur un magasin d'applications : la page s'installe elle-même sur l'écran d'accueil.

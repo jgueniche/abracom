@@ -5,7 +5,7 @@ routes: [/communaute, /communaute/annonces, /communaute/annonces/[id], /communau
 topic: daily
 keywords: [communauté, annuaire, coordonnées, petites annonces, covoiturage, objets trouvés, anniversaires, entraide]
 since: 12
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 École → **Communauté** réunit ce que les familles s'échangent entre elles.

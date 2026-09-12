@@ -11,6 +11,7 @@ import { getTranslations } from "next-intl/server";
 
 import { HubCard, HubGrid } from "@/components/domain/hub-card";
 import { NewHomeworkButton } from "@/components/domain/new-homework-button";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { isSchoolStaff } from "@/lib/permissions";
@@ -46,7 +47,7 @@ export default async function PublishPage() {
   if (!staff && classes.length === 1) redirect(`/classes/${classes[0]!.id}/publier`);
 
   return (
-    <>
+    <Column>
       <PageHeader
         title={t("title")}
         description={t("subtitle")}
@@ -96,6 +97,6 @@ export default async function PublishPage() {
           </>
         )}
       </HubGrid>
-    </>
+    </Column>
   );
 }

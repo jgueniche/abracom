@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireSchoolRole } from "@/lib/auth/guards";
@@ -55,7 +56,7 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
   };
 
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href={`/agenda/${event.id}`}>
           <ArrowLeftIcon aria-hidden />
@@ -78,6 +79,6 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
           <DeleteEventButton id={event.id} />
         </div>
       </div>
-    </>
+    </Column>
   );
 }

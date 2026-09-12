@@ -2,10 +2,15 @@ import { Document, Page, renderToBuffer, StyleSheet, Text, View } from "@react-p
 
 import type { HelpBlock } from "@/lib/help/outline";
 
-const TEAL = "#01525e";
+/* Same charter as the application since session 16 (ADR-0032), and the serif
+   for the school's voice — Times-Roman ships with @react-pdf. */
+const INK = "#0f1e33";
+const BLUE = "#0038b8";
+const MUTED = "#55657c";
+const RULE = "#becadc";
 
 const styles = StyleSheet.create({
-  page: { padding: 40, fontSize: 10.5, fontFamily: "Helvetica", color: "#1b1b1b", lineHeight: 1.4 },
+  page: { padding: 40, fontSize: 10.5, fontFamily: "Helvetica", color: INK, lineHeight: 1.4 },
   /**
    * A running head, not a footer.
    *
@@ -17,25 +22,49 @@ const styles = StyleSheet.create({
    */
   head: {
     fontSize: 8,
-    color: "#777",
+    color: MUTED,
     marginBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#e4e4e4",
+    borderBottomColor: RULE,
     paddingBottom: 4,
   },
-  title: { fontSize: 20, fontFamily: "Helvetica-Bold", color: TEAL, marginBottom: 4 },
-  subtitle: { fontSize: 10, color: "#555", marginBottom: 8 },
-  topic: {
-    fontSize: 14,
-    fontFamily: "Helvetica-Bold",
-    color: TEAL,
-    marginTop: 18,
+  /* The page sets `lineHeight: 1.4`, which a 22 pt line inherits as a box
+     shorter than its own descenders: the subtitle was printed through the
+     tail of the "g" of "Mon guide". A display line states its own leading. */
+  brand: {
+    fontSize: 8,
+    color: BLUE,
+    letterSpacing: 1,
+    textTransform: "uppercase",
     marginBottom: 2,
-    borderTopWidth: 1,
-    borderTopColor: "#d9d9d9",
-    paddingTop: 8,
   },
-  heading: { fontSize: 12, fontFamily: "Helvetica-Bold", marginTop: 12, marginBottom: 4 },
+  title: {
+    fontSize: 22,
+    fontFamily: "Times-Roman",
+    color: INK,
+    lineHeight: 1.2,
+    marginBottom: 2,
+  },
+  subtitle: { fontSize: 10, color: MUTED, marginBottom: 8 },
+  topic: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: MUTED,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+    marginTop: 20,
+    marginBottom: 4,
+    borderTopWidth: 1,
+    borderTopColor: RULE,
+    paddingTop: 10,
+  },
+  heading: {
+    fontSize: 12,
+    fontFamily: "Helvetica-Bold",
+    color: INK,
+    marginTop: 14,
+    marginBottom: 4,
+  },
   paragraph: { marginBottom: 4 },
   bullet: { flexDirection: "row", marginBottom: 3, paddingLeft: 6 },
   dot: { width: 10 },
@@ -86,6 +115,9 @@ export function GuideDocument({ data }: { data: GuideData }) {
           fixed
           render={({ pageNumber, totalPages }) => `${data.footer} · ${pageNumber} / ${totalPages}`}
         />
+        {/* The same anatomy as the booklet and the e-mails: a blue eyebrow
+            naming the sender, then the title in the school's serif. */}
+        <Text style={styles.brand}>{data.appName}</Text>
         <Text style={styles.title}>{data.title}</Text>
         <Text style={styles.subtitle}>{data.subtitle}</Text>
         {/* Flat on purpose: a wrapping View per topic, nested in the page, was

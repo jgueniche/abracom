@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SignOutButton } from "@/components/layouts/sign-out-button";
 import { Badge } from "@/components/ui/badge";
@@ -36,13 +37,13 @@ export default async function ProfilePage() {
   const acceptedAt = new Map((acceptances ?? []).map((a) => [a.legal_document_id, a.accepted_at]));
 
   return (
-    <>
+    <Column>
       <PageHeader
         title={t("title")}
         description={t("subtitle")}
         actions={<SignOutButton className="min-h-11" />}
       />
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)]">
         <Card>
           <CardContent>
             <ProfileForm
@@ -96,7 +97,7 @@ export default async function ProfilePage() {
                         {tOnboarding(`kind.${d.kind as "terms" | "charter" | "privacy"}`)} ·{" "}
                         {tOnboarding("version", { version: d.version })}
                       </span>
-                      <span className="text-muted-foreground">
+                      <span className="text-sm text-muted-foreground">
                         {when
                           ? t("acceptedOn", {
                               date: format.dateTime(new Date(when), {
@@ -114,6 +115,6 @@ export default async function ProfilePage() {
           </Card>
         </div>
       </div>
-    </>
+    </Column>
   );
 }

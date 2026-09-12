@@ -5,7 +5,7 @@ routes: [/admin/pointage]
 topic: manage
 keywords: [pointage, liste, périscolaire, cantine, appel, responsable, récurrence, visible, archiver]
 since: 19
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 Gestion → **Pointage** crée les listes et dit qui a le droit de pointer sur chacune.

@@ -5,7 +5,7 @@ routes: [/devoirs, /classes/[classId]/devoirs]
 topic: daily
 keywords: [devoirs, cahier de texte, à préparer, vu, semaine, leçons, en retard]
 since: 17
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 L'onglet **Devoirs** est le cahier de texte. Il affiche une semaine à la fois, jour par jour, à la date à laquelle le travail est à rendre — pas à la date où il a été donné.

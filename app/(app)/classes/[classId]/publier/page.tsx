@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireClassAccess } from "@/lib/auth/class-access";
 
@@ -24,21 +25,23 @@ export default async function PublishPage({
   if (!isTeacher && !isStaff) notFound();
   const defaultType = TYPES.includes(type as PostType) ? (type as PostType) : "journal";
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{defaultType === "homework" ? t("newHomework") : t("new")}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <PostForm
-          classId={classId}
-          defaultType={defaultType}
-          students={cls.students.map((s) => ({
-            id: s.id,
-            name: `${s.first_name} ${s.last_name}`,
-            imageRights: s.image_rights_signed_at !== null,
-          }))}
-        />
-      </CardContent>
-    </Card>
+    <Column width="text">
+      <Card>
+        <CardHeader>
+          <CardTitle>{defaultType === "homework" ? t("newHomework") : t("new")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <PostForm
+            classId={classId}
+            defaultType={defaultType}
+            students={cls.students.map((s) => ({
+              id: s.id,
+              name: `${s.first_name} ${s.last_name}`,
+              imageRights: s.image_rights_signed_at !== null,
+            }))}
+          />
+        </CardContent>
+      </Card>
+    </Column>
   );
 }

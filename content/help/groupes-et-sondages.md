@@ -5,7 +5,7 @@ routes: [/messages/nouveau-groupe]
 topic: daily
 keywords: [groupe, discussion, sondage, voter, sonder, classes, sortie]
 since: 17
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 **Un groupe de discussion** se crée en cochant une ou plusieurs classes : tous les responsables de leurs élèves rejoignent la conversation d'un coup, deuxième parent compris. L'écran annonce la portée avant la création — une famille présente dans deux classes n'est comptée qu'une fois. Une case ajoute aussi les enseignants de ces classes, comme modérateurs.

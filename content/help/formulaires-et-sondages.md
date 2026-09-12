@@ -5,7 +5,7 @@ routes: [/communaute/formulaires, /communaute/formulaires/[id]]
 topic: daily
 keywords: [formulaire, sondage, fiche de rentrée, autorisation, répondre, questionnaire]
 since: 12
-reviewed: 2026-09-11
+reviewed: 2026-09-12
 ---
 
 École → **Formulaires et sondages** porte les fiches de rentrée, les autorisations et les sondages de l'école. L'onglet École affiche le nombre de formulaires qui attendent encore une réponse.

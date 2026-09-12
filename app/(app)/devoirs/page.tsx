@@ -1,4 +1,5 @@
 import { BookOpenIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -6,6 +7,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { MetaChip } from "@/components/domain/content-card";
 import { NewHomeworkButton } from "@/components/domain/new-homework-button";
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -121,7 +123,7 @@ export default async function DiaryPage({
   };
 
   return (
-    <>
+    <Column>
       <PageHeader
         eyebrow={t("week", {
           from: format.dateTime(monday, { day: "numeric", month: "long" }),
@@ -155,27 +157,16 @@ export default async function DiaryPage({
       />
 
       {allChildren.length > 1 && (
-        <nav aria-label={t("title")} className="-mt-2 mb-4 flex flex-wrap gap-2">
+        <FilterChips label={t("title")} className="-mt-1">
           {[null, ...allChildren.map((child) => child.id)].map((id) => {
             const child = allChildren.find((item) => item.id === id);
-            const active = selected === id;
             return (
-              <Link
-                key={id ?? "all"}
-                href={childHref(id)}
-                aria-current={active ? "true" : undefined}
-                className={cn(
-                  "flex min-h-11 items-center rounded-full border px-4 text-sm font-medium",
-                  active
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                )}
-              >
+              <FilterChip key={id ?? "all"} href={childHref(id)} active={selected === id}>
                 {child ? child.first_name : t("allChildren")}
-              </Link>
+              </FilterChip>
             );
           })}
-        </nav>
+        </FilterChips>
       )}
 
       {classIds.length === 0 ? (
@@ -188,7 +179,14 @@ export default async function DiaryPage({
           {entries.length === 0 ? (
             <EmptyState icon={BookOpenIcon} title={t("empty")} description={t("emptyHint")} />
           ) : (
-            <ol className="flex flex-col gap-3 2xl:grid 2xl:grid-cols-2 2xl:gap-4">
+            /*
+             * A week reads as a week: one continuous list, a rule between the
+             * days, the day that has nothing saying so on a single line. Each
+             * day used to be a rounded box — and an empty day a *dashed* box,
+             * the placeholder idiom of a mock-up — so five days with nothing to
+             * prepare took as much of the screen as the two that mattered.
+             */
+            <ol className="border-t border-rule">
               {days.map((day) => {
                 const items = byDay.get(day) ?? [];
                 const isToday = day === todayIso;
@@ -199,15 +197,9 @@ export default async function DiaryPage({
                   <li
                     key={day}
                     className={cn(
-                      "rounded-2xl border",
-                      empty
-                        ? "border-dashed border-border/70 px-4 py-2.5"
-                        : "bg-card p-4 shadow-soft",
-                      isToday && !empty && "border-primary/60 ring-1 ring-primary/25",
-                      isToday && empty && "border-primary/40",
-                      !isToday && !empty && "border-border",
-                      // `opacity-55` over muted text failed the AA contrast ratio
-                      isPast && empty && "border-border/50",
+                      "relative border-b border-rule py-3.5",
+                      isToday &&
+                        "before:absolute before:inset-y-3 before:-left-3 before:w-[2px] before:rounded-full before:bg-primary sm:before:-left-4",
                     )}
                   >
                     <p
@@ -218,8 +210,8 @@ export default async function DiaryPage({
                     >
                       <span
                         className={cn(
-                          "font-heading tracking-tight first-letter:uppercase",
-                          empty ? "text-base text-muted-foreground" : "text-lg",
+                          "font-heading text-base first-letter:uppercase",
+                          empty && "text-muted-foreground",
                           isToday && "text-primary",
                         )}
                       >
@@ -259,7 +251,7 @@ export default async function DiaryPage({
                               </p>
                               <p className="font-medium">{entry.title}</p>
                               {entry.body_md && (
-                                <p className="prose-kesher mt-0.5 line-clamp-3 text-[0.9375rem]">
+                                <p className="mt-0.5 line-clamp-3 text-sm text-muted-foreground">
                                   {plainExcerpt(entry.body_md, 240)}
                                 </p>
                               )}
@@ -327,6 +319,6 @@ export default async function DiaryPage({
           )}
         </>
       )}
-    </>
+    </Column>
   );
 }

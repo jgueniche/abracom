@@ -1,9 +1,9 @@
-import { ClipboardCheckIcon } from "lucide-react";
+import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { openAttendanceSession } from "@/server/actions/attendance";
 import { getMyAttendanceLists } from "@/server/queries/attendance";
 
@@ -22,33 +22,43 @@ export async function AttendanceToday() {
   // Holding lists but none scheduled today used to render nothing, which left a
   // phone with no route to the pointeuse at all: five tabs are full and the
   // desktop bar is the only place that names it. One quiet line fixes that.
+  // It used to be a bare line floating between the page title and the first
+  // section, which read as an orphan. A screen has sections; this is one of
+  // them, whether or not it has anything in it today.
   if (today.length === 0) {
     return (
-      <p className="mb-6">
-        <Link
-          href="/pointage"
-          className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline"
-        >
-          <ClipboardCheckIcon className="size-4" aria-hidden />
-          {t("nothingTodaySeeLists", { count: lists.length })}
-        </Link>
-      </p>
+      // The way in used to be a grey sentence under the label: a link that
+      // looks exactly like static text is a link nobody clicks. It takes the
+      // section's action slot, like every other "see everything" on this page.
+      <section className="mb-10">
+        <SectionHeader
+          label={t("todayTitle")}
+          hint={t("nothingTodaySeeLists", { count: lists.length })}
+          action={
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/pointage">
+                {t("seeLists")}
+                <ChevronRightIcon aria-hidden />
+              </Link>
+            </Button>
+          }
+        />
+      </section>
     );
   }
 
   return (
-    <section className="mb-6 flex flex-col gap-3">
-      <h2 className="eyebrow">{t("todayTitle")}</h2>
+    // A medallion in front of each line said "attendance" a third time, after
+    // the section label and the name of the list. The line is the object.
+    <section className="mb-10">
+      <SectionHeader label={t("todayTitle")} count={today.length} />
       {today.map((list) => (
-        <Card key={list.list_id}>
-          <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div key={list.list_id} className="border-b border-rule last:border-b-0">
+          <div className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 items-center gap-3">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary">
-                <ClipboardCheckIcon className="size-5" aria-hidden />
-              </span>
               <div className="min-w-0">
-                <p className="truncate text-base font-semibold">{list.name}</p>
-                <p className="text-sm text-muted-foreground tabular-nums">
+                <p className="truncate text-sm font-semibold">{list.name}</p>
+                <p className="meta">
                   {list.session_id
                     ? t("counterShort", {
                         present: Number(list.present),
@@ -59,19 +69,19 @@ export async function AttendanceToday() {
               </div>
             </div>
             {list.session_id ? (
-              <Button asChild className="min-h-12 sm:min-w-40">
+              <Button asChild className="shrink-0 sm:min-w-36">
                 <Link href={`/pointage/${list.session_id}`}>{t("continue")}</Link>
               </Button>
             ) : (
               <form action={openAttendanceSession}>
                 <input type="hidden" name="listId" value={list.list_id} />
-                <Button type="submit" className="min-h-12 sm:min-w-40">
+                <Button type="submit" className="shrink-0 sm:min-w-36">
                   {t("start")}
                 </Button>
               </form>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ))}
     </section>
   );

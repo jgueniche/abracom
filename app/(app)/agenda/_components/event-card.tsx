@@ -1,13 +1,20 @@
-import { ClockIcon, MapPinIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
-import { Badge } from "@/components/ui/badge";
 import type { AgendaEvent } from "@/server/queries/agenda";
 
 import { RsvpBadge } from "./rsvp-badge";
 
-/** One event row of the agenda / upcoming lists (server component). */
+/**
+ * One event of the agenda, set as an entry rather than as a card.
+ *
+ * It used to carry two badges, a clock glyph and a pin glyph for four facts —
+ * kind, answer, time, place — which in an 18 rem rail left the title fighting
+ * its own furniture for room. The kind and the moment now share the dateline,
+ * the place follows the title as plain text, and the only thing that keeps a
+ * coloured mark is the one fact that concerns the reader personally: whether
+ * they have answered.
+ */
 export async function EventCard({
   event,
   continued = false,
@@ -33,35 +40,36 @@ export async function EventCard({
   return (
     <Link
       href={`/agenda/${event.id}`}
-      className="flex min-h-11 flex-col gap-1 rounded-2xl border p-3 hover:bg-accent/60"
+      className="-mx-2 block rounded-md px-2 py-3 transition-colors hover:bg-muted/50"
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge variant={event.kind === "holiday" ? "outline" : "secondary"}>
-          {t(`kinds.${event.kind}`)}
-        </Badge>
-        {event.requires_rsvp && <RsvpBadge rsvp={event.myRsvp} />}
-        {volunteersOpen > 0 && (
-          <Badge variant="outline">
-            <UsersIcon aria-hidden />
-            {t("slots.title")} · {volunteersOpen}
-          </Badge>
-        )}
-      </div>
-      <p className="font-heading font-semibold">
-        {event.title} {continued && <span className="text-muted-foreground">{t("continued")}</span>}
-      </p>
-      <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-        <span className="inline-flex items-center gap-1">
-          <ClockIcon className="size-3.5" aria-hidden />
+      <p className="eyebrow flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span>{t(`kinds.${event.kind}`)}</span>
+        <span aria-hidden className="size-[3px] rounded-full bg-muted-foreground/45" />
+        <span>
           {showDate ? `${format.dateTime(start, { dateStyle: "medium" })} · ${time}` : time}
         </span>
-        {event.location && (
-          <span className="inline-flex items-center gap-1">
-            <MapPinIcon className="size-3.5" aria-hidden />
-            {event.location}
+        {event.requires_rsvp && (
+          <span className="ml-auto shrink-0">
+            <RsvpBadge rsvp={event.myRsvp} />
           </span>
         )}
       </p>
+      <p className="mt-1 font-heading text-base leading-snug font-normal text-pretty">
+        {event.title} {continued && <span className="text-muted-foreground">{t("continued")}</span>}
+      </p>
+      {(event.location || volunteersOpen > 0) && (
+        <p className="meta mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+          {event.location}
+          {event.location && volunteersOpen > 0 && (
+            <span aria-hidden className="size-[3px] rounded-full bg-muted-foreground/45" />
+          )}
+          {volunteersOpen > 0 && (
+            <span className="text-warning">
+              {t("slots.title")} · {volunteersOpen}
+            </span>
+          )}
+        </p>
+      )}
     </Link>
   );
 }

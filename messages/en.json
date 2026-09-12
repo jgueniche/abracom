@@ -73,7 +73,8 @@
       "forms": "Forms",
       "feedback": "Feedback and overlays",
       "cards": "Domain cards",
-      "icons": "PWA icons"
+      "icons": "PWA icons",
+      "anatomy": "Screen anatomy"
     },
     "palette": {
       "brand": "Brand colours (constant)",
@@ -84,11 +85,20 @@
       "onBackground": "on page background"
     },
     "typography": {
-      "heading": "Headings · Fraunces",
-      "body": "Body · Inter",
+      "heading": "Two layers: structure, then content",
+      "scale": "The serif carries the school's voice, the sans carries the interface.",
       "sample": "The quick brown fox jumps over the lazy dog",
       "lead": "A lead paragraph, slightly larger, for important announcements from the school office.",
-      "muted": "Secondary text for metadata, hints and timestamps."
+      "muted": "Secondary text for metadata, hints and timestamps.",
+      "page": "Page title",
+      "nav": "Tab, destination",
+      "section": "Section label",
+      "content": "Content title (editorial)",
+      "card": "Card title (interface)",
+      "body": "Body copy",
+      "eyebrow": "Eyebrow",
+      "meta": "Metadata",
+      "prose": "Institutional prose"
     },
     "buttons": {
       "default": "Primary",
@@ -151,6 +161,40 @@
     },
     "icons": {
       "description": "Generated from the official logo, unaltered, by scripts/brand/generate-icons.ts (favicon, iOS, standard and maskable PWA icons)."
+    },
+    "anatomy": {
+      "eyebrow": "Thursday 11 September",
+      "title": "Hello Fictional name",
+      "description": "What the school needs from you today, then everything else.",
+      "action": "New homework",
+      "today": "Today",
+      "todayHint": "Three things are waiting, the most urgent first.",
+      "destinations": "The school",
+      "publications": "Latest posts",
+      "seeAll": "See all",
+      "kindAck": "Receipt",
+      "kindHomework": "Homework",
+      "kindNote": "Note",
+      "rowAck": "Back-to-school meeting for nursery classes",
+      "rowHomework": "Bring a family photo",
+      "rowNote": "Park outing moved to Tuesday",
+      "rowAckDetail": "Read receipt due before Friday",
+      "rowHomeworkDetail": "PS Tournesols · due Thursday",
+      "rowNoteDetail": "From the teacher",
+      "hubAnnouncements": "Announcements",
+      "hubAnnouncementsHint": "What the school office sends to families.",
+      "hubAnnouncementsMeta": "1 receipt pending",
+      "hubDocuments": "Documents",
+      "hubDocumentsHint": "Circulars, permissions, school rules.",
+      "hubAgenda": "Calendar",
+      "hubAgendaHint": "School calendar and Jewish holidays.",
+      "emptyTitle": "No messages yet",
+      "emptyDescription": "Conversations with the team will appear here from the first message.",
+      "emptyAction": "Write to the team",
+      "register": "Register",
+      "columnPupil": "Pupil",
+      "columnClass": "Class",
+      "columnSeen": "Seen by"
     }
   },
   "auth": {
@@ -174,7 +218,7 @@
       "password": "Password",
       "signIn": "Sign in",
       "signingIn": "Signing in…",
-      "invalidCredentials": "Incorrect e-mail address or password.",
+      "invalidCredentials": "Wrong e-mail address or password. You can also get a sign-in link by e-mail.",
       "unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment.",
       "noAccountCta": "No account? Ask the school directly to create one for you"
     },
@@ -215,7 +259,7 @@
   "appHome": {
     "greeting": "Hello {name}",
     "parent": {
-      "title": "Today",
+      "title": "What the school needs from you, then what is coming.",
       "children": "My children",
       "pendingAcks": "{count, plural, =0 {No announcement to confirm} one {# announcement to confirm} other {# announcements to confirm}}",
       "pendingHint": "Open the announcements to confirm.",
@@ -236,7 +280,8 @@
       "title": "My classes",
       "students": "{count, plural, =0 {No student} one {# student} other {# students}}",
       "noClasses": "No class is assigned to you this year.",
-      "room": "Room {room}"
+      "room": "Room {room}",
+      "subtitle": "Your classes, today's attendance and what is coming."
     },
     "admin": {
       "title": "Dashboard",
@@ -245,7 +290,11 @@
       "classes": "Classes",
       "activation": "Activated parent accounts",
       "activationHint": "{active} active out of {total} invited",
-      "classesTitle": "This year's classes"
+      "classesTitle": "This year's classes",
+      "columnClass": "Class",
+      "columnLevel": "Level",
+      "columnPupils": "Pupils",
+      "columnTeacher": "Teacher"
     }
   },
   "family": {
@@ -449,7 +498,10 @@
       "imageRightsRevoke": "Withdraw the consent",
       "imageRightsMark": "Record a paper consent",
       "imageRightsRevoked": "Consent withdrawn; the pupil no longer appears on any tagged photo.",
-      "imageRightsMarked": "Consent recorded."
+      "imageRightsMarked": "Consent recorded.",
+      "columnPupil": "Pupil",
+      "columnClass": "Class",
+      "columnGuardians": "Guardians"
     },
     "members": {
       "title": "Users",
@@ -550,7 +602,9 @@
       "done": "Promotion done: {classes} classes created, {students} students enrolled, {left} students left.",
       "invalid": "Invalid mapping.",
       "forbidden": "Head of school only.",
-      "error": "The promotion failed; nothing was changed."
+      "error": "The promotion failed; nothing was changed.",
+      "noNextTitle": "Next year does not exist yet",
+      "createNextYear": "Create next year"
     },
     "groups": {
       "publications": "Publications",
@@ -726,7 +780,10 @@
     "notFound": "Announcement not found.",
     "morePhotos": "+{count}",
     "emptyHint": "Announcements from the direction and the teaching team will arrive here.",
-    "write": "Write an announcement"
+    "write": "Write an announcement",
+    "pinnedSection": "Pinned",
+    "allOthers": "All announcements",
+    "ackTitle": "Read receipt"
   },
   "documents": {
     "title": "Documents",
@@ -982,11 +1039,11 @@
       "newHomework": "New homework"
     },
     "journal": {
-      "empty": "No photo yet.",
+      "empty": "The class diary is still empty.",
       "month": "{month}",
       "download": "Download disabled by the school",
       "photos": "{count, plural, one {# photo} other {# photos}}",
-      "emptyHint": "Photos and entries from the class journal will appear here, month by month."
+      "emptyHint": "The class diary's entries and photos will appear here, month by month."
     },
     "notes": {
       "title": "Individual notes",
@@ -1616,7 +1673,6 @@
     },
     "pdfLabels": {
       "title": "Skills report card",
-      "period": "Period",
       "born": "Born on {date}",
       "class": "Class",
       "teacher": "Teacher",
@@ -1628,7 +1684,9 @@
       "noData": "No assessment for this period.",
       "generatedOn": "Generated on {date} by {app}",
       "confidentiality": "Confidential document for the student's family."
-    }
+    },
+    "noSkills": "No skills are defined for this level",
+    "noSkillsHint": "The skills framework is installed by the school, level by level. While it is empty for {level}, there is nothing to assess here — tell the school office."
   },
   "community": {
     "title": "Community",
@@ -2080,7 +2138,8 @@
     "noListGranted": "No list is yours yet",
     "noListGrantedHint": "The direction grants attendance list by list. Ask to be added to the one you run.",
     "createFirstList": "Create a list",
-    "nothingTodaySeeLists": "{count, plural, one {Attendance · # list} other {Attendance · # lists}}"
+    "nothingTodaySeeLists": "{count, plural, one {Attendance · # list} other {Attendance · # lists}}",
+    "seeLists": "See the lists"
   },
   "timetable": {
     "title": "Timetable",

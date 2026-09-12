@@ -1,6 +1,7 @@
 "use client";
 
 import { PlusIcon, XIcon } from "lucide-react";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
@@ -25,8 +26,12 @@ export function SlotEditor({
 
   return (
     <section className="flex flex-col gap-3 rounded-xl border p-3">
-      <h2 className="font-medium">{t("slots")}</h2>
-      <p className="text-xs text-muted-foreground">{t("slotsHint")}</p>
+      <SectionHeader
+        label={t("slots")}
+        count={slots.length || undefined}
+        hint={t("slotsHint")}
+        className="mb-0"
+      />
       {slots.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("noSlots")}</p>
       ) : (

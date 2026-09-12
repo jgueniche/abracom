@@ -64,7 +64,7 @@ export function ThreadMenu({
         <button
           type="button"
           aria-label={t("conversation")}
-          className="flex size-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          className="flex size-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           <MoreVerticalIcon className="size-5" aria-hidden />
         </button>

@@ -37,7 +37,7 @@ export function PostActions({ postId }: { postId: string }) {
           <button
             type="button"
             aria-label={t("actions")}
-            className="flex size-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground md:size-9"
+            className="flex size-11 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground md:size-9"
           >
             <MoreHorizontalIcon className="size-4" aria-hidden />
           </button>
