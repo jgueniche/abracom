@@ -8,7 +8,7 @@ import { appName } from "@/lib/env";
 export async function SiteHeader() {
   const t = await getTranslations("common");
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-background">
       <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-5">
         <Link href="/" className="font-heading text-lg font-normal tracking-[-0.012em]">
           {appName}

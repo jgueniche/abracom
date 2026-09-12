@@ -203,7 +203,7 @@ export function AttendanceGrid({
   return (
     <div className="flex flex-col gap-4">
       {/* Readable from across the hall, and it never scrolls away. */}
-      <div className="sticky top-[calc(var(--nav-h)+0.5rem)] z-10 flex flex-col gap-3 rounded-xl border border-border bg-card/95 p-3 backdrop-blur">
+      <div className="sticky top-[calc(var(--nav-h)+0.5rem)] z-10 flex flex-col gap-3 rounded-xl border border-border bg-card p-3">
         <p className="text-lg font-semibold tabular-nums sm:text-xl">
           {t("counter", {
             present: present.length,
