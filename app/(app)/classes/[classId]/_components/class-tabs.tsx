@@ -9,15 +9,21 @@ import { cn } from "@/lib/utils";
 
 // "Fil" was the unfiltered union of Homework and Journal — the same posts
 // twice, in a seventh tab that pushed the row past the width of a phone.
+/**
+ * Ordered by how often a family actually opens them, not by the order the
+ * features were built. The cahier de vie and the day's notes are read several
+ * times a week; the timetable is consulted once a term, the appointments once a
+ * year. The first tab is also where the class space lands.
+ */
 const TABS = [
+  { segment: "cahier", key: "journal" },
   { segment: "devoirs", key: "homework" },
+  { segment: "mots", key: "notes" },
+  { segment: "absences", key: "absences" },
+  { segment: "evaluations", key: "assessments" },
   // The weekly grid: the first of the three reasons a family kept Educartable
   // open beside Kesher (session 20).
   { segment: "emploi-du-temps", key: "timetable" },
-  { segment: "cahier", key: "journal" },
-  { segment: "mots", key: "notes" },
-  { segment: "evaluations", key: "assessments" },
-  { segment: "absences", key: "absences" },
   // Staff reading only: lateness across a class is not a family view.
   { segment: "retards", key: "late" },
   { segment: "rdv", key: "appointments" },

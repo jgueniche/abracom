@@ -279,7 +279,8 @@
       "title": "Mes classes",
       "students": "{count, plural, =0 {Aucun élève} one {# élève} other {# élèves}}",
       "noClasses": "Aucune classe ne vous est affectée pour cette année.",
-      "room": "Salle {room}"
+      "room": "Salle {room}",
+      "subtitle": "Vos classes, le pointage du jour et ce qui vient."
     },
     "admin": {
       "title": "Tableau de bord",
@@ -1035,11 +1036,11 @@
       "newHomework": "Nouveau devoir"
     },
     "journal": {
-      "empty": "Pas encore de photos.",
+      "empty": "Le cahier de vie est encore vide.",
       "month": "{month}",
       "download": "Téléchargement désactivé par l'école",
       "photos": "{count, plural, one {# photo} other {# photos}}",
-      "emptyHint": "Les photos et les billets du cahier de vie s'afficheront ici, mois par mois."
+      "emptyHint": "Les billets et les photos du cahier de vie s'afficheront ici, mois par mois."
     },
     "notes": {
       "title": "Mots individuels",

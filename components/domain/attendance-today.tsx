@@ -1,4 +1,3 @@
-import { ClipboardCheckIcon } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
@@ -22,17 +21,20 @@ export async function AttendanceToday() {
   // Holding lists but none scheduled today used to render nothing, which left a
   // phone with no route to the pointeuse at all: five tabs are full and the
   // desktop bar is the only place that names it. One quiet line fixes that.
+  // It used to be a bare line floating between the page title and the first
+  // section, which read as an orphan. A screen has sections; this is one of
+  // them, whether or not it has anything in it today.
   if (today.length === 0) {
     return (
-      <p className="mb-6">
+      <section className="mb-10">
+        <SectionHeader label={t("todayTitle")} />
         <Link
           href="/pointage"
-          className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline"
+          className="inline-flex min-h-11 items-center text-sm text-muted-foreground transition-colors hover:text-foreground md:min-h-0"
         >
-          <ClipboardCheckIcon className="size-4" aria-hidden />
           {t("nothingTodaySeeLists", { count: lists.length })}
         </Link>
-      </p>
+      </section>
     );
   }
 

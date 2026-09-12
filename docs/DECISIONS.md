@@ -918,3 +918,39 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   précédente n'avait pu jouer ici : **28 tests e2e verts, invitation → première connexion comprise**, et
   436 assertions pgTAP — au passage, `015_attendance.sql` comparait une occurrence datée dans le fuseau
   de l'école à un `current_date` serveur, et échouait donc **toutes les nuits entre 22 h et minuit UTC**.
+
+## ADR-0053 — Un onglet, une destination : l'espace de classe ouvre sur le cahier de vie
+
+- **Contexte** : revue de l'architecture après la refonte visuelle. Sur le téléphone d'un parent d'un
+  seul enfant, **deux des cinq onglets ouvraient le même écran** : « Devoirs » (le cahier de texte,
+  tous les enfants fusionnés) et « Ma classe », qui redirigeait vers l'onglet Devoirs de la classe.
+  Quarante pour cent de la barre pour une destination. Ce n'était la décision de personne : la
+  session 16 avait fait atterrir l'espace de classe sur les devoirs parce que l'onglet « Fil » qu'elle
+  supprimait rejouait Devoirs et Cahier de vie, et la session 17 a ensuite donné aux devoirs un onglet
+  à eux dans la barre principale sans revenir sur l'atterrissage. Deux autres doublons du même
+  genre : « Formulaires » figurait dans École **et** dans Communauté, qui est elle-même une entrée
+  d'École ; l'agenda était classé quatrième dans École alors qu'il s'y consulte plus souvent que les
+  documents.
+- **Décision** : `/classes/[classId]` ouvre sur le **cahier de vie**, et les onglets de l'espace sont
+  rangés par fréquence réelle d'ouverture — Cahier de vie, Devoirs, Mots, Absences, Évaluations,
+  Emploi du temps, (Retards), Rendez-vous — le premier onglet étant l'atterrissage. « Formulaires »
+  sort du pôle Communauté et reste dans École, où il appartient : un formulaire est ce que **l'école**
+  vous demande, Communauté est ce que les familles échangent entre elles. École est rangée par
+  fréquence : Annonces, Agenda, Documents, Formulaires, Communauté.
+- **Pourquoi le cahier de vie** : c'est la vie de la classe, ce pour quoi une famille ouvre
+  l'application en dehors d'une échéance — et c'est l'écran d'accueil de tous les produits de ce
+  domaine (Klassly, Educartable, TouteMonAnnée, Seesaw, ClassDojo mènent avec le fil de la classe, pas
+  avec une liste de devoirs). Les devoirs ne perdent rien : ils gardent leur onglet, où toutes les
+  classes du lecteur sont fusionnées, ce qui vaut mieux qu'une vue par classe pour un parent de deux
+  enfants.
+- **Conséquences** : le déplacement a révélé que le cahier de vie **ne montrait que les billets
+  portant une photo, et n'affichait jamais leur texte** — il ne gardait que le titre et la grille
+  d'images. Une enseignante qui écrivait « belle sortie au parc » sans photo publiait donc dans le
+  vide, et avec une photo ses mots étaient jetés ; il n'existe aucun autre écran où un billet du
+  cahier apparaît depuis la suppression de l'onglet « Fil ». Un cahier de vie est un journal, les
+  photos l'illustrent : tous les billets publiés s'affichent désormais, texte compris. Deux autres
+  défauts corrigés au passage : le compteur « N formulaires à remplir » d'École comptait, pour
+  l'équipe qui voit toutes les réponses, les formulaires que **personne** n'avait remplis — il ne
+  compte plus que ceux du lecteur, et ne s'affiche qu'à une famille ; et l'accueil de l'enseignante
+  répétait en description le libellé de la section juste dessous, avec la ligne du pointage flottant
+  au-dessus de tout sans section.

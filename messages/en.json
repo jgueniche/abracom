@@ -279,7 +279,8 @@
       "title": "My classes",
       "students": "{count, plural, =0 {No student} one {# student} other {# students}}",
       "noClasses": "No class is assigned to you this year.",
-      "room": "Room {room}"
+      "room": "Room {room}",
+      "subtitle": "Your classes, today's attendance and what is coming."
     },
     "admin": {
       "title": "Dashboard",
@@ -1035,11 +1036,11 @@
       "newHomework": "New homework"
     },
     "journal": {
-      "empty": "No photo yet.",
+      "empty": "The class diary is still empty.",
       "month": "{month}",
       "download": "Download disabled by the school",
       "photos": "{count, plural, one {# photo} other {# photos}}",
-      "emptyHint": "Photos and entries from the class journal will appear here, month by month."
+      "emptyHint": "The class diary's entries and photos will appear here, month by month."
     },
     "notes": {
       "title": "Individual notes",

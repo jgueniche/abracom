@@ -253,6 +253,20 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   436 assertions pgTAP, `check-bundle` confirmé sur un vrai bundle, axe à 0 violation sérieuse sur neuf
   écrans connectés en clair et en sombre. Au passage, `015_attendance.sql` échouait toutes les nuits
   entre 22 h et minuit UTC (occurrence datée à Paris, comparée à un `current_date` serveur) — corrigé.
+- **Session 24 — revue d'architecture, code complet** (ADR-0053). Un onglet doit mener quelque part
+  qu'aucun autre ne mène. Sur le téléphone d'un parent d'un enfant, **deux des cinq onglets ouvraient
+  le même écran** — « Devoirs » et « Ma classe », qui atterrissait sur les devoirs de la classe :
+  séquelle de la session 16 (l'atterrissage) que la session 17 (l'onglet Devoirs fusionné) n'avait pas
+  revue. L'espace de classe ouvre désormais sur le **cahier de vie**, ses onglets sont rangés par
+  fréquence d'ouverture, « Formulaires » sort de Communauté (il figurait aussi dans École, qui contient
+  Communauté), et École est rangée par fréquence. Le déplacement a mis au jour un défaut de fond : le
+  cahier de vie **ne montrait que les billets portant une photo et n'affichait jamais leur texte** —
+  depuis la suppression de l'onglet « Fil », un billet sans photo n'existait nulle part. Corrigés
+  aussi : le compteur « N formulaires à remplir » comptait pour l'équipe les formulaires que personne
+  n'avait remplis, et l'accueil de l'enseignante répétait en description le libellé de sa première
+  section. **Reste à faire, signalé et non fait** : l'accueil de l'enseignante n'a pas d'équivalent du
+  bloc « Aujourd'hui » du parent ni de la file d'attente de la direction — cela demande de nouvelles
+  requêtes, donc une session de fonctionnalité, pas de mise en forme.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

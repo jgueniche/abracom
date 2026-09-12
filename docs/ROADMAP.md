@@ -713,6 +713,23 @@ composition, non.
 - [x] 28 e2e verts (invitation comprise), 436 assertions pgTAP, axe à 0 sur neuf écrans connectés
 - [ ] Validation visuelle par le porteur
 
+## Session 24 — Un onglet, une destination (ADR-0053)
+
+Revue de l'architecture — onglets, sections, logique du clic, ce qui est mis en avant — appuyée sur ce
+que font Klassly, Educartable, TouteMonAnnée, Pronote et ParentSquare.
+
+- [x] L'espace de classe ouvre sur le **cahier de vie** : deux des cinq onglets du téléphone ouvraient
+      le même écran pour un parent d'un enfant
+- [x] Onglets de classe rangés par fréquence d'ouverture ; le premier est l'atterrissage
+- [x] « Formulaires » sort de Communauté (doublon avec École, qui contient Communauté)
+- [x] École rangée par fréquence : Annonces, Agenda, Documents, Formulaires, Communauté
+- [x] **Défaut de fond** : le cahier de vie ne montrait que les billets avec photo et n'affichait
+      jamais leur texte — un billet sans photo n'existait nulle part
+- [x] Le compteur « formulaires à remplir » est un fait de famille, pas un chiffre d'équipe
+- [x] Accueil de l'enseignante : colonne, rail, description qui ne répète plus sa première section
+- [ ] Un bloc « Aujourd'hui » pour l'enseignante (nouvelles requêtes : session de fonctionnalité)
+- [ ] Validation par le porteur
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

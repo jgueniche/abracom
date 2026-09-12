@@ -1,9 +1,9 @@
-import { BookOpenIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { NewHomeworkButton } from "@/components/domain/new-homework-button";
 import { AttendanceToday } from "@/components/domain/attendance-today";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
@@ -27,11 +27,11 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
   const summaries = await getWeeklySummary(classes.map((row) => row.class!.id));
 
   return (
-    <>
+    <Column rail={<UpcomingEvents userId={user.id} />}>
       <PageHeader
         eyebrow={format.dateTime(new Date(), { weekday: "long", day: "numeric", month: "long" })}
         title={t("greeting", { name: user.profile.first_name })}
-        description={t("teacher.title")}
+        description={t("teacher.subtitle")}
         actions={
           <NewHomeworkButton
             classes={classes.flatMap((row) =>
@@ -45,7 +45,7 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
       {classes.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("teacher.noClasses")}</p>
       ) : (
-        <div className="mb-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2">
           {classes.map((row) => {
             const cls = row.class!;
             const summary = summaries.get(cls.id) ?? { posts: 0, homework: 0 };
@@ -67,13 +67,9 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
                       {cls.room ? cls.room : levelLabel(cls.level, locale)}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="flex flex-col gap-1 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1.5">
-                      <UsersIcon className="size-3.5" aria-hidden />
-                      {t("teacher.students", { count: cls.enrollments[0]?.count ?? 0 })}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <BookOpenIcon className="size-3.5" aria-hidden />
+                  <CardContent className="flex flex-col gap-0.5 text-xs text-muted-foreground">
+                    <span>{t("teacher.students", { count: cls.enrollments[0]?.count ?? 0 })}</span>
+                    <span>
                       {tWeek("summary", { posts: summary.posts, homework: summary.homework })}
                     </span>
                   </CardContent>
@@ -83,7 +79,6 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
           })}
         </div>
       )}
-      <UpcomingEvents userId={user.id} />
-    </>
+    </Column>
   );
 }

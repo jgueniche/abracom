@@ -8,8 +8,8 @@ import type { ChildWithClass } from "@/server/queries/family";
 
 /** The four places a parent actually goes inside a class space. */
 const SHORTCUTS = [
-  { segment: "devoirs", key: "homework" },
   { segment: "cahier", key: "journal" },
+  { segment: "devoirs", key: "homework" },
   { segment: "mots", key: "notes" },
   { segment: "absences", key: "absences" },
 ] as const;
@@ -35,7 +35,7 @@ export async function ChildClassCard({ child }: { child: ChildWithClass }) {
   return (
     <article className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
       <Link
-        href={cls ? `/classes/${cls.id}/devoirs` : "/famille"}
+        href={cls ? `/classes/${cls.id}` : "/famille"}
         className="flex items-center gap-3 px-3.5 py-3 transition-colors hover:bg-muted/50"
       >
         <UserAvatar

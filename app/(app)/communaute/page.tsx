@@ -1,4 +1,4 @@
-import { ClipboardListIcon, ContactIcon, MegaphoneIcon } from "lucide-react";
+import { ContactIcon, MegaphoneIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -8,9 +8,8 @@ import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { isSchoolStaff } from "@/lib/permissions";
 import { getMyTeachingClasses } from "@/server/queries/classes";
-import { getClassBirthdays, getClassifieds, getForms } from "@/server/queries/community";
+import { getClassBirthdays, getClassifieds } from "@/server/queries/community";
 import { getMyChildren } from "@/server/queries/family";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,13 +19,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CommunityPage() {
   const user = await requireCurrentUser();
-  const [t, format, children, teaching, classifieds, forms] = await Promise.all([
+  const [t, format, children, teaching, classifieds] = await Promise.all([
     getTranslations("community"),
     getFormatter(),
     getMyChildren(),
     getMyTeachingClasses(user.id),
     getClassifieds(),
-    getForms(),
   ]);
   const classes = new Map<string, string>();
   for (const child of children) {
@@ -46,9 +44,13 @@ export default async function CommunityPage() {
     .flatMap((list) => list.rows.map((row) => ({ ...row, className: list.name })))
     .filter((row) => row.next_birthday <= horizon)
     .sort((a, b) => a.next_birthday.localeCompare(b.next_birthday));
-  const toAnswer = forms.filter((f) => f.responses.length === 0).length;
-  const staff = user.school !== null && isSchoolStaff(user.roles, user.school.id);
 
+  /*
+   * Forms used to sit here as well as in École — and École is the screen that
+   * links to Communauté, so the same destination was offered twice, one level
+   * apart, from the same page. A form is something the *school* asks of you;
+   * this hub is what families exchange between themselves.
+   */
   const cards = [
     {
       href: "/communaute/annonces",
@@ -63,13 +65,6 @@ export default async function CommunityPage() {
       title: t("hub.directory"),
       hint: t("hub.directoryHint"),
       meta: null,
-    },
-    {
-      href: "/communaute/formulaires",
-      icon: ClipboardListIcon,
-      title: t("hub.forms"),
-      hint: t("hub.formsHint"),
-      meta: staff ? null : t("hub.openForms", { count: toAnswer }),
     },
   ];
 

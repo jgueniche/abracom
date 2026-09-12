@@ -19,11 +19,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** Sections of a child's file, in the order a parent actually asks for them. */
 const SECTIONS = [
-  { segment: "devoirs", key: "homework" },
+  // Same order as the class space's own tabs.
   { segment: "cahier", key: "journal" },
+  { segment: "devoirs", key: "homework" },
   { segment: "mots", key: "notes" },
-  { segment: "evaluations", key: "assessments" },
   { segment: "absences", key: "absences" },
+  { segment: "evaluations", key: "assessments" },
 ] as const;
 
 /**
