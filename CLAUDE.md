@@ -304,6 +304,21 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   sa carte de gauche sur sept cents pixels de blanc ; et neuf grilles à deux panneaux de
   l'administration faisaient la même chose. Vérifié : `pnpm check`, `pnpm build`, 28 e2e,
   436 assertions pgTAP, axe à 0 violation sérieuse sur vingt-six écrans en clair et en sombre.
+- **Session 27 — balayage terminé** (ADR-0056). La session 26 n'avait regardé qu'une trentaine
+  d'écrans sur soixante-huit ; les autres y sont passés, plus le mode sombre à l'œil et les rôles
+  `staff` et `super_admin` jamais parcourus depuis la session 22. Deux barres translucides
+  identiques à celles déjà corrigées dormaient encore dans l'en-tête public et le bandeau de la
+  pointeuse. Six défauts de plus, tous invisibles pour axe : sur **`/famille`**, la liste des
+  destinations était rendue hors de la carte de l'enfant, si bien que deux enfants aux équipes de
+  tailles différentes donnaient deux listes décalées ; **`field-sizing: content` neutralisait
+  l'attribut `rows`**, et le corps d'une circulaire s'ouvrait sur quatre lignes au lieu de dix ; la
+  **promotion de niveau** disait ce qui manque sans offrir la porte ; l'**agenda** dessinait un filet
+  sous chaque jour sans événement, suivi du blanc d'une journée (le filet appartient maintenant au
+  jour, qui est l'unité de la liste) ; le **tableau de bord du secrétariat** peignait son seul lien
+  comme du texte gris ; et l'**échec de connexion** était une impasse sur l'écran le plus utilisé de
+  l'application — il nomme désormais le lien par e-mail, qui est la sortie puisqu'il n'y a pas de
+  réinitialisation (ADR-0028). Vérifié : `pnpm check`, `pnpm build`, 28 e2e, axe à 0 violation
+  sérieuse. **Validation visuelle par le porteur : c'est le seul point qui reste.**
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

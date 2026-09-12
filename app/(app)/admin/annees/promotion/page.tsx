@@ -1,7 +1,8 @@
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, CalendarPlusIcon } from "lucide-react";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { EmptyState } from "@/components/domain/empty-state";
 import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
@@ -68,13 +69,25 @@ export default async function PromotionPage() {
         </Link>
       </Button>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      <Card>
-        <CardContent>
-          {!current ? (
-            <p className="text-sm text-muted-foreground">{t("noCurrent")}</p>
-          ) : !next ? (
-            <p className="text-sm text-muted-foreground">{t("noNext", { year: current.label })}</p>
-          ) : (
+      {/* Saying what is missing is half the job; the other half is the door.
+          Both of these states are one click from the years list, and the page
+          used to leave the reader to find it. */}
+      {!current ? (
+        <EmptyState
+          icon={CalendarPlusIcon}
+          title={t("noCurrent")}
+          action={{ href: "/admin/annees", label: ty("title") }}
+        />
+      ) : !next ? (
+        <EmptyState
+          icon={CalendarPlusIcon}
+          title={t("noNextTitle")}
+          description={t("noNext", { year: current.label })}
+          action={{ href: "/admin/annees", label: t("createNextYear") }}
+        />
+      ) : (
+        <Card>
+          <CardContent>
             <>
               <p className="mb-4 text-sm">{t("fromTo", { from: current.label, to: next.label })}</p>
               <PromotionForm
@@ -85,9 +98,9 @@ export default async function PromotionPage() {
                 locale={locale}
               />
             </>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </Column>
   );
 }

@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -8,9 +10,18 @@ import type { ChildWithClass } from "@/server/queries/family";
 export async function StudentCard({
   child,
   compact = false,
+  /**
+   * What the card leads to — the tabs of the child's class. It is part of the
+   * card, not a list floating under it: two children whose teams differ in
+   * length gave two cards of different heights, and the two lists of links
+   * below them then started at two different heights, as if the page had come
+   * apart.
+   */
+  footer,
 }: {
   child: ChildWithClass;
   compact?: boolean;
+  footer?: ReactNode;
 }) {
   const t = await getTranslations("family");
   const locale = await getLocale();
@@ -84,6 +95,7 @@ export async function StudentCard({
           )}
         </CardContent>
       )}
+      {footer && <div className="border-t border-rule px-1.5 py-1">{footer}</div>}
     </Card>
   );
 }

@@ -218,7 +218,7 @@
       "password": "Mot de passe",
       "signIn": "Se connecter",
       "signingIn": "Connexion…",
-      "invalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
+      "invalidCredentials": "Adresse e-mail ou mot de passe incorrect. Vous pouvez aussi recevoir un lien de connexion par e-mail.",
       "unavailable": "Le service de connexion est momentanément indisponible. Réessayez dans un instant.",
       "noAccountCta": "Pas de compte ? Demandez directement à l'école de vous créer votre compte"
     },
@@ -602,7 +602,9 @@
       "done": "Promotion terminée : {classes} classes créées, {students} élèves inscrits, {left} élèves sortis.",
       "invalid": "Correspondance invalide.",
       "forbidden": "Réservé à la direction.",
-      "error": "La promotion a échoué ; aucune modification n'a été appliquée."
+      "error": "La promotion a échoué ; aucune modification n'a été appliquée.",
+      "noNextTitle": "L'année suivante n'existe pas encore",
+      "createNextYear": "Créer l'année suivante"
     },
     "groups": {
       "publications": "Publications",
@@ -2137,7 +2139,8 @@
     "noListGranted": "Aucune liste ne vous est confiée",
     "noListGrantedHint": "La direction accorde le pointage liste par liste. Demandez-lui de vous ajouter à celle que vous tenez.",
     "createFirstList": "Créer une liste",
-    "nothingTodaySeeLists": "{count, plural, one {Pointage · # liste} other {Pointage · # listes}}"
+    "nothingTodaySeeLists": "{count, plural, one {Pointage · # liste} other {Pointage · # listes}}",
+    "seeLists": "Voir les listes"
   },
   "timetable": {
     "title": "Emploi du temps",

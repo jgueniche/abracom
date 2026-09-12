@@ -1,3 +1,4 @@
+import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
@@ -26,14 +27,22 @@ export async function AttendanceToday() {
   // them, whether or not it has anything in it today.
   if (today.length === 0) {
     return (
+      // The way in used to be a grey sentence under the label: a link that
+      // looks exactly like static text is a link nobody clicks. It takes the
+      // section's action slot, like every other "see everything" on this page.
       <section className="mb-10">
-        <SectionHeader label={t("todayTitle")} />
-        <Link
-          href="/pointage"
-          className="inline-flex min-h-11 items-center text-sm text-muted-foreground transition-colors hover:text-foreground md:min-h-0"
-        >
-          {t("nothingTodaySeeLists", { count: lists.length })}
-        </Link>
+        <SectionHeader
+          label={t("todayTitle")}
+          hint={t("nothingTodaySeeLists", { count: lists.length })}
+          action={
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/pointage">
+                {t("seeLists")}
+                <ChevronRightIcon aria-hidden />
+              </Link>
+            </Button>
+          }
+        />
       </section>
     );
   }

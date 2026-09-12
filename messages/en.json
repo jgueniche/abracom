@@ -218,7 +218,7 @@
       "password": "Password",
       "signIn": "Sign in",
       "signingIn": "Signing in…",
-      "invalidCredentials": "Incorrect e-mail address or password.",
+      "invalidCredentials": "Wrong e-mail address or password. You can also get a sign-in link by e-mail.",
       "unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment.",
       "noAccountCta": "No account? Ask the school directly to create one for you"
     },
@@ -602,7 +602,9 @@
       "done": "Promotion done: {classes} classes created, {students} students enrolled, {left} students left.",
       "invalid": "Invalid mapping.",
       "forbidden": "Head of school only.",
-      "error": "The promotion failed; nothing was changed."
+      "error": "The promotion failed; nothing was changed.",
+      "noNextTitle": "Next year does not exist yet",
+      "createNextYear": "Create next year"
     },
     "groups": {
       "publications": "Publications",
@@ -2137,7 +2139,8 @@
     "noListGranted": "No list is yours yet",
     "noListGrantedHint": "The direction grants attendance list by list. Ask to be added to the one you run.",
     "createFirstList": "Create a list",
-    "nothingTodaySeeLists": "{count, plural, one {Attendance · # list} other {Attendance · # lists}}"
+    "nothingTodaySeeLists": "{count, plural, one {Attendance · # list} other {Attendance · # lists}}",
+    "seeLists": "See the lists"
   },
   "timetable": {
     "title": "Timetable",

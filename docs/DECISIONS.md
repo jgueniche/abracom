@@ -1029,3 +1029,37 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   deux panneaux de l'administration passent en `items-start` ; le seed cesse de préfixer chaque
   intitulé de compétence par son domaine, et l'écran retire le préfixe de toute façon, pour un
   référentiel importé qui ferait la même chose.
+
+## ADR-0056 — Le balayage terminé : les écrans que personne n'avait ouverts
+
+- **Contexte** : la session 26 avait corrigé huit défauts mais n'avait regardé qu'une trentaine
+  d'écrans sur soixante-huit. Le porteur demande de finir avant de valider lui-même. Première
+  confirmation que la passe était incomplète : deux barres translucides identiques à celles déjà
+  rendues opaques dormaient encore dans l'en-tête public et dans le bandeau de la pointeuse.
+- **Ce que la fin du balayage a trouvé** — six défauts, tous invisibles pour axe :
+  1. **`/famille`** : la liste des destinations de chaque enfant était rendue _hors_ de sa carte.
+     Deux enfants dont les équipes n'ont pas le même nombre d'intervenants donnaient deux cartes de
+     hauteurs différentes, donc deux listes qui commençaient à deux hauteurs différentes : la page
+     avait l'air décousue. Les destinations deviennent le pied de la carte.
+  2. **L'éditeur Markdown** : `field-sizing: content` sur le `Textarea` partagé prend le pas sur
+     l'attribut `rows`, si bien que le corps d'une circulaire — le champ le plus important du
+     formulaire — s'ouvrait sur quatre lignes quand le code en demandait dix. Le plancher est
+     désormais exprimé dans l'unité que l'auteur avait en tête.
+  3. **La promotion de niveau** disait ce qui manque (« créez d'abord l'année suivante ») sans
+     offrir la porte : les deux états sans issue deviennent des `EmptyState` avec leur action.
+  4. **L'agenda** dessinait un filet sous chaque jour _sans_ événement — la bordure haute d'une
+     liste vide — suivi du blanc d'une journée entière. Le filet appartient maintenant au **jour**,
+     qui est l'unité de cette liste, et le mois se lit comme un registre.
+  5. **Le tableau de bord du secrétariat** : « Pointage · 1 liste » était un lien peint comme du
+     texte gris. Un lien qui ressemble à du texte statique est un lien que personne ne clique ; il
+     prend la place d'action de sa section, comme tous les autres « voir tout » de la page.
+  6. **L'échec de connexion** — « Adresse e-mail ou mot de passe incorrect. » — était une impasse
+     sur l'écran le plus utilisé de l'application, pour une population qui oubliera son mot de
+     passe. Il n'existe pas de réinitialisation (ADR-0028, volontaire) : le message nomme donc le
+     lien par e-mail, qui est la sortie.
+- **Ce qui a été vérifié sans rien trouver**, et qui vaut d'être écrit : le mode sombre regardé à
+  l'œil et non plus seulement passé à axe (la matrice de compétences, l'agenda, les accueils — les
+  quatre niveaux d'acquisition restent distinguables, les filets tiennent) ; les rôles `staff` et
+  `super_admin`, jamais parcourus depuis la session 22 ; `/profil/securite`, `/publier`,
+  `/pointage/[sessionId]`, les formulaires de création. Le lien d'évitement et les cibles de 24 px,
+  soupçonnés par une sonde géométrique, se sont révélés corrects en les regardant.

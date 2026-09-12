@@ -761,6 +761,21 @@ La navigation doit être ce qu'on voit en premier ; le contenu d'une carte, ce q
 - [x] Fiche élève et neuf grilles d'administration : `items-start`, plus de carte étirée à vide
 - [ ] Validation visuelle par le porteur
 
+## Session 27 — Le balayage terminé (ADR-0056)
+
+- [x] Les écrans jamais ouverts : formulaires de création, promotion, profil, publier, famille,
+      documents, pointage en session, détails
+- [x] Mode sombre regardé à l'œil, pas seulement passé à axe
+- [x] Rôles `staff` et `super_admin` parcourus
+- [x] Deux barres translucides oubliées (en-tête public, bandeau de pointage)
+- [x] `/famille` : les destinations rentrent dans la carte de l'enfant
+- [x] `field-sizing: content` neutralisait `rows` — le corps d'une circulaire s'ouvrait à quatre lignes
+- [x] Promotion de niveau : les états sans issue offrent leur porte
+- [x] Agenda : le filet appartient au jour, plus à la liste d'événements
+- [x] Tableau de bord du secrétariat : le lien ressemble à un lien
+- [x] Échec de connexion : nommer le lien par e-mail plutôt que laisser sans issue
+- [ ] **Validation visuelle par le porteur — le seul point restant**
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

@@ -1,4 +1,4 @@
-import { BackpackIcon, ChevronRightIcon } from "lucide-react";
+import { BackpackIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -58,30 +58,30 @@ export default async function FamilyPage() {
             const classId = child.student.enrollments[0]?.class?.id;
             return (
               <div key={child.student.id} className="flex flex-col gap-3">
-                <StudentCard child={child} />
+                <StudentCard
+                  child={child}
+                  footer={
+                    classId ? (
+                      // Five destinations, five names. The glyph that used to
+                      // sit before each one said nothing the word did not, and
+                      // a column of little pictures beside a column of words is
+                      // the shape this interface is trying to leave behind.
+                      <ul className="flex flex-wrap gap-0.5">
+                        {sections.map(({ segment, key }) => (
+                          <li key={segment}>
+                            <Link
+                              href={`/classes/${classId}/${segment}`}
+                              className="flex min-h-11 items-center rounded-md px-2.5 text-[0.8125rem] font-medium text-foreground/80 transition-colors hover:bg-muted/60 hover:text-foreground"
+                            >
+                              {tSpace(key)}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : undefined
+                  }
+                />
                 <ChildAttendance studentId={child.student.id} />
-                {classId && (
-                  // Five destinations, five names. The glyph that used to sit
-                  // before each one said nothing the word did not, and a column
-                  // of little pictures beside a column of words is the shape
-                  // this interface is trying to leave behind.
-                  <ul className="border-t border-rule">
-                    {sections.map(({ segment, key }) => (
-                      <li key={segment} className="border-b border-rule">
-                        <Link
-                          href={`/classes/${classId}/${segment}`}
-                          className="-mx-2 flex min-h-11 items-center gap-3 rounded-md px-2 text-[0.8125rem] font-medium transition-colors hover:bg-muted/60"
-                        >
-                          {tSpace(key)}
-                          <ChevronRightIcon
-                            className="ml-auto size-3.5 text-muted-foreground/50"
-                            aria-hidden
-                          />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
             );
           })}

@@ -114,6 +114,11 @@ export function MarkdownEditor({
           <Markdown size="compact">{value || t("empty")}</Markdown>
         </div>
       ) : null}
+      {/* `field-sizing: content` on the shared textarea makes the box grow with
+          what is typed — good — but it also overrides `rows`, so an empty field
+          collapsed to the primitive's `min-h-16`. The body of a circular, the
+          most important field of the form, opened at four lines while the code
+          asked for ten. The floor is stated in the same unit the author meant. */}
       <Textarea
         ref={ref}
         id={id}
@@ -121,6 +126,7 @@ export function MarkdownEditor({
         value={value}
         onChange={(e) => setValue(e.target.value)}
         rows={rows}
+        style={{ minHeight: `calc(${rows} * 1.55em + 1rem)` }}
         required={required}
         className={preview ? "hidden" : undefined}
       />
