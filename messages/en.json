@@ -85,18 +85,19 @@
       "onBackground": "on page background"
     },
     "typography": {
-      "heading": "Headings · Newsreader",
-      "body": "Body copy",
+      "heading": "Two layers: structure, then content",
+      "scale": "The serif carries the school's voice, the sans carries the interface.",
       "sample": "The quick brown fox jumps over the lazy dog",
       "lead": "A lead paragraph, slightly larger, for important announcements from the school office.",
       "muted": "Secondary text for metadata, hints and timestamps.",
-      "scale": "One scale, eight steps",
       "page": "Page title",
+      "nav": "Tab, destination",
       "section": "Section label",
-      "card": "Card title (interface)",
       "content": "Content title (editorial)",
-      "meta": "Metadata",
+      "card": "Card title (interface)",
+      "body": "Body copy",
       "eyebrow": "Eyebrow",
+      "meta": "Metadata",
       "prose": "Institutional prose"
     },
     "buttons": {

@@ -85,18 +85,19 @@
       "onBackground": "sur fond de page"
     },
     "typography": {
-      "heading": "Titres · Newsreader",
-      "body": "Texte courant",
+      "heading": "Deux couches : la structure, puis le contenu",
+      "scale": "La serif porte la voix de l'école, le sans porte l'interface.",
       "sample": "Portez ce vieux whisky au juge blond qui fume",
       "lead": "Un texte d'introduction, un peu plus grand, pour les annonces importantes de la direction.",
       "muted": "Texte secondaire pour les métadonnées, les aides et les horodatages.",
-      "scale": "Une échelle, huit crans",
       "page": "Titre de page",
+      "nav": "Onglet, destination",
       "section": "Libellé de section",
-      "card": "Titre de carte (interface)",
       "content": "Titre de contenu (éditorial)",
-      "meta": "Métadonnée",
+      "card": "Titre de carte (interface)",
+      "body": "Texte courant",
       "eyebrow": "Surtitre",
+      "meta": "Métadonnée",
       "prose": "Prose institutionnelle"
     },
     "buttons": {

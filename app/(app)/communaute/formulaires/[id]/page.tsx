@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { Markdown } from "@/components/domain/markdown";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,7 +48,7 @@ export default async function FormPage({
   );
 
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/communaute/formulaires">
           <ArrowLeftIcon aria-hidden />
@@ -83,7 +84,7 @@ export default async function FormPage({
       {form.description_md && (
         <Card className="mb-6">
           <CardContent>
-            <Markdown>{form.description_md}</Markdown>
+            <Markdown size="compact">{form.description_md}</Markdown>
           </CardContent>
         </Card>
       )}
@@ -127,6 +128,6 @@ export default async function FormPage({
           </CardContent>
         </Card>
       )}
-    </>
+    </Column>
   );
 }

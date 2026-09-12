@@ -9,21 +9,35 @@ import { cn } from "@/lib/utils";
  *
  * Three lines, always in the same order and at the same sizes: the dateline
  * (who is speaking, which class, which week), the title, and one sentence of
- * description held to a readable measure. The block used to align its actions
- * to the *bottom* of the whole column, so a page with a description pushed its
- * buttons a line and a half below the title they belong to; they now hang off
- * the title itself.
+ * description.
+ *
+ * The description is set small, because a description is apparatus. The class
+ * space passes its whole teaching team through this slot, and at body size four
+ * names with their roles filled three lines above the tabs — which is the
+ * opposite of what a header is for.
+ *
+ * The block used to align its actions to the *bottom* of the whole column, so a
+ * page with a description pushed its buttons a line and a half below the title
+ * they belong to; they now hang off the title itself.
  */
 export function PageHeader({
   eyebrow,
   title,
   description,
+  /**
+   * A fact about the screen that is not a sentence about it — the teaching team
+   * of a class, the members of a group. One line, clipped, with the whole of it
+   * on hover: it is a caption, and a caption that wraps to three lines above
+   * the tabs stops being one.
+   */
+  caption,
   actions,
   className,
 }: {
   eyebrow?: ReactNode;
   title: string;
   description?: string;
+  caption?: string;
   actions?: ReactNode;
   className?: string;
 }) {
@@ -41,7 +55,14 @@ export function PageHeader({
           <HelpHint />
         </div>
         {description && (
-          <p className="measure mt-1.5 text-sm text-pretty text-muted-foreground">{description}</p>
+          <p className="mt-1.5 max-w-[62ch] text-[0.8125rem] text-pretty text-muted-foreground">
+            {description}
+          </p>
+        )}
+        {caption && (
+          <p className="mt-1 max-w-full truncate text-xs text-muted-foreground" title={caption}>
+            {caption}
+          </p>
         )}
       </div>
       {actions && (

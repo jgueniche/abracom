@@ -17,7 +17,24 @@ const schema = {
   },
 };
 
-export function Markdown({ children, className }: { children: string; className?: string }) {
+/**
+ * Two registers, because Markdown appears in two places that are nothing alike.
+ *
+ * `reading` is a page a person reads from beginning to end — a circular, a help
+ * article — set in the editorial serif at 17 px on a 42 rem measure. `compact`
+ * is the same content inside a card, in a list, next to a title and a date: the
+ * reading setting there put a diary entry's body at the size of the page title
+ * above it and ran it across the whole column.
+ */
+export function Markdown({
+  children,
+  size = "reading",
+  className,
+}: {
+  children: string;
+  size?: "reading" | "compact";
+  className?: string;
+}) {
   return (
     <div
       className={cn(
@@ -26,6 +43,8 @@ export function Markdown({ children, className }: { children: string; className?
         // rhythm, headings that stay inside the same family as the body, links
         // underlined from the text's own colour, and rules instead of boxes.
         "prose-kesher max-w-none",
+        size === "compact" &&
+          "font-sans text-sm leading-[1.6] text-foreground/85 [&_h1]:text-base [&_h2]:text-[0.9375rem] [&_h3]:text-sm",
         "[&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
         "[&_p]:my-[0.9em]",
         "[&_h1]:mt-[1.6em] [&_h1]:mb-[0.5em] [&_h1]:font-heading [&_h1]:text-2xl [&_h1]:leading-tight [&_h1]:font-normal",

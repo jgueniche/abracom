@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,7 +51,7 @@ export default async function AdminFormPage({ params }: { params: Promise<{ id: 
   };
 
   return (
-    <>
+    <Column width="full">
       <PageHeader
         title={form.title}
         description={t("responses", { count: responses.length })}
@@ -146,6 +147,6 @@ export default async function AdminFormPage({ params }: { params: Promise<{ id: 
           </Button>
         </form>
       </div>
-    </>
+    </Column>
   );
 }

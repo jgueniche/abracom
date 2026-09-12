@@ -70,7 +70,17 @@
 }
 
 /*
- * One typographic scale, redefined at the source.
+ * One typographic scale, redefined at the source — and read in two layers.
+ *
+ * **Structure** is what a reader needs at a glance: where they are and where
+ * they can go. Tabs and the bars are set at 15 px, the section label at 13 px
+ * caps at full strength, and the one they are on is heavier than the rest.
+ * **Content** is read once they have arrived, so it sits *under* that: a card
+ * title at 15 px, its copy at 14 px, its metadata at 11–12 px.
+ *
+ * The first pass at quieting this interface got the two the wrong way round —
+ * card titles at 18 px over tabs at 13 px of muted grey — which is why a screen
+ * announced its contents more loudly than its own navigation.
  *
  * The audit of session 16 fixed the *bottom* of the scale (85 % of the app was
  * set at 14 or 12 px) by adding a display serif at the top — and overshot: a
@@ -280,9 +290,15 @@
    * The one way a page names a section (SectionHeader). A label, never a third
    * level of heading competing with the page title: twenty-one `<h2>` were
    * written by hand at six different sizes and four different margins.
+   *
+   * It sits in the *structural* layer, with the tabs and the bars — the layer a
+   * reader needs at a glance — so it is set at full strength. The first pass at
+   * quieting the interface pushed it to 12 px at 75 % opacity, under card titles
+   * of 18 px: the page then announced its contents more loudly than its own
+   * structure, which is the wrong way round.
    */
   .section-label {
-    @apply font-sans text-[0.75rem] leading-4 font-semibold tracking-[0.075em] text-foreground/75 uppercase;
+    @apply font-sans text-[0.8125rem] leading-4 font-semibold tracking-[0.06em] text-foreground uppercase;
   }
   /* Factual secondary line — author, hour, count. Sentence case, never caps. */
   .meta {

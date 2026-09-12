@@ -111,7 +111,7 @@ export function MarkdownEditor({
       </div>
       {preview ? (
         <div className="min-h-32 rounded-xl border bg-muted/30 p-3">
-          <Markdown>{value || t("empty")}</Markdown>
+          <Markdown size="compact">{value || t("empty")}</Markdown>
         </div>
       ) : null}
       <Textarea

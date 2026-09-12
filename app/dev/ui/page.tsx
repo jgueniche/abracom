@@ -310,10 +310,12 @@ export default async function DevUiPage() {
           <Card>
             <CardHeader>
               <CardTitle>{t("typography.heading")}</CardTitle>
-              <CardDescription>{t("typography.body")}</CardDescription>
+              <CardDescription>{t("typography.scale")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col divide-y divide-rule">
               {[
+                /* Structure — what carries the reader from screen to screen.
+                   It is set larger and heavier than the content below it. */
                 {
                   name: "page",
                   node: (
@@ -322,6 +324,19 @@ export default async function DevUiPage() {
                     </p>
                   ),
                 },
+                {
+                  name: "nav",
+                  node: (
+                    <p className="inline-block border-b-2 border-primary pb-1 text-[0.9375rem] font-semibold">
+                      {t("typography.sample")}
+                    </p>
+                  ),
+                },
+                {
+                  name: "section",
+                  node: <p className="section-label">{t("typography.sample")}</p>,
+                },
+                /* Content — what sits inside a destination once you are there. */
                 {
                   name: "content",
                   node: (
@@ -333,17 +348,13 @@ export default async function DevUiPage() {
                 {
                   name: "card",
                   node: (
-                    <p className="text-base font-semibold tracking-[-0.006em]">
+                    <p className="font-heading text-base leading-snug tracking-[-0.006em]">
                       {t("typography.sample")}
                     </p>
                   ),
                 },
-                {
-                  name: "section",
-                  node: <p className="section-label">{t("typography.sample")}</p>,
-                },
-                { name: "eyebrow", node: <p className="eyebrow">{t("typography.sample")}</p> },
                 { name: "body", node: <p className="text-sm">{t("typography.sample")}</p> },
+                { name: "eyebrow", node: <p className="eyebrow">{t("typography.sample")}</p> },
                 { name: "meta", node: <p className="meta">{t("typography.muted")}</p> },
                 {
                   name: "prose",

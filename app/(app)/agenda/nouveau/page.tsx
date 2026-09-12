@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireSchoolRole } from "@/lib/auth/guards";
@@ -24,7 +25,7 @@ export default async function NewEventPage() {
     getEventAudienceOptions(user, schoolId),
   ]);
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/agenda">
           <ArrowLeftIcon aria-hidden />
@@ -33,6 +34,6 @@ export default async function NewEventPage() {
       </Button>
       <PageHeader title={t("newTitle")} />
       <EventForm options={options} locale={locale} />
-    </>
+    </Column>
   );
 }

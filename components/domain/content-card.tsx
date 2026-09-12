@@ -17,6 +17,11 @@ import { cn } from "@/lib/utils";
  *
  * The excerpt runs two lines, not three: in a grid, the third line was what
  * made every card a different height and none of them scannable.
+ *
+ * The title sits at 15 px, under the 15 px of a tab and the 13 px caps of a
+ * section label rather than half again above them: the structure of a screen
+ * has to be louder than the things it holds, and the first pass at this had it
+ * exactly the other way round.
  */
 export function ContentCard({
   eyebrow,
@@ -47,7 +52,7 @@ export function ContentCard({
   className?: string;
 }) {
   const heading = (
-    <h3 className="font-heading text-[1.0625rem] leading-[1.32] font-normal tracking-[-0.008em] text-balance sm:text-[1.125rem]">
+    <h3 className="font-heading text-base leading-snug font-normal tracking-[-0.006em] text-balance">
       {title}
     </h3>
   );
@@ -97,7 +102,7 @@ export function ContentCard({
         // makes the rest of the card a target. A plain excerpt does not.
         <CardContent className={cn("flex flex-col gap-3", (body || media) && "relative z-10")}>
           {excerpt && (
-            <p className="line-clamp-2 font-serif text-[0.9375rem] leading-[1.55] text-pretty text-muted-foreground">
+            <p className="line-clamp-2 text-sm leading-[1.55] text-pretty text-muted-foreground">
               {excerpt}
             </p>
           )}

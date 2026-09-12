@@ -79,13 +79,15 @@ export function IndexEntry({
         )}
         <h3
           className={cn(
-            "mt-1 font-heading text-[1.0625rem] leading-[1.3] tracking-[-0.008em] text-pretty",
+            "mt-1 font-heading text-base leading-snug tracking-[-0.006em] text-pretty",
             unread ? "font-medium" : "font-normal",
           )}
         >
           {title}
         </h3>
-        {excerpt && <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">{excerpt}</p>}
+        {excerpt && (
+          <p className="mt-0.5 line-clamp-1 text-[0.8125rem] text-muted-foreground">{excerpt}</p>
+        )}
         {children}
       </Link>
     </li>

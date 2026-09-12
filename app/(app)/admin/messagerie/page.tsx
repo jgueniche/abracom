@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -94,7 +95,7 @@ export default async function MessagingControlPage() {
   const peak = Math.max(1, ...channelLoad.flatMap((c) => [...c.perWeek.values()]));
 
   return (
-    <>
+    <Column>
       <PageHeader
         eyebrow={t("eyebrow")}
         title={t("title")}
@@ -301,6 +302,6 @@ export default async function MessagingControlPage() {
           </CardContent>
         </Card>
       </div>
-    </>
+    </Column>
   );
 }

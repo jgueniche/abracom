@@ -30,10 +30,10 @@ export function FilterChip({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "inline-flex min-h-11 shrink-0 items-center rounded-md border px-2.5 text-[0.8125rem] font-medium whitespace-nowrap transition-colors md:min-h-8",
+        "inline-flex min-h-11 shrink-0 items-center rounded-md border px-3 text-sm font-medium whitespace-nowrap transition-colors md:min-h-9",
         active
-          ? "border-primary/45 bg-primary/10 text-primary"
-          : "border-border bg-card text-muted-foreground hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_18%)] hover:text-foreground",
+          ? "border-primary/45 bg-primary/10 font-semibold text-primary"
+          : "border-border bg-card text-foreground/70 hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_18%)] hover:text-foreground",
         className,
       )}
     >

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -16,7 +17,7 @@ export default async function NewClassifiedPage() {
   if (!user.school || !canWriteInSchool(user.roles, user.school.id))
     redirect("/communaute/annonces");
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/communaute/annonces">
           <ArrowLeftIcon aria-hidden />
@@ -25,6 +26,6 @@ export default async function NewClassifiedPage() {
       </Button>
       <PageHeader title={t("new")} />
       <ClassifiedForm />
-    </>
+    </Column>
   );
 }

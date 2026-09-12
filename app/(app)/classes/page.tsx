@@ -1,13 +1,12 @@
-import { ChevronRightIcon, SchoolIcon } from "lucide-react";
+import { SchoolIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Row, RowList } from "@/components/domain/row-list";
 import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
-import { Badge } from "@/components/ui/badge";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { isSchoolStaff } from "@/lib/permissions";
 import { getMyTeachingClasses, getSchoolClasses } from "@/server/queries/classes";
@@ -77,25 +76,17 @@ export default async function ClassesPage() {
           action={staff ? { href: "/admin/classes", label: t("manageClasses") } : undefined}
         />
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2">
+        <RowList>
           {[...entries.entries()].map(([id, entry]) => (
-            <li key={id}>
-              <Link
-                href={`/classes/${id}`}
-                className="flex min-h-16 items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-soft transition-colors hover:bg-muted/50"
-              >
-                {entry.level && <Badge variant="secondary">{entry.level}</Badge>}
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium">{entry.name}</p>
-                  {entry.subtitle && (
-                    <p className="truncate text-sm text-muted-foreground">{entry.subtitle}</p>
-                  )}
-                </div>
-                <ChevronRightIcon className="size-5 text-muted-foreground" aria-hidden />
-              </Link>
-            </li>
+            <Row
+              key={id}
+              href={`/classes/${id}`}
+              kind={entry.level ?? undefined}
+              title={entry.name}
+              detail={entry.subtitle}
+            />
           ))}
-        </ul>
+        </RowList>
       )}
     </Column>
   );

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -122,7 +123,7 @@ export default async function AgendaPage({
   };
 
   return (
-    <>
+    <Column>
       <PageHeader
         title={t("title")}
         description={t("subtitle")}
@@ -268,6 +269,6 @@ export default async function AgendaPage({
       <div className="mt-8">
         <CalendarFeedCard feed={feed} origin={`${protocol}://${host}`} />
       </div>
-    </>
+    </Column>
   );
 }

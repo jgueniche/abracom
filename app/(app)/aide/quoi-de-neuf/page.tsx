@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -43,7 +44,7 @@ export default async function WhatsNewPage() {
     }));
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/aide">
           <ArrowLeftIcon aria-hidden />
@@ -56,6 +57,6 @@ export default async function WhatsNewPage() {
       ) : (
         <WhatsNewList items={items} />
       )}
-    </div>
+    </Column>
   );
 }

@@ -6,6 +6,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EventPollButton } from "@/components/domain/event-poll-button";
 import { Markdown } from "@/components/domain/markdown";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -82,7 +83,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
     : null;
 
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/agenda">
           <ArrowLeftIcon aria-hidden />
@@ -332,6 +333,6 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
           )}
         </div>
       </div>
-    </>
+    </Column>
   );
 }

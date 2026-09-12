@@ -13,16 +13,16 @@ import type { HelpSearchEntry } from "@/lib/help/select";
 function Result({ match }: { match: HelpMatch }) {
   const tTopics = useTranslations("help.topics");
   return (
-    <li>
+    <li className="border-b border-rule">
       <Link
         href={`/aide/${match.entry.slug}`}
-        className="flex min-h-11 flex-col rounded-xl border p-3 transition-colors hover:border-primary/40 hover:bg-muted/50"
+        className="-mx-3 flex min-h-11 flex-col justify-center rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50"
       >
-        <span className="mb-1 flex flex-wrap items-baseline gap-2">
-          <span className="font-medium">{match.entry.title}</span>
-          <span className="text-xs text-muted-foreground">{tTopics(match.entry.topic)}</span>
+        <span className="flex flex-wrap items-baseline gap-2">
+          <span className="text-sm font-medium">{match.entry.title}</span>
+          <span className="eyebrow">{tTopics(match.entry.topic)}</span>
         </span>
-        <span className="text-sm text-muted-foreground">
+        <span className="mt-0.5 text-[0.8125rem] text-muted-foreground">
           <Highlighted text={match.snippet} ranges={match.ranges} />
         </span>
       </Link>
@@ -109,7 +109,7 @@ export function HelpSearch({
           <p className="mb-3 text-sm text-muted-foreground" aria-hidden>
             {t("results", { count: matches.length, query: deferred.trim() })}
           </p>
-          <ul className="flex flex-col gap-2">
+          <ul className="border-t border-rule">
             {matches.map((match) => (
               <Result key={match.entry.slug} match={match} />
             ))}

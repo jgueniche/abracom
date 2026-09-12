@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { Markdown } from "@/components/domain/markdown";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,7 @@ export default async function HelpArticlePage({ params }: { params: Promise<{ sl
   const links = article.routes.filter((route) => !route.includes("["));
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/aide">
           <ArrowLeftIcon aria-hidden />
@@ -94,6 +95,6 @@ export default async function HelpArticlePage({ params }: { params: Promise<{ sl
           })}
         </span>
       </div>
-    </div>
+    </Column>
   );
 }

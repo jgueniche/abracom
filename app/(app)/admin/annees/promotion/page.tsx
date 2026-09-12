@@ -2,6 +2,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -59,7 +60,7 @@ export default async function PromotionPage() {
   }
 
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/admin/annees">
           <ArrowLeftIcon aria-hidden />
@@ -87,6 +88,6 @@ export default async function PromotionPage() {
           )}
         </CardContent>
       </Card>
-    </>
+    </Column>
   );
 }

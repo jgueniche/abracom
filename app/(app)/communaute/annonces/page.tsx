@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
@@ -52,7 +53,7 @@ export default async function ClassifiedsPage({
   const canPost = enabled && schoolId !== undefined && canWriteInSchool(user.roles, schoolId);
 
   return (
-    <>
+    <Column>
       <PageHeader
         title={t("title")}
         description={t("subtitle")}
@@ -130,6 +131,6 @@ export default async function ClassifiedsPage({
           </ul>
         </section>
       )}
-    </>
+    </Column>
   );
 }

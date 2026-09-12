@@ -251,7 +251,7 @@ export default async function DiaryPage({
                               </p>
                               <p className="font-medium">{entry.title}</p>
                               {entry.body_md && (
-                                <p className="prose-kesher mt-0.5 line-clamp-3 text-[0.9375rem]">
+                                <p className="mt-0.5 line-clamp-3 text-sm text-muted-foreground">
                                   {plainExcerpt(entry.body_md, 240)}
                                 </p>
                               )}

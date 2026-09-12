@@ -65,9 +65,13 @@ export function ClassTabs({
   return (
     // Tabs, drawn as tabs: a rule under the row and a mark under the one you
     // are on. The row used to be eight filled pills, which read as eight
-    // buttons competing with the page's actual action.
-    <nav className="-mx-4 mb-6 overflow-x-auto px-4">
-      <ul className="flex min-w-max gap-0.5 border-b border-rule">
+    // buttons competing with the page's actual action — and then, once they
+    // were quiet, the opposite fault: 13 px of muted grey under card titles
+    // set at 18 px. Navigation is the layer a reader needs at a glance; the
+    // content is read once they have arrived. This row is now the larger of
+    // the two.
+    <nav className="-mx-4 mb-7 overflow-x-auto px-4">
+      <ul className="flex min-w-max gap-1 border-b border-border">
         {tabs.map((tab) => {
           const href = `${base}/${tab.segment}`;
           const active = pathname.startsWith(href);
@@ -78,10 +82,10 @@ export function ClassTabs({
                 ref={active ? activeRef : undefined}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative flex min-h-11 items-center px-2.5 text-[0.8125rem] font-medium whitespace-nowrap transition-colors",
+                  "relative flex min-h-12 items-center px-3 text-[0.9375rem] whitespace-nowrap transition-colors",
                   active
-                    ? "text-foreground after:absolute after:inset-x-1.5 after:-bottom-px after:h-[2px] after:rounded-full after:bg-primary"
-                    : "text-muted-foreground hover:text-foreground",
+                    ? "font-semibold text-foreground after:absolute after:inset-x-2 after:-bottom-px after:h-[2px] after:rounded-full after:bg-primary"
+                    : "font-medium text-foreground/70 hover:text-foreground",
                 )}
               >
                 {t(tab.key)}

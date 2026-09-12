@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ export default async function AdminDocumentPage({ params }: { params: Promise<{ 
   const admin = isSchoolAdmin(user.roles, schoolId);
 
   return (
-    <>
+    <Column width="full">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/admin/documents">
           <ArrowLeftIcon aria-hidden />
@@ -112,6 +113,6 @@ export default async function AdminDocumentPage({ params }: { params: Promise<{ 
           </CardContent>
         </Card>
       )}
-    </>
+    </Column>
   );
 }

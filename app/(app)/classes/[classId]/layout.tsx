@@ -45,14 +45,16 @@ export default async function ClassLayout({
 
   return (
     <Column>
-      {/* The team used to run on inside the page description, five names and
-          five roles across the full width, level ahead of them. Level and room
-          are what names the class, so they take the dateline; the team is
-          apparatus and sits under it, quieter. */}
+      {/* The team used to run on inside the page description — four names with
+          their roles, wrapping three lines between the class name and the tabs,
+          which pushed the navigation down and read as a paragraph. Level and
+          room name the class, so they take the dateline; the team is a caption:
+          one clipped line, the whole of it on hover, and laid out properly in
+          Ma famille where a parent goes to read it. */}
       <PageHeader
         eyebrow={`${levelLabel(cls.level, locale)}${cls.room ? ` · ${cls.room}` : ""}`}
         title={cls.name}
-        description={team || undefined}
+        caption={team || undefined}
         actions={
           <>
             {/* a read-only guardian has no messaging: the button led to an empty list */}

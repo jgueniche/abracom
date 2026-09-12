@@ -165,13 +165,13 @@ export function BottomNav({
                   // The active tab is marked by a rule on the bar's own edge,
                   // the way a tab is marked; the colour alone left two tabs
                   // looking alike at a glance on a 390 px bar.
-                  "relative flex min-h-14 flex-col items-center justify-center gap-1 px-0.5 text-[0.6875rem] leading-none font-medium text-muted-foreground transition-colors",
+                  "relative flex min-h-14 flex-col items-center justify-center gap-1 px-0.5 text-xs leading-none font-medium text-foreground/70 transition-colors",
                   active &&
-                    "text-primary after:absolute after:top-0 after:h-[2px] after:w-7 after:rounded-full after:bg-primary",
+                    "font-semibold text-primary after:absolute after:top-0 after:h-[2px] after:w-7 after:rounded-full after:bg-primary",
                 )}
               >
                 <span className="relative">
-                  <Icon className="size-[1.125rem]" aria-hidden />
+                  <Icon className="size-5" aria-hidden />
                   {count > 0 && <Count value={count} />}
                 </span>
                 {/* "Tableau de bord" wrapped onto two lines and spilled out of
@@ -225,9 +225,9 @@ export function TopNav({
               // — and what a desktop bar of named destinations does not: seven
               // little pictures in a row read as decoration, and decoration in
               // the top bar is the first thing that dates an interface.
-              "relative flex items-center gap-1.5 rounded-md px-2.5 text-[0.8125rem] font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground xl:px-3",
+              "relative flex items-center gap-1.5 rounded-md px-2.5 text-sm font-medium whitespace-nowrap text-foreground/70 transition-colors hover:text-foreground xl:px-3",
               "after:absolute after:inset-x-2 after:-bottom-px after:h-[2px] after:rounded-full after:bg-primary after:opacity-0 xl:after:inset-x-2.5",
-              active && "text-foreground after:opacity-100",
+              active && "font-semibold text-foreground after:opacity-100",
             )}
           >
             {t(label)}

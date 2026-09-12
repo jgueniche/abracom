@@ -62,7 +62,7 @@ export default async function JournalPage({ params }: { params: Promise<{ classI
             })}
             count={items.length}
           />
-          <div className="grid gap-3 2xl:grid-cols-2">
+          <div className="grid gap-3 lg:grid-cols-2">
             {items.map((post) => (
               /* The journal used to render a bare <p> and a grid: the third
                  rendering of the very same post. One anatomy, everywhere. */
@@ -80,7 +80,7 @@ export default async function JournalPage({ params }: { params: Promise<{ classI
                     )}
                   </>
                 }
-                body={post.body_md ? <Markdown>{post.body_md}</Markdown> : undefined}
+                body={post.body_md ? <Markdown size="compact">{post.body_md}</Markdown> : undefined}
                 media={
                   post.media.length > 0 ? (
                     <MediaGrid items={post.media} canDelete={isTeacher || isStaff} />

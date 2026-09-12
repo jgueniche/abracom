@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,7 @@ export default async function ClassifiedPage({ params }: { params: Promise<{ id:
   const own = post.author_id === user.id;
 
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/communaute/annonces">
           <ArrowLeftIcon aria-hidden />
@@ -139,6 +140,6 @@ export default async function ClassifiedPage({ params }: { params: Promise<{ id:
           )}
         </div>
       </div>
-    </>
+    </Column>
   );
 }

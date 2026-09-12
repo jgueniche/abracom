@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -28,7 +29,7 @@ export default async function NewGroupPage() {
   ]);
 
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2 min-h-11">
         <Link href="/messages">
           <ArrowLeftIcon aria-hidden />
@@ -48,6 +49,6 @@ export default async function NewGroupPage() {
           }))}
         />
       )}
-    </>
+    </Column>
   );
 }

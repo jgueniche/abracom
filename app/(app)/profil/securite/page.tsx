@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -31,7 +32,7 @@ export default async function SecurityPage({
   ]);
   const isAdmin = user.school !== null && isSchoolAdmin(user.roles, user.school.id);
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/profil">
           <ArrowLeftIcon aria-hidden />
@@ -49,6 +50,6 @@ export default async function SecurityPage({
           <TotpSetup enrolled={status.enrolled} isAdmin={isAdmin} />
         </CardContent>
       </Card>
-    </>
+    </Column>
   );
 }

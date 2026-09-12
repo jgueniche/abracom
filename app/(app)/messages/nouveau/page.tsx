@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
@@ -60,7 +61,7 @@ export default async function NewMessagePage() {
   );
 
   return (
-    <>
+    <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
         <Link href="/messages">
           <ArrowLeftIcon aria-hidden />
@@ -85,6 +86,6 @@ export default async function NewMessagePage() {
           </section>
         )}
       </div>
-    </>
+    </Column>
   );
 }

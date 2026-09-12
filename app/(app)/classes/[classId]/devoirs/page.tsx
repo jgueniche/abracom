@@ -70,7 +70,7 @@ export default async function HomeworkPage({ params }: { params: Promise<{ class
         .map((group) => (
           <section key={group.key} className="flex flex-col">
             <SectionHeader label={t(group.key)} count={group.items.length} />
-            <div className="grid gap-3 2xl:grid-cols-2">
+            <div className="grid gap-3 lg:grid-cols-2">
               {[...group.items]
                 .sort((a, b) => (a.due_on ?? "").localeCompare(b.due_on ?? ""))
                 .map((post) => (

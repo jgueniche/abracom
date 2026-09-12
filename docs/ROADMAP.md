@@ -730,6 +730,24 @@ que font Klassly, Educartable, TouteMonAnnée, Pronote et ParentSquare.
 - [ ] Un bloc « Aujourd'hui » pour l'enseignante (nouvelles requêtes : session de fonctionnalité)
 - [ ] Validation par le porteur
 
+## Session 25 — Deux couches : la structure plus forte que le contenu (ADR-0054)
+
+La navigation doit être ce qu'on voit en premier ; le contenu d'une carte, ce qu'on lit ensuite.
+
+- [x] Structure remontée : onglets de classe 15 px, `semibold` + filet de 2 px à l'actif, barre
+      principale et barre du bas au même registre, libellés de section 13 px en capitales pleines
+- [x] Contenu descendu : titre de carte 15 px, texte courant 14 px sans serif
+      (`<Markdown size="compact">`), métadonnée 11–12 px
+- [x] `PageHeader` : description 13 px, et une `caption` d'une ligne coupée pour un fait (l'équipe
+      d'une classe passait par la description et prenait trois lignes au-dessus des onglets)
+- [x] **53 écrans sans mesure** ramenés à leur colonne : `text` (formulaire, document), `index`
+      (liste), `full` (console) ; les pages d'aide rejoignent la marge de gauche commune
+- [x] Six listes de cartes bordées redeviennent index ou `RowList` ; la page d'aide devient un sommaire
+- [x] Un statut n'est écrit que lorsqu'il fait exception (plus dix « Publiée » bleus d'affilée)
+- [x] `not-found` propre au groupe `(app)` : la coquille reste autour du lecteur égaré
+- [x] Deux régressions de contraste de cette passe trouvées par axe et corrigées
+- [ ] Validation visuelle par le porteur
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

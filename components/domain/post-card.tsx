@@ -88,17 +88,17 @@ export async function PostCard({
           long ? (
             <details className="group/body">
               <summary className="cursor-pointer list-none">
-                <span className="prose-kesher block text-[0.9375rem] text-pretty group-open/body:hidden">
+                <span className="block text-sm text-pretty text-muted-foreground group-open/body:hidden">
                   {plainExcerpt(body, 260)}
                 </span>
                 <span className="mt-1 inline-block text-sm font-semibold text-primary group-open/body:hidden">
                   {t("readMore")}
                 </span>
               </summary>
-              <Markdown>{body}</Markdown>
+              <Markdown size="compact">{body}</Markdown>
             </details>
           ) : (
-            <Markdown>{body}</Markdown>
+            <Markdown size="compact">{body}</Markdown>
           )
         ) : undefined
       }

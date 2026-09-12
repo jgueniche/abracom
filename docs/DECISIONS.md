@@ -954,3 +954,38 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   compte plus que ceux du lecteur, et ne s'affiche qu'à une famille ; et l'accueil de l'enseignante
   répétait en description le libellé de la section juste dessous, avec la ligne du pointage flottant
   au-dessus de tout sans section.
+
+## ADR-0054 — Deux couches : la structure plus forte que le contenu
+
+- **Contexte** : première passe de la refonte visuelle (ADR-0051) prise à l'envers. Ayant reçu
+  « beaucoup de textes et d'encarts sont trop gros », j'ai rapetissé **tout** de la même main —
+  navigation comprise. Sur l'espace de classe, le résultat était une hiérarchie inversée : le titre
+  d'une carte du cahier de vie sortait à 18 px en serif tandis que les onglets qui mènent aux devoirs,
+  aux mots et aux absences tenaient en 13 px gris à 60 % ; l'équipe enseignante, passée par le slot
+  « description », occupait trois lignes de corps de texte au-dessus de ces onglets. Autrement dit :
+  ce qui _déplace_ le lecteur était plus discret que ce qu'il lit une fois arrivé.
+- **Décision** : une interface se lit en **deux couches**, et c'est la structure qui parle le plus
+  fort.
+  - **Structure** — barre principale, onglets d'espace, libellés de section, filtres : 15 px
+    (`text-[0.9375rem]`) pour un onglet, 13 px en capitales espacées pour un libellé de section,
+    `font-medium` au repos et `font-semibold` + un filet de 2 px à l'état actif, `text-foreground/70`
+    au repos (jamais moins : en dessous le contraste AA tombe).
+  - **Contenu** — titre de carte 15 px, texte courant 14 px, métadonnée 11–12 px, prose éditoriale en
+    serif. Le corps d'une publication passe par `<Markdown size="compact">` : sans, 14 px,
+    interligne 1,6 — la serif de lecture reste pour ce qui **est** un document (une circulaire, un
+    article d'aide), pas pour un billet de trois lignes dans une carte.
+  - Un en-tête de page porte au plus une phrase de description (13 px) ; un **fait** sur l'écran —
+    l'équipe d'une classe, les membres d'un groupe — passe par `caption`, une seule ligne coupée à la
+    largeur disponible, l'intégralité au survol.
+- **Largeur** : la mesure décidée en ADR-0052 n'était appliquée que par une poignée d'écrans ; les 53
+  autres s'étalaient sur les 1 760 px de la coquille. Chaque page porte désormais sa `Column` —
+  `text` pour un formulaire ou un document, `index` pour une liste, `full` pour une console — et les
+  pages d'aide, jusqu'ici centrées sur 48 rem, rejoignent la marge de gauche commune.
+- **Conséquences** : six listes de cartes bordées redeviennent des index ou des `RowList` (annonces
+  d'administration, documents, formulaires des deux côtés, événements, choix de classe) ; la page
+  d'aide passe de vingt-six encadrés à un sommaire ; un statut n'est plus une pastille bleue pleine
+  répétée à chaque ligne mais un mot, et seulement quand il fait exception. Deux régressions de
+  contraste introduites par cette même passe (onglets au repos à 4,38:1, `caption` à 4,02:1) ont été
+  trouvées par axe et corrigées. Enfin, un `not-found` propre au groupe `(app)` : un lecteur qui
+  ouvrait une classe qui n'est pas la sienne se retrouvait sur une page nue, sans barre ni onglets —
+  l'application disparaissait autour de lui au moment précis où il s'était trompé de porte.

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -48,7 +49,7 @@ export default async function AdminAttendancePage() {
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <>
+    <Column>
       <PageHeader eyebrow={t("eyebrow")} title={t("title")} description={t("description")} />
 
       <div className="flex flex-col gap-6">
@@ -138,6 +139,6 @@ export default async function AdminAttendancePage() {
           </CardContent>
         </Card>
       </div>
-    </>
+    </Column>
   );
 }

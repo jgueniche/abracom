@@ -89,15 +89,18 @@ export default async function HelpPage() {
                   count={group.articles.length}
                   hint={tTopics(`${group.topic}Hint`)}
                 />
-                <ul className="grid gap-2 sm:grid-cols-2">
+                {/* A table of contents, not twenty-six boxes: the help index
+                    is the one screen whose whole job is to let the eye run down
+                    a list of titles. */}
+                <ul className="border-t border-rule">
                   {group.articles.map((article) => (
-                    <li key={article.slug}>
+                    <li key={article.slug} className="border-b border-rule">
                       <Link
                         href={`/aide/${article.slug}`}
-                        className="flex h-full min-h-11 flex-col rounded-xl border border-border bg-card p-3 transition-colors hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_16%)] hover:bg-muted/50"
+                        className="-mx-3 flex min-h-11 flex-col justify-center rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50"
                       >
                         <span className="text-sm font-medium">{article.title}</span>
-                        <span className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
+                        <span className="mt-0.5 line-clamp-1 text-[0.8125rem] text-muted-foreground">
                           {article.excerpt}
                         </span>
                       </Link>

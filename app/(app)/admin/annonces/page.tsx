@@ -1,9 +1,10 @@
-import { ChevronRightIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { IndexEntry, IndexList } from "@/components/domain/index-entry";
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { requireSchoolStaff } from "@/lib/auth/guards";
 import { getAdminAnnouncements } from "@/server/queries/announcements";
@@ -15,15 +16,16 @@ export default async function AdminAnnouncementsPage() {
     getFormatter(),
     getAdminAnnouncements(schoolId),
   ]);
-  const variant = {
-    draft: "outline",
-    scheduled: "secondary",
-    published: "default",
-    expired: "outline",
-  } as const;
+  // A status is a fact about the entry, not a colour to repaint it with: ten
+  // filled blue "Publiée" pills down a page say nothing, because they say the
+  // same thing. Only what is *not yet out* — a draft, a scheduled item — is
+  // marked, and it is marked in the margin.
+  const pending = (status: string) => status === "draft" || status === "scheduled";
+  // "Publiée" on every line of a list of published announcements is a word the
+  // eye has to skip ten times to read the eleventh; the exceptions are named.
 
   return (
-    <>
+    <Column>
       <PageHeader
         title={t("title")}
         description={t("subtitle")}
@@ -36,38 +38,38 @@ export default async function AdminAnnouncementsPage() {
           </Button>
         }
       />
-      <ul className="flex flex-col gap-2">
+      <IndexList>
         {announcements.map((a) => (
-          <li key={a.id}>
-            <Link
-              href={`/admin/annonces/${a.id}`}
-              className="flex min-h-16 items-center gap-3 rounded-xl border border-border bg-card p-3 shadow-soft transition-colors hover:bg-muted/50"
-            >
-              <Badge variant={variant[a.status]}>{t(`status.${a.status}`)}</Badge>
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-medium">{a.title}</p>
-                <p className="text-sm text-muted-foreground">
-                  {a.published_at
-                    ? format.dateTime(new Date(a.published_at), {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })
-                    : "—"}
-                  {a.requires_ack ? ` · ${t("fields.requiresAck")}` : ""}
-                  {/* The total is only known per announcement (RLS-scoped
-                      recipients), and printing "80 / ?" told nobody anything.
-                      The real ratio lives on the announcement's own page. */}
-                  {` · ${t("readsCount", { count: a.reads.length })}`}
-                  {a.requires_ack
-                    ? ` · ${t("ackedShort", { count: a.reads.filter((r) => r.acked_at).length })}`
-                    : ""}
-                </p>
-              </div>
-              <ChevronRightIcon className="size-5 shrink-0 text-muted-foreground" aria-hidden />
-            </Link>
-          </li>
+          <IndexEntry
+            key={a.id}
+            href={`/admin/annonces/${a.id}`}
+            accent={pending(a.status)}
+            unread={pending(a.status)}
+            eyebrow={
+              a.published_at
+                ? format.dateTime(new Date(a.published_at), {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })
+                : t(`status.${a.status}`)
+            }
+            marker={a.status === "published" ? undefined : t(`status.${a.status}`)}
+            title={a.title}
+            excerpt={[
+              a.requires_ack ? t("fields.requiresAck") : null,
+              // The total is only known per announcement (RLS-scoped
+              // recipients), and printing "80 / ?" told nobody anything. The
+              // real ratio lives on the announcement's own page.
+              t("readsCount", { count: a.reads.length }),
+              a.requires_ack
+                ? t("ackedShort", { count: a.reads.filter((r) => r.acked_at).length })
+                : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          />
         ))}
-      </ul>
-    </>
+      </IndexList>
+    </Column>
   );
 }

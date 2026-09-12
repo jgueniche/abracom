@@ -41,10 +41,10 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
                       href={item.href}
                       aria-current={isActive(item.href) ? "page" : undefined}
                       className={cn(
-                        "flex min-h-11 items-center rounded-md border px-2.5 text-[0.8125rem] font-medium transition-colors",
+                        "flex min-h-11 items-center rounded-md border px-2.5 text-sm font-medium transition-colors",
                         isActive(item.href)
-                          ? "border-primary/45 bg-primary/10 text-primary"
-                          : "border-border bg-card text-muted-foreground hover:text-foreground",
+                          ? "border-primary/45 bg-primary/10 font-semibold text-primary"
+                          : "border-border bg-card text-foreground/70 hover:text-foreground",
                       )}
                     >
                       {t(item.key)}
@@ -72,10 +72,10 @@ export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
                     href={item.href}
                     aria-current={isActive(item.href) ? "page" : undefined}
                     className={cn(
-                      "relative flex min-h-8 items-center rounded-md px-2.5 text-[0.8125rem] font-medium transition-colors",
+                      "relative flex min-h-9 items-center rounded-md px-2.5 text-sm font-medium transition-colors",
                       isActive(item.href)
                         ? "bg-muted font-semibold text-foreground before:absolute before:inset-y-1.5 before:left-0 before:w-[2px] before:rounded-full before:bg-primary"
-                        : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+                        : "text-foreground/70 hover:bg-muted/60 hover:text-foreground",
                     )}
                   >
                     {t(item.key)}

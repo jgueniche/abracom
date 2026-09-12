@@ -2,6 +2,7 @@ import { CheckIcon, GraduationCapIcon } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,7 @@ export default async function YearsPage() {
   const suggested = `${Number(a) + 1}-${Number(a) + 2}`;
 
   return (
-    <>
+    <Column>
       <PageHeader
         title={t("title")}
         description={t("subtitle")}
@@ -89,6 +90,6 @@ export default async function YearsPage() {
           </Card>
         )}
       </div>
-    </>
+    </Column>
   );
 }

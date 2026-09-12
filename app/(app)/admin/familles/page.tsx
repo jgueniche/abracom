@@ -2,6 +2,7 @@ import { ChevronRightIcon, SearchIcon } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +36,7 @@ export default async function StudentsPage({
   ]);
 
   return (
-    <>
+    <Column width="full">
       <PageHeader title={t("title")} description={t("subtitle")} />
       <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="flex flex-col gap-4">
@@ -112,6 +113,6 @@ export default async function StudentsPage({
           </CardContent>
         </Card>
       </div>
-    </>
+    </Column>
   );
 }

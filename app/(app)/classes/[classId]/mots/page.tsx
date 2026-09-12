@@ -98,7 +98,7 @@ export default async function NotesPage({ params }: { params: Promise<{ classId:
                         </span>
                       )}
                     </div>
-                    <Markdown>{note.body_md}</Markdown>
+                    <Markdown size="compact">{note.body_md}</Markdown>
                     {!canWrite &&
                       (mine ? (
                         <Badge variant="outline" className="w-fit">

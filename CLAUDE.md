@@ -267,6 +267,24 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   section. **Reste à faire, signalé et non fait** : l'accueil de l'enseignante n'a pas d'équivalent du
   bloc « Aujourd'hui » du parent ni de la file d'attente de la direction — cela demande de nouvelles
   requêtes, donc une session de fonctionnalité, pas de mise en forme.
+- **Session 25 — hiérarchie de lecture, code complet** (ADR-0054). La première passe graphique avait
+  rapetissé la navigation en même temps que le contenu : sur l'espace de classe, le titre d'une carte
+  du cahier de vie sortait plus gros que les onglets qui mènent aux devoirs et aux absences, et
+  l'équipe enseignante occupait trois lignes de corps de texte juste au-dessus d'eux. L'interface se
+  lit désormais en **deux couches** : la **structure** parle le plus fort — onglet 15 px, `semibold` +
+  filet de 2 px à l'état actif, libellé de section 13 px en capitales, jamais sous `foreground/70` ;
+  le **contenu** passe dessous — titre de carte 15 px, texte 14 px, métadonnée 11–12 px, corps des
+  publications en `<Markdown size="compact">`. Un en-tête porte au plus une phrase de description ; un
+  fait sur l'écran (l'équipe d'une classe) devient une `caption` d'une ligne coupée. La mesure de la
+  session 23 n'était appliquée que par une poignée d'écrans : **les 53 autres s'étalaient sur 1 760 px**
+  — chaque page porte maintenant sa `Column` (`text` / `index` / `full`), l'aide comprise, qui était
+  centrée. Six listes de cartes bordées redeviennent index ou `RowList`, la page d'aide passe de
+  vingt-six encadrés à un sommaire, un statut n'est nommé que s'il fait exception. Deux régressions de
+  contraste introduites par la passe elle-même (onglet au repos 4,38:1, caption 4,02:1) trouvées par
+  axe et corrigées, et un `not-found` propre au groupe `(app)` : une classe qui n'est pas la vôtre ne
+  fait plus disparaître la barre de navigation. 28 e2e verts (invitation comprise), 156 tests
+  unitaires, axe à 0 violation sérieuse sur douze écrans connectés en clair et en sombre, à 390 et
+  1 440 px.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

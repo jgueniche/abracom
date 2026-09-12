@@ -3,6 +3,7 @@ import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -46,7 +47,7 @@ export default async function DirectoryPage({
   const isParent = user.roles.some((r) => r.role === "parent" || r.role === "guardian");
 
   return (
-    <>
+    <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
       <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
         {isParent && (
@@ -129,6 +130,6 @@ export default async function DirectoryPage({
           )}
         </div>
       </div>
-    </>
+    </Column>
   );
 }
