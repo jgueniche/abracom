@@ -220,6 +220,34 @@
   html {
     @apply font-sans;
     -webkit-tap-highlight-color: transparent;
+    /*
+     * SC 2.4.11 « Focus Not Obscured ». Tabbing scrolls the focused control
+     * flush against the edge of the viewport, which on a phone put it *under*
+     * the fixed bottom bar: 57 px of a 63 px row disappeared, focus ring
+     * included. The same thing happened to every in-page anchor, which landed
+     * behind the sticky header. Both are one declaration, because the browser
+     * already knows how to leave room — it just has to be told how much.
+     */
+    scroll-padding-top: 4.5rem;
+    scroll-padding-bottom: calc(var(--nav-h) + 0.75rem);
+  }
+  /*
+   * Tailwind v4 dropped v3's opinionated `cursor: pointer` on buttons and
+   * follows the user agent instead, which shows an arrow. Nothing in the
+   * application declared it back, so every control in the interface — buttons,
+   * menu triggers, tabs, switches, checkboxes, the account menu — answered the
+   * pointer with the same cursor as a paragraph of text, while the links right
+   * next to them showed a hand. It is the kind of defect that is never *seen*,
+   * only felt as "this does not react like an application".
+   */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  select:not(:disabled),
+  label[for],
+  label:has(input:is([type="checkbox"], [type="radio"]):not(:disabled)),
+  input:is([type="checkbox"], [type="radio"], [type="range"], [type="color"]):not(:disabled) {
+    cursor: pointer;
   }
   body {
     @apply bg-background text-foreground;

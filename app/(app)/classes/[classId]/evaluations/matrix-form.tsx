@@ -59,6 +59,13 @@ function LevelSelect({
   );
 }
 
+/** `"Mobiliser le langage · Comprendre les consignes"` under the domain
+ * `"Mobiliser le langage"` is just `"Comprendre les consignes"`. */
+function withoutDomain(label: string, domain: string): string {
+  const prefix = `${domain} · `;
+  return label.startsWith(prefix) ? label.slice(prefix.length) : label;
+}
+
 export function MatrixForm({
   classId,
   periodId,
@@ -116,7 +123,12 @@ export function MatrixForm({
                     className="max-w-24 px-1 pb-2 text-left align-bottom text-[11px] leading-tight font-normal"
                     title={skill.label}
                   >
-                    <span className="line-clamp-3">{skill.label}</span>
+                    {/* The domain is already the header spanning these columns.
+                        A catalogue that repeats it in every label — the seed did,
+                        and an imported one may — left three columns all reading
+                        "Mobiliser le langage · …" with the only distinguishing
+                        words cut off. The full label stays in the tooltip. */}
+                    <span className="line-clamp-3">{withoutDomain(skill.label, group.domain)}</span>
                   </th>
                 )),
               )}

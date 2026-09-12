@@ -285,6 +285,25 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   fait plus disparaître la barre de navigation. 28 e2e verts (invitation comprise), 156 tests
   unitaires, axe à 0 violation sérieuse sur douze écrans connectés en clair et en sombre, à 390 et
   1 440 px.
+- **Session 26 — une liste de contrôle tierce, et ce qu'elle a trouvé** (ADR-0055). Le corpus de
+  `ui-ux-pro-max` (MIT) est vendorisé dans `.claude/skills/ui-ux-pro-max/` **sans ses scripts
+  Python**, et `.claude/skills/design-review/SKILL.md` pose la doctrine de Kesher et arbitre : en cas
+  de contradiction, l'ADR gagne, et son générateur de design system n'est jamais lancé ici. Huit
+  défauts corrigés. Trois par la liste, qu'aucune des quatre sessions de design n'avait vus :
+  **Tailwind v4 a retiré le `cursor: pointer` des boutons** (toute l'application répondait au
+  pointeur comme un paragraphe, pendant que les liens voisins montraient une main) ; **SC 2.4.11
+  « Focus Not Obscured » échouait sur tout le téléphone** (tabuler collait l'élément au bord, donc
+  sous la barre du bas : 57 px d'une ligne de 63 px, anneau de focus compris — corrigé par
+  `scroll-padding`) ; et les deux barres translucides laissaient lire le contenu au travers, devenues
+  opaques. Cinq en regardant les écrans : la **grille d'évaluations d'une classe sans référentiel**
+  affichait une colonne de noms, une légende et « Enregistrer la grille » sous une grille vide — le
+  seed ne remplit que PS, MS et GS, donc six niveaux sur neuf avaient l'air cassés ; chaque colonne
+  de la matrice répétait le domaine déjà porté par son en-tête puis tronquait ce qui distingue les
+  colonnes ; la matrice, console de vingt et une colonnes, était enfermée dans la colonne de lecture
+  de 58 rem (les onglets de classe portent désormais chacun leur `Column`) ; la fiche élève étirait
+  sa carte de gauche sur sept cents pixels de blanc ; et neuf grilles à deux panneaux de
+  l'administration faisaient la même chose. Vérifié : `pnpm check`, `pnpm build`, 28 e2e,
+  436 assertions pgTAP, axe à 0 violation sérieuse sur vingt-six écrans en clair et en sombre.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

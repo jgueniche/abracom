@@ -20,7 +20,9 @@ export function SearchBox({ compact = false }: { compact?: boolean }) {
   }
   return (
     <form action="/recherche" role="search" className="hidden items-center xl:flex">
-      <label className="relative">
+      {/* The label wraps the field, so its padding is part of the click
+          target: it must read as text, not as the page. */}
+      <label className="relative cursor-text">
         <span className="sr-only">{t("title")}</span>
         <SearchIcon
           className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"

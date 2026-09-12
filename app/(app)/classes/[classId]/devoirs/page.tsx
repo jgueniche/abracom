@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { NewHomeworkButton } from "@/components/domain/new-homework-button";
 import { PostCard } from "@/components/domain/post-card";
@@ -59,32 +60,34 @@ export default async function HomeworkPage({ params }: { params: Promise<{ class
     return <EmptyState title={t("noHomework")} action={<NewHomeworkButton classes={composer} />} />;
 
   return (
-    <div className="flex flex-col gap-8">
-      {canPublish && (
-        <div className="flex justify-end">
-          <NewHomeworkButton classes={composer} />
-        </div>
-      )}
-      {groups
-        .filter((g) => g.items.length > 0)
-        .map((group) => (
-          <section key={group.key} className="flex flex-col">
-            <SectionHeader label={t(group.key)} count={group.items.length} />
-            <div className="grid gap-3 lg:grid-cols-2">
-              {[...group.items]
-                .sort((a, b) => (a.due_on ?? "").localeCompare(b.due_on ?? ""))
-                .map((post) => (
-                  <PostCard
-                    key={post.id}
-                    post={post}
-                    students={myStudents}
-                    canManage={isTeacher || isStaff}
-                    totalFamilies={cls.students.length}
-                  />
-                ))}
-            </div>
-          </section>
-        ))}
-    </div>
+    <Column>
+      <div className="flex flex-col gap-8">
+        {canPublish && (
+          <div className="flex justify-end">
+            <NewHomeworkButton classes={composer} />
+          </div>
+        )}
+        {groups
+          .filter((g) => g.items.length > 0)
+          .map((group) => (
+            <section key={group.key} className="flex flex-col">
+              <SectionHeader label={t(group.key)} count={group.items.length} />
+              <div className="grid gap-3 lg:grid-cols-2">
+                {[...group.items]
+                  .sort((a, b) => (a.due_on ?? "").localeCompare(b.due_on ?? ""))
+                  .map((post) => (
+                    <PostCard
+                      key={post.id}
+                      post={post}
+                      students={myStudents}
+                      canManage={isTeacher || isStaff}
+                      totalFamilies={cls.students.length}
+                    />
+                  ))}
+              </div>
+            </section>
+          ))}
+      </div>
+    </Column>
   );
 }

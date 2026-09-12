@@ -1683,7 +1683,9 @@
       "noData": "Aucune évaluation pour cette période.",
       "generatedOn": "Généré le {date} par {app}",
       "confidentiality": "Document confidentiel destiné à la famille de l'élève."
-    }
+    },
+    "noSkills": "Aucune compétence n'est définie pour ce niveau",
+    "noSkillsHint": "Le référentiel de compétences est installé par l'école, niveau par niveau. Tant qu'il est vide pour {level}, il n'y a rien à évaluer ici — signalez-le à la direction."
   },
   "community": {
     "title": "Communauté",

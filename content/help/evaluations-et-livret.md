@@ -18,6 +18,8 @@ Vous voyez les compétences d'une période une fois qu'elles ont été **publié
 Choisissez la période, remplissez la grille élèves × compétences, ajoutez une appréciation par élève, enregistrez. Rien n'est visible des familles tant que vous n'avez pas fait « Publier aux familles » ; les cases remplies après une publication attendent la suivante.
 
 Un aperçu du livret est possible avant publication : il porte la mention « brouillon ». Une note sur 20 est possible en complément, elle reste facultative.
+
+Si l'onglet annonce **« Aucune compétence n'est définie pour ce niveau »**, il n'y a rien à remplir : le référentiel est installé par l'école, niveau par niveau. Signalez-le à la direction.
 :::
 
 Le secrétariat n'a pas accès aux évaluations, et un responsable en lecture seule non plus : l'onglet ne leur est pas proposé.

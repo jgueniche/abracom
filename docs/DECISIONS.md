@@ -989,3 +989,43 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   trouvées par axe et corrigées. Enfin, un `not-found` propre au groupe `(app)` : un lecteur qui
   ouvrait une classe qui n'est pas la sienne se retrouvait sur une page nue, sans barre ni onglets —
   l'application disparaissait autour de lui au moment précis où il s'était trompé de porte.
+
+## ADR-0055 — Une liste de contrôle tierce, arbitrée par les ADR
+
+- **Contexte** : le porteur demande si une compétence d'UI/UX publiée sur GitHub ferait mieux que
+  nos propres passes. Lecture faite (`nextlevelbuilder/ui-ux-pro-max-skill`, MIT), c'est un corpus
+  CSV — styles, palettes par type de produit, appariements de polices, lignes directrices UX — plus
+  un moteur de recherche BM25 et un **générateur de design system**, et deux listes de contrôle.
+- **Décision** : on la vendorise dans `.claude/skills/ui-ux-pro-max/` **sans ses scripts Python**,
+  et on écrit `.claude/skills/design-review/SKILL.md` qui pose la doctrine de Kesher (deux couches,
+  trois largeurs, la forme suit le contenu, le trait plutôt que la boîte) et **arbitre** : quand le
+  corpus contredit un ADR, l'ADR gagne. Son générateur de design system n'est jamais lancé sur ce
+  dépôt — Kesher a déjà le sien, et un second document « Master » serait une seconde source de
+  vérité, c'est-à-dire aucune.
+- **Pourquoi sans les scripts** : la valeur du dépôt est le corpus et les listes, pas un classement
+  BM25 sur vingt CSV qu'un `grep` fait aussi bien. Vendoriser une centaine de kilo-octets de Python
+  tiers dans une application qui traite des données de mineurs, exécuté par toutes les sessions à
+  venir, n'est pas un risque qui se justifie pour une fonction de recherche.
+- **Ce que la liste a réellement trouvé**, dès la première passe, et qu'aucune de nos quatre sessions
+  de design n'avait vu : (1) Tailwind v4 a retiré le `cursor: pointer` des `<button>` — **tous** les
+  contrôles de l'application répondaient au pointeur comme un paragraphe de texte pendant que les
+  liens voisins montraient une main ; (2) **SC 2.4.11 « Focus Not Obscured »** échouait sur tout le
+  téléphone — tabuler fait défiler l'élément au ras du bord, donc sous la barre du bas : 57 px d'une
+  ligne de 63 px disparaissaient, anneau de focus compris ; (3) les deux barres translucides
+  laissaient lire le contenu au travers, ce que la règle de « scrim » du corpus nomme exactement.
+  Le reste de la liste (cibles 24×24, collage dans les champs d'authentification, hiérarchie des
+  titres, lien d'évitement) est passé — vérifié, pas supposé.
+- **Ce que la même passe a trouvé en regardant les écrans**, ce qu'aucune liste ne fait à notre
+  place : la grille d'évaluations d'une classe sans référentiel affichait une colonne de noms, une
+  légende et un bouton « Enregistrer la grille » sous une grille vide (le seed ne remplit que PS, MS
+  et GS : six niveaux sur neuf, tout l'élémentaire, avaient l'air cassés) ; chaque colonne de la
+  matrice répétait le nom du domaine déjà porté par l'en-tête qui la chapeaute, puis tronquait les
+  mots qui distinguent les colonnes ; la matrice — une console de vingt et une colonnes — était
+  enfermée dans la colonne de lecture de 58 rem imposée par la coquille de classe ; et la fiche
+  élève étirait sa carte de gauche sur sept cents pixels de blanc pour atteindre la hauteur de la
+  colonne des responsables.
+- **Conséquences** : les onglets de classe portent chacun leur `Column` (la coquille garde la sienne
+  pour l'en-tête et les onglets, qui doivent rester alignés d'un onglet à l'autre) ; les grilles à
+  deux panneaux de l'administration passent en `items-start` ; le seed cesse de préfixer chaque
+  intitulé de compétence par son domaine, et l'écran retire le préfixe de toute façon, pour un
+  référentiel importé qui ferait la même chose.

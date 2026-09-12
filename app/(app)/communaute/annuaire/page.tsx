@@ -49,7 +49,7 @@ export default async function DirectoryPage({
   return (
     <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[1fr_2fr]">
         {isParent && (
           <Card className="h-fit">
             <CardHeader>

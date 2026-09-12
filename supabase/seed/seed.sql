@@ -261,7 +261,7 @@ begin
         n := n + 1;
         insert into public.skill_catalog (id, school_id, level_id, domain, code, label_fr, label_en, sort_order)
         values (pg_temp.uid('0', 1024 + n), pg_temp.uid('0', 1), pg_temp.uid('0', 256 + level_i), domain.label_fr,
-                domain.code || '-' || skill.i, domain.label_fr || ' · ' || skill.label_fr, domain.label_en || ' · ' || skill.label_en, n);
+                domain.code || '-' || skill.i, skill.label_fr, skill.label_en, n);
       end loop;
     end loop;
   end loop;

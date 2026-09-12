@@ -42,7 +42,7 @@ export default async function YearsPage() {
           ) : undefined
         }
       />
-      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
         <Card>
           <CardContent>
             {years.length === 0 ? (

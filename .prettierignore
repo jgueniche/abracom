@@ -15,3 +15,6 @@ public/
 # Help articles: prose with a `:::roles` directive Prettier does not know,
 # and a front matter whose long lists it wraps onto a second line.
 content/help
+
+# Compétence tierce vendorisée : gardée telle quelle (voir .claude/skills/ui-ux-pro-max/PROVENANCE.md)
+.claude/skills/ui-ux-pro-max/

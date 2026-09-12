@@ -145,7 +145,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
         {event.requires_rsvp && <RsvpBadge rsvp={event.myRsvp} />}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[2fr_1fr]">
         <div className="flex flex-col gap-6">
           <Card>
             <CardContent className="flex flex-col gap-3">

@@ -2,6 +2,7 @@ import { CalendarCheckIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
+import { Column } from "@/components/layouts/column";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -69,95 +70,97 @@ export default async function AppointmentsPage({
   const time = (iso: string) => format.dateTime(new Date(iso), { timeStyle: "short" });
 
   return (
-    <div className="flex flex-col gap-6">
-      <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-      {teamView && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("create")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SlotsForm classId={classId} />
-          </CardContent>
-        </Card>
-      )}
-      {!teamView && !canBook && (
-        <p className="text-sm text-muted-foreground">
-          {myStudents.length === 0 ? t("noChild") : t("readOnly")}
-        </p>
-      )}
-      {slots.length === 0 ? (
-        <EmptyState
-          icon={CalendarCheckIcon}
-          title={t("empty")}
-          description={teamView ? t("emptyHintTeacher") : t("emptyHint")}
-        />
-      ) : (
-        [...days.entries()].map(([day, list]) => (
-          <section key={day}>
-            <SectionHeader
-              label={format.dateTime(new Date(`${day}T12:00:00Z`), { dateStyle: "full" })}
-              count={t("slots", { count: list.length })}
-            />
-            <ul className="flex flex-col gap-2">
-              {list.map((slot) => {
-                const mine = slot.booked_by === user.id;
-                const booked = slot.booked_by !== null;
-                return (
-                  <li
-                    key={slot.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3"
-                  >
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium">
-                        {time(slot.starts_at)} – {time(slot.ends_at)}
-                      </span>
-                      {slot.location && (
-                        <span className="text-sm text-muted-foreground">{slot.location}</span>
-                      )}
-                      {mine ? (
-                        <Badge>{t("mine")}</Badge>
-                      ) : booked ? (
-                        <Badge variant="secondary">
-                          {t("booked")}
-                          {slot.parent_name
-                            ? ` · ${slot.parent_name}${slot.student_name ? ` (${slot.student_name})` : ""}`
-                            : ""}
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline">{t("free")}</Badge>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      {!booked && canBook && (
-                        <BookForm classId={classId} slotId={slot.id} students={myStudents} />
-                      )}
-                      {booked && (mine || teamView) && (
-                        <form action={cancelAppointment}>
-                          <input type="hidden" name="slotId" value={slot.id} />
-                          <input type="hidden" name="classId" value={classId} />
-                          <Button type="submit" variant="outline" size="sm" className="min-h-11">
-                            {t("cancel")}
-                          </Button>
-                        </form>
-                      )}
-                      {!booked && teamView && (
-                        <form action={deleteAppointmentSlot}>
-                          <input type="hidden" name="id" value={slot.id} />
-                          <input type="hidden" name="classId" value={classId} />
-                          <Button type="submit" variant="ghost" size="sm" className="min-h-11">
-                            {t("delete")}
-                          </Button>
-                        </form>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))
-      )}
-    </div>
+    <Column>
+      <div className="flex flex-col gap-6">
+        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+        {teamView && (
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("create")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SlotsForm classId={classId} />
+            </CardContent>
+          </Card>
+        )}
+        {!teamView && !canBook && (
+          <p className="text-sm text-muted-foreground">
+            {myStudents.length === 0 ? t("noChild") : t("readOnly")}
+          </p>
+        )}
+        {slots.length === 0 ? (
+          <EmptyState
+            icon={CalendarCheckIcon}
+            title={t("empty")}
+            description={teamView ? t("emptyHintTeacher") : t("emptyHint")}
+          />
+        ) : (
+          [...days.entries()].map(([day, list]) => (
+            <section key={day}>
+              <SectionHeader
+                label={format.dateTime(new Date(`${day}T12:00:00Z`), { dateStyle: "full" })}
+                count={t("slots", { count: list.length })}
+              />
+              <ul className="flex flex-col gap-2">
+                {list.map((slot) => {
+                  const mine = slot.booked_by === user.id;
+                  const booked = slot.booked_by !== null;
+                  return (
+                    <li
+                      key={slot.id}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3"
+                    >
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-medium">
+                          {time(slot.starts_at)} – {time(slot.ends_at)}
+                        </span>
+                        {slot.location && (
+                          <span className="text-sm text-muted-foreground">{slot.location}</span>
+                        )}
+                        {mine ? (
+                          <Badge>{t("mine")}</Badge>
+                        ) : booked ? (
+                          <Badge variant="secondary">
+                            {t("booked")}
+                            {slot.parent_name
+                              ? ` · ${slot.parent_name}${slot.student_name ? ` (${slot.student_name})` : ""}`
+                              : ""}
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline">{t("free")}</Badge>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {!booked && canBook && (
+                          <BookForm classId={classId} slotId={slot.id} students={myStudents} />
+                        )}
+                        {booked && (mine || teamView) && (
+                          <form action={cancelAppointment}>
+                            <input type="hidden" name="slotId" value={slot.id} />
+                            <input type="hidden" name="classId" value={classId} />
+                            <Button type="submit" variant="outline" size="sm" className="min-h-11">
+                              {t("cancel")}
+                            </Button>
+                          </form>
+                        )}
+                        {!booked && teamView && (
+                          <form action={deleteAppointmentSlot}>
+                            <input type="hidden" name="id" value={slot.id} />
+                            <input type="hidden" name="classId" value={classId} />
+                            <Button type="submit" variant="ghost" size="sm" className="min-h-11">
+                              {t("delete")}
+                            </Button>
+                          </form>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))
+        )}
+      </div>
+    </Column>
   );
 }

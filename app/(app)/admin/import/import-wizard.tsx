@@ -66,7 +66,7 @@ export function ImportWizard() {
   const ready = preview.status === "success" && preview.csvText;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+    <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
       <div className="flex flex-col gap-6">
         <Card>
           <CardContent className="flex flex-col gap-4">

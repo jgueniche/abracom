@@ -26,7 +26,7 @@ export default async function ClassesPage() {
   return (
     <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
         <ul className="flex flex-col gap-3">
           {classes.map((c) => (
             <li key={c.id}>

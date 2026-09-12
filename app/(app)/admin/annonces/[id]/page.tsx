@@ -66,7 +66,7 @@ export default async function AdminAnnouncementPage({
           </form>
         }
       />
-      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
         <Card>
           <CardContent>
             <AnnouncementForm

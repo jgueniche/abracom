@@ -748,6 +748,19 @@ La navigation doit être ce qu'on voit en premier ; le contenu d'une carte, ce q
 - [x] Deux régressions de contraste de cette passe trouvées par axe et corrigées
 - [ ] Validation visuelle par le porteur
 
+## Session 26 — Une liste de contrôle tierce, arbitrée par les ADR (ADR-0055)
+
+- [x] `ui-ux-pro-max` vendorisée (corpus et listes seulement, pas les scripts Python)
+- [x] `.claude/skills/design-review/SKILL.md` : la doctrine Kesher arbitre, la liste tierce assiste
+- [x] **Curseur des contrôles** : Tailwind v4 avait retiré `cursor: pointer` des `<button>`
+- [x] **SC 2.4.11** : `scroll-padding` pour que le focus ne passe jamais sous les barres collantes
+- [x] Barres du haut et du bas opaques : on lisait le contenu au travers
+- [x] **Évaluations sans référentiel** : dire ce qui manque au lieu d'une grille vide
+- [x] Colonnes de la matrice : ne plus répéter le domaine porté par l'en-tête
+- [x] Les onglets de classe portent chacun leur colonne ; la matrice reprend toute la largeur
+- [x] Fiche élève et neuf grilles d'administration : `items-start`, plus de carte étirée à vide
+- [ ] Validation visuelle par le porteur
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

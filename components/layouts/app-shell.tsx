@@ -52,7 +52,7 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
       >
         {tc("skipToContent")}
       </a>
-      <header className="sticky top-0 z-40 border-b border-border/80 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+      <header className="sticky top-0 z-40 border-b border-border/80 bg-background">
         <div className="mx-auto flex h-14 w-full max-w-[110rem] items-stretch gap-3 px-4 md:px-6 lg:h-16 lg:px-8 2xl:px-12">
           <Link
             href="/accueil"

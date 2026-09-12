@@ -26,7 +26,7 @@ export default async function AdminDocumentsPage() {
   return (
     <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
         <div className="flex flex-col gap-6">
           {groups.map((group) => (
             <section key={group.name || "none"}>

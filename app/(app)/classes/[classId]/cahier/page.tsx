@@ -5,6 +5,7 @@ import { ContentCard, EyebrowDot } from "@/components/domain/content-card";
 import { EmptyState } from "@/components/domain/empty-state";
 import { Markdown } from "@/components/domain/markdown";
 import { MediaGrid } from "@/components/domain/media-grid";
+import { Column } from "@/components/layouts/column";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { requireClassAccess } from "@/lib/auth/class-access";
 import { getClassFeed } from "@/server/queries/class-space";
@@ -39,58 +40,64 @@ export default async function JournalPage({ params }: { params: Promise<{ classI
 
   if (entries.length === 0)
     return (
-      <EmptyState
-        icon={ImagesIcon}
-        title={t("empty")}
-        description={t("emptyHint")}
-        action={
-          isTeacher || isStaff
-            ? { href: `/classes/${classId}/publier`, label: tSpace("post.new") }
-            : undefined
-        }
-      />
+      <Column>
+        <EmptyState
+          icon={ImagesIcon}
+          title={t("empty")}
+          description={t("emptyHint")}
+          action={
+            isTeacher || isStaff
+              ? { href: `/classes/${classId}/publier`, label: tSpace("post.new") }
+              : undefined
+          }
+        />
+      </Column>
     );
 
   return (
-    <div className="flex flex-col gap-10">
-      {[...months.entries()].map(([month, items]) => (
-        <section key={month} className="flex flex-col">
-          <SectionHeader
-            label={format.dateTime(new Date(`${month}-01T12:00:00`), {
-              month: "long",
-              year: "numeric",
-            })}
-            count={items.length}
-          />
-          <div className="grid gap-3 lg:grid-cols-2">
-            {items.map((post) => (
-              /* The journal used to render a bare <p> and a grid: the third
+    <Column>
+      <div className="flex flex-col gap-10">
+        {[...months.entries()].map(([month, items]) => (
+          <section key={month} className="flex flex-col">
+            <SectionHeader
+              label={format.dateTime(new Date(`${month}-01T12:00:00`), {
+                month: "long",
+                year: "numeric",
+              })}
+              count={items.length}
+            />
+            <div className="grid gap-3 lg:grid-cols-2">
+              {items.map((post) => (
+                /* The journal used to render a bare <p> and a grid: the third
                  rendering of the very same post. One anatomy, everywhere. */
-              <ContentCard
-                key={post.id}
-                title={post.title}
-                eyebrow={
-                  <>
-                    {format.dateTime(new Date(post.published_at!), { dateStyle: "long" })}
-                    {post.media.length > 0 && (
-                      <>
-                        <EyebrowDot />
-                        {t("photos", { count: post.media.length })}
-                      </>
-                    )}
-                  </>
-                }
-                body={post.body_md ? <Markdown size="compact">{post.body_md}</Markdown> : undefined}
-                media={
-                  post.media.length > 0 ? (
-                    <MediaGrid items={post.media} canDelete={isTeacher || isStaff} />
-                  ) : undefined
-                }
-              />
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
+                <ContentCard
+                  key={post.id}
+                  title={post.title}
+                  eyebrow={
+                    <>
+                      {format.dateTime(new Date(post.published_at!), { dateStyle: "long" })}
+                      {post.media.length > 0 && (
+                        <>
+                          <EyebrowDot />
+                          {t("photos", { count: post.media.length })}
+                        </>
+                      )}
+                    </>
+                  }
+                  body={
+                    post.body_md ? <Markdown size="compact">{post.body_md}</Markdown> : undefined
+                  }
+                  media={
+                    post.media.length > 0 ? (
+                      <MediaGrid items={post.media} canDelete={isTeacher || isStaff} />
+                    ) : undefined
+                  }
+                />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </Column>
   );
 }

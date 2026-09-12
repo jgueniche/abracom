@@ -149,7 +149,7 @@ export function BottomNav({
   return (
     <nav
       aria-label={t("home")}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur supports-[backdrop-filter]:bg-background/85 lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       <ul className="mx-auto grid max-w-lg grid-cols-5">
         {itemsFor(perspective, canMessage).map(({ href, label, short, icon: Icon, badge }) => {

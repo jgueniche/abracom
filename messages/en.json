@@ -1683,7 +1683,9 @@
       "noData": "No assessment for this period.",
       "generatedOn": "Generated on {date} by {app}",
       "confidentiality": "Confidential document for the student's family."
-    }
+    },
+    "noSkills": "No skills are defined for this level",
+    "noSkillsHint": "The skills framework is installed by the school, level by level. While it is empty for {level}, there is nothing to assess here — tell the school office."
   },
   "community": {
     "title": "Community",

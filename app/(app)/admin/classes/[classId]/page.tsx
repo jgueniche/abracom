@@ -48,7 +48,7 @@ export default async function ClassDetailPage({
         title={cls.name}
         description={`${cls.level?.code ?? ""} · ${levelLabel(cls.level, locale)}`}
       />
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid items-start gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>{t("team")}</CardTitle>
