@@ -776,6 +776,17 @@ La navigation doit être ce qu'on voit en premier ; le contenu d'une carte, ce q
 - [x] Échec de connexion : nommer le lien par e-mail plutôt que laisser sans issue
 - [ ] **Validation visuelle par le porteur — le seul point restant**
 
+## Session 28 — Ce que les familles reçoivent (ADR-0057)
+
+- [x] Les sept e-mails (six gabarits d'authentification + le transactionnel) sur la charte actuelle
+- [x] Les deux PDF (livret, « mon guide ») sur la charte actuelle, serif sans fichier de police
+- [x] **Invitation** : la phrase sur le mot de passe était fausse depuis la session 17
+- [x] **Livret** : le domaine répété dans chaque ligne, et « Période : Période 1 »
+- [x] **Guide** : le sous-titre imprimé à travers les jambages du titre
+- [x] Bandes teintées → filets en capitales, liste du digest alignée sur un seul bord
+- [ ] Brancher Resend et décommenter les modèles de `config.toml` (exploitation, pas design)
+- [ ] Validation visuelle par le porteur
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

@@ -1673,7 +1673,6 @@
     },
     "pdfLabels": {
       "title": "Skills report card",
-      "period": "Period",
       "born": "Born on {date}",
       "class": "Class",
       "teacher": "Teacher",

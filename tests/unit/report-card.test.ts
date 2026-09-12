@@ -49,7 +49,6 @@ const data: ReportCardData = {
   generatedAt: "2026-09-08T10:00:00Z",
   labels: {
     title: "Livret de compétences",
-    period: "Période",
     born: "Née le 14 mars 2023",
     classLabel: "Classe",
     teacher: "Enseignant·e",

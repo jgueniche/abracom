@@ -81,22 +81,32 @@ export function renderEmail(input: {
   const items = input.items
     .map(
       (item) =>
-        `<li style="margin:0 0 12px"><a href="${escapeHtml(item.href)}" style="color:#01525e;font-weight:600">${escapeHtml(item.title)}</a>${
-          item.body ? `<div style="color:#555;margin-top:2px">${escapeHtml(item.body)}</div>` : ""
+        `<li style="margin:0 0 14px;padding-left:14px;border-left:2px solid #becadc"><a href="${escapeHtml(item.href)}" style="color:#0038b8;font-weight:600;text-decoration:none">${escapeHtml(item.title)}</a>${
+          item.body
+            ? `<div style="color:#55657c;font-size:14px;margin-top:2px">${escapeHtml(item.body)}</div>`
+            : ""
         }</li>`,
     )
     .join("");
   const cta = input.cta
-    ? `<p style="margin:24px 0"><a href="${escapeHtml(input.cta.href)}" style="background:#01525e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block">${escapeHtml(input.cta.label)}</a></p>`
+    ? `<p style="margin:26px 0 0"><a href="${escapeHtml(input.cta.href)}" style="background:#0038b8;color:#ffffff;font-weight:600;padding:0 20px;min-height:44px;line-height:44px;border-radius:6px;text-decoration:none;display:inline-block">${escapeHtml(input.cta.label)}</a></p>`
     : "";
-  const html = `<!doctype html><html><body style="font-family:Inter,Arial,sans-serif;font-size:16px;line-height:1.5;color:#1b1b1b;background:#f7f5f0;margin:0;padding:24px">
-<div style="max-width:560px;margin:0 auto;background:#fff;border-radius:16px;padding:32px">
-<p style="font-size:20px;font-weight:700;margin:0 0 16px;color:#01525e">${escapeHtml(appName)}</p>
-<p style="margin:0 0 8px">${escapeHtml(input.greeting)}</p>
-<p style="margin:0 0 16px">${escapeHtml(input.intro)}</p>
-<ul style="padding-left:20px;margin:0">${items}</ul>
+  /*
+   * The application changed charter in session 16 — the teal of the first two
+   * sessions gave way to the blues of the flag (ADR-0032) — and nothing here
+   * followed, because nobody opens the e-mails. The greeting is set in a serif,
+   * as the school's voice is in the application; Georgia is the one serif every
+   * mail client has, and no web font is worth a download in an inbox.
+   */
+  const html = `<!doctype html><html lang="fr"><body style="font-family:Inter,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55;color:#0f1e33;background:#f3f8fe;margin:0;padding:24px">
+<div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;padding:32px">
+<p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#0038b8;margin:0 0 14px">${escapeHtml(appName)}</p>
+<p style="font-family:Georgia,'Times New Roman',serif;font-size:25px;line-height:1.25;letter-spacing:-0.01em;margin:0 0 10px">${escapeHtml(input.greeting)}</p>
+<p style="margin:0 0 18px">${escapeHtml(input.intro)}</p>
+<ul style="list-style:none;padding:0;margin:0">${items}</ul>
 ${cta}
-<p style="color:#777;font-size:13px;margin:24px 0 0">${escapeHtml(input.footer)}</p>
+<hr style="border:0;border-top:1px solid #becadc;margin:26px 0 16px" />
+<p style="color:#55657c;font-size:13px;line-height:1.5;margin:0">${escapeHtml(input.footer)}</p>
 </div></body></html>`;
   const text = [
     input.greeting,

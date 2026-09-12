@@ -129,7 +129,6 @@ export async function GET(
     generatedAt: new Date().toISOString(),
     labels: {
       title: t("pdfLabels.title"),
-      period: t("pdfLabels.period"),
       born: report.student.birth_date
         ? t("pdfLabels.born", {
             date: format.dateTime(new Date(`${report.student.birth_date}T12:00:00Z`), {

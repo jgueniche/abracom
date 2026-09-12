@@ -1063,3 +1063,33 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   `super_admin`, jamais parcourus depuis la session 22 ; `/profil/securite`, `/publier`,
   `/pointage/[sessionId]`, les formulaires de création. Le lien d'évitement et les cibles de 24 px,
   soupçonnés par une sonde géométrique, se sont révélés corrects en les regardant.
+
+## ADR-0057 — Ce que les familles reçoivent : e-mails et PDF sur la charte de l'application
+
+- **Contexte** : sept e-mails et deux PDF sortent de cette application vers les familles, et aucune
+  des six sessions de design ne les avait ouverts. Ils étaient restés peints en **sarcelle
+  `#01525e`** sur fond crème — la charte des sessions 1–2, remplacée par les bleus du drapeau en
+  session 16 (ADR-0032). Un parent recevait donc, dans sa boîte, une application qui n'existe plus.
+- **Décision** : une seule anatomie pour tout ce qui sort de l'application — un **surtitre bleu** qui
+  nomme l'expéditeur, un **titre en serif** (la voix de l'école), le texte en sans, un filet, et le
+  pied en gris muet. Les jetons sont ceux de l'application : `#0038b8`, `#0f1e33`, `#55657c`,
+  `#becadc`, fond `#f3f8fe`, carte blanche à 12 px de rayon, contrôle à 6 px.
+- **La serif sans fichier de police** : Georgia dans les e-mails, Times-Roman dans les PDF. L'une est
+  présente dans tous les clients de messagerie, l'autre est livrée avec `@react-pdf` ; aucune police
+  téléchargée ne vaut son poids dans une boîte de réception, et Newsreader n'a pas d'équivalent sûr.
+- **Défauts de contenu, plus graves que les couleurs** :
+  - L'**e-mail d'invitation** — le tout premier message qu'une famille reçoit — affirmait « Vous
+    n'avez pas de mot de passe à retenir : vous recevrez un nouveau lien à chaque connexion. » Faux
+    depuis la session 17 : l'école communique un mot de passe et le lien magique est la seconde voie.
+  - Le **livret** répétait le domaine dans chaque ligne de compétence, sous un titre de section qui
+    le portait déjà — le même défaut que l'écran, corrigé de la même façon (`withoutDomain`), pour
+    les référentiels déjà en base comme pour ceux qu'une école importera.
+  - Le livret imprimait « **Période : Période 1 (…)** » : le libellé répétait le nom de la chose
+    qu'il désigne. Le libellé disparaît, la période se nomme elle-même.
+  - Le **guide PDF** imprimait son sous-titre **à travers les jambages de son titre** : la page pose
+    `lineHeight: 1.4`, dont une ligne de 22 points hérite une boîte plus courte que ses propres
+    descendantes. Une ligne d'affichage déclare son interligne.
+- **Conséquences** : les bandes teintées des sections du livret deviennent des filets en capitales,
+  comme les écrans depuis la session 22 ; la liste du digest s'aligne sur un seul bord gauche avec
+  une barre dans la marge, comme les entrées d'index de l'application. Les modèles d'e-mails de
+  `config.toml` restent commentés — les activer est une décision d'exploitation, pas de design.

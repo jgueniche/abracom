@@ -1673,7 +1673,6 @@
     },
     "pdfLabels": {
       "title": "Livret de compétences",
-      "period": "Période",
       "born": "Né·e le {date}",
       "class": "Classe",
       "teacher": "Enseignant·e",

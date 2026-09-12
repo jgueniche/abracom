@@ -319,6 +319,18 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   l'application — il nomme désormais le lien par e-mail, qui est la sortie puisqu'il n'y a pas de
   réinitialisation (ADR-0028). Vérifié : `pnpm check`, `pnpm build`, 28 e2e, axe à 0 violation
   sérieuse. **Validation visuelle par le porteur : c'est le seul point qui reste.**
+- **Session 28 — ce que les familles reçoivent** (ADR-0057). Sept e-mails et deux PDF sortent vers
+  les familles ; aucune des six sessions de design ne les avait ouverts. Tous étaient restés peints
+  en **sarcelle `#01525e` sur fond crème** — la charte des sessions 1–2, remplacée en session 16. Ils
+  portent désormais la même anatomie que l'application : surtitre bleu qui nomme l'expéditeur, titre
+  en serif (Georgia dans les e-mails, Times-Roman dans les PDF — aucune police téléchargée), texte en
+  sans, filet, pied muet. Quatre défauts de contenu, plus graves que les couleurs : l'**e-mail
+  d'invitation**, le tout premier message qu'une famille reçoit, affirmait « vous n'avez pas de mot
+  de passe à retenir », faux depuis la session 17 ; le **livret** répétait le domaine dans chaque
+  ligne de compétence sous un titre qui le portait déjà, et imprimait « Période : Période 1 » ; le
+  **guide PDF** imprimait son sous-titre à travers les jambages de son titre (une ligne de 22 points
+  héritait du `lineHeight: 1.4` de la page). Vérifié : `pnpm check`, `pnpm build`, 28 e2e, et les
+  neuf documents rendus puis regardés un par un.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
