@@ -1,4 +1,4 @@
-import { BookOpenIcon, CheckIcon, ImageIcon, InfoIcon, MegaphoneIcon } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { ContentCard, EyebrowDot, MetaChip } from "@/components/domain/content-card";
@@ -9,13 +9,6 @@ import { Button } from "@/components/ui/button";
 import { plainExcerpt } from "@/lib/text";
 import { toggleHomeworkSeen } from "@/server/actions/class-posts";
 import type { ClassPost } from "@/server/queries/class-space";
-
-const ICONS = {
-  homework: BookOpenIcon,
-  journal: ImageIcon,
-  info: InfoIcon,
-  reminder: MegaphoneIcon,
-} as const;
 
 /** Past this many characters the body is folded behind "Lire la suite". */
 const FOLD_AT = 320;
@@ -33,7 +26,6 @@ export async function PostCard({
   totalFamilies?: number;
 }) {
   const [t, format] = await Promise.all([getTranslations("classSpace"), getFormatter()]);
-  const Icon = ICONS[post.type];
   const isDraft = post.published_at === null;
   const body = post.body_md ?? "";
   const long = body.length > FOLD_AT;
@@ -43,7 +35,11 @@ export async function PostCard({
       muted={isDraft}
       eyebrow={
         <>
-          <Icon className="size-3.5" aria-hidden />
+          {/* The type used to be preceded by its own pictogram — a megaphone
+              beside the word "Rappel", an image beside "Vie de classe". Once the
+              diary shows all three categories at once the icons became a column
+              of decoration repeating, in a picture, the word written next to
+              them (ADR-0056 removed the same thing elsewhere). */}
           {t(`type.${post.type}`)}
           {post.subject && (
             <>
@@ -80,7 +76,14 @@ export async function PostCard({
         </>
       }
       title={post.title}
-      menu={canManage ? <PostActions postId={post.id} /> : undefined}
+      menu={
+        canManage ? (
+          <PostActions
+            postId={post.id}
+            editHref={`/classes/${post.class_id}/publier?post=${post.id}`}
+          />
+        ) : undefined
+      }
       body={
         body ? (
           // The full Markdown used to be printed inside every feed row: a

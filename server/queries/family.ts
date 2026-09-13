@@ -17,12 +17,27 @@ const CHILD_SELECT = `
   )
 ` as const;
 
-/** The signed-in guardian's children with their current class and teachers (RLS-scoped). */
+/**
+ * The signed-in guardian's children with their current class and teachers.
+ *
+ * RLS is not the filter here, and that was a real bug: a teacher may read the
+ * `student_guardians` rows of every pupil in her class, so this returned one
+ * row *per guardian per pupil* — twenty-odd "children" for a teacher of ten.
+ * The cahier de texte took them for her own family and offered her a filter
+ * chip and a "vu" button for each, the same first name two or three times over
+ * (ADR-0059). The question this function asks is "whose guardian am I", so it
+ * says so.
+ */
 export async function getMyChildren() {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
   const { data, error } = await supabase
     .from("student_guardians")
     .select(CHILD_SELECT)
+    .eq("user_id", user.id)
     .order("is_primary", { ascending: false });
   if (error) throw error;
 

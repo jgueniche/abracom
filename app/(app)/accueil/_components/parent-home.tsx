@@ -21,7 +21,11 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
     getFormatter(),
     getMyChildren(),
     getPendingAcknowledgements(user.id),
-    getTodayForParent(user.id, user.school?.timezone ?? "Europe/Paris"),
+    getTodayForParent(
+      user.id,
+      user.school?.timezone ?? "Europe/Paris",
+      user.roles.some((role) => role.role === "parent" && role.status === "active"),
+    ),
   ]);
 
   // A receipt owed is the most "today" thing there is, so it heads the list;

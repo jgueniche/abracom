@@ -1,6 +1,7 @@
 "use client";
 
-import { MoreHorizontalIcon, Trash2Icon } from "lucide-react";
+import { MoreHorizontalIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -25,8 +26,12 @@ import { deleteClassPost } from "@/server/actions/class-posts";
  * Administration of a post lives in a menu, and deleting asks first.
  * "Supprimer le billet" used to sit at the bottom of every card as a plain
  * button that destroyed the post on the first click.
+ *
+ * The menu held that one destructive item and nothing else: a teacher who
+ * mistyped a due date had to delete the homework — in front of the families
+ * who had already ticked it — and set it again.
  */
-export function PostActions({ postId }: { postId: string }) {
+export function PostActions({ postId, editHref }: { postId: string; editHref: string }) {
   const t = useTranslations("classSpace");
   const [confirming, setConfirming] = useState(false);
 
@@ -43,6 +48,12 @@ export function PostActions({ postId }: { postId: string }) {
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem asChild className="min-h-11 md:min-h-9">
+            <Link href={editHref}>
+              <PencilIcon aria-hidden />
+              {t("post.edit")}
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuItem variant="destructive" onSelect={() => setConfirming(true)}>
             <Trash2Icon aria-hidden />
             {t("post.delete")}

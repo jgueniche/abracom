@@ -11,8 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getLegalStatus } from "@/lib/auth/legal";
 import { requireCurrentUser } from "@/lib/auth/session";
+import { hasSchoolRole, isSchoolStaff } from "@/lib/permissions";
 import { createClient } from "@/lib/supabase/server";
 
+import { MessagingDoorForm } from "./messaging-door-form";
 import { ProfileForm } from "./profile-form";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,14 +24,20 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ProfilePage() {
   const user = await requireCurrentUser();
-  const [t, tRoles, tOnboarding, format, legal, supabase] = await Promise.all([
+  const [t, tRoles, tOnboarding, tMessaging, format, legal, supabase] = await Promise.all([
     getTranslations("profile"),
     getTranslations("roles"),
     getTranslations("auth.onboarding"),
+    getTranslations("messaging"),
     getFormatter(),
     getLegalStatus(user),
     createClient(),
   ]);
+  // Only the people families can write to have a door to close.
+  const onTheTeam = user.school
+    ? isSchoolStaff(user.roles, user.school.id) ||
+      hasSchoolRole(user.roles, user.school.id, ["teacher"])
+    : false;
   const { data: acceptances } = await supabase
     .from("legal_acceptances")
     .select("legal_document_id, accepted_at")
@@ -43,7 +51,11 @@ export default async function ProfilePage() {
         description={t("subtitle")}
         actions={<SignOutButton className="min-h-11" />}
       />
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)]">
+      {/* `items-start`: without it the left card stretches to the height of the
+          whole right-hand column — four hundred pixels of white under the save
+          button. ADR-0056 fixed nine of these in the administration; this page
+          and two others were not among them. */}
+      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)]">
         <Card>
           <CardContent>
             <ProfileForm
@@ -83,6 +95,16 @@ export default async function ProfilePage() {
               ))}
             </CardContent>
           </Card>
+          {onTheTeam && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{tMessaging("doorTitle")}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MessagingDoorForm accepts={user.profile.accepts_parent_dm} />
+              </CardContent>
+            </Card>
+          )}
           <Card>
             <CardHeader>
               <CardTitle>{t("legal")}</CardTitle>

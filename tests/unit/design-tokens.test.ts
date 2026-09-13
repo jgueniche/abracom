@@ -40,11 +40,11 @@ const TEXT_PAIRS: Array<[string, string]> = [
 /**
  * The original palette passed every contrast test and still looked flat: card on
  * background was 1.04:1 AND its border only 1.35:1, so nothing drew the plane.
- * A plane can be drawn by its fill or by its edge; on a near-white page it has
- * to be the edge, so the fill threshold is low and the border one is strict.
+ * A plane can be drawn by its fill or by its edge — never by neither, which is
+ * what the assertion below checks. Since ADR-0058 the light page is pure white
+ * and so is the card, so in that theme the edge carries all of it.
  */
 const SURFACE_PAIRS: Array<[string, string, number]> = [
-  ["background", "card", 1.06],
   ["background", "surface", 1.1],
   ["card", "border", 1.55],
   ["background", "border", 1.5],
@@ -62,6 +62,14 @@ describe.each([
 
   it.each(SURFACE_PAIRS)("--%s and --%s stay %f:1 apart", (a, b, min) => {
     expect(contrastRatio(vars[a]!, vars[b]!)).toBeGreaterThanOrEqual(min);
+  });
+
+  it("separates a card from the page by its fill or by its edge", () => {
+    const byFill = contrastRatio(vars["background"]!, vars["card"]!) >= 1.06;
+    const byEdge =
+      contrastRatio(vars["card"]!, vars["border"]!) >= 1.55 &&
+      contrastRatio(vars["background"]!, vars["border"]!) >= 1.5;
+    expect(byFill || byEdge, "a plane needs either a fill or an edge").toBe(true);
   });
 
   it("keeps white text readable on destructive", () => {

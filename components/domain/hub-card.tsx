@@ -6,7 +6,8 @@ import { cn } from "@/lib/utils";
 
 export type HubCardProps = {
   href: string;
-  icon: ComponentType<SVGProps<SVGSVGElement>>;
+  /** Kept in the signature for the callers' vocabulary; the row draws no icon. */
+  icon?: ComponentType<SVGProps<SVGSVGElement>>;
   title: string;
   hint?: string;
   /** Short live figure — "3 accusés en attente" — shown at the far right. */

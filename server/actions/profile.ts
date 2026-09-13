@@ -72,3 +72,29 @@ export async function updateProfile(
   revalidatePath("/", "layout");
   return { status: "saved", message: t("saved") };
 }
+
+/**
+ * A member of the team opens or closes their own door to direct messages from
+ * families (ADR-0060).
+ *
+ * The direction already had a tap on the whole school (session 19); this is the
+ * one lever a person holds over their own inbox. It never touches colleagues:
+ * `can_direct_message` reads it only in its parent branch, and the database is
+ * what refuses the message — the screen only says so first.
+ */
+export async function updateMessagingDoor(
+  _previous: ProfileState,
+  formData: FormData,
+): Promise<ProfileState> {
+  const t = await getTranslations("messaging");
+  const user = await requireCurrentUser();
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ accepts_parent_dm: formData.get("acceptsParentDm") === "on" })
+    .eq("id", user.id);
+  if (error) return { status: "error", message: t("doorError") };
+  revalidatePath("/profil");
+  revalidatePath("/messages", "layout");
+  return { status: "saved", message: t("doorSaved") };
+}

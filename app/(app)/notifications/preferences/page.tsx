@@ -35,7 +35,7 @@ export default async function NotificationPreferencesPage() {
         </Link>
       </Button>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[2fr_1fr]">
         <Card>
           <CardContent>
             <PreferencesForm initial={initial} />

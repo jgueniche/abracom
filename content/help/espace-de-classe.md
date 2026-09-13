@@ -5,12 +5,17 @@ routes: [/classes, /classes/[classId]]
 topic: daily
 keywords: [classe, cahier de vie, publications, onglets, équipe, info, rappel]
 since: 17
-reviewed: 2026-09-12
+reviewed: 2026-09-13
 ---
 
 L'onglet **Classe** ouvre l'espace de la classe, sur le **cahier de vie** : ce que la classe a vécu, mois par mois, billets et photos.
 
-Les autres onglets suivent, dans l'ordre où on les ouvre : Devoirs, Mots, Absences, Emploi du temps — et, selon votre rôle, Évaluations, Rendez-vous et Retards. Les devoirs ont aussi leur propre onglet dans la barre principale, où toutes vos classes sont fusionnées.
+Les onglets sont rangés en deux familles, sur deux lignes :
+
+- **Classe**, le quotidien — Cahier de vie, Devoirs, Mots, Emploi du temps.
+- **Suivi**, ce que l'école tient sur chaque élève — Absences, Retards, Évaluations, Rendez-vous.
+
+Chacun n'apparaît que si votre rôle y a accès. Les devoirs ont aussi leur propre onglet dans la barre principale, où toutes vos classes sont fusionnées.
 
 :::roles parent, guardian
 Si vous avez plusieurs enfants, la page liste leurs classes ; l'accueil permet aussi d'ouvrir directement celle de chaque enfant.
