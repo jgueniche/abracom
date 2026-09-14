@@ -281,7 +281,21 @@
       "students": "{count, plural, =0 {Aucun élève} one {# élève} other {# élèves}}",
       "noClasses": "Aucune classe ne vous est affectée pour cette année.",
       "room": "Salle {room}",
-      "subtitle": "Vos classes, le pointage du jour et ce qui vient."
+      "subtitle": "Ce qui vous attend, ce qui s'est passé dans vos classes.",
+      "queue": "Ce qui vous attend",
+      "queueNothing": "Rien à traiter : tout est à jour.",
+      "queueKinds": {
+        "draft": "Brouillon",
+        "absence": "Absences à statuer",
+        "assessment": "Évaluations à publier"
+      },
+      "activity": "Dans vos classes",
+      "activityNothing": "Rien de neuf cette semaine.",
+      "activityKinds": {
+        "post": "Publication",
+        "absence": "Absent aujourd'hui",
+        "appointment": "Rendez-vous"
+      }
     },
     "admin": {
       "title": "Tableau de bord",
@@ -979,12 +993,15 @@
       "assessments": "Évaluations",
       "appointments": "Rendez-vous",
       "timetable": "Emploi du temps",
-      "late": "Retards"
+      "late": "Retards",
+      "groupClass": "Classe",
+      "groupFollow": "Suivi",
+      "aria": "Onglets de la classe"
     },
     "type": {
-      "homework": "À préparer",
-      "journal": "Cahier de vie",
-      "info": "Info",
+      "homework": "Devoir",
+      "journal": "Vie de classe",
+      "info": "Information",
       "reminder": "Rappel"
     },
     "visibility": {
@@ -1010,7 +1027,14 @@
     },
     "post": {
       "new": "Nouvelle publication",
+      "kind": "Que publiez-vous ?",
+      "kindJournal": "Billet de cahier de vie",
+      "kindHomework": "Devoir",
+      "category": "Catégorie",
+      "categoryHint": "Range le billet dans le cahier de vie ; les familles peuvent filtrer dessus.",
       "edit": "Modifier",
+      "editTitle": "Modifier la publication",
+      "editSaved": "Publication mise à jour.",
       "type": "Type",
       "title": "Titre",
       "body": "Contenu",
@@ -1043,6 +1067,7 @@
       "month": "{month}",
       "download": "Téléchargement désactivé par l'école",
       "photos": "{count, plural, one {# photo} other {# photos}}",
+      "filterAll": "Tout",
       "emptyHint": "Les billets et les photos du cahier de vie s'afficheront ici, mois par mois."
     },
     "notes": {
@@ -1050,6 +1075,9 @@
       "empty": "Aucun mot pour l'instant.",
       "new": "Écrire un mot",
       "student": "Élève",
+      "students": "Élèves",
+      "studentsHint": "Chaque famille reçoit son propre mot : personne ne voit celui d'un autre.",
+      "allStudents": "Toute la classe",
       "body": "Message",
       "kind": "Nature",
       "kinds": {
@@ -1060,7 +1088,9 @@
       "visibility": "Visibilité",
       "send": "Envoyer aux parents",
       "sent": "Mot envoyé.",
+      "sentMany": "Mot envoyé à {count} familles.",
       "invalid": "Écrivez un message.",
+      "noStudent": "Choisissez au moins un élève.",
       "saveError": "Envoi impossible.",
       "read": "J'ai lu",
       "readOn": "Lu le {date}",
@@ -1068,7 +1098,7 @@
       "from": "De {name}",
       "for": "Pour {name}",
       "emptyHint": "Un mot de l'enseignant·e vous concernant apparaîtra ici, avec son accusé de lecture.",
-      "emptyHintTeacher": "Écrivez un mot individuel depuis la fiche d'un élève ou depuis le composeur de la classe.",
+      "emptyHintTeacher": "Les mots que vous enverrez apparaîtront ici, avec leur accusé de lecture.",
       "praiseTitle": "Envoyer un bravo",
       "praiseHint": "Une tape sur un prénom envoie « {sentence} » à sa famille. Pour en dire plus, utilisez le formulaire ci-dessous.",
       "praiseBody": "Bravo !"
@@ -1266,12 +1296,20 @@
     },
     "channelClosed": "Les échanges avec l'équipe sont momentanément fermés. Vous pouvez toujours relire cette conversation.",
     "channelClosedUntil": "Les échanges avec l'équipe sont fermés jusqu'au {date}. Vous pouvez toujours relire cette conversation.",
+    "channelClosedByPerson": "{name} ne reçoit pas de messages directs des familles. Vous pouvez relire cette conversation ; pour joindre l'école, passez par le secrétariat ou la direction.",
     "urgencyContact": "En cas d'urgence : {contact}",
     "makeAnnouncement": "Annonce seule",
     "allowReplies": "Les familles peuvent répondre",
     "takeOverride": "Rouvrir malgré la fermeture",
     "dropOverride": "Suivre la fermeture de l'école",
-    "channelClosesAt": "Les échanges ferment le {date}."
+    "channelClosesAt": "Les échanges ferment le {date}.",
+    "doorTitle": "Messages directs des familles",
+    "doorHint": "Vos collègues — enseignants, secrétariat, direction — vous écrivent dans tous les cas. Ce réglage ne concerne que les messages directs venant des familles.",
+    "doorOpen": "J'accepte les messages directs des familles",
+    "doorClosed": "Fermé : les familles ne peuvent pas ouvrir de conversation avec vous.",
+    "doorSaved": "Réglage enregistré.",
+    "doorError": "Enregistrement impossible.",
+    "doorSave": "Enregistrer"
   },
   "adminReports": {
     "title": "Signalements",
@@ -2043,7 +2081,12 @@
     "subtitle": "Que voulez-vous publier ?",
     "chooseClass": "Choisissez une classe",
     "classSpace": "Dans une classe",
+    "school": "École",
     "classSpaceHint": "Devoir, billet de cahier de vie ou mot individuel.",
+    "journal": "Cahier de vie",
+    "journalHint": "Un moment de classe, une information ou un rappel, avec photos.",
+    "note": "Mot individuel",
+    "noteHint": "Un message à la famille d'un élève, ou de plusieurs.",
     "announcement": "Annonce",
     "announcementHint": "Message officiel à des classes ou à toute l'école.",
     "document": "Document",

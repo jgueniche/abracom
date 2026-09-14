@@ -10,14 +10,22 @@ import { createClient } from "@/lib/supabase/server";
 import { type ActionState, field, toActionError, uuid } from "./admin/_shared";
 
 const noteSchema = z.object({
-  studentId: z.string().regex(uuid),
+  studentIds: z.array(z.string().regex(uuid)).min(1).max(60),
   classId: z.string().regex(uuid).nullable(),
   bodyMd: z.string().trim().min(1).max(5000),
   kind: z.enum(["praise", "concern", "info"]),
   visibility: z.enum(["parents", "staff"]),
 });
 
-/** "Mot individuel": a private note from the teacher to the guardians of one student. */
+/**
+ * "Mot individuel": a private note from the teacher to the guardians of a
+ * pupil — or of several, which is not the same thing as an announcement.
+ *
+ * The form asked for one pupil in a select, so "pensez au sac de piscine
+ * mardi" had to be written twenty-six times or turned into a class post that
+ * every family reads. One row is still written per pupil: each family reads
+ * its own note, sees its own read receipt, and never learns who else got one.
+ */
 export async function createIndividualNote(
   _prev: ActionState,
   formData: FormData,
@@ -25,35 +33,45 @@ export async function createIndividualNote(
   try {
     const t = await getTranslations("classSpace.notes");
     const user = await requireCurrentUser();
+    const ids = formData.getAll("studentIds").map(String).filter(Boolean);
     const parsed = noteSchema.safeParse({
-      studentId: field(formData, "studentId"),
+      // one pupil at a time is still how the pupil file writes a note
+      studentIds: ids.length > 0 ? ids : [field(formData, "studentId")].filter(Boolean),
       classId: field(formData, "classId") || null,
       bodyMd: String(formData.get("bodyMd") ?? ""),
       kind: field(formData, "kind") || "info",
       visibility: field(formData, "visibility") || "parents",
     });
-    if (!parsed.success) return { status: "error", message: t("invalid") };
+    if (!parsed.success)
+      return {
+        status: "error",
+        message: String(formData.get("bodyMd") ?? "").trim() ? t("noStudent") : t("invalid"),
+      };
 
     const supabase = await createClient();
-    const { data: student } = await supabase
+    const { data: students } = await supabase
       .from("students")
-      .select("school_id")
-      .eq("id", parsed.data.studentId)
-      .maybeSingle();
-    if (!student) return { status: "error", message: t("saveError") };
-    const { error } = await supabase.from("individual_notes").insert({
-      school_id: student.school_id,
-      student_id: parsed.data.studentId,
-      author_id: user.id,
-      body_md: parsed.data.bodyMd,
-      kind: parsed.data.kind,
-      visibility: parsed.data.visibility,
-    });
+      .select("id, school_id")
+      .in("id", parsed.data.studentIds);
+    if (!students?.length) return { status: "error", message: t("saveError") };
+    const { error } = await supabase.from("individual_notes").insert(
+      students.map((student) => ({
+        school_id: student.school_id,
+        student_id: student.id,
+        author_id: user.id,
+        body_md: parsed.data.bodyMd,
+        kind: parsed.data.kind,
+        visibility: parsed.data.visibility,
+      })),
+    );
     if (error) return { status: "error", message: t("saveError") };
 
     if (parsed.data.classId) revalidatePath(`/classes/${parsed.data.classId}`, "layout");
     revalidatePath("/famille");
-    return { status: "success", message: t("sent") };
+    return {
+      status: "success",
+      message: students.length > 1 ? t("sentMany", { count: students.length }) : t("sent"),
+    };
   } catch (error) {
     return toActionError(error);
   }

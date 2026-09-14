@@ -26,7 +26,12 @@ const postSchema = z.object({
 
 export type PostFormState = ActionState & { postId?: string };
 
-/** Teachers publish typed posts (homework, journal, info, reminder) in their classes. */
+/**
+ * Teachers publish in their classes: a homework, or an entry of the cahier de
+ * vie filed under one of its three categories (journal, info, reminder).
+ * Passing `id` re-opens an existing publication — supported here since session
+ * 5, reachable from the interface only since ADR-0059.
+ */
 export async function saveClassPost(
   _prev: PostFormState,
   formData: FormData,
@@ -147,7 +152,7 @@ export async function saveClassPost(
     revalidatePath("/accueil");
     return {
       status: "success",
-      message: parsed.data.publish ? t("published") : t("saved"),
+      message: parsed.data.id ? t("editSaved") : parsed.data.publish ? t("published") : t("saved"),
       postId,
     };
   } catch (error) {

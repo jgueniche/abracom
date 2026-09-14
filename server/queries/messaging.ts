@@ -168,12 +168,16 @@ export async function getThreadMessagingState(threadId: string) {
     reopensAt?: string | null;
     closesAt?: string | null;
     governed?: boolean;
+    closedBy?: string | null;
   };
   return {
     open: state.open !== false,
     reopensAt: state.reopensAt ?? null,
     closesAt: state.closesAt ?? null,
     governed: state.governed === true,
+    // "person" — the member wrote to has closed their own door (ADR-0060), so
+    // there is no reopening date to promise and no point naming the school.
+    closedBy: state.closedBy ?? null,
   };
 }
 

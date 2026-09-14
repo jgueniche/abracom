@@ -1,18 +1,12 @@
-import {
-  CalendarPlusIcon,
-  ClipboardListIcon,
-  FilePlusIcon,
-  MegaphoneIcon,
-  SchoolIcon,
-} from "lucide-react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { HubCard, HubGrid } from "@/components/domain/hub-card";
-import { NewHomeworkButton } from "@/components/domain/new-homework-button";
+import { HubMenuCard } from "@/components/domain/hub-menu-card";
 import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { isSchoolStaff } from "@/lib/permissions";
 import { getMyTeachingClasses } from "@/server/queries/classes";
@@ -23,14 +17,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Publishing is a teacher's daily loop, and it was buried in the header of a
- * class page. This is the one place that answers "what do I want to publish?"
- * — a single class goes straight through to its composer.
+ * The one place that answers "what do I want to publish?".
  *
- * Everything here writes. "Devoirs" used to be a card of this grid pointing at
- * `/devoirs`, the diary — a reading screen, in a hub where every other card
- * opens a composer. Setting homework is now the header action, which already
- * knows how to ask which class when a teacher has several.
+ * It used to answer a different question — *in which class?* — and then, for
+ * the teacher of a single class, answer it by itself: the tab redirected
+ * straight into that class's composer, so one of the five tabs in the bar led
+ * nowhere of its own. What a teacher publishes is three different things (a
+ * diary entry, a homework, a private note to one family), each reached today by
+ * guessing a select inside a composer. They are the rows of this hub; the class
+ * is asked only when there is more than one.
  */
 export default async function PublishPage() {
   const user = await requireCurrentUser();
@@ -44,59 +39,56 @@ export default async function PublishPage() {
   // Nothing to publish and no class to publish in: the page answered by URL
   // with an empty hub.
   if (!staff && classes.length === 0) redirect("/accueil");
-  if (!staff && classes.length === 1) redirect(`/classes/${classes[0]!.id}/publier`);
+
+  const targets = [
+    { key: "journal", href: (id: string) => `/classes/${id}/publier?type=journal` },
+    { key: "homework", href: (id: string) => `/classes/${id}/publier?type=homework` },
+    { key: "note", href: (id: string) => `/classes/${id}/mots` },
+  ] as const;
 
   return (
-    <Column>
-      <PageHeader
-        title={t("title")}
-        description={t("subtitle")}
-        actions={
-          <NewHomeworkButton
-            classes={classes.map((cls) => ({ id: cls.id, name: cls.name }))}
-            variant={staff ? "outline" : "default"}
-          />
-        }
-      />
-      <HubGrid>
-        {classes.map((cls) => (
-          <HubCard
-            key={cls.id}
-            href={`/classes/${cls.id}/publier`}
-            icon={SchoolIcon}
-            title={cls.name}
-            hint={t("classSpaceHint")}
-          />
-        ))}
-        {staff && (
-          <>
+    <Column width="index">
+      <PageHeader title={t("title")} description={t("subtitle")} />
+      {classes.length > 0 && (
+        <section className="flex flex-col">
+          {staff && <SectionHeader label={t("classSpace")} />}
+          <HubGrid>
+            {targets.map((target) =>
+              classes.length === 1 ? (
+                <HubCard
+                  key={target.key}
+                  href={target.href(classes[0]!.id)}
+                  title={t(target.key)}
+                  hint={t(`${target.key}Hint`)}
+                />
+              ) : (
+                <HubMenuCard
+                  key={target.key}
+                  title={t(target.key)}
+                  hint={t(`${target.key}Hint`)}
+                  classes={classes.map((cls) => ({ id: cls.id, name: cls.name }))}
+                  href={target.href}
+                />
+              ),
+            )}
+          </HubGrid>
+        </section>
+      )}
+      {staff && (
+        <section className="mt-8 flex flex-col">
+          {classes.length > 0 && <SectionHeader label={t("school")} />}
+          <HubGrid>
             <HubCard
               href="/admin/annonces/nouvelle"
-              icon={MegaphoneIcon}
               title={t("announcement")}
               hint={t("announcementHint")}
             />
-            <HubCard
-              href="/admin/documents"
-              icon={FilePlusIcon}
-              title={t("document")}
-              hint={t("documentHint")}
-            />
-            <HubCard
-              href="/agenda/nouveau"
-              icon={CalendarPlusIcon}
-              title={t("event")}
-              hint={t("eventHint")}
-            />
-            <HubCard
-              href="/admin/formulaires/nouveau"
-              icon={ClipboardListIcon}
-              title={t("form")}
-              hint={t("formHint")}
-            />
-          </>
-        )}
-      </HubGrid>
+            <HubCard href="/admin/documents" title={t("document")} hint={t("documentHint")} />
+            <HubCard href="/agenda/nouveau" title={t("event")} hint={t("eventHint")} />
+            <HubCard href="/admin/formulaires/nouveau" title={t("form")} hint={t("formHint")} />
+          </HubGrid>
+        </section>
+      )}
     </Column>
   );
 }

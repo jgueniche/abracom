@@ -331,6 +331,31 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   **guide PDF** imprimait son sous-titre à travers les jambages de son titre (une ligne de 22 points
   héritait du `lineHeight: 1.4` de la page). Vérifié : `pnpm check`, `pnpm build`, 28 e2e, et les
   neuf documents rendus puis regardés un par un.
+- **Session 29 — ce qu'une enseignante a trouvé en se servant de l'application** (ADR-0058 à
+  ADR-0060), joué sur une stack Supabase réelle. **Le fond redevient blanc** et le bleu passe en
+  touches : page et carte en blanc pur, le filet dessine seul le plan, et `--muted` / `--accent` /
+  `--secondary` / `--surface` reprennent la chroma que la session 22 leur avait ôtée puisqu'ils ne
+  reposent plus sur une page bleue (le thème sombre ne bouge pas). Sept points relevés par l'usage,
+  tous livrés : **Publier** ne rebondit plus dans la classe et liste ce qu'on publie — billet,
+  devoir, mot — la classe n'étant demandée qu'au pluriel ; **une publication, une catégorie** — le
+  cahier de vie absorbe Info et Rappel, filtrables par pastilles, alors que ces deux valeurs étaient
+  écrites depuis la session 5 et **lues par aucun écran** ; les **onglets de classe** se rangent en
+  deux familles, _Classe_ et _Suivi_ ; **modifier une publication** devient atteignable (possible en
+  base depuis la session 5, jamais offerte) ; un **mot individuel** part à plusieurs élèves ou à
+  toute la classe, une ligne par élève, chaque famille son accusé ; **la porte de chacun**
+  (`profiles.accepts_parent_dm`) laisse un enseignant, le secrétariat ou la direction refuser les
+  messages directs des familles **sans jamais bloquer un collègue**, appliqué par
+  `can_direct_message` et `thread_messaging_state` ; l'**accueil de l'enseignante** ouvre enfin sur
+  « Ce qui vous attend » et « Dans vos classes » (dette signalée en session 24). La repasse sur les
+  rôles a trouvé le défaut le plus grave de la session : **`getMyChildren()` ne filtrait pas sur le
+  lecteur** — il lisait les liens de responsabilité que les RLS lui laissent voir, si bien qu'une
+  enseignante se voyait offrir dans son cahier de texte une pastille de filtre et un bouton « vu »
+  par élève de sa classe, chaque prénom répété une fois par responsable ; plus un responsable en
+  lecture seule prié de signer ce que la base lui refuse, trois grilles à deux panneaux encore
+  étirées, la file d'attente de la direction redessinée sur le composant commun, et le pictogramme
+  de type retiré des cartes du cahier de vie. Vérifié : `pnpm check`, `pnpm build`, 455 assertions
+  pgTAP, axe à 0 violation sérieuse en clair et en sombre. **Validation visuelle par le porteur en
+  attente.**
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

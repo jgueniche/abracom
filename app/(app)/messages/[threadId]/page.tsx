@@ -87,14 +87,17 @@ export default async function ThreadPage({
   else if (!writer) closedReason = t("composer.readOnly");
   else if (thread.locked || thread.archived) closedReason = t("composer.closed");
   else if (channelShut)
-    closedReason = channel.reopensAt
-      ? t("channelClosedUntil", {
-          date: format.dateTime(new Date(channel.reopensAt), {
-            dateStyle: "long",
-            timeStyle: "short",
-          }),
-        })
-      : t("channelClosed");
+    closedReason =
+      channel.closedBy === "person"
+        ? t("channelClosedByPerson", { name: other?.name ?? t("kinds.dm") })
+        : channel.reopensAt
+          ? t("channelClosedUntil", {
+              date: format.dateTime(new Date(channel.reopensAt), {
+                dateStyle: "long",
+                timeStyle: "short",
+              }),
+            })
+          : t("channelClosed");
   else if (!thread.allow_replies && !isModerator) closedReason = t("readOnlyChannel");
   // Searching used to flip this to false: the composer vanished mid-conversation
   // with no explanation of why.

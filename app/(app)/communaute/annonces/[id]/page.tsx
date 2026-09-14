@@ -62,7 +62,7 @@ export default async function ClassifiedPage({ params }: { params: Promise<{ id:
       {own && post.status === "rejected" && (
         <p className="mb-4 text-sm text-destructive">{t("rejectedBanner")}</p>
       )}
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[2fr_1fr]">
         <Card>
           <CardContent>
             <p className="whitespace-pre-line">{post.body}</p>

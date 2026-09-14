@@ -281,7 +281,21 @@
       "students": "{count, plural, =0 {No student} one {# student} other {# students}}",
       "noClasses": "No class is assigned to you this year.",
       "room": "Room {room}",
-      "subtitle": "Your classes, today's attendance and what is coming."
+      "subtitle": "What is waiting on you, and what happened in your classes.",
+      "queue": "Waiting on you",
+      "queueNothing": "Nothing to deal with: you are up to date.",
+      "queueKinds": {
+        "draft": "Draft",
+        "absence": "Absences to rule on",
+        "assessment": "Assessments to publish"
+      },
+      "activity": "In your classes",
+      "activityNothing": "Nothing new this week.",
+      "activityKinds": {
+        "post": "Post",
+        "absence": "Absent today",
+        "appointment": "Appointment"
+      }
     },
     "admin": {
       "title": "Dashboard",
@@ -979,12 +993,15 @@
       "assessments": "Assessments",
       "appointments": "Appointments",
       "timetable": "Timetable",
-      "late": "Late"
+      "late": "Late",
+      "groupClass": "Class",
+      "groupFollow": "Follow-up",
+      "aria": "Class tabs"
     },
     "type": {
-      "homework": "To prepare",
-      "journal": "Class diary",
-      "info": "Info",
+      "homework": "Homework",
+      "journal": "Class life",
+      "info": "Information",
       "reminder": "Reminder"
     },
     "visibility": {
@@ -1010,7 +1027,14 @@
     },
     "post": {
       "new": "New post",
+      "kind": "What are you publishing?",
+      "kindJournal": "Class diary entry",
+      "kindHomework": "Homework",
+      "category": "Category",
+      "categoryHint": "Files the entry in the class diary; families can filter on it.",
       "edit": "Edit",
+      "editTitle": "Edit the post",
+      "editSaved": "Post updated.",
       "type": "Type",
       "title": "Title",
       "body": "Body",
@@ -1043,6 +1067,7 @@
       "month": "{month}",
       "download": "Download disabled by the school",
       "photos": "{count, plural, one {# photo} other {# photos}}",
+      "filterAll": "All",
       "emptyHint": "The class diary's entries and photos will appear here, month by month."
     },
     "notes": {
@@ -1050,6 +1075,9 @@
       "empty": "No note yet.",
       "new": "Write a note",
       "student": "Student",
+      "students": "Pupils",
+      "studentsHint": "Each family gets its own note: nobody sees anyone else's.",
+      "allStudents": "The whole class",
       "body": "Message",
       "kind": "Kind",
       "kinds": {
@@ -1060,7 +1088,9 @@
       "visibility": "Visibility",
       "send": "Send to the parents",
       "sent": "Note sent.",
+      "sentMany": "Note sent to {count} families.",
       "invalid": "Write a message.",
+      "noStudent": "Pick at least one pupil.",
       "saveError": "Could not send.",
       "read": "Mark as read",
       "readOn": "Read on {date}",
@@ -1068,7 +1098,7 @@
       "from": "From {name}",
       "for": "For {name}",
       "emptyHint": "A note from the teacher about your child will appear here, with its read receipt.",
-      "emptyHintTeacher": "Write an individual note from a pupil's file or from the class composer.",
+      "emptyHintTeacher": "The notes you send will appear here, with their read receipts.",
       "praiseTitle": "Send a well done",
       "praiseHint": "One tap on a first name sends “{sentence}” to their family. To say more, use the form below.",
       "praiseBody": "Well done!"
@@ -1266,12 +1296,20 @@
     },
     "channelClosed": "Messaging with the team is closed for now. You can still read this conversation.",
     "channelClosedUntil": "Messaging with the team is closed until {date}. You can still read this conversation.",
+    "channelClosedByPerson": "{name} does not take direct messages from families. You can still read this conversation; to reach the school, go through the office or the head teacher.",
     "urgencyContact": "In an emergency: {contact}",
     "makeAnnouncement": "Announcements only",
     "allowReplies": "Families may reply",
     "takeOverride": "Reopen despite the closure",
     "dropOverride": "Follow the school closure",
-    "channelClosesAt": "Messaging closes on {date}."
+    "channelClosesAt": "Messaging closes on {date}.",
+    "doorTitle": "Direct messages from families",
+    "doorHint": "Colleagues — teachers, office, head teacher — reach you either way. This setting only covers direct messages coming from families.",
+    "doorOpen": "I accept direct messages from families",
+    "doorClosed": "Closed: families cannot open a conversation with you.",
+    "doorSaved": "Setting saved.",
+    "doorError": "Could not save.",
+    "doorSave": "Save"
   },
   "adminReports": {
     "title": "Reports",
@@ -2043,7 +2081,12 @@
     "subtitle": "What would you like to publish?",
     "chooseClass": "Pick a class",
     "classSpace": "In a class",
+    "school": "School",
     "classSpaceHint": "Homework, a journal entry or a private note.",
+    "journal": "Class diary",
+    "journalHint": "A moment of class life, an information or a reminder, with photos.",
+    "note": "Private note",
+    "noteHint": "A message to one pupil's family, or to several.",
     "announcement": "Announcement",
     "announcementHint": "Official message to selected classes or the whole school.",
     "document": "Document",

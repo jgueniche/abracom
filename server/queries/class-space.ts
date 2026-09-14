@@ -33,10 +33,21 @@ export async function getClassSummary(classId: string) {
   };
 }
 
+export type ClassPostType = "homework" | "journal" | "info" | "reminder";
+
+/**
+ * The three kinds of entry a cahier de vie holds. `info` and `reminder` were
+ * written by the composer since session 5 and read by no screen at all: the
+ * only two calls to this query asked for `journal` or for `homework`, so a
+ * teacher who chose "Info" published into a table nobody queried. They are
+ * categories of the diary, not destinations of their own (ADR-0059).
+ */
+export const JOURNAL_TYPES = ["journal", "info", "reminder"] as const;
+
 /** Feed of a class (RLS decides drafts / staff-only visibility). */
 export async function getClassFeed(
   classId: string,
-  type?: "homework" | "journal" | "info" | "reminder",
+  type?: ClassPostType | readonly ClassPostType[],
 ) {
   const supabase = await createClient();
   let request = supabase
@@ -46,7 +57,8 @@ export async function getClassFeed(
     .is("deleted_at", null)
     .order("published_at", { ascending: false, nullsFirst: true })
     .limit(60);
-  if (type) request = request.eq("type", type);
+  if (Array.isArray(type)) request = request.in("type", type as ClassPostType[]);
+  else if (type) request = request.eq("type", type as ClassPostType);
   const { data, error } = await request;
   if (error) throw error;
   return data.map((post) => ({
@@ -56,6 +68,20 @@ export async function getClassFeed(
 }
 
 export type ClassPost = Awaited<ReturnType<typeof getClassFeed>>[number];
+
+/** One post, to re-open it in the composer (RLS decides who may read a draft). */
+export async function getClassPost(classId: string, postId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("class_posts")
+    .select(POST_SELECT)
+    .eq("id", postId)
+    .eq("class_id", classId)
+    .is("deleted_at", null)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
 
 /**
  * Homework due between two dates, across every class the reader follows.

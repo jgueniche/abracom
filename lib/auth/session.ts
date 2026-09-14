@@ -99,6 +99,7 @@ function emptyProfile(id: string): Tables<"profiles"> {
     avatar_path: null,
     locale: "fr",
     show_hebrew_date: false,
+    accepts_parent_dm: true,
     last_seen_at: null,
     anonymized_at: null,
     deletion_requested_at: null,

@@ -1093,3 +1093,109 @@ public.schools set modules = modules || '{"security": {"mfaRequired": true}}'`) 
   comme les écrans depuis la session 22 ; la liste du digest s'aligne sur un seul bord gauche avec
   une barre dans la marge, comme les entrées d'index de l'application. Les modèles d'e-mails de
   `config.toml` restent commentés — les activer est une décision d'exploitation, pas de design.
+
+## ADR-0058 — Le fond redevient blanc, le bleu passe en touches
+
+- **Contexte** : depuis la session 16 la page elle-même était teintée (`#f3f8fe`) et les cartes
+  posées en blanc dessus. Toute l'application portait donc un lavis bleu pâle continu, et le bleu ne
+  pouvait plus rien signifier en particulier : une pastille sélectionnée, une ligne du jour, une
+  bande « ceci vous attend » se détachaient à peine du fond qui portait déjà la même couleur.
+- **Décision** : la page et la carte sont **toutes deux blanc pur**. Ce qui sépare les plans est le
+  filet, et seulement le filet — ce que l'ADR-0051 avait déjà posé pour tout le reste. Le bleu
+  revient là où il porte un sens : un survol, une pastille choisie, la ligne d'aujourd'hui, le bleu
+  foncé `#0038b8` pour ce sur quoi on peut agir.
+- **Conséquence sur les jetons** : `--muted`, `--accent`, `--secondary` et `--surface` reprennent la
+  chroma que la session 22 leur avait retirée. Ils ne reposent plus sur une page bleue : ils doivent
+  être le bleu eux-mêmes. `--border` et `--rule` gagnent également un peu de bleu, à luminance
+  quasi constante — le filet est la seule chose qui dessine encore une carte, il ne peut pas pâlir.
+- **Ce que le garde-fou vérifie** : `tests/unit/design-tokens.test.ts` exigeait 1,06:1 entre la page
+  et la carte. L'assertion devient « un plan est dessiné par son fond **ou** par son bord, jamais par
+  ni l'un ni l'autre » : en clair c'est le bord (1,62:1), en sombre le fond suffit encore (1,22:1).
+- **Le thème sombre ne change pas.** « Nuit Techelet » avait déjà un fond, des cartes et des filets
+  distincts ; la demande portait sur le clair.
+
+## ADR-0059 — Ce qu'une enseignante a trouvé en se servant de l'application
+
+Une enseignante a parcouru l'application et relevé sept points. Aucun n'est un détail de mise en
+forme ; deux étaient des fonctions écrites mais inaccessibles, et un troisième un vrai bug de
+périmètre. Ce qui suit est la décision prise pour chacun.
+
+1. **« Publier » rebondissait.** Le pôle Publier redirigeait l'enseignante d'une seule classe droit
+   dans le composeur de cette classe : un onglet sur cinq ne menait donc nulle part qui lui soit
+   propre. Il répondait d'ailleurs à la mauvaise question — _dans quelle classe ?_ — alors qu'un
+   enseignant publie **trois objets différents** (un billet, un devoir, un mot individuel), chacun
+   atteint jusqu'ici en devinant un `select` au fond d'un formulaire. Ce sont désormais les lignes de
+   la page ; la classe n'est demandée que s'il y en a plusieurs.
+2. **Une publication, une catégorie.** Le composeur offrait quatre pairs — « Cahier de vie »,
+   « À préparer », « Info », « Rappel » — qui ne correspondaient à aucune section de l'application.
+   Pire : `info` et `reminder` étaient écrits en base depuis la session 5 et **lus par aucun écran**
+   (`getClassFeed` n'était appelé qu'avec `journal` ou `homework`). Une enseignante qui choisissait
+   « Info » publiait dans le vide. Le cahier de vie les absorbe comme **catégories** — Vie de classe,
+   Information, Rappel — filtrables par pastilles ; le devoir reste un objet à part, parce qu'il
+   porte une date et un accusé « vu » par famille. Aucune migration : l'enum garde ses quatre
+   valeurs, c'est leur lecture qui change.
+3. **Dix onglets à plat.** L'espace de classe fait deux métiers ; la rangée ne le disait nulle part.
+   Deux familles, deux lignes, chacune avec son libellé dans la marge : **Classe** (cahier de vie,
+   devoirs, mots, emploi du temps) et **Suivi** (absences, retards, évaluations, rendez-vous).
+   L'ordre à l'intérieur reste la fréquence d'ouverture (ADR-0053).
+4. **Modifier, pas seulement supprimer.** `saveClassPost` accepte un `id` et met à jour depuis la
+   session 5 ; rien dans l'interface n'en passait jamais un. Une date de devoir mal tapée obligeait à
+   supprimer le devoir devant les familles qui l'avaient coché. Le menu **…** porte « Modifier ».
+5. **Un mot à plusieurs familles.** Le formulaire n'offrait qu'un `select` d'un seul élève : « pensez
+   au sac de piscine mardi » se réécrivait vingt-six fois ou devenait une publication de classe. On
+   coche plusieurs élèves, ou toute la classe. **Une ligne est écrite par élève** : chaque famille
+   reçoit son mot, avec son accusé de lecture, et n'apprend jamais qui d'autre l'a reçu.
+6. **La porte de chacun** — voir ADR-0060.
+7. **L'accueil de l'enseignante** n'avait ni le bloc « Aujourd'hui » du parent ni la file d'attente
+   de la direction ; la session 24 avait noté la dette et l'avait laissée. Deux sections :
+   **Ce qui vous attend** (brouillon, absences à statuer, évaluations non publiées — rien qui ne
+   dépende d'elle, et pas les messages, que la barre du bas compte déjà) et **Dans vos classes**
+   (les sept derniers jours : publications, absents du jour, rendez-vous réservés).
+
+**Ce que la repasse sur les rôles a trouvé en plus** :
+
+- **`getMyChildren()` ne filtrait pas sur le lecteur.** Il demandait à la base « les liens de
+  responsabilité que j'ai le droit de lire » et traitait la réponse comme « mes enfants ». Pour un
+  parent les deux coïncident ; pour une enseignante, non : elle lit les responsables de tous les
+  élèves de sa classe. Son cahier de texte affichait donc **une pastille de filtre et un bouton
+  « vu » par élève**, chaque prénom répété une fois par responsable, et le repère `teacherView`
+  — « ai-je des enfants ? » — basculait du mauvais côté, si bien qu'elle cochait « vu » à la place
+  des familles. La règle est écrite en pgTAP (`018_guardian_scope.sql`) : **les RLS sont un plafond,
+  pas un filtre.**
+- **Un responsable en lecture seule était prié de signer.** Son accueil ouvrait sur trois lignes
+  « À signer », alors que la base refuse sa signature (`can_write_in_school`) et que l'écran
+  Documents le lui dit en toutes lettres. Le bloc « Aujourd'hui » ne les lui propose plus. Un accusé
+  de lecture, lui, reste ouvert : lire une circulaire et dire qu'on l'a lue est un acte de lecture.
+- **Trois grilles à deux panneaux** étiraient encore leur carte de gauche sur la hauteur de la
+  colonne de droite (`/profil`, les préférences de notification, une petite annonce) — le défaut que
+  l'ADR-0056 avait corrigé neuf fois dans l'administration.
+- **La file d'attente de la direction** dessinait sa propre liste, la barre d'urgence posée hors du
+  plan. Les trois accueils ouvrent maintenant sur le même objet, donc sur le même composant.
+- **Le pictogramme de type** en tête de chaque carte du cahier de vie répétait en image le mot écrit
+  à côté de lui — visible seulement une fois les trois catégories réunies sur le même écran.
+
+## ADR-0060 — La porte de chacun : refuser les messages directs des familles
+
+- **Contexte** : la session 19 a donné à **la direction** un robinet sur la messagerie parents →
+  école (mode d'école, périodes datées, dérogation par fil). Elle n'a donné à personne une porte à
+  soi. La demande est précise : « je veux pouvoir interdire l'envoi de message direct de parents ;
+  je ne peux pas bloquer les messages des autres profs, direction ou membres du staff ».
+- **Décision** : un booléen sur le profil, `profiles.accepts_parent_dm`, réglé par la personne
+  elle-même depuis **Mon profil**. Deux fonctions déjà en place le lisent — `can_direct_message`
+  **dans sa seule branche parent**, donc un collègue n'est jamais refusé, et `thread_messaging_state`
+  pour une conversation déjà ouverte, donc une porte fermée arrête le message suivant et pas
+  seulement le premier. Les fils de classe (`class_official`, `class_group`) ne sont pas concernés :
+  la porte parle d'être écrit personnellement, pas du canal où l'école s'adresse à une classe.
+- **Pourquoi pas une `messaging_window`** : une fenêtre est datée et appartient à la direction. Une
+  porte n'a pas de date de réouverture à promettre et appartient à la personne. Mélanger les deux
+  aurait brouillé qui décide de quoi.
+- **Ce que le parent lit** : `thread_messaging_state` renvoie `closedBy: 'person'`, ce qui permet de
+  dire la vraie raison — « X ne reçoit pas de messages directs des familles » — au lieu d'inventer
+  une fermeture d'école et une date de réouverture. Dans « Nouveau message », la personne a
+  simplement disparu de la liste, puisque `dm_contacts` appelle déjà `can_direct_message`.
+- **Portée** : le réglage est porté par le profil, donc par la personne et non par l'établissement.
+  Une personne membre de deux écoles ferme les deux. La direction peut techniquement le modifier
+  (`profiles_update_admin`), ce qui est cohérent avec le robinet d'école qu'elle tient déjà.
+- **Vérifié en base** : `017_messaging_door.sql`, quinze assertions — le défaut est ouvert, la
+  personne ferme la sienne et pas celle du voisin, la famille perd la liste et l'INSERT est refusé,
+  les collègues et la direction passent toujours.

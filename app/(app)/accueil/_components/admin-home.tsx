@@ -1,8 +1,9 @@
-import { CheckCircle2Icon, ChevronRightIcon } from "lucide-react";
+import { CheckCircle2Icon } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { AttendanceToday } from "@/components/domain/attendance-today";
+import { Row, RowList } from "@/components/domain/row-list";
 import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
@@ -15,7 +16,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import type { CurrentUser } from "@/lib/auth/session";
 import { getAdminAnnouncements } from "@/server/queries/announcements";
 import { getSchoolClasses } from "@/server/queries/classes";
@@ -113,37 +113,31 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
 
       <section className="mb-10">
         <SectionHeader label={tDash("queue")} count={queue.length || undefined} />
+        {/* The three homes now open on the same object — "what is waiting on
+            you" — so they are drawn by the same component. This one had its own
+            hand-rolled list, with the urgency bar outside the plane rather than
+            in its margin. */}
         {queue.length === 0 ? (
-          <Card>
-            <CardContent className="flex items-center gap-3 py-2 text-muted-foreground">
-              <CheckCircle2Icon className="size-5 text-success" aria-hidden />
-              {tDash("nothing")}
-            </CardContent>
-          </Card>
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
+            <CheckCircle2Icon className="size-4 text-success" aria-hidden />
+            {tDash("nothing")}
+          </p>
         ) : (
-          <ul>
+          <RowList>
             {queue.map((row) => (
-              <li key={row.id} className="relative border-b border-rule last:border-b-0">
-                <span
-                  aria-hidden
-                  className="absolute inset-y-1.5 -left-3 w-[2px] rounded-full bg-brick sm:-left-4"
-                />
-                <Link
-                  href={row.href}
-                  className="-mx-2 flex min-h-12 items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-muted/50"
-                >
-                  <span className="min-w-0 flex-1 text-sm font-medium">{row.label}</span>
+              <Row
+                key={row.id}
+                href={row.href}
+                urgent
+                title={row.label}
+                trailing={
                   <span className="shrink-0 text-sm font-semibold text-brick tabular-nums">
                     {row.count}
                   </span>
-                  <ChevronRightIcon
-                    className="size-3.5 shrink-0 text-muted-foreground/50"
-                    aria-hidden
-                  />
-                </Link>
-              </li>
+                }
+              />
             ))}
-          </ul>
+          </RowList>
         )}
       </section>
 

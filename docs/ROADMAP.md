@@ -787,6 +787,27 @@ La navigation doit être ce qu'on voit en premier ; le contenu d'une carte, ce q
 - [ ] Brancher Resend et décommenter les modèles de `config.toml` (exploitation, pas design)
 - [ ] Validation visuelle par le porteur
 
+## Session 29 — Ce qu'une enseignante a trouvé (ADR-0058 à ADR-0060)
+
+- [x] **Fond blanc, bleu en touches** (ADR-0058) : page et carte en blanc pur, le filet dessine seul
+      le plan, les fonds teintés reprennent la chroma qu'ils avaient perdue
+- [x] **Publier** ne rebondit plus : trois lignes (cahier de vie, devoir, mot), la classe demandée
+      seulement s'il y en a plusieurs
+- [x] **Une publication, une catégorie** : le cahier de vie absorbe Info et Rappel, filtrables ;
+      `info` et `reminder` étaient écrits depuis la session 5 et lus par aucun écran
+- [x] **Onglets de classe en deux familles** : Classe (quotidien) et Suivi (le dossier de l'élève)
+- [x] **Modifier une publication** : possible en base depuis la session 5, jamais atteignable
+- [x] **Mots individuels à plusieurs élèves** : une ligne par élève, chaque famille son accusé
+- [x] **La porte de chacun** (ADR-0060) : `profiles.accepts_parent_dm`, appliqué par les RLS, sans
+      jamais bloquer un collègue
+- [x] **Accueil de l'enseignante** : « Ce qui vous attend » et « Dans vos classes » (dette de la
+      session 24)
+- [x] **Repasse sur les rôles** : `getMyChildren()` ne filtrait pas sur le lecteur — une enseignante
+      voyait dans son cahier de texte une pastille et un bouton « vu » par élève de sa classe ; un
+      responsable en lecture seule était prié de signer ; trois grilles à deux panneaux s'étiraient
+- [x] 455 assertions pgTAP, axe à 0 violation sérieuse en clair et en sombre
+- [ ] Validation visuelle par le porteur
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

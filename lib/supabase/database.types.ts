@@ -2610,6 +2610,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          accepts_parent_dm: boolean
           anonymized_at: string | null
           avatar_path: string | null
           created_at: string
@@ -2623,6 +2624,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          accepts_parent_dm?: boolean
           anonymized_at?: string | null
           avatar_path?: string | null
           created_at?: string
@@ -2636,6 +2638,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          accepts_parent_dm?: boolean
           anonymized_at?: string | null
           avatar_path?: string | null
           created_at?: string
@@ -3222,6 +3225,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accepts_parent_dm: { Args: { target: string }; Returns: boolean }
       activate_my_memberships: { Args: { schools?: string[] }; Returns: number }
       announcement_recipients: {
         Args: { announcement: string }

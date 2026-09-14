@@ -138,24 +138,31 @@
      truth for everything that floats above it (composer, install banner, main). */
   --nav-h: calc(3.5rem + env(safe-area-inset-bottom, 0px));
 
-  /* light — "Blanc & Techelet": an almost-white page, white cards, blue ink.
-     The page and the card are nearly the same value on purpose; what separates
-     the planes here is the edge, and only the edge. */
-  --background: oklch(0.977 0.01 252.8); /* #f3f8fe */
+  /* light — "Blanc & Techelet", second reading (ADR-0058): **a white page, and
+     the blue in touches**. Until now the page itself was tinted (#f3f8fe) and
+     the cards were white on top of it, so the whole application wore a pale
+     blue wash and the blue could no longer mean anything in particular. The
+     page and the card are now both pure white: what separates the planes is the
+     hairline, and only the hairline (ADR-0051). The blue comes back where it
+     carries meaning — a hover, a chosen chip, today's row, the band of what is
+     waiting — and dark blue stays the colour of what you can act on. The tinted
+     fills therefore take back the chroma session 22 had removed from them: they
+     no longer sit on a blue page, they have to be the blue themselves. */
+  --background: oklch(1 0 0); /* #ffffff */
   --foreground: oklch(0.234 0.046 257); /* #0f1e33 */
-  --surface: oklch(0.926 0.018 254); /* the fills lost a third of their chroma: */
+  --surface: oklch(0.908 0.038 253); /* the deepest of the pale-blue touches */
   --surface-foreground: oklch(0.234 0.046 257);
-  --card: oklch(1 0 0); /* #ffffff */
+  --card: oklch(1 0 0); /* #ffffff — drawn by its edge, not by its fill */
   --card-foreground: oklch(0.234 0.046 257);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.234 0.046 257);
   --primary: oklch(0.412 0.206 262.9); /* #0038b8 — techelet, the flag blue */
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.932 0.016 254);
+  --secondary: oklch(0.929 0.032 253);
   --secondary-foreground: oklch(0.349 0.08 257.9); /* #1e3a63 */
-  --muted: oklch(0.955 0.011 256.3);
+  --muted: oklch(0.964 0.016 253); /* the quietest wash */
   --muted-foreground: oklch(0.502 0.042 258.7); /* #52657f */
-  --accent: oklch(0.945 0.019 256.5); /* a hover, not a highlighter */
+  --accent: oklch(0.944 0.026 253); /* a hover, not a highlighter */
   --accent-foreground: oklch(0.388 0.143 259.8); /* #0b3f8f */
   --brick: oklch(0.457 0.157 27.4); /* #9c2420 — the wordmark red, for what waits */
   --brick-foreground: oklch(1 0 0);
@@ -164,12 +171,13 @@
   --warning: oklch(0.5 0.109 69.6); /* #8a5600 */
   --warning-foreground: oklch(1 0 0);
   --destructive: oklch(0.469 0.165 27.6); /* #a3231f */
-  --border: oklch(0.836 0.028 255.9); /* 1.65:1 seen from a white card */
-  --rule: oklch(0.902 0.018 255.9); /* the filet inside a plane */
-  /* Same lightness as before, a third of the chroma: SC 1.4.11 still reads 3.9:1
-     against the page, and the field is drawn by a grey hairline rather than by
-     a blue rule that shouted louder than the label above it. */
-  --input: oklch(0.584 0.026 257.4);
+  /* The edge now carries the whole separation between a card and the page, so
+     it is the one line that may not be lightened. */
+  --border: oklch(0.842 0.034 253); /* 1.63:1 seen from the white page */
+  --rule: oklch(0.906 0.024 253); /* the filet inside a plane */
+  /* SC 1.4.11: the field is drawn by a hairline of the page's own blue-grey,
+     never by a rule louder than the label above it. */
+  --input: oklch(0.584 0.034 255);
   --ring: oklch(0.412 0.206 262.9);
   /* 8 px. The previous 14 px turned a 44 px field into a lozenge and a 32 px
      button into a pill — the single loudest tell of the generic look. */
