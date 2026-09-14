@@ -9,9 +9,14 @@ import {
   parseQuietHours,
   type QuietHours,
 } from "@/lib/notifications/kinds";
+import { getSessionContext } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
 export async function getUnreadNotificationCount(userId: string): Promise<number> {
+  const context = await getSessionContext();
+  if (context?.unreadNotifications !== null && context?.unreadNotifications !== undefined) {
+    return context.unreadNotifications;
+  }
   const supabase = await createClient();
   const { count } = await supabase
     .from("notifications")

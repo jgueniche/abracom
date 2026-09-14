@@ -1275,3 +1275,66 @@ paraissaient plausibles et ils étaient faux — ils avaient déjà servi à tra
 dans le mauvais sens. Le script de banc (`serve.sh`) refuse désormais de rendre la main tant qu'un
 chunk statique n'est pas réellement servi comme du JavaScript. **Un banc d'essai se vérifie avant de
 croire ce qu'il dit.**
+
+## ADR-0062 — Un aller-retour pour la coquille, et un préchargement qui sert
+
+Suite de l'ADR-0061, après un nouveau signalement : « c'est encore franchement lent ».
+
+### Ce que la plateforme n'explique pas
+
+Vérifié avant de toucher au code, pour ne pas corriger à l'aveugle :
+
+- **La région est bonne.** Le projet Supabase de production répond, depuis le bac à sable américain
+  de travail, en 242 ms — contre 226 ms pour un projet de référence en `eu-west-3` (Paris) et 230 ms
+  pour un autre en `eu-north-1`. Un projet américain aurait répondu ~150 ms plus vite d'ici. La base
+  est donc bien en Europe, à côté des fonctions Vercel, qui tournent en `cdg1` (confirmé sur le
+  déploiement).
+- **Les RLS ne tombent pas dans le piège classique.** Les **149 politiques** qui appellent
+  `auth.uid()` l'enveloppent toutes dans `(select auth.uid())`, donc Postgres l'évalue une fois en
+  InitPlan et non par ligne. (Une première mesure disait le contraire ; elle était fausse — l'expression
+  rendue par `pg_policies` s'écrit `( SELECT auth.uid() AS uid)`, que la première expression régulière
+  ne reconnaissait pas.)
+- **36 clés étrangères sans index**, mais ce sont presque toutes des colonnes d'audit (`created_by`,
+  `moderated_by`, `reviewed_by`) sur des tables de quelques centaines de lignes : rien de mesurable
+  sur une démonstration. Ce n'est pas la cause.
+- **Ce qui reste hors de portée d'ici** : le plan Supabase (le projet n'est pas dans le compte
+  connecté) et la latence réelle de la production (le mandataire de l'environnement ajoute 0,2 à
+  0,9 s, soit l'ordre de grandeur cherché).
+
+### Ce qui a été corrigé
+
+- **Huit allers-retours deviennent un.** Le profil, les coordonnées, les adhésions avec leur école,
+  les textes légaux, les acceptations, l'état 2FA et les deux pastilles étaient huit requêtes, sur
+  _chaque_ page. `session_context()` les rend ensemble. Mesuré sur la même machine, en désactivant la
+  fonction en base pour obtenir un A/B honnête :
+
+  | route                  | avec    | sans (repli) | appels avec | appels sans |
+  | ---------------------- | ------- | ------------ | ----------- | ----------- |
+  | parent `/accueil`      | 0,243 s | 0,265 s      | **10**      | 18          |
+  | parent `/devoirs`      | 0,169 s | 0,191 s      | **5**       | 13          |
+  | parent `/messages`     | 0,143 s | 0,157 s      | **3**       | 11          |
+  | enseignante `/accueil` | 0,238 s | 0,241 s      | **16**      | 24          |
+
+  En local le réseau est gratuit, donc le gain de temps est modeste ; c'est la disparition de **huit
+  allers-retours** qui compte sur un déploiement où chacun coûte un vrai trajet réseau.
+
+- **Le préchargement ne travaille plus pour rien.** Next 15 met `staleTimes.dynamic` à **0** : le
+  routeur précharge chaque lien visible, reçoit la page, puis la considère périmée sur-le-champ — au
+  clic il refait donc l'aller-retour complet. Trente secondes rendent ce travail utile : une page déjà
+  visitée se rouvre depuis le cache client (78 ms au lieu de 190, mesuré). Le risque est une page vue
+  moins de trente secondes après son préchargement et modifiée entre-temps par quelqu'un d'autre ;
+  toute mutation appelle `revalidatePath`, qui vide ce cache, donc celui qui écrit voit toujours son
+  propre changement.
+
+### Le repli, et pourquoi il est obligatoire
+
+**Les migrations SQL de ce projet sont appliquées à la main sur la base hébergée**
+(`scripts/ops/apply-migrations.sh`), avant le déploiement. Un build peut donc arriver en production
+avant elles. `getSessionContext()` retombe alors sur les huit requêtes d'origine, `isMfaEnrolled()`
+sur `listFactors()` et la pastille des messages sur `my_threads()` — le comportement est identique,
+seule la vitesse manque. Sans ce repli, une fonction absente aurait déconnecté tout le monde.
+
+Corollaire à retenir : **les gains SQL de l'ADR-0061 n'existent en production que lorsque la migration
+y est passée.** Tant qu'elle ne l'est pas, `mfa_enrolled()` répondait « pas de facteur » à tout le
+monde — ce qui, pour la direction, désactivait la redirection vers la vérification. Le repli corrige
+cela aussi.

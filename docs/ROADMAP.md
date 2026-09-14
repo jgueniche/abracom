@@ -825,6 +825,25 @@ La navigation doit être ce qu'on voit en premier ; le contenu d'une carte, ce q
 - [ ] **À vérifier côté Supabase** : le projet de production doit émettre des jetons asymétriques
       (Auth → JWT Keys). Sur l'ancien secret HS256, `getClaims()` retombe sur `getUser()`
 
+## Session 31 — Un aller-retour pour la coquille (ADR-0062)
+
+- [x] **Éliminé côté plateforme** : la base est bien en Europe (242 ms contre 226 et 230 ms pour deux
+      projets de référence en `eu-west-3` et `eu-north-1`), les fonctions Vercel sont en `cdg1`, les
+      149 politiques RLS enveloppent toutes `auth.uid()` dans un `(select …)`, et les 36 clés
+      étrangères sans index sont des colonnes d'audit sur des tables minuscules
+- [x] **`session_context()`** : huit requêtes deviennent une (profil, coordonnées, adhésions, écoles,
+      textes légaux, acceptations, 2FA, messages et notifications non lus)
+- [x] **`staleTimes.dynamic: 30`** : Next jetait le résultat de chaque préchargement ; une page déjà
+      visitée se rouvre maintenant depuis le cache client (78 ms au lieu de 190)
+- [x] **Repli obligatoire** : les migrations partant à la main, un build qui arrive avant elles
+      retombe sur l'ancien chemin au lieu de déconnecter tout le monde
+- [x] 468 assertions pgTAP sur les deux chemins, 28 e2e, `pnpm check` vert
+- [ ] **À faire côté Supabase** : appliquer les migrations
+      (`SUPABASE_ACCESS_TOKEN=… scripts/ops/apply-migrations.sh <ref>`) — sans elles, les gains SQL
+      des sessions 30 et 31 n'existent pas en production
+- [ ] **À vérifier côté Supabase** : le plan et la taille d'instance, et que les jetons soient
+      asymétriques (Auth → JWT Keys)
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

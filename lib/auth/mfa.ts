@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { CurrentUser } from "@/lib/auth/session";
+import { type CurrentUser, getSessionContext } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
 export type MfaStatus = {
@@ -26,8 +26,15 @@ export async function getMfaStatus(user: CurrentUser): Promise<MfaStatus> {
 
 /** The enrolment half on its own, so it can be fetched beside the profile. */
 export async function isMfaEnrolled(): Promise<boolean> {
+  const context = await getSessionContext();
+  if (context?.mfaEnrolled !== null && context?.mfaEnrolled !== undefined) {
+    return context.mfaEnrolled;
+  }
   const supabase = await createClient();
-  const { data } = await supabase.rpc("mfa_enrolled");
+  const { data, error } = await supabase.rpc("mfa_enrolled");
+  // Neither `session_context()` nor `mfa_enrolled()` is in the database yet
+  // (ADR-0062): ask the auth server, which is what this did before.
+  if (error) return (await getMfaFactorId()) !== null;
   return data === true;
 }
 
