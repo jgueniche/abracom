@@ -1,6 +1,6 @@
 import "server-only";
 
-import { type CurrentUser, getCurrentUserId } from "@/lib/auth/session";
+import { type CurrentUser, getCurrentUserId, getSessionContext } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/supabase/types";
 
@@ -31,6 +31,12 @@ export type LegalRows = {
  * the staff may read other people's.
  */
 export async function fetchLegalRows(): Promise<LegalRows> {
+  const context = await getSessionContext();
+  if (context && context.legalDocuments.length > 0) {
+    return { documents: context.legalDocuments, accepted: new Set(context.legalAccepted) };
+  }
+  // The database does not know `session_context()` yet (ADR-0062): the two
+  // requests, as before.
   const [supabase, userId] = await Promise.all([createClient(), getCurrentUserId()]);
   if (!userId) return { documents: [], accepted: new Set() };
   const [{ data: documents }, { data: acceptances }] = await Promise.all([

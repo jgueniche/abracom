@@ -3872,6 +3872,7 @@ export type Database = {
       }
       school_staff_ids: { Args: { school: string }; Returns: string[] }
       school_timezone: { Args: { school_: string }; Returns: string }
+      session_context: { Args: Record<PropertyKey, never>; Returns: Json }
       set_current_school_year: { Args: { year_id: string }; Returns: undefined }
       set_image_rights: {
         Args: { signed: boolean; student: string }

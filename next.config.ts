@@ -64,6 +64,25 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  /*
+   * Le cache du routeur côté client.
+   *
+   * Next 15 met `staleTimes.dynamic` à 0 par défaut : le routeur précharge
+   * chaque lien visible, reçoit la page… et la considère périmée aussitôt. Au
+   * clic il refait donc l'aller-retour complet, et le travail du préchargement
+   * est jeté — soit, mesuré sur cette application, vingt-cinq rendus serveur
+   * par affichage pour rien (ADR-0062).
+   *
+   * Trente secondes rendent ce travail utile : un onglet préchargé s'ouvre
+   * depuis le cache, sans toucher au serveur. Le risque est une page vue moins
+   * de trente secondes après son préchargement et entre-temps modifiée par
+   * quelqu'un d'autre ; toute mutation de l'application appelle
+   * `revalidatePath`, qui vide ce cache, donc la personne qui écrit voit
+   * toujours son propre changement immédiatement.
+   */
+  experimental: {
+    staleTimes: { dynamic: 30, static: 300 },
+  },
   poweredByHeader: false,
   outputFileTracingRoot: fileURLToPath(new URL(".", import.meta.url)),
   images: {

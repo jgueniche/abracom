@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getSessionContext } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
 export async function getMyThreads() {
@@ -18,14 +19,22 @@ export type ThreadSummary = Awaited<ReturnType<typeof getMyThreads>>[number];
  * Never throws: a badge is not worth a 500 on every signed-in page.
  */
 export async function getUnreadMessageCount(): Promise<number> {
+  const context = await getSessionContext();
+  if (context?.unreadMessages !== null && context?.unreadMessages !== undefined) {
+    return context.unreadMessages;
+  }
   const supabase = await createClient();
   // It used to call `my_threads()` — every conversation, its last message, its
   // members — and add up one column of the result, on every page of the
   // application. `unread_message_count()` does the addition in Postgres and
   // returns the integer (ADR-0061).
   const { data, error } = await supabase.rpc("unread_message_count");
-  if (error) return 0;
-  return Number(data ?? 0);
+  if (!error) return Number(data ?? 0);
+  // The database does not know the function yet (ADR-0062): the old sum.
+  const { data: threads } = await supabase.rpc("my_threads");
+  return (threads ?? [])
+    .filter((thread) => !thread.archived)
+    .reduce((total, thread) => total + Number(thread.unread_count ?? 0), 0);
 }
 
 export async function getThread(threadId: string) {

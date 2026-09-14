@@ -379,6 +379,28 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   JavaScript. 463 assertions pgTAP, 28 e2e, axe à 0 violation sérieuse. **Reste à vérifier côté
   Supabase : le projet de production doit émettre des jetons asymétriques (Auth → JWT Keys), sinon
   `getClaims()` retombe sur `getUser()` et le gain est nul.**
+- **Session 31 — un aller-retour pour la coquille** (ADR-0062). Nouveau signalement : « c'est encore
+  franchement lent ». **Éliminé d'abord côté plateforme** : le projet Supabase répond en 242 ms depuis
+  l'environnement de travail contre 226 et 230 ms pour deux projets de référence en `eu-west-3` et
+  `eu-north-1` — il est donc bien en Europe, à côté des fonctions Vercel qui tournent en `cdg1` ; les
+  **149 politiques RLS** enveloppent toutes `auth.uid()` dans un `(select …)`, donc pas d'évaluation
+  par ligne ; et les 36 clés étrangères sans index sont des colonnes d'audit sur des tables de
+  quelques centaines de lignes. **Corrigé ensuite** : `session_context()` rend en **une** requête ce
+  qui en coûtait **huit** sur chaque page (profil, coordonnées, adhésions, écoles, textes légaux,
+  acceptations, 2FA, messages et notifications non lus) — A/B sur la même machine, la fonction
+  désactivée en base pour comparer honnêtement : `/accueil` passe de 18 à 10 appels, `/devoirs` de 13
+  à 5, `/messages` de 11 à 3, avec 9 à 13 % de temps en moins là où le réseau est pourtant gratuit ;
+  et `staleTimes.dynamic: 30` arrête de **jeter** le résultat de chaque préchargement (Next 15 le met
+  à 0 par défaut), si bien qu'une page déjà visitée se rouvre depuis le cache client en 78 ms au lieu
+  de 190. **Repli obligatoire** : les migrations SQL partant à la main avant le déploiement, tout le
+  chemin retombe sur les requêtes d'origine si la fonction n'est pas encore en base — sans quoi une
+  fonction absente aurait déconnecté tout le monde. Corollaire : **les gains SQL des sessions 30 et 31
+  n'existent en production qu'une fois la migration appliquée**, et tant qu'elle ne l'est pas,
+  `mfa_enrolled()` répondait « pas de facteur » à tout le monde, ce qui désactivait la vérification
+  2FA de la direction — le repli corrige cela aussi. 468 assertions pgTAP sur les deux chemins,
+  28 e2e, `pnpm check` vert. **Restent au porteur : appliquer les migrations
+  (`scripts/ops/apply-migrations.sh`), et vérifier le plan Supabase ainsi que les clés JWT
+  asymétriques.**
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

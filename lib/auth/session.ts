@@ -55,6 +55,86 @@ export const getCurrentUserId = cache(async (): Promise<string | null> => {
   }
 });
 
+/**
+ * Everything the signed-in shell needs, in one round trip.
+ *
+ * The profile, the contacts, the memberships with their school, the legal texts
+ * and their acceptances, the two-factor state and the two unread counts used to
+ * be **eight** separate requests, paid on every page. They ran in parallel, but
+ * parallel is not free: eight connections and eight round trips, and on a shared
+ * database that is what shows (ADR-0062). `session_context()` returns the lot.
+ *
+ * **It falls back to the eight requests when the function is not there.** The
+ * SQL migrations of this project are applied to the hosted database by hand,
+ * before the deployment; a build that reaches production first must keep working
+ * rather than log everyone out. The fallback is the old code, unchanged.
+ */
+export type SessionContext = {
+  profile: Tables<"profiles"> | null;
+  phone: string | null;
+  memberships: Array<Tables<"memberships"> & { school: SchoolSummary | null }>;
+  legalDocuments: Tables<"legal_documents">[];
+  legalAccepted: string[];
+  mfaEnrolled: boolean | null;
+  unreadMessages: number | null;
+  unreadNotifications: number | null;
+};
+
+function asArray<T>(value: unknown): T[] {
+  return Array.isArray(value) ? (value as T[]) : [];
+}
+
+export const getSessionContext = cache(async (): Promise<SessionContext | null> => {
+  let supabase: Awaited<ReturnType<typeof createClient>>;
+  try {
+    supabase = await createClient();
+  } catch (error) {
+    if (error instanceof MissingSupabaseConfigError) return null;
+    throw error;
+  }
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
+
+  const { data, error } = await supabase.rpc("session_context");
+  if (!error && data && typeof data === "object" && !Array.isArray(data)) {
+    const row = data as Record<string, unknown>;
+    return {
+      profile: (row.profile as Tables<"profiles"> | null) ?? null,
+      phone: typeof row.phone === "string" ? row.phone : null,
+      memberships: asArray(row.memberships),
+      legalDocuments: asArray(row.legalDocuments),
+      legalAccepted: asArray<string>(row.legalAccepted),
+      mfaEnrolled: row.mfaEnrolled === true,
+      unreadMessages: Number(row.unreadMessages ?? 0),
+      unreadNotifications: Number(row.unreadNotifications ?? 0),
+    };
+  }
+
+  // The database does not know the function yet: the eight requests, as before.
+  const [{ data: profile }, { data: contact }, { data: memberships }] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+    supabase.from("profile_contacts").select("phone").eq("user_id", userId).maybeSingle(),
+    supabase
+      .from("memberships")
+      .select(
+        "*, school:schools(id, slug, name, locale_default, modules, timezone, latitude, longitude)",
+      )
+      .eq("user_id", userId)
+      .order("created_at"),
+  ]);
+  return {
+    profile: profile ?? null,
+    phone: contact?.phone ?? null,
+    memberships: memberships ?? [],
+    legalDocuments: [],
+    legalAccepted: [],
+    // `null` means "not answered here": each caller falls back to its own query.
+    mfaEnrolled: null,
+    unreadMessages: null,
+    unreadNotifications: null,
+  };
+});
+
 /** Loads the signed-in user with profile and memberships. Cached per request. */
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   let supabase: Awaited<ReturnType<typeof createClient>>;
@@ -75,25 +155,9 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const { data: claims } = await supabase.auth.getClaims();
   const userId = typeof claims?.claims?.sub === "string" ? claims.claims.sub : null;
   if (!userId) return null;
-  const user = {
-    id: userId,
-    email: typeof claims?.claims?.email === "string" ? claims.claims.email : null,
-    aal: typeof claims?.claims?.aal === "string" ? claims.claims.aal : null,
-  };
 
-  const [{ data: profile }, { data: contact }, { data: memberships }] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-    supabase.from("profile_contacts").select("phone").eq("user_id", user.id).maybeSingle(),
-    supabase
-      .from("memberships")
-      .select(
-        "*, school:schools(id, slug, name, locale_default, modules, timezone, latitude, longitude)",
-      )
-      .eq("user_id", user.id)
-      .order("created_at"),
-  ]);
-
-  const rows = memberships ?? [];
+  const context = await getSessionContext();
+  const rows = context?.memberships ?? [];
   const roles: MembershipLike[] = rows.map((m) => ({
     schoolId: m.school_id,
     role: m.role,
@@ -102,11 +166,11 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const requested = (await cookies()).get(PERSPECTIVE_COOKIE)?.value;
 
   return {
-    id: user.id,
-    email: user.email,
-    aal: user.aal,
-    profile: profile ?? emptyProfile(user.id),
-    phone: contact?.phone ?? null,
+    id: userId,
+    email: typeof claims?.claims?.email === "string" ? claims.claims.email : null,
+    aal: typeof claims?.claims?.aal === "string" ? claims.claims.aal : null,
+    profile: context?.profile ?? emptyProfile(userId),
+    phone: context?.phone ?? null,
     memberships: rows,
     roles,
     perspectives: perspectivesFor(roles),
