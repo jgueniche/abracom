@@ -81,7 +81,13 @@ export function Row({
     <li className={cn("relative", className)}>
       {urgent && <span aria-hidden className="absolute inset-y-0 left-0 w-[2px] bg-brick" />}
       {href ? (
-        <Link href={href} className={cn(inner, "transition-colors hover:bg-muted/70")}>
+        // A list is read, then one row is chosen: prefetching all of them costs
+        // one server render per row for the rows nobody opens (ADR-0061).
+        <Link
+          href={href}
+          prefetch={false}
+          className={cn(inner, "transition-colors hover:bg-muted/70")}
+        >
           {body}
         </Link>
       ) : (

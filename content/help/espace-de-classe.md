@@ -5,7 +5,7 @@ routes: [/classes, /classes/[classId]]
 topic: daily
 keywords: [classe, cahier de vie, publications, onglets, équipe, info, rappel]
 since: 17
-reviewed: 2026-09-13
+reviewed: 2026-09-14
 ---
 
 L'onglet **Classe** ouvre l'espace de la classe, sur le **cahier de vie** : ce que la classe a vécu, mois par mois, billets et photos.

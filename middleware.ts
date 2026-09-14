@@ -21,12 +21,12 @@ export async function middleware(request: NextRequest) {
     return response;
   };
 
-  const { response, user, configured } = await updateSession(request, requestHeaders);
+  const { response, userId, configured } = await updateSession(request, requestHeaders);
   if (!configured) return secured(response);
 
   const { pathname, search } = request.nextUrl;
 
-  if (!user && !isPublicPath(pathname)) {
+  if (!userId && !isPublicPath(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = LOGIN_PATH;
     url.search = "";
@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
     return secured(NextResponse.redirect(url));
   }
 
-  if (user && pathname === LOGIN_PATH) {
+  if (userId && pathname === LOGIN_PATH) {
     const url = request.nextUrl.clone();
     url.pathname = APP_HOME_PATH;
     url.search = "";

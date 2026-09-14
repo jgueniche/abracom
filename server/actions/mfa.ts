@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import { getMfaStatus } from "@/lib/auth/mfa";
+import { getMfaFactorId } from "@/lib/auth/mfa";
 import { APP_HOME_PATH, safeNextPath } from "@/lib/auth/routes";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { mfaRequiredFor } from "@/lib/auth/policy";
@@ -90,19 +90,19 @@ export async function disableTotp(_prev: ActionState, formData: FormData): Promi
     if (mfaRequiredFor(user)) {
       return { status: "error", message: t("adminCannotDisable") };
     }
-    const status = await getMfaStatus();
+    const factorId = await getMfaFactorId();
     const code = field(formData, "code").replace(/\s+/g, "");
-    if (!status.factorId || !CODE.test(code)) return { status: "error", message: t("invalidCode") };
+    if (!factorId || !CODE.test(code)) return { status: "error", message: t("invalidCode") };
     const supabase = await createClient();
-    const { data: challenge } = await supabase.auth.mfa.challenge({ factorId: status.factorId });
+    const { data: challenge } = await supabase.auth.mfa.challenge({ factorId });
     if (!challenge) return { status: "error", message: t("error") };
     const { error: verifyError } = await supabase.auth.mfa.verify({
-      factorId: status.factorId,
+      factorId,
       challengeId: challenge.id,
       code,
     });
     if (verifyError) return { status: "error", message: t("invalidCode") };
-    const { error } = await supabase.auth.mfa.unenroll({ factorId: status.factorId });
+    const { error } = await supabase.auth.mfa.unenroll({ factorId });
     if (error) return { status: "error", message: t("error") };
     if (user.school) {
       await logAudit(supabase, {
@@ -128,16 +128,16 @@ export async function verifyLoginTotp(
   try {
     const t = await getTranslations("verification");
     await requireCurrentUser();
-    const status = await getMfaStatus();
+    const factorId = await getMfaFactorId();
     const code = field(formData, "code").replace(/\s+/g, "");
     const next = safeNextPath(field(formData, "next"), APP_HOME_PATH);
-    if (!status.factorId) redirect(next);
+    if (!factorId) redirect(next);
     if (!CODE.test(code)) return { status: "error", message: t("invalid") };
     const supabase = await createClient();
-    const { data: challenge } = await supabase.auth.mfa.challenge({ factorId: status.factorId });
+    const { data: challenge } = await supabase.auth.mfa.challenge({ factorId });
     if (!challenge) return { status: "error", message: t("invalid") };
     const { error } = await supabase.auth.mfa.verify({
-      factorId: status.factorId,
+      factorId,
       challengeId: challenge.id,
       code,
     });

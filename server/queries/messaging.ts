@@ -19,11 +19,13 @@ export type ThreadSummary = Awaited<ReturnType<typeof getMyThreads>>[number];
  */
 export async function getUnreadMessageCount(): Promise<number> {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("my_threads");
+  // It used to call `my_threads()` — every conversation, its last message, its
+  // members — and add up one column of the result, on every page of the
+  // application. `unread_message_count()` does the addition in Postgres and
+  // returns the integer (ADR-0061).
+  const { data, error } = await supabase.rpc("unread_message_count");
   if (error) return 0;
-  return (data ?? [])
-    .filter((thread) => !thread.archived)
-    .reduce((total, thread) => total + Number(thread.unread_count ?? 0), 0);
+  return Number(data ?? 0);
 }
 
 export async function getThread(threadId: string) {

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
+import { LinkPending } from "@/components/layouts/link-pending";
 import { cn } from "@/lib/utils";
 
 // "Fil" was the unfiltered union of Homework and Journal — the same posts
@@ -113,6 +114,7 @@ export function ClassTabs({
                     )}
                   >
                     {t(tab.key)}
+                    {!active && <LinkPending className="inset-x-2 -bottom-px" />}
                   </Link>
                 </li>
               );

@@ -3750,6 +3750,7 @@ export type Database = {
         }
         Returns: string
       }
+      mfa_enrolled: { Args: { uid?: string }; Returns: boolean }
       mfa_required: { Args: { school: string }; Returns: boolean }
       my_attendance_lists: {
         Args: { on_date_?: string }
@@ -3900,6 +3901,10 @@ export type Database = {
         Returns: Json
       }
       try_uuid: { Args: { value: string }; Returns: string }
+      unread_message_count: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       user_school_ids: { Args: { uid?: string }; Returns: string[] }
       vote_in_poll: {
         Args: { choices: number[]; poll_: string }

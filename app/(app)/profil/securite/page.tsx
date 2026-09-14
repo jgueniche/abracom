@@ -28,7 +28,7 @@ export default async function SecurityPage({
   const [t, tp, status] = await Promise.all([
     getTranslations("security"),
     getTranslations("profile"),
-    getMfaStatus(),
+    getMfaStatus(user),
   ]);
   const isAdmin = user.school !== null && isSchoolAdmin(user.roles, user.school.id);
   return (

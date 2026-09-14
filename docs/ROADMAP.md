@@ -808,6 +808,23 @@ La navigation doit être ce qu'on voit en premier ; le contenu d'une carte, ce q
 - [x] 455 assertions pgTAP, axe à 0 violation sérieuse en clair et en sombre
 - [ ] Validation visuelle par le porteur
 
+## Session 30 — La latence (ADR-0061)
+
+- [x] **Mesurer avant de corriger** : build de production local contre la stack Supabase, appels
+      comptés dans le journal de Kong. Le mandataire du bac à sable ajoute ~1 s à tout, donc la
+      production n'était pas mesurable de là
+- [x] **L'authentification passait par le réseau à chaque requête** : `getUser()` = 53 ms d'appel à
+      GoTrue, quatre fois par rendu, et vingt-huit fois par affichage de l'accueil avec le
+      préchargement. Remplacé par `getClaims()`, vérification ES256 locale
+- [x] `mfa_enrolled()` et `unread_message_count()` : deux appels réseau devenus du SQL
+- [x] Une étape de cascade supprimée dans la coquille (profil, textes légaux et 2FA en parallèle)
+- [x] **Le clic muet** : `loading.tsx` essayé, mesuré, retiré (il triple le temps d'arrivée du
+      contenu) ; remplacé par `LinkPending` — un trait sous l'onglet touché, en 30 ms
+- [x] Préchargement retiré des liens de contenu, conservé sur la navigation principale
+- [x] 463 assertions pgTAP, 28 e2e (invitation comprise), axe à 0 violation sérieuse
+- [ ] **À vérifier côté Supabase** : le projet de production doit émettre des jetons asymétriques
+      (Auth → JWT Keys). Sur l'ancien secret HS256, `getClaims()` retombe sur `getUser()`
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

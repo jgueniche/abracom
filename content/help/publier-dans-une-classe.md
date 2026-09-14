@@ -5,7 +5,7 @@ routes: [/publier, /classes/[classId]/publier]
 topic: publish
 keywords: [publier, devoir, cahier de vie, info, rappel, brouillon, photos, composeur]
 since: 16
-reviewed: 2026-09-13
+reviewed: 2026-09-14
 ---
 
 **Publier** répond à une seule question : que voulez-vous publier ? La page liste ce que vous pouvez écrire — un billet de cahier de vie, un devoir, un mot individuel — et vous demande la classe seulement si vous en avez plusieurs.
