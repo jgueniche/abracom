@@ -23,10 +23,10 @@ export default async function VerificationPage({
 }: {
   searchParams: Promise<{ next?: string }>;
 }) {
-  await requireCurrentUser();
+  const user = await requireCurrentUser();
   const { next } = await searchParams;
   const target = safeNextPath(next, APP_HOME_PATH);
-  const status = await getMfaStatus();
+  const status = await getMfaStatus(user);
   if (!status.enrolled || status.verified) redirect(target);
   const t = await getTranslations("verification");
   return (

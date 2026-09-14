@@ -31,7 +31,7 @@ export async function enforceStaffMfa(
   _schoolId: string,
   mode: "page" | "action",
 ) {
-  const mfa = await getMfaStatus();
+  const mfa = await getMfaStatus(user);
   if (mfa.enrolled && !mfa.verified) {
     if (mode === "action") throw new ForbiddenError();
     const pathname = (await headers()).get("x-pathname") ?? APP_HOME_PATH;

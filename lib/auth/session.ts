@@ -23,6 +23,8 @@ export type SchoolSummary = Pick<
 export type CurrentUser = {
   id: string;
   email: string | null;
+  /** Assurance level of the session, straight from the JWT claim: 'aal1' or 'aal2'. */
+  aal: string | null;
   profile: Tables<"profiles">;
   /** Contact details live apart from the shared profile (profile_contacts). */
   phone: string | null;
@@ -35,6 +37,24 @@ export type CurrentUser = {
   school: SchoolSummary | null;
 };
 
+/**
+ * The signed-in user's identifier, and nothing else.
+ *
+ * Reading it costs nothing — the JWT's signature is verified locally — so a
+ * query that needs only "who is asking" no longer has to wait for the profile,
+ * the contacts and the memberships to come back first (ADR-0061).
+ */
+export const getCurrentUserId = cache(async (): Promise<string | null> => {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getClaims();
+    return typeof data?.claims?.sub === "string" ? data.claims.sub : null;
+  } catch (error) {
+    if (error instanceof MissingSupabaseConfigError) return null;
+    throw error;
+  }
+});
+
 /** Loads the signed-in user with profile and memberships. Cached per request. */
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   let supabase: Awaited<ReturnType<typeof createClient>>;
@@ -45,10 +65,21 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     throw error;
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+  // The signed-in identity comes from the JWT the browser already sent, whose
+  // ES256 signature is verified locally against the cached JWKS — not from a
+  // round trip to the auth server, which the middleware has just paid for the
+  // same token (ADR-0061). RLS still checks that same token in Postgres, so a
+  // membership revoked mid-session stops the data at the source; what the
+  // claims cannot see is a user deleted between two token refreshes, which
+  // Postgres would answer with an empty result anyway.
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = typeof claims?.claims?.sub === "string" ? claims.claims.sub : null;
+  if (!userId) return null;
+  const user = {
+    id: userId,
+    email: typeof claims?.claims?.email === "string" ? claims.claims.email : null,
+    aal: typeof claims?.claims?.aal === "string" ? claims.claims.aal : null,
+  };
 
   const [{ data: profile }, { data: contact }, { data: memberships }] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
@@ -72,7 +103,8 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
 
   return {
     id: user.id,
-    email: user.email ?? null,
+    email: user.email,
+    aal: user.aal,
     profile: profile ?? emptyProfile(user.id),
     phone: contact?.phone ?? null,
     memberships: rows,

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getCurrentUser } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
 const CHILD_SELECT = `
@@ -29,10 +30,7 @@ const CHILD_SELECT = `
  * says so.
  */
 export async function getMyChildren() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [supabase, user] = await Promise.all([createClient(), getCurrentUser()]);
   if (!user) return [];
   const { data, error } = await supabase
     .from("student_guardians")

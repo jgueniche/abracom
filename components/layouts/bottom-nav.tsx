@@ -18,6 +18,7 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import type { Perspective } from "@/lib/permissions";
+import { LinkPending } from "@/components/layouts/link-pending";
 import { cn } from "@/lib/utils";
 
 type Label =
@@ -178,6 +179,7 @@ export function BottomNav({
                     its column, over the page behind the bar, on every screen
                     of the direction. */}
                 <span className="max-w-full truncate">{t(short ?? label)}</span>
+                {!active && <LinkPending className="top-0 w-7" />}
               </Link>
             </li>
           );
@@ -231,6 +233,7 @@ export function TopNav({
             )}
           >
             {t(label)}
+            {!active && <LinkPending className="inset-x-2 -bottom-px xl:inset-x-2.5" />}
             {count > 0 && (
               <span
                 data-slot="count"

@@ -35,6 +35,7 @@ export async function ChildClassCard({ child }: { child: ChildWithClass }) {
   return (
     <article className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
       <Link
+        prefetch={false}
         href={cls ? `/classes/${cls.id}` : "/famille"}
         className="flex items-center gap-3 px-3.5 py-3 transition-colors hover:bg-muted/50"
       >
@@ -63,6 +64,7 @@ export async function ChildClassCard({ child }: { child: ChildWithClass }) {
         >
           {SHORTCUTS.map((shortcut) => (
             <Link
+              prefetch={false}
               key={shortcut.key}
               href={`/classes/${cls.id}/${shortcut.segment}`}
               className="flex min-h-11 items-center rounded-md px-2 text-[0.8125rem] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:min-h-8"

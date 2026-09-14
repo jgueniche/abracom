@@ -5,7 +5,7 @@ routes: [/classes/[classId]/cahier]
 topic: daily
 keywords: [cahier de vie, photos, galerie, droit à l'image, tag, mois]
 since: 7
-reviewed: 2026-09-13
+reviewed: 2026-09-14
 ---
 
 Le cahier de vie est le journal de la classe, rangé par mois : ce que l'équipe a écrit, et les photos qui l'accompagnent quand il y en a. Un billet sans photo s'y affiche comme les autres.

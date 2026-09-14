@@ -37,6 +37,7 @@ export function HubCard({ href, title, hint, meta, urgent, className }: HubCardP
     <li className={cn("border-b border-rule", className)}>
       <Link
         href={href}
+        prefetch={false}
         className="group -mx-3 flex min-h-14 items-baseline gap-4 rounded-md px-3 py-3.5 transition-colors hover:bg-muted/50"
       >
         <span className="min-w-0 flex-1">

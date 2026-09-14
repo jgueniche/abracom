@@ -1199,3 +1199,79 @@ périmètre. Ce qui suit est la décision prise pour chacun.
 - **Vérifié en base** : `017_messaging_door.sql`, quinze assertions — le défaut est ouvert, la
   personne ferme la sienne et pas celle du voisin, la famille perd la liste et l'INSERT est refusé,
   les collègues et la direction passent toujours.
+
+## ADR-0061 — La latence : ce qu'elle était, et ce qui la causait
+
+- **Le signalement** : « le site est lent, il y a de la vraie latence dans les clics pour changer de
+  section ». Vérifié, chiffré, corrigé — dans cet ordre.
+- **Méthode** : impossible de mesurer la production depuis l'environnement de travail, dont le
+  mandataire ajoute une seconde à **tout** (`example.com` répond en 1,0 s de TTFB, une icône statique
+  de Vercel en 0,9 s). Toutes les mesures ci-dessous viennent donc d'un **build de production local**
+  contre la stack Supabase du dépôt, où la latence réseau est nulle : ce qui reste est le coût de
+  l'application, et il est multiplié sur le déploiement réel par un aller-retour réseau **par appel**.
+  Les allers-retours sont comptés dans le journal de Kong, qui voit passer chaque requête Supabase.
+
+### Ce que la mesure a montré
+
+|                                                      | avant                                      | après              |
+| ---------------------------------------------------- | ------------------------------------------ | ------------------ |
+| Appels Supabase pour **un** chargement de `/accueil` | **43**, dont **28** vers le serveur d'auth | **16**, dont **0** |
+| Appels par navigation                                | 10 à 23, dont 2 d'auth                     | 9 à 23, dont 0     |
+| Temps serveur par route                              | 150 à 270 ms                               | 62 à 190 ms        |
+| Retour visuel après le clic                          | **aucun**                                  | 24 à 34 ms         |
+| Clic → contenu affiché                               | 213 à 325 ms                               | 139 à 206 ms       |
+
+- **La cause principale : l'authentification se faisait par le réseau, à chaque requête.**
+  `supabase.auth.getUser()` n'est pas une lecture de cookie, c'est un appel HTTP à GoTrue — **53 ms
+  mesurés avec la base sur la même machine**, contre 22 ms pour une requête PostgREST ordinaire.
+  L'application en faisait quatre : le middleware, `getCurrentUser()`, `listFactors()` dans la
+  coquille, et `getMyChildren()`. Le middleware s'exécutant à _chaque_ requête et le routeur
+  préchargeant chaque lien visible, **un seul affichage de l'accueil en déclenchait vingt-huit**,
+  dont vingt-cinq pour des pages que personne n'avait demandées.
+- **La correction** : `getClaims()`, qui vérifie la signature ES256 du jeton **localement** contre le
+  JWKS du projet, mis en cache dans un objet de module pour la durée du processus. Il passe toujours
+  par `getSession()`, donc un jeton expiré est rafraîchi et les cookies pivotés exactement comme
+  avant. Ce que l'on perd : `getUser()` vérifiait aussi, à chaque appel, que le compte existe encore
+  côté serveur ; avec les claims, un compte supprimé garde son jeton jusqu'à son expiration. Les RLS
+  lisent le même jeton dans Postgres, donc une adhésion révoquée arrête les données à la source, et
+  un compte supprimé ne trouve plus rien à lire. C'est le compromis que Supabase recommande
+  lui-même pour le rendu côté serveur.
+  **Condition** : le projet de production doit émettre des jetons asymétriques. Sur un projet encore
+  réglé sur l'ancien secret partagé HS256, `getClaims()` retombe sur `getUser()` et le gain est nul —
+  la migration se fait dans le tableau de bord Supabase (Auth → JWT Keys).
+- **Deux appels réseau remplacés par du SQL** : `mfa_enrolled()` répond en une ligne de
+  `auth.mfa_factors` à ce que `listFactors()` demandait à GoTrue, et `unread_message_count()` fait en
+  Postgres l'addition que la pastille des messages faisait en TypeScript après avoir chargé
+  **toutes** les conversations, sur toutes les pages.
+- **Une étape de moins dans la cascade** : la coquille attendait le profil avant de pouvoir demander
+  les textes légaux et l'état 2FA. Les trois ne dépendent que de l'identifiant du lecteur, que le
+  jeton porte déjà ; elles partent maintenant ensemble. Les trois lignes de `legal_documents` sont
+  lues sans filtre — leur politique de lecture est `using (true)` — et resserrées en TypeScript.
+
+### Le clic muet, et pourquoi le squelette a été essayé puis retiré
+
+Une route dynamique sans frontière de chargement ne rend rien tant que le serveur n'a pas répondu :
+le clic ne produisait **aucun** signal. Un `loading.tsx` a donc été écrit, mesuré, et **retiré** :
+
+|                    | marque visible | contenu réel     |
+| ------------------ | -------------- | ---------------- |
+| avec `loading.tsx` | 34 à 40 ms     | **392 à 871 ms** |
+| avec `LinkPending` | 24 à 34 ms     | **139 à 206 ms** |
+
+La frontière de chargement coupe la navigation en deux allers-retours — le squelette d'abord, la
+page ensuite — et rend le préchargement plus coûteux, puisqu'il exécute alors les mises en page.
+`useLinkStatus` donne le même retour en 30 ms sans toucher au flux de données : un trait sous
+l'onglet touché, à l'endroit exact où se trouve la marque de l'onglet courant, donc là où l'œil
+regarde déjà. Le préchargement est par ailleurs retiré des liens de _contenu_ (les lignes d'un
+index, les entrées d'un sommaire, les raccourcis d'une carte d'enfant) : on lit une liste, puis on
+en choisit une ligne ; précharger les vingt autres coûte un rendu serveur par ligne que personne
+n'ouvrira. La navigation principale, elle, reste préchargée.
+
+### Une leçon de méthode, consignée parce qu'elle a failli coûter une conclusion fausse
+
+Pendant plusieurs mesures, le banc d'essai servait un build supprimé : les chunks revenaient en
+`text/html`, donc rien ne s'hydratait et chaque clic était un rechargement complet. Les chiffres
+paraissaient plausibles et ils étaient faux — ils avaient déjà servi à trancher l'A/B du squelette
+dans le mauvais sens. Le script de banc (`serve.sh`) refuse désormais de rendre la main tant qu'un
+chunk statique n'est pas réellement servi comme du JavaScript. **Un banc d'essai se vérifie avant de
+croire ce qu'il dit.**

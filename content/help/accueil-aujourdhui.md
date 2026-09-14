@@ -5,7 +5,7 @@ routes: [/accueil]
 topic: daily
 keywords: [accueil, aujourd'hui, tableau de bord, à faire, enfants, classes]
 since: 19
-reviewed: 2026-09-13
+reviewed: 2026-09-14
 ---
 
 :::roles parent, guardian

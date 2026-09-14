@@ -5,7 +5,7 @@ routes: [/profil/securite, /verification]
 topic: data
 keywords: [sécurité, 2FA, double authentification, TOTP, code, application d'authentification, mot de passe]
 since: 14
-reviewed: 2026-09-12
+reviewed: 2026-09-14
 ---
 
 Mon profil → **Sécurité** porte le mot de passe et la validation en deux étapes.

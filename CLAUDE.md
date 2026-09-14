@@ -356,6 +356,29 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   de type retiré des cartes du cahier de vie. Vérifié : `pnpm check`, `pnpm build`, 455 assertions
   pgTAP, axe à 0 violation sérieuse en clair et en sombre. **Validation visuelle par le porteur en
   attente.**
+- **Session 30 — la latence** (ADR-0061). Signalement du porteur : « le site est lent, il y a de la
+  vraie latence dans les clics ». Mesuré sur un build de production local contre la stack Supabase
+  (le mandataire du bac à sable ajoute une seconde à tout, la production n'était pas mesurable de
+  là), les allers-retours comptés dans le journal de Kong. **Un seul affichage de l'accueil coûtait
+  43 appels Supabase, dont 28 au serveur d'authentification** : `auth.getUser()` n'est pas une
+  lecture de cookie mais un appel HTTP à GoTrue — 53 ms mesurés avec la base sur la même machine,
+  contre 22 ms pour une requête PostgREST — et l'application en faisait quatre par rendu, multipliés
+  par le préchargement de chaque lien visible. Remplacé par `getClaims()`, qui vérifie la signature
+  ES256 **localement** contre le JWKS mis en cache (le rafraîchissement des cookies est inchangé) ;
+  `listFactors()` et la pastille des messages deviennent deux fonctions SQL (`mfa_enrolled()`,
+  `unread_message_count()`) ; et la coquille n'attend plus le profil pour demander les textes légaux
+  et l'état 2FA. **Résultat : 16 appels au lieu de 43, aucun au serveur d'auth, et 62–190 ms de
+  temps serveur par route au lieu de 150–270.** Le clic était par ailleurs **muet** : un `loading.tsx`
+  a été écrit, mesuré, puis **retiré** — il répond en 35 ms mais fait arriver le contenu trois fois
+  plus tard (392–871 ms contre 139–206) parce qu'il coupe la navigation en deux allers-retours ;
+  `LinkPending` (`useLinkStatus`) donne le même retour en 24–34 ms sans toucher au flux de données.
+  Le préchargement est retiré des liens de contenu et conservé sur la navigation. **Consigné comme
+  leçon de méthode** : pendant plusieurs tours le banc d'essai servait un build supprimé (chunks en
+  `text/html`, aucune hydratation), ce qui avait déjà fait trancher l'A/B dans le mauvais sens — le
+  script de banc refuse maintenant de rendre la main tant qu'un chunk n'est pas servi comme du
+  JavaScript. 463 assertions pgTAP, 28 e2e, axe à 0 violation sérieuse. **Reste à vérifier côté
+  Supabase : le projet de production doit émettre des jetons asymétriques (Auth → JWT Keys), sinon
+  `getClaims()` retombe sur `getUser()` et le gain est nul.**
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
