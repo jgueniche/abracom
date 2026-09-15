@@ -1489,8 +1489,49 @@ dans `register()` comme dans `onRequestError`.
 propre morceau de 1,65 Mo qui n'est chargé que si le DSN est là. Le comportement est identique dans
 les deux cas : avec un DSN, Sentry fonctionne comme avant ; sans, il ne coûte plus rien.
 
-**Ce qui reste, et qui est plus gros.** Un morceau serveur de **2,55 Mo est requis par 76 routes** —
-dont `/hors-ligne` et `/dev/ui`, qui n'en ont aucun usage. Il porte des marqueurs de nodemailer
-(`createTransport`) et de polices PDF (`Helvetica`), c'est-à-dire la machinerie d'e-mail et de PDF
-tirée dans le tronc commun de toutes les pages. Le démêler demande de revoir des chaînes d'imports —
-un travail à part, à mesurer de la même façon.
+### Ce qu'une première lecture m'avait fait dire de faux
+
+J'ai d'abord annoncé que le morceau partagé portait « la machinerie de nodemailer et de polices PDF ».
+C'était faux, et sur deux points. `createTransport` y voisine `continueTrace` et `dedupeIntegration` :
+c'est l'API de transport **de Sentry**, pas de nodemailer — que le projet n'installe même pas.
+`Helvetica` apparaît dans une **pile de polices CSS** de la page d'erreur de Next, pas dans un PDF.
+Chercher un nom de symbole dans un paquet minifié ne prouve rien sans son contexte.
+
+La vraie suite de l'histoire était ailleurs, et Sentry en faisait bien partie : `app/global-error.tsx`
+importait le SDK **statiquement**. Cette frontière d'erreur est dans le graphe de **toutes** les
+routes, ce qui remettait le SDK dans le morceau partagé qu'embarquent 76 fonctions sur 96. Elle le
+charge désormais elle aussi dynamiquement, sous condition de DSN. (Au passage, son bouton était resté
+peint en sarcelle `#01525e`, la charte des sessions 1–2 remplacée en session 16 : la session 28 avait
+traqué cette couleur périmée dans les e-mails et les PDF et manqué cet écran-là.)
+
+### Le vrai poids : 16 Mo de `sharp` sur des écrans qui ne traitent aucune image
+
+En pesant non plus les morceaux mais **les fonctions** (les traces `.nft.json`, qui disent ce que
+Vercel embarque vraiment), quatre routes sortaient à **21,7 Mo** quand les autres tenaient sous 6 :
+`/devoirs`, `/classes/[classId]/devoirs`, `/classes/[classId]/cahier` et `/classes/[classId]/publier`.
+L'écart tenait en un fichier : **`libvips-cpp.so`, 15,87 Mo**, la bibliothèque native de `sharp`.
+
+Deux chemins l'y amenaient. Un composant d'**affichage**, `MediaGrid`, allait chercher
+`blurhashAverageColor` dans `lib/media.ts` — or cette fonction est une lecture base83 sur quatre
+caractères, qui n'a aucun besoin de `sharp` ; elle vit maintenant dans `lib/blurhash.ts`. Et surtout
+`saveClassPost`, seule action à appeler `processImage`, **cohabitait** avec `toggleHomeworkSeen`,
+`deleteClassPost` et `deletePostMedia` dans un même fichier. Une Server Action étant empaquetée dans
+**chaque route qui l'importe**, un écran qui ne fait que cocher « vu » embarquait libvips.
+`saveClassPost` part donc dans `server/actions/class-post-publish.ts`.
+
+**Mesuré** (taille de fonction, traces Vercel) :
+
+| Route                                                | Avant    | Après                                    |
+| ---------------------------------------------------- | -------- | ---------------------------------------- |
+| `/devoirs` — onglet de navigation                    | 21,54 Mo | **4,91 Mo**                              |
+| `/classes/[classId]/cahier` — atterrissage de classe | 21,75 Mo | **5,13 Mo**                              |
+| `/classes/[classId]/devoirs`                         | 21,75 Mo | **5,13 Mo**                              |
+| `/classes/[classId]/publier`                         | 21,72 Mo | 21,72 Mo — il envoie vraiment des photos |
+
+Les trois écrans les plus ouverts de l'application perdent **77 %** de leur fonction. Un démarrage à
+froid commence par télécharger et décompresser ce paquet : c'est la part du coût que l'ADR-0065
+mesurait à 978–1 820 ms sans savoir d'où elle venait.
+
+**Leçon de méthode, la même qu'à l'ADR-0061.** Deux fois dans la même journée j'ai conclu d'un indice
+au lieu de mesurer : la rafale de préchargements d'abord, les noms de symboles ensuite. Ce qui a
+tranché, ici, c'est de peser les fonctions une par une.

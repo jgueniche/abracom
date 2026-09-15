@@ -9,7 +9,7 @@ import { SubmitButton } from "@/components/forms/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { compressFileInput } from "@/lib/media-client";
-import { type PostFormState, saveClassPost } from "@/server/actions/class-posts";
+import { type PostFormState, saveClassPost } from "@/server/actions/class-post-publish";
 
 /**
  * A publication has one nature and, if it is a diary entry, one category.

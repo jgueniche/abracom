@@ -904,15 +904,25 @@ Reste au porteur : rouvrir le site pour confirmer le ressenti — `session_conte
 
 ## Le poids du démarrage à froid (2026-09-15, ADR-0066)
 
-- [x] **Trouvé le coût du démarrage à froid** : `instrumentation.js`, exécuté au démarrage de chaque
-      fonction, pesait **1 782 579 octets** — tout le SDK Sentry, chargé même sans `SENTRY_DSN`
-      parce que l'import en tête de fichier était statique.
-- [x] **Sentry en imports dynamiques**, conditionnés au DSN. Mesuré : **1 782 579 → 1 832 octets**.
-      Comportement inchangé avec un DSN, gratuit sans.
-- [ ] **Reste, plus gros** : un morceau serveur de **2,55 Mo requis par 76 routes** (`/hors-ligne` et
-      `/dev/ui` comprises), portant des marqueurs de nodemailer et de polices PDF. Démêler ces
-      chaînes d'imports est un travail à part.
-- [ ] **À remesurer** : le temps à froid, qui était de 978 à 1 820 ms.
+- [x] **Sentry ne se charge plus sans DSN** : `instrumentation.js` **1 782 579 → 1 832 octets**, et
+      `app/global-error.tsx` (frontière d'erreur présente dans le graphe de toutes les routes) passe
+      lui aussi en import dynamique. Son bouton était resté en sarcelle des sessions 1–2 : corrigé.
+- [x] **16 Mo de `sharp` retirés des écrans qui ne traitent aucune image.** `blurhashAverageColor`
+      sort de `lib/media.ts` vers `lib/blurhash.ts`, et `saveClassPost` — seule action appelant
+      `processImage` — part dans `server/actions/class-post-publish.ts`, une Server Action étant
+      empaquetée dans chaque route qui l'importe.
+
+| Route                                                | Avant    | Après                                    |
+| ---------------------------------------------------- | -------- | ---------------------------------------- |
+| `/devoirs` (onglet de navigation)                    | 21,54 Mo | **4,91 Mo**                              |
+| `/classes/[classId]/cahier` (atterrissage de classe) | 21,75 Mo | **5,13 Mo**                              |
+| `/classes/[classId]/devoirs`                         | 21,75 Mo | **5,13 Mo**                              |
+| `/classes/[classId]/publier`                         | 21,72 Mo | 21,72 Mo (il envoie vraiment des photos) |
+
+- [ ] **À remesurer en production** : le temps à froid, qui était de 978 à 1 820 ms.
+- [x] **Corrigé deux affirmations fausses** faites plus tôt dans la journée : le morceau partagé ne
+      contenait ni nodemailer ni polices PDF — `createTransport` est l'API de transport de Sentry et
+      `Helvetica` une pile de polices CSS.
 
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 

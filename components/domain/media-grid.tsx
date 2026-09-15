@@ -2,7 +2,7 @@ import { XIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
-import { blurhashAverageColor } from "@/lib/media";
+import { blurhashAverageColor } from "@/lib/blurhash";
 import { BUCKETS, SIGNED_URL_TTL_SECONDS } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 import { deletePostMedia } from "@/server/actions/class-posts";
