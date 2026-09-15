@@ -902,6 +902,18 @@ Reste au porteur : rouvrir le site pour confirmer le ressenti — `session_conte
 - [ ] **Piste suivante si insuffisant** : remettre un `loading.tsx` pour un préchargement bon marché
       sans renoncer au clic instantané.
 
+## Le poids du démarrage à froid (2026-09-15, ADR-0066)
+
+- [x] **Trouvé le coût du démarrage à froid** : `instrumentation.js`, exécuté au démarrage de chaque
+      fonction, pesait **1 782 579 octets** — tout le SDK Sentry, chargé même sans `SENTRY_DSN`
+      parce que l'import en tête de fichier était statique.
+- [x] **Sentry en imports dynamiques**, conditionnés au DSN. Mesuré : **1 782 579 → 1 832 octets**.
+      Comportement inchangé avec un DSN, gratuit sans.
+- [ ] **Reste, plus gros** : un morceau serveur de **2,55 Mo requis par 76 routes** (`/hors-ligne` et
+      `/dev/ui` comprises), portant des marqueurs de nodemailer et de polices PDF. Démêler ces
+      chaînes d'imports est un travail à part.
+- [ ] **À remesurer** : le temps à froid, qui était de 978 à 1 820 ms.
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

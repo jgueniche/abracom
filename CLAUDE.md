@@ -453,6 +453,19 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   et c'est la variance qui était le grief. **Piste suivante si insuffisant** : remettre un
   `loading.tsx`, qui rendrait le préchargement bon marché sans renoncer au clic instantané — mesuré,
   pas décrété.
+- **Le poids du démarrage à froid — 2026-09-15** (ADR-0066). L'ADR-0065 expliquait la _fréquence_
+  des démarrages à froid, pas leur _coût_ : 978 à 1 820 ms à froid contre 205 à 305 ms à chaud. Ce
+  coût se paie en octets analysés avant le premier octet de réponse — et **`instrumentation.js`, que
+  Next exécute au démarrage de chaque fonction, pesait 1 782 579 octets** : tout le SDK Sentry. Le
+  fichier disait pourtant vrai (« no-op tant que `SENTRY_DSN` n'est pas défini ») et `Sentry.init`
+  le garantit **à l'exécution** — mais `import * as Sentry` en tête est **statique**, donc le SDK
+  était empaqueté et analysé quand même. Un déploiement sans DSN payait 1,7 Mo au démarrage de chaque
+  fonction pour un outil qui ne fait rien. Le SDK n'est plus atteint que par imports dynamiques, et
+  seulement si un DSN existe. **Mesuré : 1 782 579 → 1 832 octets**, Sentry parti dans son propre
+  morceau de 1,65 Mo chargé à la demande ; comportement identique avec DSN, gratuit sans.
+  **Reste, plus gros** : un morceau serveur de **2,55 Mo requis par 76 routes**, `/hors-ligne` et
+  `/dev/ui` comprises, portant des marqueurs de nodemailer et de polices PDF — la machinerie d'e-mail
+  et de PDF tirée dans le tronc commun. À démêler à part, et à mesurer pareil.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

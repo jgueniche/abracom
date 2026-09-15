@@ -1463,3 +1463,34 @@ entrées d'agenda**, en plus des listes déjà traitées. Plus aucun lien de l'a
 renoncer au clic instantané ; l'ADR-0061 l'avait mesuré comme faisant arriver le contenu trois fois
 plus tard, et il ajoute un squelette clignotant à chaque navigation. Si la constance obtenue ici ne
 suffit pas, c'est la piste suivante — mais mesurée, pas décrétée.
+
+## ADR-0066 — Sentry n'est plus chargé quand il n'y a pas de DSN
+
+**Statut** : acceptée (2026-09-15) · **Contexte** : réduire le démarrage à froid mesuré à l'ADR-0065.
+
+L'ADR-0065 a chiffré le mal : une page dynamique **à chaud** coûte 205 à 305 ms, mais **à froid
+978 à 1 820 ms**. Le préchargement expliquait la _fréquence_ des démarrages à froid ; il n'explique
+pas leur _coût_. Celui-ci se paie en octets à analyser avant le premier octet de réponse.
+
+En regardant ce que la fonction charge : **`instrumentation.js` pesait 1 782 579 octets**. C'est le
+module que Next exécute au démarrage de **chaque** fonction, dans **chaque** runtime. Il contenait
+tout le SDK Sentry.
+
+Le commentaire du fichier disait pourtant vrai — « Sentry est un no-op tant que `SENTRY_DSN` n'est pas
+défini » — et `Sentry.init({ enabled: Boolean(process.env.SENTRY_DSN) })` le garantit **à
+l'exécution**. Mais `import * as Sentry from "@sentry/nextjs"` en tête de fichier est **statique** :
+le SDK est empaqueté et analysé de toute façon. Un déploiement sans DSN payait donc 1,7 Mo d'analyse
+au démarrage de chaque fonction pour un outil qui ne fait rien.
+
+**Décision.** Le SDK n'est atteint que par des imports dynamiques, et seulement si un DSN existe —
+dans `register()` comme dans `onRequestError`.
+
+**Mesuré** : `instrumentation.js` passe de **1 782 579 à 1 832 octets**, et Sentry s'en va dans son
+propre morceau de 1,65 Mo qui n'est chargé que si le DSN est là. Le comportement est identique dans
+les deux cas : avec un DSN, Sentry fonctionne comme avant ; sans, il ne coûte plus rien.
+
+**Ce qui reste, et qui est plus gros.** Un morceau serveur de **2,55 Mo est requis par 76 routes** —
+dont `/hors-ligne` et `/dev/ui`, qui n'en ont aucun usage. Il porte des marqueurs de nodemailer
+(`createTransport`) et de polices PDF (`Helvetica`), c'est-à-dire la machinerie d'e-mail et de PDF
+tirée dans le tronc commun de toutes les pages. Le démêler demande de revoir des chaînes d'imports —
+un travail à part, à mesurer de la même façon.
