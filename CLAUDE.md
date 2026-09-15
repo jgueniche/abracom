@@ -435,6 +435,24 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   `LinkPending` pour la réponse immédiate. **Non corrigé** : le démarrage à froid lui-même (levier =
   Fluid Compute dans la console Vercel, pas le code), et le middleware qui s'exécute sur l'Edge à
   Londres alors que fonctions et base sont à Paris. **À vérifier sur la prochaine session réelle.**
+- **Le chiffre, enfin — 2026-09-15** (ADR-0065). L'ADR-0064 n'a pas suffi : les préchargements de
+  listes ont bien disparu des journaux, mais le porteur trouve l'application **toujours aussi lente**,
+  et Fluid Compute était **déjà activé**. Mesuré enfin de bout en bout sur la production, temps de
+  connexion retranché : `/connexion` **à froid 1 298 ms**, **à chaud 227–273 ms**, statique
+  48–175 ms. Une page dynamique à chaud ne coûte donc que 150 à 200 ms de plus qu'un fichier
+  statique — c'est sain ; **tout le grief est le démarrage à froid, 1,1 s**. Le mécanisme, trouvé en
+  croisant deux faits : l'ADR-0061 a **supprimé `loading.tsx`** (il n'en reste aucun) et les liens de
+  navigation prennent le préchargement par défaut. Or, pour une route dynamique, ce défaut s'arrête à
+  la première frontière `loading.tsx` — sans frontière, **Next rend la page entière**. Observé, pas
+  lu : les routes préchargées interrogeaient vraiment Supabase. D'où la boucle — une trentaine de
+  rendus complets simultanés par vue de page, autant d'instances ouvertes, la plupart à froid, puis
+  récupérées ; et pendant la rafale les temps Supabase **triplent** (14–81 ms → 150–344 ms).
+  `prefetch={false}` sur la barre de navigation, les onglets de classe et les entrées d'agenda :
+  **plus aucun lien ne précharge**. **Compromis assumé** : les clics suivants, que le porteur trouvait
+  « quasi instantanés », coûteront ~230 ms — on échange un pic à 1,3 s contre une constance à 230 ms,
+  et c'est la variance qui était le grief. **Piste suivante si insuffisant** : remettre un
+  `loading.tsx`, qui rendrait le préchargement bon marché sans renoncer au clic instantané — mesuré,
+  pas décrété.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

@@ -1411,3 +1411,55 @@ première requête paie l'initialisation de la fonction — c'est inhérent au s
 levier est Fluid Compute dans la console Vercel, pas le code. Le middleware s'exécute par ailleurs sur
 l'Edge **à Londres** alors que les fonctions et la base sont à Paris ; depuis l'ADR-0061 il n'appelle
 plus Supabase à chaque requête, donc il ne reste que le saut lui-même.
+
+## ADR-0065 — Le préchargement rendait la page entière ; plus aucun lien ne précharge
+
+**Statut** : acceptée (2026-09-15) · **Contexte** : l'ADR-0064 n'a pas suffi, et la mesure manquait.
+
+L'ADR-0064 a coupé le préchargement des listes et du « ? ». Les journaux confirment que ces
+requêtes-là ont disparu. **Le porteur trouve toujours l'application aussi lente.**
+
+### Ce qui manquait : le chiffre
+
+Jusqu'ici tout était déduit. Mesuré enfin de bout en bout sur la production, en retranchant le temps
+de connexion pour neutraliser le mandataire du bac à sable :
+
+| Requête                                   | Temps serveur |
+| ----------------------------------------- | ------------- |
+| `/connexion`, **premier appel (à froid)** | **1 298 ms**  |
+| `/connexion`, à chaud                     | 273 → 227 ms  |
+| `/sw.js`, statique (ligne de base)        | 48 → 175 ms   |
+
+Une page dynamique **à chaud** coûte donc 150 à 200 ms de plus qu'un fichier statique : c'est sain.
+**Le démarrage à froid coûte 1,1 s**, et il survient alors que Fluid Compute est déjà activé.
+
+### Le mécanisme
+
+Deux faits se rejoignent. L'ADR-0061 a **supprimé `loading.tsx`** — il n'en reste aucun dans `app/`.
+Et les liens de navigation ne passent aucun `prefetch`, donc ils prennent le défaut de Next.
+
+Or pour une route dynamique, le préchargement par défaut s'arrête à la **première frontière
+`loading.tsx`**. Sans aucune frontière, il n'y a rien où s'arrêter : Next **rend la page entière**.
+Ce n'est pas une lecture de documentation, c'est une observation — les routes préchargées
+interrogeaient réellement Supabase (`assessments`, `events`, `class_posts`).
+
+D'où la boucle : une vue de page réclame une trentaine de rendus complets simultanés (barre du bas,
+sept onglets de classe, entrées d'agenda) ; Vercel ouvre autant d'instances ; la plupart démarrent à
+froid à 1,1 s ; elles retombent inactives et sont récupérées ; le clic suivant après une pause
+repaie le démarrage. Les temps Supabase le montrent aussi : pendant la rafale ils **triplent**, de
+14–81 ms à 150–344 ms.
+
+### Décision
+
+`prefetch={false}` sur **la barre de navigation (les deux barres), les onglets de classe et les
+entrées d'agenda**, en plus des listes déjà traitées. Plus aucun lien de l'application ne précharge.
+
+**Le compromis, dit franchement.** Le porteur appréciait que les clics suivants soient
+« quasi instantanés » : c'était le préchargement. Ils coûteront désormais ~230 ms à chaud, avec
+`LinkPending` pour la réponse immédiate. On échange **un pic à 1,3 s** contre **une constance à
+~230 ms** — et c'est bien la variance qui était le grief.
+
+**L'autre voie, écartée.** Remettre un `loading.tsx` rendrait le préchargement bon marché sans
+renoncer au clic instantané ; l'ADR-0061 l'avait mesuré comme faisant arriver le contenu trois fois
+plus tard, et il ajoute un squelette clignotant à chaque navigation. Si la constance obtenue ici ne
+suffit pas, c'est la piste suivante — mais mesurée, pas décrétée.

@@ -40,6 +40,7 @@ export async function EventCard({
   return (
     <Link
       href={`/agenda/${event.id}`}
+      prefetch={false}
       className="-mx-2 block rounded-md px-2 py-3 transition-colors hover:bg-muted/50"
     >
       <p className="eyebrow flex flex-wrap items-center gap-x-2 gap-y-1">

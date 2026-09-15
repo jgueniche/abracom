@@ -160,6 +160,7 @@ export function BottomNav({
             <li key={href} className="min-w-0">
               <Link
                 href={href}
+                prefetch={false}
                 aria-current={active ? "page" : undefined}
                 aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
                 className={cn(
@@ -215,6 +216,7 @@ export function TopNav({
           <Link
             key={href}
             href={href}
+            prefetch={false}
             aria-current={active ? "page" : undefined}
             aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
             className={cn(
