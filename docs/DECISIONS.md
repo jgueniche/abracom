@@ -1676,6 +1676,52 @@ par ordre de rendement mesuré ou estimé :
    requête, mêmes treize lignes visibles, 9,3 → 6,6 ms. Un gain, mais modeste : le coût fixe des
    fonctions d'accès reste. À faire après 1 et 2, avec les 468 assertions pgTAP comme filet.
 
+### Mesuré sur la production, le soir même
+
+Le porteur a donné le mot de passe des comptes de démonstration ; la mesure qui manquait a donc pu
+être faite : Chromium piloté depuis le bac à sable (`scripts/perf/nav.mjs`, désormais dans le
+dépôt : `pnpm perf:nav <url> <email> <mot de passe>`), connexion réelle, dix navigations, sur le
+déploiement de cette PR. Trois passes (parent, enseignante, parent à chaud), et les journaux Supabase
+en face, à la milliseconde.
+
+**Le rythme a disparu.** `devoirs → accueil` rejoué 35 s après la précédente visite : **49 ms**, depuis
+le cache, aucune requête. Sur la version d'avant ce commit, la même navigation sur le banc coûtait
+232 ms et neuf appels.
+
+**Ce que coûte un clic non caché, vu du bac à sable** (à chaud ; le bac à sable est aux États-Unis et
+passe par un mandataire, donc chaque chiffre porte 150 à 250 ms de trajet que Paris ne paie pas, et
+le transfert du payload y est lent — la partie serveur est représentative, la partie réseau ne l'est
+pas) :
+
+| navigation (parent, à chaud) | premier octet RSC | clic → contenu | temps base (journaux) |
+| ---------------------------- | ----------------- | -------------- | --------------------- |
+| → `/devoirs`                 | 192 ms            | 656 ms         | 195 ms                |
+| → `/accueil`                 | 284 ms            | 884 ms         | **420–463 ms**        |
+| → `/messages`                | 206 ms            | 585 ms         | **36 ms**             |
+| → `/ecole`                   | 205 ms            | 638 ms         | 116 ms                |
+| → `/classes`                 | 324 ms            | 707 ms         | 80 ms                 |
+| revisite dans les 5 minutes  | —                 | **46–58 ms**   | 0                     |
+
+Deux lectures. La base explique les **écarts** entre pages — l'accueil coûte 400 ms de plus que la
+messagerie, et c'est exactement sa vague de requêtes — mais pas le **plancher** : `/messages` coûte
+585 ms pour 36 ms de base. Ce plancher est le trajet du bac à sable, le middleware, l'invocation et
+le transfert ; depuis Paris il tombe vraisemblablement à 150–250 ms, ce qui donne, à chaud, ~200 ms
+pour la messagerie et ~600 ms pour l'accueil. Le passage de l'accueil en une vague est visible dans
+les journaux : `events` part avec les autres (13:47:09.529, avec `announcements` et `documents`), et
+le temps base de l'accueil passe de 620 ms à 420–463 ms. Il reste la requête la plus longue de la
+page, **372 à 497 ms à elle seule**, à cause de ses jointures : la règle de visibilité de
+`event_rsvps` réévalue toute celle de `events` pour chaque réponse qu'elle regarde. Mesuré en local
+sur les mêmes données : requête actuelle 45–54 ms ; réponses limitées à celles du lecteur 17–23 ms ;
+sans les créneaux de bénévolat 7–9 ms ; sans aucune jointure 7–8 ms. La vignette d'accueil n'a besoin
+que de la réponse du lecteur et des places ouvertes, donc `getUpcomingEvents` filtre désormais les
+réponses au lecteur — la variante à 17–23 ms, sans rien perdre à l'écran.
+
+L'accueil de l'enseignante coûte **630 ms de base en trois vagues** (classes → résumés, file et
+activité → présences), `events` en tête de la première désormais ; avant ce commit il partait après
+les trois. Un démarrage à froid s'est aussi laissé voir au niveau du **middleware** : une instance
+Edge neuve, à IAD, a redemandé le JWKS à Supabase en **374 ms** (trajet transatlantique) juste avant
+un `/devoirs` à 840 ms de premier octet — depuis Londres, la même requête coûte 8 à 134 ms.
+
 ### À vérifier par le porteur
 
 Le rythme « instantané / lent à trente secondes » doit avoir disparu. Le premier clic sur un onglet

@@ -947,8 +947,14 @@ Reste au porteur : rouvrir le site pour confirmer le ressenti — `session_conte
 - [ ] **Session de base de données** : une requête par écran (motif `session_context`) pour l'accueil
       et le cahier de texte ; palier de calcul Supabase ; politiques en ensembles (essai local
       9,3 → 6,6 ms sur `events`, modeste). 468 assertions pgTAP comme filet.
-- [ ] **À vérifier par le porteur** : le rythme à trente secondes a disparu ; relevé DevTools (Réseau,
-      filtre `_rsc`) sur un clic lent pour départager serveur et navigateur.
+- [x] **Vérifié sur la production** avec le mot de passe fourni par le porteur : le rythme à trente
+      secondes a disparu (revisite à 35 s : 49 ms, aucune requête) ; temps base de l'accueil parent
+      620 → 420–463 ms ; à chaud et vu du bac à sable, un clic non caché coûte 585 à 884 ms, dont
+      150 à 250 ms de trajet que Paris ne paie pas.
+- [x] **`events` limité aux réponses du lecteur** sur la vignette d'accueil : la requête la plus lourde
+      de la page (372–497 ms en production ; 45–54 → 17–23 ms en local) sans rien perdre à l'écran.
+- [ ] **À vérifier par le porteur** : le ressenti depuis Paris ; relevé DevTools (Réseau, filtre `_rsc`)
+      sur un clic encore lent pour départager serveur et navigateur.
 - [ ] **Non résolu** : instances neuves par répartition des requêtes simultanées (pas d'inactivité :
       sonde chaude après 240 s), six rafraîchissements de jeton en parallèle depuis l'Edge de Londres
       à l'ouverture.

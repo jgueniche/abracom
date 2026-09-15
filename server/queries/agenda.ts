@@ -67,7 +67,19 @@ export async function getAgendaEvents(userId: string, from: string, to: string) 
 
 export type AgendaEvent = Awaited<ReturnType<typeof getAgendaEvents>>[number];
 
-/** The next events from `from` (ISO), for home widgets. */
+/**
+ * The next events from `from` (ISO), for the home screens.
+ *
+ * The answers are narrowed to the reader's own: the home entry shows whether
+ * *you* have answered and how many volunteer places stay open, never the
+ * counts (`visibleCounts` is not meaningful here — the agenda and the
+ * administration list read `getAgendaEvents`). It matters because the
+ * visibility rule of `event_rsvps` re-evaluates the whole visibility rule of
+ * `events` for every answer row it looks at: on the hosted database this one
+ * query was the long pole of the home screen, 372 to 497 ms on its own, and
+ * on the same data locally the filter alone brings it from 45–54 ms to
+ * 17–23 ms (ADR-0067).
+ */
 export async function getUpcomingEvents(userId: string, from: string, limit = 3) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -76,6 +88,7 @@ export async function getUpcomingEvents(userId: string, from: string, limit = 3)
     .is("deleted_at", null)
     .neq("kind", "holiday")
     .gte("starts_at", from)
+    .eq("rsvps.user_id", userId)
     .order("starts_at")
     .limit(limit);
   if (error) throw error;

@@ -31,6 +31,7 @@
     "db:test": "scripts/db/test-local.sh --seed",
     "db:types:local": "scripts/db/gen-types-local.sh",
     "perf": "node scripts/perf/lighthouse.mjs",
+    "perf:nav": "node scripts/perf/nav.mjs",
     "ops:check-env": "node scripts/ops/check-env.mjs",
     "ops:storage-sweep": "node scripts/ops/storage-sweep.mjs",
     "db:test:supabase": "scripts/db/test-local.sh --supabase",
