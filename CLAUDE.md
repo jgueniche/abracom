@@ -453,6 +453,31 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   et c'est la variance qui était le grief. **Piste suivante si insuffisant** : remettre un
   `loading.tsx`, qui rendrait le préchargement bon marché sans renoncer au clic instantané — mesuré,
   pas décrété.
+- **Le poids du démarrage à froid — 2026-09-15** (ADR-0066). L'ADR-0065 expliquait la _fréquence_
+  des démarrages à froid, pas leur _coût_ : 978 à 1 820 ms à froid contre 205 à 305 ms à chaud. Ce
+  coût-là se paie en octets — téléchargés, décompressés, analysés avant le premier octet de réponse.
+  **(1)** `instrumentation.js`, que Next exécute au démarrage de **chaque** fonction, pesait
+  **1 782 579 octets** : tout le SDK Sentry. Le fichier disait vrai (« no-op sans `SENTRY_DSN` ») et
+  `Sentry.init` le garantit **à l'exécution**, mais `import * as Sentry` en tête est **statique**.
+  Passé en imports dynamiques conditionnés au DSN : **1 782 579 → 1 832 octets**.
+  `app/global-error.tsx` l'importait aussi statiquement — et cette frontière d'erreur est dans le
+  graphe de **toutes** les routes ; même traitement (au passage, son bouton était resté en sarcelle
+  `#01525e`, charte des sessions 1–2 que la session 28 avait traquée dans les e-mails et les PDF en
+  manquant cet écran). **(2)** En pesant non plus les morceaux mais **les fonctions** (traces
+  `.nft.json`), quatre routes sortaient à **21,7 Mo** quand les autres tenaient sous 6 :
+  **`libvips-cpp.so`, 15,87 Mo**, la bibliothèque native de `sharp`. Deux chemins l'amenaient là où
+  aucune image n'est traitée : `MediaGrid`, composant d'**affichage**, allait chercher
+  `blurhashAverageColor` dans `lib/media.ts` (c'est une lecture base83 sur quatre caractères — elle
+  vit désormais dans `lib/blurhash.ts`) ; et surtout `saveClassPost`, seule action appelant
+  `processImage`, **cohabitait** avec `toggleHomeworkSeen` et consorts — or une Server Action est
+  empaquetée dans **chaque route qui l'importe**, donc cocher « vu » embarquait libvips.
+  `saveClassPost` part dans `server/actions/class-post-publish.ts`. **Mesuré : `/devoirs` 21,54 →
+  4,91 Mo, `/classes/[id]/cahier` 21,75 → 5,13 Mo, `/classes/[id]/devoirs` 21,75 → 5,13 Mo** — les
+  trois écrans les plus ouverts perdent **77 %** de leur fonction ; `/publier` garde ses 21,7 Mo, il
+  envoie vraiment des photos. **Leçon, la même qu'à l'ADR-0061** : deux fois ce jour-là j'ai conclu
+  d'un indice au lieu de mesurer — la rafale de préchargements, puis des noms de symboles lus dans un
+  paquet minifié (`createTransport` était l'API de transport **de Sentry**, pas nodemailer, et
+  `Helvetica` une pile de polices CSS). Ce qui a tranché, c'est de peser les fonctions une par une.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
