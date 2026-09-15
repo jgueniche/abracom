@@ -104,6 +104,7 @@ export function ClassTabs({
                 <li key={tab.key} className="shrink-0">
                   <Link
                     href={href}
+                    prefetch={false}
                     ref={active ? activeRef : undefined}
                     aria-current={active ? "page" : undefined}
                     className={cn(

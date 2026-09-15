@@ -885,6 +885,23 @@ Reste au porteur : rouvrir le site pour confirmer le ressenti — `session_conte
 - [ ] **À remesurer** sur la prochaine navigation réelle : le nombre de routes rendues par page vue
       doit tomber de ~15 à ~2.
 
+## Le chiffre, enfin (2026-09-15, ADR-0065)
+
+- [x] **Mesuré la production de bout en bout** (temps de connexion retranché) : `/connexion` à froid
+      **1 298 ms**, à chaud **227–273 ms**, statique 48–175 ms.
+- [x] **Isolé la cause** : pas le SQL, pas la formule — le **démarrage à froid**, malgré Fluid
+      Compute déjà activé.
+- [x] **Trouvé le mécanisme** : sans aucun `loading.tsx` (supprimé par l'ADR-0061), le préchargement
+      par défaut d'une route dynamique **rend la page entière**. Une trentaine de rendus simultanés
+      par vue de page ouvrent autant d'instances froides ; les temps Supabase triplent pendant la
+      rafale.
+- [x] **`prefetch={false}` partout** : barre de navigation, onglets de classe, entrées d'agenda,
+      en plus des listes de l'ADR-0064.
+- [ ] **À remesurer** : le nombre de rendus par vue de page doit tomber d'une trentaine à un ou deux,
+      et le premier clic passer de ~1,3 s à ~400 ms.
+- [ ] **Piste suivante si insuffisant** : remettre un `loading.tsx` pour un préchargement bon marché
+      sans renoncer au clic instantané.
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle
