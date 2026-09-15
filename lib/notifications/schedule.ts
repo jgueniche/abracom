@@ -61,3 +61,23 @@ export function isDigestWindow(now: Date, timeZone: string, fromHour = 17, toHou
   const hour = Number(localTime(now, timeZone).slice(0, 2));
   return hour >= fromHour && hour < toHour;
 }
+
+/**
+ * How long a delivery may wait on a channel this deployment does not have before it is dropped.
+ *
+ * This is calendar time, not failures: an unconfigured channel never errors, it simply waits, so
+ * the attempt counter that ends a failing delivery never ends this one.
+ */
+export const STALE_AFTER_MS = 7 * 24 * 3_600_000;
+
+/**
+ * True when a notification has waited so long that delivering it would do harm rather than good:
+ * a reminder for yesterday's homework read a fortnight late is worse than silence, and a backlog
+ * held back by an unconfigured channel would otherwise leave in one burst the day it is wired up.
+ */
+export function isTooLateToDeliver(createdAt: string | null, now: Date): boolean {
+  if (!createdAt) return false;
+  const created = new Date(createdAt).getTime();
+  if (Number.isNaN(created)) return false;
+  return now.getTime() - created > STALE_AFTER_MS;
+}

@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { localTime } from "@/lib/calendar/dates";
 import { DEFAULT_LOCATION } from "@/lib/hebcal";
-import { isDeliverableNow, isDigestWindow, nextAllowedTime } from "@/lib/notifications/schedule";
+import {
+  isDeliverableNow,
+  isDigestWindow,
+  isTooLateToDeliver,
+  nextAllowedTime,
+  STALE_AFTER_MS,
+} from "@/lib/notifications/schedule";
 
 const paris = (iso: string) => localTime(iso, "Europe/Paris");
 
@@ -60,5 +66,26 @@ describe("isDigestWindow", () => {
     expect(isDigestWindow(new Date("2026-01-15T15:30:00Z"), "Europe/Paris")).toBe(false); // 16:30
     expect(isDigestWindow(new Date("2026-07-15T15:30:00Z"), "Europe/Paris")).toBe(true); // 17:30 DST
     expect(isDigestWindow(new Date("2026-07-15T19:30:00Z"), "Europe/Paris")).toBe(false); // 21:30 DST
+  });
+});
+
+describe("isTooLateToDeliver (a channel that stays unconfigured)", () => {
+  const now = new Date("2026-09-15T09:00:00Z");
+  const ago = (ms: number) => new Date(now.getTime() - ms).toISOString();
+
+  it("keeps a notification that is still worth reading", () => {
+    expect(isTooLateToDeliver(ago(0), now)).toBe(false);
+    expect(isTooLateToDeliver(ago(6 * 24 * 3_600_000), now)).toBe(false);
+    expect(isTooLateToDeliver(ago(STALE_AFTER_MS), now)).toBe(false);
+  });
+
+  it("drops one that has waited past the horizon", () => {
+    expect(isTooLateToDeliver(ago(STALE_AFTER_MS + 1_000), now)).toBe(true);
+    expect(isTooLateToDeliver(ago(30 * 24 * 3_600_000), now)).toBe(true);
+  });
+
+  it("keeps a row it cannot date rather than dropping it blind", () => {
+    expect(isTooLateToDeliver(null, now)).toBe(false);
+    expect(isTooLateToDeliver("pas une date", now)).toBe(false);
   });
 });
