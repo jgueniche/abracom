@@ -989,6 +989,18 @@ d'exploitation de plusieurs. À reprendre quand les droits à l'image seront maj
 des petites annonces, modérées a priori. Le manque n'est pas fonctionnel, il est de notoriété — deux
 entrées nommées depuis le pôle Communauté suffiraient, et cela ne coûte rien.
 
+## Ce que « lent » nomme (2026-09-15, ADR-0068)
+
+- [x] **Lu la session du porteur dans les journaux** : connexion 569 ms, accueil sur une instance neuve
+      (huit requêtes de 235 à 458 ms), quatre onglets ouverts pour la première fois en sept secondes,
+      chacun un aller-retour complet sans réaction à l'écran.
+- [x] **Frontière de chargement** dans `(app)`, l'espace de classe et l'administration (`PageLoading`),
+      et **préchargement de la barre de navigation** rétabli : squelette 42–51 ms après le clic sur le
+      banc local ; le seuil de React (300 ms) retarde le contenu sur le banc, pas sur la production.
+- [ ] **À vérifier par le porteur** : la réaction au clic, depuis Paris.
+- [ ] **Reste** : la connexion elle-même (569 ms de jeton, 313 ms de profil, puis une instance neuve),
+      et la session de base de données de l'ADR-0067.
+
 ## Questions ouvertes (§15 du brief)
 
 Bloquantes pour la session 2 :

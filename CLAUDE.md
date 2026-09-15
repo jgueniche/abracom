@@ -511,6 +511,16 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   `events` reste le poste le plus lourd de l'accueil (372–497 ms) et ses réponses sont désormais
   limitées au lecteur (45–54 → 17–23 ms en local, même écran). Accueil de l'enseignante : 630 ms de
   base en trois vagues.
+- **Ce que « lent » nomme — 2026-09-15** (ADR-0068). Après l'ADR-0067 déployé, « tout est encore
+  lent comme avant ». Sa session dans les journaux : connexion 569 ms, accueil sur une instance neuve
+  (huit requêtes de 235 à 458 ms), puis quatre onglets ouverts pour la première fois en sept secondes,
+  chacun un aller-retour complet sans rien à l'écran. Le grief est le **silence après le clic**, pas
+  la durée. Repris de Vitola et mesuré : une **frontière de chargement** dans `(app)`, l'espace de
+  classe et l'administration (`PageLoading`, calme, `aria-busy`), et **la barre de navigation
+  précharge de nouveau** — derrière une frontière, un préchargement ne coûte que la coquille et
+  `session_context()`, gardés cinq minutes. Banc local à 40 ms : squelette **42–51 ms** après le clic
+  sur un onglet préchargé ; le contenu y arrive 200–250 ms plus tard qu'avant à cause du seuil
+  anti-clignotement de React, qui ne mord pas sur la production où les pages dépassent 300 ms.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

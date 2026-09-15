@@ -1729,3 +1729,53 @@ coûte encore un aller-retour ; sur `/accueil` il doit être plus court d'enviro
 Relevé utile, dans DevTools, onglet Réseau, filtre `_rsc` : sur un clic lent, lire « Waiting for
 server response » (le serveur) et « Content download » (le transfert) ; si la somme fait le clic,
 c'est la base ; sinon, c'est le navigateur, et il faudra l'onglet Performance.
+
+## ADR-0068 — Ce que « lent » nomme : le silence après le clic, pas la durée
+
+**Statut** : acceptée (2026-09-15) · **Contexte** : après l'ADR-0067 déployé, le porteur trouve
+« tout encore lent comme avant », alors que Vitola, même pile, « marche mieux ».
+
+### Ce que sa session dit
+
+Les journaux Supabase de son essai (14:42:34 → 14:42:41 UTC) se lisent comme un scénario : connexion
+(`/auth/v1/token` **569 ms**, puis une lecture de `profiles` de 313 ms), accueil servi par une
+**instance neuve** dont les huit requêtes ont coûté 235 à 458 ms chacune (`events` 458 ms, celui-là
+même qui vaut 47 ms à chaud), puis **quatre onglets ouverts pour la première fois en sept secondes**,
+chacun un aller-retour complet, 150 à 330 ms de base plus le trajet. Le cache à cinq minutes
+(ADR-0067) ne joue que sur les revisites ; il n'y en avait pas. Et pendant chaque aller-retour, rien
+ne bouge à l'écran : le trait sous l'onglet (`LinkPending`, ADR-0061) est un signal de deux pixels.
+
+C'est la différence avec Vitola. Là-bas, une frontière `loading.tsx` par groupe de routes et le
+préchargement de la navigation font **changer l'écran 34 à 73 ms après le clic** ; le contenu arrive
+ensuite, quand il arrive. L'ADR-0067 avait écarté `loading.tsx` sur le banc local, où les pages
+tiennent en 100 à 160 ms et où le seuil anti-clignotement de React (300 ms) retardait le contenu de
+230 ms. Sur la production, les pages dépassent ce seuil : le squelette ne retarde rien, et il remplace
+le silence.
+
+### Décision
+
+- **Une frontière de chargement** dans `(app)`, dans l'espace de classe (les onglets restent) et dans
+  l'administration (le sommaire reste) — un seul composant, `PageLoading` : une colonne, un titre,
+  quelques filets, en teinte atténuée, `aria-busy` et un mot pour les lecteurs d'écran. Pas de
+  spinner.
+- **La barre de navigation reprend le préchargement** (`prefetch={null}`, le défaut de Next). Derrière
+  une frontière, précharger un onglet ne rend que la coquille et l'état de chargement : **une
+  invocation et un `session_context()`**, gardés cinq minutes par `staleTimes.static`. Le clic sur un
+  onglet préchargé affiche donc le squelette depuis le cache, sans attendre le réseau. Les onglets de
+  classe et les listes ne préchargent toujours pas : leur coût serait la mise en page de classe et ses
+  requêtes, sept fois par visite.
+
+### Mesuré
+
+Banc local, 40 ms de latence émulée, `pnpm perf:nav` :
+
+| navigation                             | clic → squelette | clic → contenu | avant (ADR-0067) |
+| -------------------------------------- | ---------------- | -------------- | ---------------- |
+| onglet préchargé (3 mesures)           | **42–51 ms**     | 335–342 ms     | 96–145 ms        |
+| premier onglet, préchargement en cours | 129 ms           | 422 ms         | 150 ms           |
+| revisite dans les cinq minutes         | —                | 42–59 ms       | 50–57 ms         |
+
+Le contenu arrive plus tard qu'avant sur ce banc, de 200 à 250 ms : c'est le seuil de React, qui garde
+un repli affiché au moins 300 ms. Sur la production, où l'aller-retour vaut 300 à 900 ms, ce seuil ne
+mord pas ; ce qui change, c'est qu'un clic a une réponse visible en cinquante millisecondes au lieu
+d'aucune.
