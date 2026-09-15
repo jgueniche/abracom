@@ -924,6 +924,35 @@ Reste au porteur : rouvrir le site pour confirmer le ressenti — `session_conte
       contenait ni nodemailer ni polices PDF — `createTransport` est l'API de transport de Sentry et
       `Helvetica` une pile de polices CSS.
 
+## Ce qu'un clic coûte vraiment (2026-09-15, ADR-0067)
+
+- [x] **Mesuré une navigation authentifiée de bout en bout** : journaux Supabase de la vraie session
+      du porteur (temps base par page, instance par instance), `pg_stat_statements`, banc local avec
+      Chromium piloté et latence émulée (clic → premier octet → contenu → peinture, préchargements et
+      appels comptés), sonde `curl` sur la production après des pauses de 2 à 240 s.
+- [x] **Le rythme du symptôme est `staleTimes.dynamic: 30`**, reproduit au banc (47 ms depuis le cache
+      à 26 s, 232 ms et neuf appels à 30 s). Porté à **300 s** ; à garder ou ramener à deux minutes
+      après retour du porteur (ce que publie quelqu'un d'autre peut attendre cinq minutes sur une
+      page rouverte depuis le cache).
+- [x] **Le clic non caché coûte ce que coûte la base** : accueil parent 620 ms de base à chaud
+      (`session_context` → sept requêtes → `events` seule après), 937 ms sur une instance neuve ;
+      requêtes cinq à huit fois plus lentes qu'en local, congestion par vagues, palier gratuit.
+- [x] **Le rail d'événements part avec la première vague** sur les deux accueils (620 → ~330 ms de base
+      projetés).
+- [x] **Le préchargement n'a jamais rendu la page** (257 octets, zéro appel, vérifié au `curl`) ; il en
+      restait sept sur `/messages`. `components/ui/link.tsx` met `prefetch={false}` par défaut, ESLint
+      interdit `next/link` ailleurs.
+- [x] **`loading.tsx` mesuré et écarté** : contenu retardé à ~370 ms par le seuil anti-clignotement de
+      React (300 ms). `LinkPending` reste le signal.
+- [ ] **Session de base de données** : une requête par écran (motif `session_context`) pour l'accueil
+      et le cahier de texte ; palier de calcul Supabase ; politiques en ensembles (essai local
+      9,3 → 6,6 ms sur `events`, modeste). 468 assertions pgTAP comme filet.
+- [ ] **À vérifier par le porteur** : le rythme à trente secondes a disparu ; relevé DevTools (Réseau,
+      filtre `_rsc`) sur un clic lent pour départager serveur et navigateur.
+- [ ] **Non résolu** : instances neuves par répartition des requêtes simultanées (pas d'inactivité :
+      sonde chaude après 240 s), six rafraîchissements de jeton en parallèle depuis l'Edge de Londres
+      à l'ouverture.
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

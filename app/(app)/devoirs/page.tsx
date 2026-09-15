@@ -1,7 +1,7 @@
 import { BookOpenIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { MetaChip } from "@/components/domain/content-card";

@@ -1,5 +1,5 @@
 import { ChevronRightIcon, SearchIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { getTranslations } from "next-intl/server";
 
 import { Column } from "@/components/layouts/column";

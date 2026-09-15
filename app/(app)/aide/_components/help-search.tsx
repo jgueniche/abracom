@@ -1,7 +1,7 @@
 "use client";
 
 import { SearchIcon, XIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { useTranslations } from "next-intl";
 import { useDeferredValue, useId, useMemo, useState } from "react";
 

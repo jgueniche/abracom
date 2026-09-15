@@ -1,5 +1,5 @@
 import { BellOffIcon, LockIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { UserAvatar } from "@/components/domain/user-avatar";

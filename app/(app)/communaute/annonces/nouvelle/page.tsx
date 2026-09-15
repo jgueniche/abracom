@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 

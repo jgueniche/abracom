@@ -2,7 +2,7 @@ import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "l
 import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";

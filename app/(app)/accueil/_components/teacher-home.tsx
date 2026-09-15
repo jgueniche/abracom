@@ -1,5 +1,5 @@
 import { CheckCircle2Icon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { AttendanceToday } from "@/components/domain/attendance-today";
@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { CurrentUser } from "@/lib/auth/session";
 import { levelLabel } from "@/lib/levels";
 
-import { UpcomingEvents } from "@/app/(app)/agenda/_components/upcoming-events";
+import { UpcomingEvents, upcomingEventsFor } from "@/app/(app)/agenda/_components/upcoming-events";
 import { getWeeklySummary } from "@/server/queries/class-space";
 import { getMyTeachingClasses } from "@/server/queries/classes";
 import { getClassActivity, getTeacherQueue } from "@/server/queries/today";
@@ -27,6 +27,11 @@ import { getClassActivity, getTeacherQueue } from "@/server/queries/today";
  * happened in my classes.
  */
 export async function TeacherHome({ user }: { user: CurrentUser }) {
+  // Started with the first wave and awaited by the rail widget itself: the
+  // events query no longer waits for the classes, the queue and the activity.
+  const events = upcomingEventsFor(user.id);
+  // Awaited by the widget; should the first wave throw, the rejection here is not left unhandled.
+  events.catch(() => {});
   const [t, tFamily, tWeek, format, locale, classes] = await Promise.all([
     getTranslations("appHome"),
     getTranslations("family"),
@@ -43,7 +48,7 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
   ]);
 
   return (
-    <Column rail={<UpcomingEvents userId={user.id} />}>
+    <Column rail={<UpcomingEvents events={events} />}>
       <PageHeader
         eyebrow={format.dateTime(new Date(), { weekday: "long", day: "numeric", month: "long" })}
         title={t("greeting", { name: user.profile.first_name })}

@@ -1,5 +1,5 @@
 import { PlusIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { Row, RowList } from "@/components/domain/row-list";

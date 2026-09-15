@@ -37,7 +37,25 @@ const eslintConfig = [
         "error",
         { prefer: "type-imports", fixStyle: "inline-type-imports" },
       ],
+      // Every link goes through components/ui/link, whose prefetch default is off (ADR-0067).
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "next/link",
+              importNames: ["default"],
+              message:
+                'Import { Link } from "@/components/ui/link" (prefetch off by default, ADR-0067).',
+            },
+          ],
+        },
+      ],
     },
+  },
+  {
+    files: ["components/ui/link.tsx"],
+    rules: { "no-restricted-imports": "off" },
   },
   prettier,
 ];
