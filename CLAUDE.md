@@ -520,7 +520,11 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   précharge de nouveau** — derrière une frontière, un préchargement ne coûte que la coquille et
   `session_context()`, gardés cinq minutes. Banc local à 40 ms : squelette **42–51 ms** après le clic
   sur un onglet préchargé ; le contenu y arrive 200–250 ms plus tard qu'avant à cause du seuil
-  anti-clignotement de React, qui ne mord pas sur la production où les pages dépassent 300 ms.
+  anti-clignotement de React, qui ne mord pas sur la production où les pages dépassent 300 ms. Sur le
+  déploiement de prévisualisation, fonctions froides : squelette **48–55 ms** après le clic, et les
+  journaux ne montrent aucun `session_context()` pour les sept préchargements — une invocation, zéro
+  requête. **Reste** : la connexion (340–569 ms de jeton, 183–313 ms de profil, instance neuve) et la
+  session de base de l'ADR-0067.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

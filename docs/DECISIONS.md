@@ -1779,3 +1779,20 @@ Le contenu arrive plus tard qu'avant sur ce banc, de 200 à 250 ms : c'est le se
 un repli affiché au moins 300 ms. Sur la production, où l'aller-retour vaut 300 à 900 ms, ce seuil ne
 mord pas ; ce qui change, c'est qu'un clic a une réponse visible en cinquante millisecondes au lieu
 d'aucune.
+
+Puis sur le **déploiement de prévisualisation** de ce commit (infrastructure Vercel réelle, base de
+production, fonctions toutes froides puisque le déploiement venait de naître, vu du bac à sable) :
+squelette **48 à 55 ms** après le clic sur les trois onglets préchargés ; 643 ms sur le tout premier
+clic après la connexion, les préchargements étant encore en vol sur des fonctions froides (457 à
+673 ms de premier octet chacun). Les journaux Supabase de la même fenêtre ne montrent **qu'un
+`session_context()` par navigation réelle, aucun pour les sept préchargements** : derrière une
+frontière de chargement, le préchargement d'un onglet dont la coquille est déjà à l'écran ne rend que
+l'état de chargement — une invocation, zéro requête. Le contenu, lui, arrivait en 779 à 1 622 ms sur
+ce déploiement froid ; c'est le coût du démarrage des fonctions et du trajet, inchangé par cette
+décision.
+
+### Ce qui reste
+
+La connexion elle-même : 340 à 569 ms de `/auth/v1/token`, une lecture de `profiles` de 183 à 313 ms
+pour la langue, puis un accueil sur une instance neuve. Et la session de base de données de
+l'ADR-0067, qui décide du temps de contenu une fois le clic entendu.

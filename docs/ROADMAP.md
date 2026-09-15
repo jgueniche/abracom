@@ -997,9 +997,12 @@ entrées nommées depuis le pôle Communauté suffiraient, et cela ne coûte rie
 - [x] **Frontière de chargement** dans `(app)`, l'espace de classe et l'administration (`PageLoading`),
       et **préchargement de la barre de navigation** rétabli : squelette 42–51 ms après le clic sur le
       banc local ; le seuil de React (300 ms) retarde le contenu sur le banc, pas sur la production.
+- [x] **Mesuré sur le déploiement de prévisualisation** (infrastructure réelle, fonctions froides) :
+      squelette 48–55 ms après le clic sur un onglet préchargé ; un seul `session_context()` par
+      navigation réelle, aucun pour les sept préchargements.
 - [ ] **À vérifier par le porteur** : la réaction au clic, depuis Paris.
-- [ ] **Reste** : la connexion elle-même (569 ms de jeton, 313 ms de profil, puis une instance neuve),
-      et la session de base de données de l'ADR-0067.
+- [ ] **Reste** : la connexion elle-même (340–569 ms de jeton, 183–313 ms de profil, puis une instance
+      neuve), et la session de base de données de l'ADR-0067.
 
 ## Questions ouvertes (§15 du brief)
 
