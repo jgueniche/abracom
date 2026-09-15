@@ -55,6 +55,7 @@ Realtime, Edge Functions) avec **RLS obligatoire sur toutes les tables** · migr
 | `pnpm db:test:supabase`                   | Rejoue les tests pgTAP sur une stack Supabase déjà démarrée (`db:start`)    |
 | `pnpm ops:check-bundle`                   | Origine Supabase présente dans les bundles client (auto en `postbuild`)     |
 | `pnpm ops:check-help`                     | Couverture et fraîcheur de l'aide (inclus dans `pnpm check`)                |
+| `pnpm perf:nav <url> <email> <mdp>`       | Coût de chaque clic, connecté, dans un Chromium piloté (prod ou local)      |
 
 Variables : copier `.env.example` vers `.env.local` ; sans Supabase, l'app démarre et ses clients lèvent une erreur explicite.
 
@@ -504,6 +505,12 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   calcul, des politiques en ensembles (essayé en local : 9,3 → 6,6 ms, modeste). **Ce qui n'a pas été
   possible** : se connecter à la production (mot de passe propre au staging, connecteur Supabase en
   lecture seule, journaux Vercel refusés par le bac à sable) — la partie navigateur vient du banc.
+  **Puis mesuré sur la production avec le mot de passe fourni par le porteur** : le rythme a disparu
+  (revisite à 35 s : 49 ms, aucune requête) ; à chaud et vu du bac à sable, un clic non caché coûte
+  585 ms (`/messages`, 36 ms de base) à 884 ms (`/accueil`, 420–463 ms de base, contre 620 avant) ;
+  `events` reste le poste le plus lourd de l'accueil (372–497 ms) et ses réponses sont désormais
+  limitées au lecteur (45–54 → 17–23 ms en local, même écran). Accueil de l'enseignante : 630 ms de
+  base en trois vagues.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
