@@ -15,7 +15,7 @@ import {
 import { parseQuietHours } from "@/lib/notifications/kinds";
 import { isPushConfigured, sendPush } from "@/lib/notifications/push";
 import { renderNotification, type Translate } from "@/lib/notifications/render";
-import { isDigestWindow, nextAllowedTime } from "@/lib/notifications/schedule";
+import { isDigestWindow, isTooLateToDeliver, nextAllowedTime } from "@/lib/notifications/schedule";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type JobTask = "dispatch" | "digest" | "reminders";
@@ -237,7 +237,7 @@ export async function runNotificationJob(
 
     if (row.channel === "push") {
       if (!isPushConfigured()) {
-        await skip(row.delivery_id, row.attempts, "push_not_configured");
+        await skip(row.delivery_id, row.attempts, "push_not_configured", row.created_at);
         report.skipped++;
         continue;
       }
@@ -271,7 +271,12 @@ export async function runNotificationJob(
     }
 
     if (!row.email || !isEmailConfigured()) {
-      await skip(row.delivery_id, row.attempts, row.email ? "email_not_configured" : "no_email");
+      await skip(
+        row.delivery_id,
+        row.attempts,
+        row.email ? "email_not_configured" : "no_email",
+        row.created_at,
+      );
       report.skipped++;
       continue;
     }
@@ -347,8 +352,22 @@ export async function runNotificationJob(
       .eq("id", id);
   }
 
-  /** Not configured on this deployment: look again in an hour, without burning attempts. */
-  async function skip(id: string, attempts: number, note: string) {
+  /**
+   * Not configured on this deployment: look again in an hour, without burning attempts.
+   *
+   * Past the staleness horizon the row is closed instead, because a channel can stay unconfigured for
+   * weeks and the wait is not a failure the attempt counter would ever end. A reminder for
+   * yesterday's homework read a fortnight late is worse than silence, and without this the whole
+   * backlog would leave in one burst the day the channel is finally wired up.
+   */
+  async function skip(id: string, attempts: number, note: string, createdAt: string | null) {
+    if (isTooLateToDeliver(createdAt, now)) {
+      await admin
+        .from("notification_deliveries")
+        .update({ sent_at: now.toISOString(), claimed_at: null, last_error: `stale: ${note}` })
+        .eq("id", id);
+      return;
+    }
     await admin
       .from("notification_deliveries")
       .update({

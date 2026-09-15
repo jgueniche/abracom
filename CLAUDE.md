@@ -401,6 +401,23 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   28 e2e, `pnpm check` vert. **Restent au porteur : appliquer les migrations
   (`scripts/ops/apply-migrations.sh`), et vérifier le plan Supabase ainsi que les clés JWT
   asymétriques.**
+- **Vérification de production — 2026-09-15** (ADR-0063). Première lecture de la base et du
+  déploiement hébergés (jusque-là tout était mesuré en local). Les trois points laissés au porteur en
+  session 31 sont levés : **les 44 migrations sont appliquées**, dont les trois des sessions 29–31 ;
+  **les clés JWT sont asymétriques (ES256)**, donc `getClaims()` vérifie en local sans repli ; et
+  **la formule n'est pas en cause** — 21 Mo de base pour 224 Mo de `shared_buffers`, 16 à 34 ms de
+  temps d'origine médian, aucune requête lente en 24 h, 15 connexions sur 60. Surtout, les journaux
+  datent le malentendu : le test qui a motivé « c'est trop long » a eu lieu entre 11:00 et 12:00, et
+  **le correctif de la session 30 n'a été déployé qu'à 14:24**, celui de la session 31 à 15:26. Les
+  journaux prouvent le gain — **231 appels à `/auth/v1/user` pendant l'heure de test, zéro ensuite** —
+  et `session_context()` n'a encore jamais été appelé, faute de navigation depuis. Défaut trouvé en
+  chemin et corrigé : **63 % de tout le trafic Supabase** venait du worker de notifications repassant
+  chaque heure 197 livraisons qu'il ne peut pas envoyer, une requête par ligne ; `skip()` les
+  repoussait d'une heure sans fin, car `MAX_ATTEMPTS` compte des échecs et **un canal non configuré
+  n'échoue jamais, il attend**. `skip()` a désormais un plafond d'âge de sept jours
+  (`lib/notifications/schedule.ts`, trois tests), ce qui évite aussi que tout l'arriéré parte d'un
+  bloc le jour où Resend sera branché. Aucune ligne modifiée à la main en base : l'arriéré s'éteint
+  en passant l'horizon. **Reste au porteur : rouvrir le site et dire ce qu'il ressent.**
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

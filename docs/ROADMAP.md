@@ -844,6 +844,31 @@ La navigation doit être ce qu'on voit en premier ; le contenu d'une carte, ce q
 - [ ] **À vérifier côté Supabase** : le plan et la taille d'instance, et que les jetons soient
       asymétriques (Auth → JWT Keys)
 
+## Vérification de production (2026-09-15, ADR-0063)
+
+Première session à lire la base et le déploiement hébergés plutôt qu'une stack locale. Elle répond
+aux trois points laissés au porteur en session 31, et corrige un défaut trouvé en chemin.
+
+- [x] **Les 44 migrations sont appliquées**, dont les trois des sessions 29 à 31 ; les six fonctions
+      (`session_context`, `mfa_enrolled`, `unread_message_count`, `accepts_parent_dm`,
+      `can_direct_message`, `thread_messaging_state`) sont en base. Le repli de l'ADR-0062 n'est donc
+      plus le chemin emprunté.
+- [x] **Les clés JWT sont asymétriques (ES256)** : `getClaims()` vérifie en local, sans repli sur
+      `getUser()`. C'était le point ouvert de l'ADR-0061.
+- [x] **La formule n'est pas en cause.** Base de 21 Mo pour 224 Mo de `shared_buffers` — elle tient
+      entièrement en mémoire ; temps d'origine médian de 16 à 34 ms par requête ; aucune requête lente
+      en 24 h ; 15 connexions sur 60. Monter de forfait n'achèterait rien de mesurable à cette taille.
+- [x] **Le correctif de la session 30 est prouvé actif en production par ses propres journaux** :
+      231 appels à `/auth/v1/user` pendant l'heure de test du porteur, **zéro** après le déploiement
+      de 14:24, remplacés par quelques lectures du JWKS mises en cache. Le test qui a motivé le
+      signalement « c'est trop long » portait sur le build d'avant le correctif.
+- [x] **Plafond d'âge sur les livraisons en attente** (ADR-0063) : `skip()` abandonne au bout de sept
+      jours au lieu de repousser d'une heure indéfiniment. Règle posée dans
+      `lib/notifications/schedule.ts` et couverte par trois tests.
+
+Reste au porteur : rouvrir le site pour confirmer le ressenti — `session_context()` n'a encore jamais
+été appelé en production, faute de navigation depuis le déploiement de la session 31.
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

@@ -1338,3 +1338,35 @@ Corollaire à retenir : **les gains SQL de l'ADR-0061 n'existent en production q
 y est passée.** Tant qu'elle ne l'est pas, `mfa_enrolled()` répondait « pas de facteur » à tout le
 monde — ce qui, pour la direction, désactivait la redirection vers la vérification. Le repli corrige
 cela aussi.
+
+## ADR-0063 — Une livraison qui attend trop longtemps est abandonnée, pas livrée en retard
+
+**Statut** : acceptée (2026-09-15) · **Contexte** : vérification de la production.
+
+Les journaux de la base hébergée montrent que **63 % de tout le trafic Supabase** vient d'un
+seul endroit : le worker de notifications repasse chaque heure 197 livraisons e-mail qu'il ne peut
+pas envoyer, une requête par ligne. Resend n'est pas branché, donc `skip()` les repousse d'une heure
+« sans brûler les tentatives » — volontairement, pour que le retard parte quand le canal s'ouvrira.
+
+Le compteur de tentatives ne peut pas les arrêter : **un canal non configuré n'échoue jamais, il
+attend**. `MAX_ATTEMPTS` compte des échecs, et il n'y en a aucun. La file n'a donc pas de fin.
+
+Deux conséquences, la seconde plus grave que la première. Le trafic inutile, d'abord. Puis le jour où
+Resend sera branché : tout l'arriéré part d'un coup. Un rappel de devoirs lu quinze jours plus tard
+est pire que pas de rappel du tout, et une famille qui reçoit trente notifications en une minute
+n'en lit aucune.
+
+**Décision.** `skip()` reçoit un plafond de temps calendaire, à côté du plafond de tentatives :
+passé **sept jours** depuis la création de la notification annoncée, la ligne est close
+(`sent_at` posé, `last_error` conservé) exactement comme le fait déjà l'abandon après cinq échecs —
+la purge de rétention l'enlèvera ensuite à trente jours. La règle vit dans
+`lib/notifications/schedule.ts`, avec les autres règles d'heure de livraison (Chabbat, heures calmes,
+fenêtre du digest) plutôt que dans le worker, ce qui la rend testable sans client Supabase.
+
+Sept jours parce que c'est l'horizon des rappels d'événement (J-7) : au-delà, plus aucun des contenus
+notifiés — devoir, annonce, rappel — n'a de raison d'arriver.
+
+**Ce que cela ne fait pas.** Une adresse indélivrable par construction (les comptes `*@demo.local`
+du seed) reste indélivrable ; elle est simplement close au bout de sept jours au lieu de tourner
+indéfiniment. Aucune ligne n'a été modifiée à la main sur la base hébergée : le correctif est dans le
+code, l'arriéré existant s'éteint tout seul en passant l'horizon.
