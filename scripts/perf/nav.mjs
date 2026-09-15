@@ -16,7 +16,8 @@
 //
 // Environment: PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH to use a pre-installed
 // Chromium; KONG_LOG to count Supabase calls per navigation from a local
-// gateway log (`docker logs -f supabase_kong_<project> > kong.log`).
+// gateway log (`docker logs -f supabase_kong_<project> > kong.log`);
+// PREVIEW_ACCESS_URL, a Vercel share link, to reach a protected preview.
 //
 // Numbers seen from far away carry the network: the sandbox this was written
 // in sits in the United States, behind a proxy, so its "click → content" is
@@ -80,6 +81,11 @@ cdp.on("Network.loadingFinished", (e) => {
   const r = requests.get(e.requestId);
   if (r) r.bytes = e.encodedDataLength;
 });
+
+// A protected preview deployment: visit the share link first, it sets the access cookie.
+if (process.env.PREVIEW_ACCESS_URL) {
+  await page.goto(process.env.PREVIEW_ACCESS_URL, { waitUntil: "networkidle" });
+}
 
 // Sign in (identifier + password), through the onboarding if the account is new to this seed.
 const t0 = Date.now();

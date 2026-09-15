@@ -160,7 +160,12 @@ export function BottomNav({
             <li key={href} className="min-w-0">
               <Link
                 href={href}
-                prefetch={false}
+                // The five tabs are the likeliest next clicks. With a loading
+                // boundary in place, prefetching one fetches the shell and the
+                // loading state only — one invocation, one `session_context()`,
+                // kept five minutes — and the click then answers at once from
+                // the cache instead of waiting for the network (ADR-0068).
+                prefetch={null}
                 aria-current={active ? "page" : undefined}
                 aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
                 className={cn(
@@ -216,7 +221,7 @@ export function TopNav({
           <Link
             key={href}
             href={href}
-            prefetch={false}
+            prefetch={null}
             aria-current={active ? "page" : undefined}
             aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
             className={cn(
