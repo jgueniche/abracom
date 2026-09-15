@@ -869,6 +869,22 @@ aux trois points laissés au porteur en session 31, et corrige un défaut trouv�
 Reste au porteur : rouvrir le site pour confirmer le ressenti — `session_context()` n'a encore jamais
 été appelé en production, faute de navigation depuis le déploiement de la session 31.
 
+## Le préchargement, mesuré en production (2026-09-15, ADR-0064)
+
+- [x] **Confirmé que la session 31 tourne** : `session_context()` est appelé une fois par page, en
+      14 à 81 ms, et chaque page ne coûte plus que 2 à 6 appels Supabase.
+- [x] **Trouvé le vrai coût du premier clic** : une poignée de pages ouvertes à la main déclenchent
+      des dizaines de rendus serveur — préchargement de chaque `<Link>` visible, neuf articles
+      `/aide/*` compris.
+- [x] **`prefetch={false}`** sur `IndexEntry`, `ContentCard` et `HelpHint` ; la navigation (barre du
+      bas, onglets de classe) garde le sien.
+- [ ] **Démarrage à froid** : non corrigé, inhérent au serverless sur Hobby. Levier = Fluid Compute
+      dans la console Vercel.
+- [ ] **Middleware sur l'Edge à Londres** alors que fonctions et base sont à Paris. Depuis
+      l'ADR-0061 il n'appelle plus Supabase par requête, donc il ne reste que le saut.
+- [ ] **À remesurer** sur la prochaine navigation réelle : le nombre de routes rendues par page vue
+      doit tomber de ~15 à ~2.
+
 ## Écarts avec Educartable et consorts — évaluation (session 19)
 
 Demandé avant d'écrire quoi que ce soit. Constaté à l'écran et en base sur une stack Supabase réelle

@@ -69,6 +69,7 @@ export function IndexEntry({
       )}
       <Link
         href={href}
+        prefetch={false}
         className="-mx-3 block rounded-md px-3 py-3.5 transition-colors hover:bg-muted/50"
       >
         {eyebrow && (

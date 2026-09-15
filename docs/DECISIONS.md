@@ -1370,3 +1370,44 @@ notifiés — devoir, annonce, rappel — n'a de raison d'arriver.
 du seed) reste indélivrable ; elle est simplement close au bout de sept jours au lieu de tourner
 indéfiniment. Aucune ligne n'a été modifiée à la main sur la base hébergée : le correctif est dans le
 code, l'arriéré existant s'éteint tout seul en passant l'horizon.
+
+## ADR-0064 — Le préchargement paie la navigation, pas les listes
+
+**Statut** : acceptée (2026-09-15) · **Contexte** : première mesure d'une vraie session en production.
+
+Le porteur décrit exactement le bon symptôme : « le premier clic est long (0,5 s), les suivants sont
+quasi instantanés ; si j'attends un peu, ça redevient long ». Ce n'est pas une base lente — mesurée
+pendant cette session-là, chaque page ne coûte que **2 à 6 appels Supabase**, dont `session_context()`
+en 14 à 81 ms.
+
+Les journaux Vercel montrent autre chose. Pour une poignée de pages ouvertes à la main, **des
+dizaines de routes sont rendues côté serveur** en quelques secondes : cinq `/messages/<id>`, trois
+`/agenda/<id>`, les sept onglets de deux classes, et **neuf articles `/aide/*`** que personne n'a
+demandés. Ce sont des **préchargements** : Next précharge chaque `<Link>` visible, et chaque
+préchargement est une invocation de fonction complète, avec son `session_context()`.
+
+L'ADR-0061 disait déjà « le préchargement est retiré des liens de contenu et conservé sur la
+navigation ». La règle n'avait jamais atteint les trois composants qui portent le plus de liens :
+`IndexEntry` (les listes de publications, de messages, d'agenda), `ContentCard`, et `HelpHint` — le
+« ? » présent dans **chaque** en-tête, qui préchargeait un article d'aide à chaque écran affiché.
+
+**Pourquoi cela coûte le premier clic.** Sur le forfait Hobby, la concurrence se paie en instances :
+une rafale de quinze préchargements simultanés réveille plusieurs fonctions froides — on le voit au
+`jwks.json` redemandé, signe d'un isolat neuf au cache de module vide — et celles-ci disputent le
+budget de concurrence à la navigation que l'utilisateur, lui, attend. Quinze rendus jetés pour rendre
+un clic instantané, et avec `staleTimes.dynamic: 30` ils sont de toute façon périmés au bout de
+trente secondes.
+
+**Décision.** `prefetch={false}` sur `IndexEntry`, `ContentCard` et `HelpHint`. La **navigation**
+garde son préchargement : barre du bas (cinq liens, forte probabilité de clic) et onglets de classe.
+
+**Le compromis, dit franchement.** Ouvrir une conversation depuis la liste redevient un aller-retour
+serveur au lieu d'être instantané ; `LinkPending` (ADR-0061) donne la réponse immédiate au clic. On
+échange « le deuxième clic est gratuit » contre « le premier clic n'attend plus quinze rendus
+inutiles ». C'est à vérifier sur la prochaine session réelle, pas à décréter.
+
+**Ce que cela ne corrige pas.** Le démarrage à froid lui-même. Après quelques minutes d'inactivité, la
+première requête paie l'initialisation de la fonction — c'est inhérent au serverless sur Hobby, et le
+levier est Fluid Compute dans la console Vercel, pas le code. Le middleware s'exécute par ailleurs sur
+l'Edge **à Londres** alors que les fonctions et la base sont à Paris ; depuis l'ADR-0061 il n'appelle
+plus Supabase à chaque requête, donc il ne reste que le saut lui-même.
