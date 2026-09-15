@@ -418,6 +418,23 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   (`lib/notifications/schedule.ts`, trois tests), ce qui évite aussi que tout l'arriéré parte d'un
   bloc le jour où Resend sera branché. Aucune ligne modifiée à la main en base : l'arriéré s'éteint
   en passant l'horizon. **Reste au porteur : rouvrir le site et dire ce qu'il ressent.**
+- **Le préchargement, mesuré sur une vraie session — 2026-09-15** (ADR-0064). Le porteur décrit le
+  bon symptôme : « le premier clic est long (0,5 s), les suivants quasi instantanés ; si j'attends un
+  peu, ça redevient long ». Ce n'est pas la base : pendant cette session, chaque page ne coûte que
+  **2 à 6 appels Supabase**, `session_context()` compris (14 à 81 ms) — la session 31 tourne donc bien
+  en production. Les journaux Vercel montrent le vrai coût : pour une poignée de pages ouvertes à la
+  main, **des dizaines de routes sont rendues côté serveur** — cinq `/messages/<id>`, trois
+  `/agenda/<id>`, les sept onglets de deux classes et **neuf articles `/aide/*`** que personne n'a
+  demandés. Ce sont des préchargements, et chacun est une invocation complète. L'ADR-0061 disait déjà
+  « préchargement retiré des liens de contenu, conservé sur la navigation » ; la règle n'avait jamais
+  atteint `IndexEntry`, `ContentCard` ni `HelpHint` — le « ? » de **chaque** en-tête. Sur Hobby la
+  concurrence se paie en instances : quinze préchargements simultanés réveillent des fonctions froides
+  (le `jwks.json` redemandé le trahit) qui disputent le budget à la navigation attendue.
+  `prefetch={false}` sur ces trois composants ; la barre du bas et les onglets de classe gardent le
+  leur. **Compromis assumé** : ouvrir une conversation depuis la liste redevient un aller-retour, avec
+  `LinkPending` pour la réponse immédiate. **Non corrigé** : le démarrage à froid lui-même (levier =
+  Fluid Compute dans la console Vercel, pas le code), et le middleware qui s'exécute sur l'Edge à
+  Londres alors que fonctions et base sont à Paris. **À vérifier sur la prochaine session réelle.**
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

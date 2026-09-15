@@ -85,6 +85,7 @@ export function ContentCard({
               // The overlay makes the whole card the target, as a card should be.
               <Link
                 href={href}
+                prefetch={false}
                 className="group/title block after:absolute after:inset-0 hover:underline hover:decoration-foreground/25 hover:underline-offset-[3px]"
               >
                 {heading}

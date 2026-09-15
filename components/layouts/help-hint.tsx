@@ -51,6 +51,7 @@ export function HelpHint() {
   return (
     <Link
       href={`/aide/${article.slug}`}
+      prefetch={false}
       aria-label={`${t("label")} — ${article.title}`}
       title={article.title}
       className="-my-2 inline-flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground/70 transition-colors hover:bg-muted hover:text-foreground md:size-8"
