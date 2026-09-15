@@ -478,6 +478,32 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   d'un indice au lieu de mesurer — la rafale de préchargements, puis des noms de symboles lus dans un
   paquet minifié (`createTransport` était l'API de transport **de Sentry**, pas nodemailer, et
   `Helvetica` une pile de polices CSS). Ce qui a tranché, c'est de peser les fonctions une par une.
+- **Ce qu'un clic coûte vraiment — 2026-09-15** (ADR-0067). Sixième passe, la première à regarder
+  une navigation **authentifiée depuis le navigateur** : journaux Supabase de la vraie session du
+  porteur à la milliseconde, `pg_stat_statements`, un banc local (stack Docker + build de production +
+  Chromium piloté par CDP, latence émulée) qui décompose chaque clic, et une sonde `curl` sur la
+  production après des pauses de 2 à 240 s. **Le rythme « instantané / lent à trente secondes » est
+  `staleTimes.dynamic: 30`** (session 31), reproduit au banc : 47 ms depuis le cache à 26 s, 232 ms et
+  neuf appels à 30 s ; passé à **300**. **Le clic non caché coûte ce que coûte la base** : sur la
+  session du porteur, l'accueil parent = `session_context` 50 ms → sept requêtes en parallèle
+  (85–208 ms) → `events` **seule, après**, 296 ms = **620 ms de base** (937 ms sur une instance neuve).
+  « Supabase hors de cause » était faux à cette échelle : `events` 239 ms et `student_guardians`
+  215 ms de moyenne sur des tables de cent lignes, **cinq à huit fois plus lentes que les mêmes
+  requêtes en local** — du calcul de politiques RLS par ligne sur le palier de calcul gratuit, qui se
+  congestionne par vagues. **Le préchargement n'a jamais rendu la page** : vérifié au `curl`, un
+  préchargement renvoie 257 octets et zéro appel, une navigation 116 Ko et six ; les ADR-0064 et 0065
+  s'étaient trompés de mécanisme, et il restait sept liens préchargés sur `/messages` — `next/link` est
+  désormais enveloppé (`components/ui/link.tsx`, `prefetch={false}` par défaut, ESLint l'impose).
+  **`loading.tsx` mesuré et écarté** : squelette à 70–90 ms mais contenu à 360–380 ms au lieu de
+  105–160 — le seuil anti-clignotement de React (300 ms), qui explique les chiffres de l'ADR-0061.
+  Les instances neuves ne viennent pas de l'inactivité (sonde chaude après 240 s) mais de la
+  répartition des requêtes simultanées : quatre instances en 53 s, six rafraîchissements de jeton en
+  1,3 s depuis Londres à l'ouverture. **Corrigé** : cache à cinq minutes, aucun lien ne précharge, le
+  rail d'événements de l'accueil part avec la première vague (620 → ~330 ms de base projetés). **Reste,
+  chiffré pour une session de base** : une requête par écran (motif `session_context`), le palier de
+  calcul, des politiques en ensembles (essayé en local : 9,3 → 6,6 ms, modeste). **Ce qui n'a pas été
+  possible** : se connecter à la production (mot de passe propre au staging, connecteur Supabase en
+  lecture seule, journaux Vercel refusés par le bac à sable) — la partie navigateur vient du banc.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

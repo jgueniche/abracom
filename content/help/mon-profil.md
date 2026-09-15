@@ -5,7 +5,7 @@ routes: [/profil]
 topic: data
 keywords: [profil, coordonnées, téléphone, langue, mot de passe, photo, thème]
 since: 4
-reviewed: 2026-09-14
+reviewed: 2026-09-15
 ---
 
 **Mon profil**, sous votre photo en haut à droite, porte ce qui vous appartient : prénom, nom, téléphone, langue de l'interface, photo.

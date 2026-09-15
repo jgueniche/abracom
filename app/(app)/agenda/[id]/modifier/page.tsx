@@ -1,6 +1,6 @@
 import { ArrowLeftIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { notFound, redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 

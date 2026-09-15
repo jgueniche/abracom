@@ -67,21 +67,22 @@ const nextConfig: NextConfig = {
   /*
    * Le cache du routeur côté client.
    *
-   * Next 15 met `staleTimes.dynamic` à 0 par défaut : le routeur précharge
-   * chaque lien visible, reçoit la page… et la considère périmée aussitôt. Au
-   * clic il refait donc l'aller-retour complet, et le travail du préchargement
-   * est jeté — soit, mesuré sur cette application, vingt-cinq rendus serveur
-   * par affichage pour rien (ADR-0062).
+   * Next 15 met `staleTimes.dynamic` à 0 par défaut : chaque navigation est
+   * un aller-retour serveur, même vers une page ouverte trois secondes plus
+   * tôt. La session 31 l'avait portée à 30 s ; l'ADR-0067 a mesuré ce que
+   * cette frontière produit sur une vraie session : « je reclique, c'est
+   * instantané ; j'attends trente secondes, c'est de nouveau long » — le
+   * symptôme décrit mot pour mot par le porteur. Une page revue dans les cinq
+   * minutes se rouvre donc depuis le cache ; passé ce délai, ou après toute
+   * mutation (`revalidatePath` vide ce cache), elle est redemandée.
    *
-   * Trente secondes rendent ce travail utile : un onglet préchargé s'ouvre
-   * depuis le cache, sans toucher au serveur. Le risque est une page vue moins
-   * de trente secondes après son préchargement et entre-temps modifiée par
-   * quelqu'un d'autre ; toute mutation de l'application appelle
-   * `revalidatePath`, qui vide ce cache, donc la personne qui écrit voit
-   * toujours son propre changement immédiatement.
+   * Ce que l'on accepte en échange : un contenu publié par quelqu'un d'autre
+   * peut mettre jusqu'à cinq minutes à apparaître sur une page rouverte depuis
+   * le cache. La messagerie reçoit ses messages en temps réel, et un
+   * rechargement force toujours la lecture.
    */
   experimental: {
-    staleTimes: { dynamic: 30, static: 300 },
+    staleTimes: { dynamic: 300, static: 300 },
   },
   poweredByHeader: false,
   outputFileTracingRoot: fileURLToPath(new URL(".", import.meta.url)),

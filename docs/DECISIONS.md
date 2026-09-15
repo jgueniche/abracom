@@ -1535,3 +1535,151 @@ mesurait à 978–1 820 ms sans savoir d'où elle venait.
 **Leçon de méthode, la même qu'à l'ADR-0061.** Deux fois dans la même journée j'ai conclu d'un indice
 au lieu de mesurer : la rafale de préchargements d'abord, les noms de symboles ensuite. Ce qui a
 tranché, ici, c'est de peser les fonctions une par une.
+
+## ADR-0067 — Ce qu'un clic coûte vraiment, mesuré de bout en bout ; la frontière du cache ; ce que le préchargement n'a jamais fait
+
+**Statut** : acceptée (2026-09-15) · **Contexte** : cinq tentatives (ADR-0061 à ADR-0066) n'ont pas
+levé le signalement. Cette fois, dans les mots du porteur : « premier clic lent, je reclique c'est
+rapide, j'attends à peine trente secondes, je reclique : c'est à nouveau long ».
+
+### Ce qui a été mesuré, et comment
+
+Personne n'avait encore regardé une navigation **authentifiée** depuis le navigateur. Les cinq ADR
+précédents mesuraient le serveur (`curl` sur `/connexion`, journaux, tailles de fonctions). Cette
+session assemble quatre sources, chacune choisie pour ce qu'elle seule peut dire :
+
+1. **Les journaux Supabase de la vraie session du porteur**, à la milliseconde (`edge_logs`,
+   `response.origin_time`, adresse de l'instance Vercel qui appelle). C'est le seul relevé de
+   production d'un utilisateur réel, et il donne le temps base par page.
+2. **`pg_stat_statements`** de la base hébergée : temps moyen de chaque requête depuis le 8 septembre.
+3. **Un banc local honnête** : stack Supabase (Docker) + seed, build de production, **Chromium piloté
+   par le protocole DevTools** avec une latence réseau émulée de 40 ms, et pour chaque clic : temps
+   jusqu'au premier octet de la requête RSC, jusqu'au dernier, jusqu'au remplacement du contenu,
+   jusqu'à la peinture suivante ; requêtes de préchargement comptées ; appels Supabase comptés dans le
+   journal de Kong. Le banc refuse de rendre la main tant qu'un chunk n'est pas servi en JavaScript
+   (leçon de l'ADR-0061).
+4. **Une sonde `curl` sur la production** (`time_starttransfer − time_pretransfer`, qui neutralise le
+   mandataire du bac à sable) après des pauses croissantes de 2 s à 240 s.
+
+Ce qui n'a **pas** été possible, et pourquoi la mesure est composée plutôt qu'unique : se connecter à
+la production. Le mot de passe des comptes de démonstration y est propre au staging (`docs/DEMO.md`),
+le connecteur Supabase refuse toute écriture (« read-only transaction », donc pas de mot de passe
+temporaire sur un compte jamais utilisé), et les journaux d'exécution Vercel sont refusés par la
+politique du bac à sable. La partie navigateur vient donc du banc local avec latence émulée, la partie
+serveur de la vraie session du porteur.
+
+### Ce que la mesure a montré
+
+**1. La frontière du cache existe et fait exactement le symptôme.** Sur le banc, la même navigation
+`devoirs → accueil` rejouée **26 s** après la précédente vient du cache du routeur : 47 ms, aucune
+requête. Rejouée **après 30 s** : 232 ms, une requête RSC, neuf appels Supabase. Avec
+`staleTimes.dynamic: 300`, la même navigation à 35 s : 45 ms, aucune requête. Le rythme
+« instantané / lent à trente secondes » n'est ni le démarrage à froid ni la base : c'est
+`experimental.staleTimes.dynamic: 30`, posé en session 31.
+
+**2. Ce que coûte le clic non caché, sur la vraie session du porteur (parent, 09:36:44 UTC).** Le
+temps **base** seul, lu dans les journaux Supabase :
+
+| étape                                                     | quand           | durée      |
+| --------------------------------------------------------- | --------------- | ---------- |
+| `session_context()`                                       | 44.325          | 50 ms      |
+| sept requêtes de l'accueil en parallèle                   | 44.406 → 44.628 | 85–208 ms  |
+| `events` (rail « Prochains événements »), **après** elles | 44.650 → 44.946 | **296 ms** |
+| **temps base de la page**                                 |                 | **620 ms** |
+
+Même page à 09:37:19, sur une **instance neuve** (elle redemande le JWKS) : `session_context` 84 ms,
+vague de 96 à 243 ms, `events` 291 ms → **937 ms** de base, avant le démarrage à froid lui-même. Les
+autres onglets sont plus légers : `/devoirs` ≈ 140 ms, `/classes` ≈ 90 ms, `/messages` ≈ 60 ms de base.
+
+**3. « Supabase hors de cause » était faux à l'échelle qui compte.** Aucune requête ne dépasse la
+seconde, mais `pg_stat_statements` donne, en moyenne depuis le 8 septembre : `events` (prochains
+événements) **239 ms** sur 89 appels, `student_guardians` sans filtre **215 ms** sur 132 appels (le
+défaut corrigé en session 29 ; la variante filtrée vaut 36 ms), `students` 229 ms, `assessments`
+221 ms, `documents` 151 ms — sur des tables de dix à cent lignes. Les **mêmes requêtes, sous le même
+rôle, sur le banc local** : 13,6 / 37,8 / 13,0 / 11,6 ms. **La base hébergée est cinq à huit fois
+plus lente** sur ce travail, qui est du calcul de politiques RLS — `matches_audience()`,
+`can_access_student()` et leurs sous-fonctions `SECURITY DEFINER` appelées **par ligne** (≈ 1 ms la
+ligne en local, `EXPLAIN ANALYZE` en main) — et elle se congestionne quand une page lance sept
+requêtes à la fois : `session_context()` répond en 14 à 29 ms quand elle est seule, 50 à 84 ms en
+tête d'une vague, 481 ms comme première requête d'une instance neuve. Le projet tourne sur le palier
+de calcul de l'offre gratuite.
+
+**4. Les instances neuves ne viennent pas de l'inactivité.** La sonde `curl` sur `/connexion` reste
+chaude après des pauses de 10, 20, 30, 45, 60, 90, 120, 180 et 240 s (213 à 397 ms de temps
+serveur ; 1 927 ms au premier appel seulement). Pourtant, entre 08:09:00 et 08:09:53, la session du
+porteur a été servie par **quatre instances différentes**, chacune commençant par redemander le JWKS ;
+à 09:37:19, une instance neuve après 32 s de calme. C'est la répartition des requêtes par Vercel, pas
+un délai d'inactivité — et **chaque requête simultanée est une occasion d'instance neuve**. À
+l'ouverture de l'application, le middleware a rafraîchi le jeton **six fois en 1,3 s depuis cinq
+instances Edge de Londres** (la première en 352 ms) : six requêtes parallèles, six rafraîchissements.
+
+**5. Le préchargement n'a jamais rendu la page.** Vérifié au plus court, avec `curl` et le cookie de
+session sur le build local, sur `/messages/<id>` :
+
+| requête                                | octets      | appels Supabase | durée  |
+| -------------------------------------- | ----------- | --------------- | ------ |
+| préchargement (`Next-Router-Prefetch`) | **257**     | **0**           | 14 ms  |
+| navigation (`RSC: 1`)                  | **115 928** | **6**           | 149 ms |
+
+Sur cette version de Next, le préchargement d'une route dynamique sans `loading.tsx` renvoie l'arbre
+de la route et rien d'autre. L'ADR-0064 (« une invocation complète, avec son `session_context()` »)
+et l'ADR-0065 (« sans frontière, Next rend la page entière — observé ») s'étaient trompés sur le
+mécanisme : ces requêtes étaient bien des **invocations** (et sur Hobby une invocation simultanée
+peut réveiller une instance), mais pas des rendus ; et elles n'apportaient rien non plus, puisque
+rien de la page n'est préchargé. Les retirer était juste, pour une autre raison. Il en restait
+d'ailleurs : le banc en compte **sept sur `/messages`** (cinq conversations, deux boutons) et deux sur
+`/devoirs` (plus les trois flèches de semaine), après un ADR intitulé « plus aucun lien ne précharge »
+— parce que `next/link` précharge par défaut et que le dépôt compte quatre-vingts imports.
+
+**6. `loading.tsx`, mesuré, et pourquoi l'ADR-0061 avait raison sans le savoir.** Avec une frontière
+de chargement dans `(app)`, le squelette apparaît en **67 à 88 ms** — mais le contenu arrive en
+**362 à 380 ms** au lieu de 104 à 158 ms, sur toutes les pages, quel que soit leur coût serveur. Un
+délai fixe d'environ 300 ms : c'est le **seuil anti-clignotement de React** (`FALLBACK_THROTTLE_MS`,
+300 ms) — un repli affiché reste affiché au moins ce temps-là. L'ADR-0061 mesurait « 392 à 871 ms »
+et l'attribuait à « deux allers-retours » ; le mécanisme est celui-ci. Sur la production, où la page
+met plus de 300 ms, le seuil ne mordrait pas aujourd'hui — mais il mordrait sur chaque page rendue
+rapide, et `LinkPending` donne déjà un signal à 24–34 ms sans plancher.
+
+### Décisions
+
+- **`staleTimes.dynamic: 300`.** C'est le test demandé ; il rend une page revue dans les cinq minutes
+  instantanée. Le prix, dit franchement : ce que quelqu'un d'autre publie peut mettre jusqu'à cinq
+  minutes à paraître sur une page rouverte depuis le cache (la pastille des messages non lus
+  comprise). La messagerie reçoit ses messages en temps réel, toute mutation de la personne elle-même
+  vide ce cache (`revalidatePath`), et un rechargement force la lecture. À garder ou ramener à deux
+  minutes après retour du porteur.
+- **Plus de préchargement par défaut, structurellement.** `components/ui/link.tsx` enveloppe
+  `next/link` avec `prefetch={false}` comme défaut, les quatre-vingts imports passent par lui, et
+  ESLint interdit `next/link` ailleurs. Un lien qui doit précharger le dit. Trois sessions l'avaient
+  retiré composant par composant et il en restait.
+- **Pas de `loading.tsx`.** Mesuré, pas décrété : voir le point 6.
+- **L'accueil en une vague.** Le rail « Prochains événements » était un élément créé _après_ le
+  `Promise.all` des écrans d'accueil, donc sa requête — la plus lente de la page — partait seule,
+  après les sept autres. Elle part maintenant avec elles (`upcomingEventsFor()`), pour le parent
+  comme pour l'enseignante. Sur la session du porteur, cela ramène le temps base de l'accueil de
+  620 ms vers ~330 ms (le maximum de la vague au lieu de la somme) ; sur le banc, 158 → 141 ms.
+
+### Ce qui reste, chiffré, pour une session de base de données
+
+Le clic non caché coûte ce que coûte la base : 60 à 80 % du temps serveur à chaud. Trois leviers,
+par ordre de rendement mesuré ou estimé :
+
+1. **Une seule requête par écran** — le motif de `session_context()` (ADR-0062), appliqué à l'accueil
+   et au cahier de texte : une fonction SQL rend en une transaction ce que sept requêtes rendent en
+   sept, chacune avec le coût d'entrée de ses politiques. C'est la disparition de la congestion du
+   point 3.
+2. **Le palier de calcul.** Le projet est sur le palier gratuit ; les mêmes requêtes vont cinq à huit
+   fois plus vite sur un portable. Ce n'est pas la formule qui est en cause, c'est le processeur
+   partagé sur un travail de politiques qui est du processeur pur.
+3. **Des politiques en ensembles plutôt qu'en appels par ligne.** Essayé en local sur `events`, en
+   transaction annulée : `matches_audience()` par ligne → sous-requêtes calculées une fois par
+   requête, mêmes treize lignes visibles, 9,3 → 6,6 ms. Un gain, mais modeste : le coût fixe des
+   fonctions d'accès reste. À faire après 1 et 2, avec les 468 assertions pgTAP comme filet.
+
+### À vérifier par le porteur
+
+Le rythme « instantané / lent à trente secondes » doit avoir disparu. Le premier clic sur un onglet
+coûte encore un aller-retour ; sur `/accueil` il doit être plus court d'environ 300 ms à chaud.
+Relevé utile, dans DevTools, onglet Réseau, filtre `_rsc` : sur un clic lent, lire « Waiting for
+server response » (le serveur) et « Content download » (le transfert) ; si la somme fait le clic,
+c'est la base ; sinon, c'est le navigateur, et il faudra l'onglet Performance.

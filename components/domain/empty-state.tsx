@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
 import { Button } from "@/components/ui/button";

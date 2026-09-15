@@ -1,7 +1,7 @@
 "use client";
 
 import { BarChart3Icon, ExternalLinkIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { BarChart3Icon, CalendarDaysIcon, CheckIcon, LockIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 

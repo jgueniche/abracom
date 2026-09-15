@@ -1,7 +1,7 @@
 import { BellIcon } from "lucide-react";
 import { CheckCheckIcon, SettingsIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";

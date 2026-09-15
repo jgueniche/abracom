@@ -5,7 +5,7 @@ import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SignOutButton } from "@/components/layouts/sign-out-button";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -1,6 +1,6 @@
 import { ContactIcon, MegaphoneIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { HubCard, HubGrid } from "@/components/domain/hub-card";

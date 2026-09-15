@@ -13,7 +13,7 @@ import {
   UserRoundIcon,
   UsersRoundIcon,
 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useTransition } from "react";

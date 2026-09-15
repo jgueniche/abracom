@@ -1,7 +1,7 @@
 "use client";
 
 import { SearchIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { useTranslations } from "next-intl";
 
 /** Header entry point of the global search (a real form: works without JavaScript). */

@@ -1,5 +1,5 @@
 import { CheckCircle2Icon, ChevronRightIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { ChildClassCard } from "@/components/domain/child-class-card";
@@ -10,13 +10,15 @@ import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
 import type { CurrentUser } from "@/lib/auth/session";
 
-import { UpcomingEvents } from "@/app/(app)/agenda/_components/upcoming-events";
+import { UpcomingEvents, upcomingEventsFor } from "@/app/(app)/agenda/_components/upcoming-events";
 import { getPendingAcknowledgements } from "@/server/queries/announcements";
 import { getMyChildren } from "@/server/queries/family";
 import { type TodayItem, getTodayForParent } from "@/server/queries/today";
 
 export async function ParentHome({ user }: { user: CurrentUser }) {
-  const [t, format, children, pending, today] = await Promise.all([
+  // One wave, not two: the rail's events query is the slowest of the page and
+  // used to start only after all the others had returned (ADR-0067).
+  const [t, format, children, pending, today, events] = await Promise.all([
     getTranslations("appHome"),
     getFormatter(),
     getMyChildren(),
@@ -26,6 +28,7 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
       user.school?.timezone ?? "Europe/Paris",
       user.roles.some((role) => role.role === "parent" && role.status === "active"),
     ),
+    upcomingEventsFor(user.id),
   ]);
 
   // A receipt owed is the most "today" thing there is, so it heads the list;
@@ -43,7 +46,7 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
   ];
 
   return (
-    <Column rail={<UpcomingEvents userId={user.id} />}>
+    <Column rail={<UpcomingEvents events={events} />}>
       <PageHeader
         eyebrow={format.dateTime(new Date(), { weekday: "long", day: "numeric", month: "long" })}
         title={t("greeting", { name: user.profile.first_name })}

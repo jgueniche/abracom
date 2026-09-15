@@ -1,7 +1,7 @@
 "use client";
 
 import { CircleQuestionMarkIcon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createContext, type ReactNode, useContext, useMemo } from "react";

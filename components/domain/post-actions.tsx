@@ -1,7 +1,7 @@
 "use client";
 
 import { MoreHorizontalIcon, PencilIcon, Trash2Icon } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 

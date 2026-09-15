@@ -1,7 +1,7 @@
 import { MessageCircleIcon, PlusIcon, UsersRoundIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
