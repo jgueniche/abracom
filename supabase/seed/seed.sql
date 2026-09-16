@@ -540,6 +540,35 @@ values
 insert into public.attendance_list_managers (list_id, user_id, added_by)
 values (pg_temp.uid('0', 1792 + 1), pg_temp.uid('a', 2), pg_temp.uid('a', 1));
 
+-- weekly menus (session 32): two fictional weeks — the current one and the one
+-- before it, so the arrows show something and « Dupliquer la semaine
+-- précédente » has something to copy. No Wednesday: the demo school runs a
+-- four-day week, and a blank day is simply absent (save_weekly_menu drops it).
+do $$
+declare
+  monday date := date_trunc('week', current_date)::date;
+begin
+  -- `updated_at` is stated, not defaulted: left at now() a freshly seeded menu
+  -- would tell every family it had been « modifié » the day the seed ran.
+  insert into public.weekly_menus (id, school_id, week_start, published_at, updated_at, created_by)
+  values
+    (pg_temp.uid('0', 3840 + 1), pg_temp.uid('0', 1), monday - 7,
+     (monday - 10)::timestamptz + interval '11 hours', (monday - 10)::timestamptz + interval '11 hours', pg_temp.uid('a', 2)),
+    (pg_temp.uid('0', 3840 + 2), pg_temp.uid('0', 1), monday,
+     (monday - 3)::timestamptz + interval '16 hours', (monday - 3)::timestamptz + interval '16 hours', pg_temp.uid('a', 2));
+
+  insert into public.weekly_menu_days (id, menu_id, day, starter, main_course, side, dessert, snack, note)
+  values
+    (pg_temp.uid('0', 3840 + 11), pg_temp.uid('0', 3840 + 1), 1, 'Carottes râpées', 'Boulettes de bœuf sauce tomate', 'Semoule', 'Compote de pommes', 'Pain et chocolat', null),
+    (pg_temp.uid('0', 3840 + 12), pg_temp.uid('0', 3840 + 1), 2, 'Salade de tomates', 'Poisson pané au citron', 'Purée de pommes de terre', 'Fromage blanc au miel', 'Fruit de saison', 'Sans gluten : poisson nature sur demande'),
+    (pg_temp.uid('0', 3840 + 14), pg_temp.uid('0', 3840 + 1), 4, 'Salade de lentilles', 'Escalope de dinde', 'Haricots verts', 'Orange', 'Pain et confiture', null),
+    (pg_temp.uid('0', 3840 + 15), pg_temp.uid('0', 3840 + 1), 5, 'Houmous et crudités', 'Saumon au four', 'Riz aux petits légumes', 'Salade de fruits', 'Hallah', 'Goûter de Chabbat'),
+    (pg_temp.uid('0', 3840 + 21), pg_temp.uid('0', 3840 + 2), 1, 'Salade de concombre', 'Poulet au citron', 'Pommes de terre rôties', 'Poire', 'Pain et chocolat', null),
+    (pg_temp.uid('0', 3840 + 22), pg_temp.uid('0', 3840 + 2), 2, 'Betteraves vinaigrette', 'Omelette aux fines herbes', 'Ratatouille', 'Yaourt nature', 'Fruit de saison', null),
+    (pg_temp.uid('0', 3840 + 24), pg_temp.uid('0', 3840 + 2), 4, 'Velouté de potiron', 'Couscous de légumes aux pois chiches', null, 'Fromage et pain', 'Biscuits', 'Sans gluten disponible sur demande'),
+    (pg_temp.uid('0', 3840 + 25), pg_temp.uid('0', 3840 + 2), 5, 'Taboulé', 'Poisson au four sauce tomate', 'Boulgour', 'Compote', 'Hallah', 'Goûter de Chabbat');
+end $$;
+
 -- cleanup helpers
 drop function pg_temp.create_user(uuid, text, text, text, text, text);
 drop function pg_temp.person_uid(text, int, int);

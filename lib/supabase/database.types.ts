@@ -3220,6 +3220,88 @@ export type Database = {
           },
         ]
       }
+      weekly_menu_days: {
+        Row: {
+          day: number
+          dessert: string | null
+          id: string
+          main_course: string | null
+          menu_id: string
+          note: string | null
+          side: string | null
+          snack: string | null
+          starter: string | null
+        }
+        Insert: {
+          day: number
+          dessert?: string | null
+          id?: string
+          main_course?: string | null
+          menu_id: string
+          note?: string | null
+          side?: string | null
+          snack?: string | null
+          starter?: string | null
+        }
+        Update: {
+          day?: number
+          dessert?: string | null
+          id?: string
+          main_course?: string | null
+          menu_id?: string
+          note?: string | null
+          side?: string | null
+          snack?: string | null
+          starter?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_menu_days_menu_id_fkey"
+            columns: ["menu_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_menus"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_menus: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          published_at: string
+          school_id: string
+          updated_at: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          published_at?: string
+          school_id: string
+          updated_at?: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          published_at?: string
+          school_id?: string
+          updated_at?: string
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_menus_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -3869,6 +3951,10 @@ export type Database = {
           student?: string
         }
         Returns: boolean
+      }
+      save_weekly_menu: {
+        Args: { days_: Json; school_: string; week_start_: string }
+        Returns: string
       }
       school_staff_ids: { Args: { school: string }; Returns: string[] }
       school_timezone: { Args: { school_: string }; Returns: string }

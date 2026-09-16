@@ -402,7 +402,8 @@
       "all": "Toutes les rubriques",
       "subtitle": "Les rubriques de gestion et où en est chacune.",
       "messaging": "Messagerie",
-      "attendance": "Pointage"
+      "attendance": "Pointage",
+      "menus": "Menus"
     },
     "years": {
       "title": "Années scolaires",
@@ -2069,6 +2070,8 @@
     "documentsHint": "Règlements, autorisations et pièces à signer.",
     "agenda": "Agenda",
     "agendaHint": "Calendrier scolaire, fêtes juives, événements et inscriptions.",
+    "menus": "Menus de la semaine",
+    "menusHint": "Ce que les enfants mangent à la cantine, jour par jour.",
     "forms": "Formulaires et sondages",
     "formsHint": "Les demandes de l'école auxquelles vous devez répondre.",
     "community": "Communauté",
@@ -2229,5 +2232,46 @@
     "lastOn": "dernier le {date}",
     "sources": "« Déclarés » vient des familles, « constatés » du pointage. Un même retard peut figurer dans les deux.",
     "exportCsv": "Export CSV"
+  },
+  "menus": {
+    "title": "Menus de la semaine",
+    "subtitle": "Ce que les enfants mangent à la cantine, jour par jour.",
+    "week": "Du {from} au {to}",
+    "thisWeek": "Cette semaine",
+    "previousWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
+    "today": "Aujourd'hui",
+    "courses": {
+      "starter": "Entrée",
+      "mainCourse": "Plat",
+      "side": "Accompagnement",
+      "dessert": "Dessert",
+      "snack": "Goûter"
+    },
+    "note": "Remarque",
+    "empty": "Aucun menu saisi pour cette semaine.",
+    "emptyHint": "Il apparaîtra ici dès que l'école l'aura saisi.",
+    "emptyHintStaff": "Saisissez-le depuis Gestion → Menus : les familles le verront aussitôt.",
+    "enter": "Saisir le menu",
+    "edit": "Modifier",
+    "publishedOn": "Publié le {date}",
+    "updatedOn": "modifié le {date}",
+    "admin": {
+      "subtitle": "Choisissez la semaine, remplissez les jours de cantine, enregistrez : les familles le voient aussitôt.",
+      "none": "Aucun menu pour cette semaine.",
+      "published": "Menu publié le {date}",
+      "updated": "modifié le {date}",
+      "duplicate": "Dupliquer la semaine précédente",
+      "duplicating": "Copie du menu de la semaine du {date} : rien n'est enregistré tant que vous n'avez pas cliqué sur « Enregistrer ».",
+      "dayHint": "Laissez vide un jour sans cantine : il n'apparaîtra pas.",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "saved": "Le menu est enregistré et visible des familles.",
+      "invalid": "Vérifiez les textes : 120 caractères au plus par ligne, 200 pour une remarque.",
+      "emptyWeek": "Le menu est vide : renseignez au moins un plat ou une remarque.",
+      "saveError": "L'enregistrement n'a pas abouti. Réessayez dans un instant.",
+      "delete": "Supprimer ce menu",
+      "view": "Voir comme les familles"
+    }
   }
 }

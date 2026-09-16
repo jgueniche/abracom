@@ -402,7 +402,8 @@
       "all": "All sections",
       "subtitle": "The management sections and where each one stands.",
       "messaging": "Messaging",
-      "attendance": "Attendance"
+      "attendance": "Attendance",
+      "menus": "Menus"
     },
     "years": {
       "title": "School years",
@@ -2069,6 +2070,8 @@
     "documentsHint": "Rules, permission slips and papers to sign.",
     "agenda": "Agenda",
     "agendaHint": "School calendar, Jewish holidays, events and sign-ups.",
+    "menus": "Weekly menus",
+    "menusHint": "What the children eat at the canteen, day by day.",
     "forms": "Forms and surveys",
     "formsHint": "Requests from the school that need your answer.",
     "community": "Community",
@@ -2229,5 +2232,46 @@
     "lastOn": "last on {date}",
     "sources": "“Reported” comes from families, “seen” from check-in. One late arrival may appear in both.",
     "exportCsv": "CSV export"
+  },
+  "menus": {
+    "title": "Weekly menus",
+    "subtitle": "What the children eat at the canteen, day by day.",
+    "week": "{from} to {to}",
+    "thisWeek": "This week",
+    "previousWeek": "Previous week",
+    "nextWeek": "Next week",
+    "today": "Today",
+    "courses": {
+      "starter": "Starter",
+      "mainCourse": "Main course",
+      "side": "Side",
+      "dessert": "Dessert",
+      "snack": "Snack"
+    },
+    "note": "Note",
+    "empty": "No menu has been entered for this week.",
+    "emptyHint": "It will appear here as soon as the school enters it.",
+    "emptyHintStaff": "Enter it from Manage → Menus: families will see it right away.",
+    "enter": "Enter the menu",
+    "edit": "Edit",
+    "publishedOn": "Published on {date}",
+    "updatedOn": "edited on {date}",
+    "admin": {
+      "subtitle": "Pick the week, fill in the canteen days, save: families see it right away.",
+      "none": "No menu for this week.",
+      "published": "Menu published on {date}",
+      "updated": "edited on {date}",
+      "duplicate": "Copy last week",
+      "duplicating": "Copy of the menu of the week of {date}: nothing is saved until you press “Save”.",
+      "dayHint": "Leave a day blank when there is no canteen: it will not be shown.",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "The menu is saved and visible to families.",
+      "invalid": "Check the texts: 120 characters at most per line, 200 for a note.",
+      "emptyWeek": "The menu is empty: enter at least one course or a note.",
+      "saveError": "Saving did not go through. Try again in a moment.",
+      "delete": "Delete this menu",
+      "view": "View as families do"
+    }
   }
 }

@@ -525,6 +525,29 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   journaux ne montrent aucun `session_context()` pour les sept préchargements — une invocation, zéro
   requête. **Reste** : la connexion (340–569 ms de jeton, 183–313 ms de profil, instance neuve) et la
   session de base de l'ADR-0067.
+- **Session 32 — les menus de la semaine** (ADR-0069), montée et jouée sur une pile Supabase réelle.
+  Première session de fonctionnalité depuis la session 20. Une page **« Menus de la semaine »**
+  (`/ecole/menus`) dans le hub École, à sa place par fréquence, juste après l'Agenda : la semaine
+  courante d'abord, flèches de semaine comme `/devoirs`, un jour par bloc en `RowList`, colonne
+  `text`. Deux tables — `weekly_menus` (une ligne par école et par semaine, nommée par son lundi,
+  contrainte en base) et `weekly_menu_days` (jour 1..5, entrée, plat, accompagnement, dessert,
+  goûter, remarque). **Lecture pour tout membre actif de l'école**, responsable en lecture seule
+  compris ; **écriture pour la direction et le secrétariat**, comme les annonces. `/admin/menus`
+  (famille Publications) saisit la semaine, la duplique depuis la précédente et la supprime ;
+  `save_weekly_menu` écrit la semaine et ses jours **en une transaction**, en `security invoker`,
+  donc les politiques décident. Un jour sans cantine est **absent, pas vide**, et une semaine vide
+  est refusée en français. Une seule requête par écran (l'écran de saisie demande la semaine _et_ la
+  précédente, ce qui rend la duplication gratuite). **Quatre défauts trouvés en regardant, aucun
+  lisible dans le code** : un `<legend>` flotté pleine largeur réduisait la grille de saisie à zéro
+  pixel — trente champs à **22 px**, sous le SC 2.5.8, et 98 px de débordement sur téléphone ; les
+  colonnes ne s'alignaient pas d'un jour à l'autre (le défaut de `/famille` de la session 27, en plus
+  petit) ; le menu du **dimanche soir** était celui de la semaine écoulée ; et le seed prétendait que
+  chaque menu avait été modifié. Faute de Docker, la pile a été montée à la main — PostgreSQL 16,
+  **GoTrue et PostgREST en binaires**, proxy de préfixes — et le parcours joué à six rôles : le
+  secrétariat saisit, duplique, se voit refuser une semaine vide ; la famille, le responsable en
+  lecture seule et l'enseignante lisent ; l'enseignante est renvoyée de l'écran de saisie. Vérifié :
+  `pnpm check`, `pnpm build`, **499 assertions pgTAP**, 26 e2e (2 ignorés, l'invitation), axe à
+  0 violation sérieuse à 390 et 1 440 px, en clair et en sombre.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

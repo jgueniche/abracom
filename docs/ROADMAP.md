@@ -1004,6 +1004,58 @@ entrées nommées depuis le pôle Communauté suffiraient, et cela ne coûte rie
 - [ ] **Reste** : la connexion elle-même (340–569 ms de jeton, 183–313 ms de profil, puis une instance
       neuve), et la session de base de données de l'ADR-0067.
 
+## Session 32 — Les menus de la semaine (2026-09-16, ADR-0069)
+
+Première session de fonctionnalité depuis la session 20. Demandée par le porteur, livrée telle quelle :
+une page rangée dans École, remplie par l'école, lisible par tout le monde. Rien de plus.
+
+- [x] **Modèle** : `weekly_menus` (école, `week_start` contraint à un lundi, publication, auteur —
+      une ligne par école et par semaine) et `weekly_menu_days` (jour 1..5, entrée, plat,
+      accompagnement, dessert, goûter, remarque). Pas de pièce jointe PDF : la saisie au clavier est
+      la seule qui se lise sur un téléphone.
+- [x] **RLS** : lecture pour tout membre actif de l'école (responsable en lecture seule compris),
+      écriture pour la direction **et** le secrétariat, comme les annonces. `save_weekly_menu` écrit
+      la semaine et ses jours en une transaction, en `security invoker` : les politiques décident.
+- [x] **Lecture** (`/ecole/menus`) : semaine courante d'abord, flèches de semaine, un jour par bloc
+      en `RowList`, colonne `text`, repère « Aujourd'hui » par une barre dans la marge **et** un mot.
+      Un jour sans cantine est absent, pas vide. État vide honnête, avec la porte pour l'école.
+- [x] **Écriture** (`/admin/menus`, famille Publications) : choisir la semaine, remplir cinq jours,
+      « Dupliquer la semaine précédente », enregistrer, supprimer. Server Action zod → rôle → RPC →
+      `revalidatePath` → `audit_log`. Modifier un menu publié emprunte le même chemin.
+- [x] **Une requête par écran** : la semaine et ses jours en select imbriqué ; l'écran de saisie
+      demande la semaine _et_ la précédente, ce qui rend la duplication gratuite (ADR-0067).
+- [x] **Libellés fr/en**, article d'aide `menus-de-la-semaine.md` (tous rôles, les deux routes),
+      `se-reperer.md` et `administration.md` relus et redatés. `ops:check-help` vert.
+- [x] **Seed** : deux semaines fictives (la courante et la précédente) pour que les flèches et la
+      duplication aient matière, sans contenu institutionnel réel.
+
+### Ce que le banc a trouvé, et que la relecture n'aurait pas trouvé
+
+Pas de Docker ici : la pile a été montée à la main — PostgreSQL 16, **GoTrue v2.180 et PostgREST v13
+en binaires**, un proxy de vingt lignes pour `/auth/v1` et `/rest/v1`, les vraies migrations
+d'authentification par-dessus le shim du dépôt. Connexion réelle, six rôles.
+
+- [x] Un **`<legend>` flotté pleine largeur** ne laissait aucune place à la grille de saisie : trente
+      champs à **22 px de large** (sous les 24 px du SC 2.5.8, `axe` le disait) et 98 px de
+      débordement sur téléphone. Une cause, deux symptômes.
+- [x] Les **colonnes ne s'alignaient pas d'un jour à l'autre** — une colonne `auto` se calcule dans
+      son propre jour. Le défaut de `/famille` de la session 27, en plus petit.
+- [x] Le **menu du dimanche soir** était celui de la semaine écoulée : `menuWeekOf()` ouvre sur la
+      semaine qui commence dès le samedi.
+- [x] Le **seed prétendait que chaque menu avait été modifié** (`updated_at` laissé à `now()`).
+
+### Recette
+
+- [x] `pnpm check`, `pnpm build`, **499 assertions pgTAP** (31 nouvelles), 26 e2e (2 ignorés :
+      l'invitation, qui demande une boîte aux lettres).
+- [x] `axe` à 0 violation sérieuse sur les deux écrans, à 390 et 1 440 px, en clair et en sombre.
+- [x] Parcours joué : le secrétariat saisit, duplique, se voit refuser une semaine vide ; la famille,
+      le responsable en lecture seule et l'enseignante lisent ; l'enseignante est renvoyée de l'écran
+      de saisie.
+- [ ] **À vérifier par le porteur** : la page sur le déploiement, une fois les migrations appliquées
+      (`scripts/ops/apply-migrations.sh`) — sans elles, les deux écrans échouent, la table n'existant
+      pas.
+
 ## Questions ouvertes (§15 du brief)
 
 Bloquantes pour la session 2 :
