@@ -4,6 +4,7 @@ import {
   FolderIcon,
   MegaphoneIcon,
   UsersIcon,
+  UtensilsIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -67,6 +68,8 @@ export default async function SchoolPage() {
           title={t("agenda")}
           hint={t("agendaHint")}
         />
+        {/* consulted every week, like the agenda — and on a Sunday evening */}
+        <HubCard href="/ecole/menus" icon={UtensilsIcon} title={t("menus")} hint={t("menusHint")} />
         <HubCard
           href="/documents"
           icon={FolderIcon}

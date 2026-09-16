@@ -41,7 +41,7 @@ export default async function AdminIndexPage() {
   return (
     <Column>
       <PageHeader title={t("title")} description={t("nav.subtitle")} />
-      {/* The column beside this page already lists these twelve destinations.
+      {/* The column beside this page already lists these thirteen destinations.
           What this page adds is the figure next to each one, so it is set as a
           board of figures — four groups, a name, a number — and not as four
           more cards repeating the menu with a pictogram in front of every

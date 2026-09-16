@@ -1796,3 +1796,80 @@ décision.
 La connexion elle-même : 340 à 569 ms de `/auth/v1/token`, une lecture de `profiles` de 183 à 313 ms
 pour la langue, puis un accueil sur une instance neuve. Et la session de base de données de
 l'ADR-0067, qui décide du temps de contenu une fois le clic entendu.
+
+## ADR-0069 — Les menus de la semaine : une semaine nommée par son lundi, cinq jours, et rien d'autre
+
+**Statut** : acceptée (2026-09-16) · **Contexte** : demande du porteur — une page « Menus de la
+semaine » dans le hub École, remplie par la direction ou le secrétariat, lisible par tout le monde.
+Rien de plus. C'est la première session de fonctionnalité depuis la session 20 ; les sessions 21 à 31
+ont été de l'aide, du design et de la latence.
+
+### Le modèle
+
+Deux tables. `weekly_menus` (école, `week_start`, publication, auteur) porte **une ligne par école et
+par semaine** — contrainte d'unicité, et `week_start` contraint à un lundi (`extract(isodow) = 1`) :
+une semaine ne peut pas être nommée deux fois de deux façons. `weekly_menu_days` (menu, `day` 1..5,
+entrée, plat, accompagnement, dessert, goûter, remarque) porte une ligne par jour de cantine, avec
+une contrainte d'unicité par jour.
+
+Trois choix valent d'être écrits :
+
+- **Pas de pièce jointe PDF.** La saisie au clavier suffit, et elle seule se lit sur un téléphone,
+  se cherchera un jour, et ne coûte rien à stocker. Un PDF scanné aurait été plus rapide à déposer et
+  illisible là où la question se pose.
+- **Un jour sans cantine est absent, pas vide.** L'école laisse le jour blanc, `save_weekly_menu` le
+  retire, et l'écran affiche quatre jours pour une semaine de quatre jours — pas cinq avec un trou.
+  Une semaine où rien n'est renseigné est **refusée**, en français côté action et par un
+  `check_violation` côté base : un menu vide publié est pire que pas de menu.
+- **Du lundi au vendredi.** `day between 1 and 5`. Une école qui servirait le dimanche déplace la
+  contrainte, rien d'autre.
+
+### Les droits
+
+Lecture pour tout membre actif de l'école (`is_school_member`) — **responsable en lecture seule
+compris** : un menu est exactement ce qu'il a le droit de savoir. Écriture pour `is_school_staff`,
+comme les annonces : la direction **et** le secrétariat. Un enseignant lit et n'écrit pas ; l'écran
+de saisie le renvoie à l'accueil, et la base refuserait de toute façon.
+
+`save_weekly_menu(school_, week_start_, days_ jsonb)` écrit la semaine et ses jours en une
+transaction. Elle est **`security invoker`** : ce sont les politiques ci-dessus qui décident, donc un
+parent qui appellerait la fonction reçoit le même `42501` que sur un `insert` nu. Enregistrer une
+semaine déjà publiée est permis et emprunte le même chemin — la base met à jour la semaine qu'elle a.
+31 assertions pgTAP, **499 au total**, vertes sur les deux chemins.
+
+### Une requête par écran
+
+La contrainte des sessions 30-31 tient : la page de lecture coûte **une** requête (la semaine et ses
+jours en select imbriqué), l'écran de saisie **une** aussi — il demande la semaine _et_ la précédente,
+ce qui rend « Dupliquer la semaine précédente » gratuit. Aucun `loading.tsx` ajouté, aucun lien
+préchargé : `components/ui/link.tsx` s'en charge (ADR-0067).
+
+### Ce que le banc a trouvé, et que la relecture n'aurait pas trouvé
+
+Faute de Docker dans cet environnement, la pile a été montée à la main : PostgreSQL 16 local,
+**GoTrue v2.180 et PostgREST v13 en binaires**, un proxy de vingt lignes pour les préfixes
+`/auth/v1` et `/rest/v1`, et les vraies migrations d'authentification par-dessus le shim du dépôt.
+Connexion réelle, six rôles, captures à 390 et 1440 px, clair et sombre, `axe` sur chacune.
+
+Quatre défauts, tous invisibles à la lecture du code :
+
+1. **Le `<legend>` flotté réduisait la grille de saisie à zéro pixel.** Un flotté pleine largeur ne
+   laisse aucune place au bloc qui le suit : les trente champs tombaient à **22 px de large** —
+   sous les 24 px du SC 2.5.8, ce qu'`axe` signalait — et débordaient l'écran de 98 px sur un
+   téléphone. Une cause, deux symptômes. Le jour est désormais une `<section aria-labelledby>`
+   nommée par un `SectionHeader`, le composant que le dépôt a déjà pour ça.
+2. **Les colonnes ne s'alignaient pas d'un jour à l'autre.** Une colonne `auto` se calcule dans son
+   propre jour : un jeudi sans accompagnement plaçait ses plats à une autre marge que le lundi. C'est
+   le défaut de `/famille` de la session 27, en plus petit. Une mesure pour toute la semaine.
+3. **Le menu du dimanche soir était celui de la semaine écoulée.** `mondayOf()` d'un dimanche rend le
+   lundi passé — cinq jours de repas déjà mangés, à l'heure exacte où un parent ouvre la page.
+   `menuWeekOf()` ouvre sur la semaine qui commence dès le samedi.
+4. **Le seed prétendait que chaque menu avait été modifié.** `updated_at` laissé à `now()` sur une
+   insertion datée du passé affichait « publié le 11, modifié le 16 » sur une démonstration
+   fraîchement semée. Le seed pose les deux dates.
+
+### Ce qui reste
+
+Le worker de notifications ne touche pas aux menus : publier un menu n'envoie rien. C'est délibéré —
+une notification par semaine pour un menu serait du bruit, et la page est à un geste depuis École.
+À reprendre si le porteur constate que personne ne l'ouvre.

@@ -68,6 +68,11 @@ export function isoWeekday(key: DateKey): number {
   return d === 0 ? 7 : d;
 }
 
+/** The Monday of the week containing `key` — the name of a school week. */
+export function mondayOf(key: DateKey): DateKey {
+  return addDays(key, 1 - isoWeekday(key));
+}
+
 /** First and (exclusive) next-month keys for a `YYYY-MM` month. */
 export function monthRange(month: string): { from: DateKey; to: DateKey } {
   const match = /^(\d{4})-(\d{2})$/.exec(month);

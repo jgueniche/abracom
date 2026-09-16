@@ -1,5 +1,5 @@
 /**
- * The twelve management destinations, in four named families.
+ * The thirteen management destinations, in four named families.
  *
  * Twelve flat pills measured 1 372 px: on any screen, finding "Journal" meant
  * scrolling sideways — including on a 1 920 px display with 928 px of empty
@@ -20,6 +20,8 @@ export const ADMIN_GROUPS = [
       { href: "/admin/documents", key: "documents" },
       { href: "/admin/evenements", key: "events" },
       { href: "/admin/formulaires", key: "forms" },
+      // what the school publishes every week — the secretariat writes it too
+      { href: "/admin/menus", key: "menus" },
     ],
   },
   {

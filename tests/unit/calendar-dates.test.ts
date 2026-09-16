@@ -6,6 +6,7 @@ import {
   isoWeekday,
   localDateKey,
   localTime,
+  mondayOf,
   monthRange,
   shiftMonth,
   utcToZonedNaive,
@@ -22,6 +23,11 @@ describe("calendar dates", () => {
   it("knows weekdays and month ranges", () => {
     expect(isoWeekday("2026-09-19")).toBe(6); // Saturday
     expect(isoWeekday("2026-09-20")).toBe(7);
+    // the Monday that names a school week, whichever day of it is asked for
+    expect(mondayOf("2026-09-14")).toBe("2026-09-14");
+    expect(mondayOf("2026-09-16")).toBe("2026-09-14");
+    expect(mondayOf("2026-09-20")).toBe("2026-09-14");
+    expect(mondayOf("2027-01-01")).toBe("2026-12-28");
     expect(monthRange("2026-12")).toEqual({ from: "2026-12-01", to: "2027-01-01" });
     expect(shiftMonth("2026-01", -1)).toBe("2025-12");
     expect(shiftMonth("2026-11", 3)).toBe("2027-02");
