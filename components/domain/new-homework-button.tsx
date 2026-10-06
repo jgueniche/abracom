@@ -24,12 +24,16 @@ import {
 export function NewHomeworkButton({
   classes,
   variant = "default",
+  returnTo,
 }: {
   classes: Array<{ id: string; name: string }>;
   variant?: "default" | "outline";
+  /** Where the composer returns once the homework is published: the class tab it was opened from. */
+  returnTo?: "classe";
 }) {
   const t = useTranslations("diary");
-  const href = (id: string) => `/classes/${id}/publier?type=homework`;
+  const href = (id: string) =>
+    `/devoirs/nouveau?classe=${id}${returnTo ? `&retour=${returnTo}` : ""}`;
 
   if (classes.length === 0) return null;
   if (classes.length === 1)

@@ -1732,8 +1732,9 @@ c'est la base ; sinon, c'est le navigateur, et il faudra l'onglet Performance.
 
 ## ADR-0068 — Ce que « lent » nomme : le silence après le clic, pas la durée
 
-**Statut** : acceptée (2026-09-15) · **Contexte** : après l'ADR-0067 déployé, le porteur trouve
-« tout encore lent comme avant », alors que Vitola, même pile, « marche mieux ».
+**Statut** : acceptée (2026-09-15), **frontières de chargement retirées par l'ADR-0072**
+(2026-10-06) · **Contexte** : après l'ADR-0067 déployé, le porteur trouve « tout encore lent comme
+avant », alors que Vitola, même pile, « marche mieux ».
 
 ### Ce que sa session dit
 
@@ -1873,3 +1874,256 @@ Quatre défauts, tous invisibles à la lecture du code :
 Le worker de notifications ne touche pas aux menus : publier un menu n'envoie rien. C'est délibéré —
 une notification par semaine pour un menu serait du bruit, et la page est à un geste depuis École.
 À reprendre si le porteur constate que personne ne l'ouvre.
+
+## ADR-0070 — L'espace devoirs : la semaine s'ouvre sur le jour préparé, les pages se lisent, « Fait » se coche
+
+**Statut** : acceptée (2026-10-06) · **Contexte** : demande du porteur — repenser l'espace devoirs,
+« principalement pour les enseignants et également pour les parents », « ultra fluide et intuitif »,
+« très ludique » ; que l'enseignant puisse **photographier une page** de révision et l'envoyer, pour
+que les familles la lisent sur leur téléphone ou l'impriment **si le cahier est resté à l'école** ; et
+que les parents puissent partager des photos dans les groupes (ADR-0071).
+
+### Ce que montrait l'écran avant d'y toucher
+
+Regardé sur la pile, à 390 px, avec les comptes de démonstration :
+
+- **Le premier écran d'un téléphone disait cinq fois « Rien à préparer ».** Chaque jour de la semaine
+  avait sa ligne ; les deux devoirs de la semaine étaient sous la ligne de flottaison.
+- **Les pages jointes n'existaient pour personne.** Un devoir pouvait porter des photos depuis la
+  session 7 ; aucun écran du cahier de texte ne les affichait.
+- **Le composeur de devoir était celui du cahier de vie** : un `select` à basculer sur « Devoir », une
+  date au format du navigateur, la matière retapée chaque jour, un champ photo écrit pour des photos de
+  classe — avec l'attestation de droit à l'image et la liste des vingt élèves à identifier, dont une
+  page de manuel n'a que faire — le tout sous l'en-tête de la classe et ses deux rangées d'onglets.
+- **L'onglet Devoirs de la classe dessinait les mêmes devoirs autrement** (une grille de cartes
+  « en retard / cette semaine / plus tard ») sans pages ni coches.
+- Les flèches de semaine, posées dans l'en-tête à côté de « Nouveau devoir », passaient à la ligne :
+  la flèche « semaine suivante » finissait seule sur une deuxième rangée.
+
+### Les décisions
+
+1. **La semaine s'ouvre sur le jour préparé** (`lib/homework.ts`, seize tests). Le soir, « Pour
+   demain » ; le matin, jusqu'à midi, « Pour aujourd'hui » — un devoir dû aujourd'hui a été rendu à
+   8 h 30 ; dès le vendredi midi et le week-end, « Pour lundi », dans la semaine suivante (le défaut que
+   l'ADR-0069 a corrigé pour les menus, avec la même réponse). Le jour préparé vient en tête même vide :
+   « Rien à préparer pour demain » est une information. Les jours suivants suivent, les jours passés se
+   rangent sous « Plus tôt cette semaine ».
+2. **La semaine en bandeau.** Cinq jours sur une ligne, chacun avec ce qu'il contient ; la liste ne
+   garde que les jours qui contiennent quelque chose. C'est la ligne qui remplace les cinq « Rien à
+   préparer ».
+3. **« Fait » remplace « Vu »** — **écart assumé au brief** (§ « case vu par enfant »), à valider par
+   le porteur. « Vu » était un accusé de réception pour l'enseignant ; ce qu'une famille fait d'un
+   devoir le soir est une liste à cocher — c'est le geste de Pronote, que les familles connaissent, et
+   c'est le seul moment « ludique » qui ait un sens ici. L'enseignant voit **combien** d'élèves ont coché
+   (« Fait : 12 / 24 »), jamais lesquels. Aucune donnée ne change (`homework_completions` est déjà une
+   table de « complétions ») ; revenir à « Vu » tient en deux libellés. Une conséquence en base :
+   l'état appartient à l'enfant, pas au parent qui a coché — le père doit pouvoir décocher ce que la
+   mère a coché par erreur, ce que la politique de suppression interdisait. Elle est élargie aux
+   responsables de l'enfant qui écrivent dans l'école (lecture seule exclue), quatre assertions.
+4. **Une page jointe est un document, pas une photo de classe.** Ni attestation de droit à l'image ni
+   élève à identifier ; 2 400 px sur le grand côté (environ 200 dpi sur une feuille A4 — à 1 600 px, la
+   taille du cahier de vie, une page photographiée s'imprimait floue) ; PDF jusqu'à 20 Mo ; nom et
+   poids du fichier conservés (`filename`, `size_bytes`) ; une vignette de 640 px écrite à la
+   publication (`thumb_path`), pour qu'une semaine de dix pages coûte quelques centaines de kilo-octets
+   sur un téléphone au lieu de dix images pleine taille.
+5. **Le composeur a sa page, sous `/devoirs`** (`/devoirs/nouveau`, `/devoirs/[id]/modifier`) — les
+   anciennes adresses y redirigent. Les questions dans l'ordre où l'on y pense : **pour quand** (les
+   cinq prochains jours d'école en un toucher ; le **prochain cours de la matière**, lu dans l'emploi
+   du temps, est marqué et choisi tant que la date n'a pas été touchée), **quelle matière** (celles de
+   l'emploi du temps puis celles déjà utilisées, en un toucher), **quoi faire**, puis **les pages** :
+   « Photographier une page » ouvre l'appareil, chaque page part dès qu'elle est choisie, se redresse
+   d'un quart de tour. « Donner aussi à » publie le même devoir dans les autres classes de l'enseignant
+   — les fichiers sont **copiés dans le bucket**, jamais renvoyés, et chaque classe a les siens sous son
+   propre dossier.
+6. **La fiche d'un devoir** (`/devoirs/[id]`) : les pages à la largeur de la colonne, lisibles sans
+   rien ouvrir, et « Imprimer » qui sort **une page par feuille** sous le titre et la date. Les
+   notifications et le bloc « Aujourd'hui » y mènent.
+7. **La visionneuse** (`AttachmentViewer`) remplace l'onglet de navigateur qu'ouvrait chaque photo :
+   plein écran sur fond sombre opaque, glissement et flèches, et deux boutons — **Imprimer** imprime la
+   page seule (une portée d'impression sur `<html>` masque tout le reste), **Télécharger** la garde.
+   Le pincement agrandit ; une fois agrandi, un glissement lit la ligne au lieu de changer de page. Le
+   cahier de vie et la messagerie l'utilisent aussi.
+8. **Ludique, dans le trait.** Une couleur par matière (huit, au moins 4:1 sur le fond — un contrôle,
+   SC 1.4.11 —, testées dans `design-tokens.test.ts`), dessinée en **anneau** ou en filet, jamais en
+   pastille ; le nom de la matière est toujours écrit à côté. Le rond « Fait » se remplit avec un léger
+   rebond, la coche se dessine, huit points de la couleur s'envolent — **une** célébration, au seul
+   endroit où elle a un sens, et rien pour qui a demandé moins de mouvement. Le jour affiche
+   « 2 / 3 faits » puis « Tout est fait », et le jour préparé, une fois complet, le dit en une phrase.
+9. **Fluide, mesurablement.** La coche est dessinée à l'instant (`useOptimistic`) et partout à la fois
+   — le rond, le compte du jour, l'anneau du bandeau, la barre de la semaine — puis défaite avec un
+   message si la base refuse. Le rendu suivant de la page (l'action revalide) ne retélécharge plus les
+   vignettes : une URL signée porte sa seconde d'émission, donc chaque rendu en produisait de nouvelles
+   et le navigateur rechargeait toutes les images à chaque coche. `lib/storage-urls.ts` réutilise une
+   URL tant qu'il lui reste plus de cinq minutes — les cinq minutes du cache du routeur.
+
+### Ce qui a été trouvé en regardant
+
+- Le composeur, d'abord écrit sous l'espace de classe, s'ouvrait sous un demi-écran de navigation :
+  déplacé sous `/devoirs`.
+- La barre d'envoi collante faisait deux rangées sur un téléphone ; une seule, « Brouillon » abrégé.
+- Le rond « Fait » s'étirait sur toute la hauteur du devoir (alignement par défaut d'une colonne
+  flexible) et centrait la coche au milieu des pages.
+- La visionneuse laissait lire l'écran à travers son fond, et ses flèches blanches disparaissaient sur
+  une page blanche : fond opaque, flèches sous l'image sur un téléphone.
+- Un PDF était une grande carte vide de 112 px de haut ; c'est une étiquette.
+- Le seed fixait des devoirs au samedi, et deux dates figées — la clôture du formulaire de rentrée au
+  30 septembre, les créneaux de rendez-vous au 5 octobre — rendaient **quatre assertions pgTAP rouges
+  depuis le 1er octobre**, sur `main` aussi. Dates relatives, jours d'école.
+- **SC 2.4.11, au clavier.** La barre d'envoi épinglée coupe l'éditeur dès l'ouverture du formulaire,
+  et le navigateur ne fait défiler un contrôle qui reçoit le focus que s'il est **hors** de la
+  fenêtre : Gras, Italique, Liste et Lien restaient cachés sous la barre, 39 px sur 44. Le
+  `scroll-padding` de la session 26 ne suffit donc pas seul — il est élargi de la hauteur de la barre
+  quand elle est là (`html:has([data-pinned-actions])`), et le formulaire ramène au-dessus d'elle un
+  contrôle atteint au clavier. Sonde rejouée (Tab sur toute la page, à 390 px, émulé et non émulé) :
+  plus aucun arrêt masqué. Sur les autres écrans parcourus, rien ne l'était.
+- `axe` signale encore `target-size` sur ce formulaire à 390 px, **page en haut** : la barre épinglée
+  recouvre la barre d'outils de l'éditeur tant qu'on n'a pas défilé, et la règle mesure la partie
+  visible d'une cible. C'est le propre d'une barre collante (défilée, la même règle relève des
+  pastilles passées sous l'en-tête) ; les boutons font 44 px et le focus est traité ci-dessus.
+- Le rond d'un responsable en lecture seule ressemblait trait pour trait au rond qu'on coche : il est
+  en pointillés, un état à lire et non un geste offert.
+- Le compositeur de messages dessinait le sondage dans un cadre, à côté d'un appareil photo et d'un
+  trombone qui n'en ont pas : trois façons d'ajouter, au même niveau.
+- Un passage e2e interrompu laissait son devoir dans le seed, coché, sur la semaine d'un parent : le
+  nettoyage est dans un `finally`.
+
+### Ce qui reste
+
+- La validation de « Fait » par le porteur, et l'usage réel sur téléphone (appareil photo, impression
+  AirPrint) : la caméra n'a été jouée qu'en émulation.
+- Les transformations d'image de Supabase (vignettes à la volée) ne sont pas utilisées : payantes sur le
+  palier actuel, et la vignette écrite une fois suffit.
+- Un HEIC glissé depuis un Mac dans Chrome n'est pas décodable par le navigateur : il est refusé avec un
+  message. Un iPhone, lui, envoie du JPEG.
+
+## ADR-0071 — Les fichiers ne passent plus par les Server Actions
+
+**Statut** : acceptée (2026-10-06) · **Contexte** : mesuré sur la pile — une photo prise au téléphone
+(4 Mo) envoyée dans le groupe des parents de PS faisait **planter tout l'écran de conversation** :
+« Une erreur est survenue ». Next refuse tout corps de Server Action au-delà de **1 Mo**
+(`Body exceeded 1 MB limit`), et Vercel au-delà de 4,5 Mo de toute façon. Le composeur du cahier de vie
+promettait « jusqu'à 20 photos » et échouait passé la troisième. C'est exactement ce que le porteur
+demandait : que des parents partagent la photo d'une page de devoir dans le groupe.
+
+### La décision
+
+**Le navigateur écrit le fichier directement dans le bucket privé**, sous les politiques Storage qui
+existaient déjà (le dossier dit l'école, la classe ou le fil), et l'action ne reçoit plus qu'une
+**description** de quelques centaines d'octets, vérifiée par zod puis confrontée à ce que Storage
+contient réellement (`info()` : existence, type, taille — la taille enregistrée est celle du serveur,
+pas celle annoncée).
+
+- **Dès qu'il est choisi.** Chaque fichier part au moment où on le choisit, avec sa progression
+  (`XMLHttpRequest`, pour `upload.onprogress` que supabase-js n'expose pas) : pendant qu'on tape le
+  titre, la page est déjà en route. Un échec se réessaie seul, sans perdre le formulaire. Les photos sont
+  décodées **une à une** — dix photos de douze mégapixels décodées ensemble, c'est un demi-gigaoctet,
+  et un onglet de téléphone qui meurt.
+- **Ré-encodées par le navigateur, toujours.** Un canvas ne contient que des pixels : ce qui en sort
+  n'a plus de bloc EXIF — ni la position GPS de la cuisine où la page a été photographiée, ni le modèle
+  du téléphone. L'ancien compresseur rendait tels quels les fichiers de moins de 600 Ko, métadonnées
+  comprises.
+- **Normalisées par le serveur pour la classe** (ADR-0019 tient) : à la publication, l'action télécharge
+  chaque original (`.upload.jpg`), le redresse, le réduit, le ré-encode en WebP, écrit sa vignette et
+  son blurhash, puis supprime l'original — **seulement quand toutes les pages ont été acceptées**, pour
+  qu'une seconde tentative fonctionne ; sinon ce qui a été écrit est retiré et rien n'est publié. Une
+  page ne peut être prise que dans le dossier de **ce** devoir, et une photo que depuis un original qui
+  vient d'être déposé — jamais depuis le fichier publié d'un autre.
+- **Pas de second passage serveur pour les messages.** `sharp` pèse 16 Mo (ADR-0066) ; le mettre dans
+  l'action d'envoi l'aurait mis dans la fonction de `/messages/[threadId]`, l'écran le plus ouvert après
+  l'accueil. Le navigateur ré-encode, écrit une vignette de 640 px et calcule une couleur moyenne ; le
+  bucket refuse tout autre type que JPEG, PNG, WebP et PDF. Un client modifié qui contournerait le
+  ré-encodage n'exposerait que ses propres métadonnées.
+- **Déposer, c'est déjà écrire.** La politique d'insertion du bucket `messages` ne demandait que d'être
+  membre du fil : un responsable en lecture seule, un parent dont l'école a fermé le canal pouvaient y
+  déposer des fichiers que personne ne les laisserait envoyer. Elle appelle désormais
+  `can_post_in_thread`, la fonction de l'`INSERT` sur `messages` — six assertions, dont la fermeture
+  du canal par la direction.
+- **Les orphelins.** Un fichier choisi puis abandonné reste dans le bucket : c'est le prix d'un envoi
+  qui commence avant la publication, et c'est `ops:storage-sweep` qui le retire, après 24 h, quand
+  aucune ligne ne le nomme. En s'appuyant dessus, on a lu le script, et il n'avait **jamais rien
+  balayé** : il lisait `storage.objects` par l'API REST, qui n'expose pas le schéma `storage`
+  (`PGRST106`, en local comme sur Supabase par défaut) — l'appel mensuel prévu par
+  `docs/DEPLOIEMENT.md` échouait avant de supprimer quoi que ce soit. Corrigé, et deux défauts qui
+  auraient détruit des fichiers le jour où il aurait marché : il ignorait les vignettes (toutes
+  supprimées un jour après leur écriture), et il lisait chaque table **en une requête**, que l'API
+  coupe à `max_rows` (1 000) — passé mille photos, des photos publiées seraient passées pour
+  orphelines. Il liste désormais les objets par l'API Storage, bucket par bucket (seulement ceux dont
+  il connaît les références), pagine les tables en avançant du nombre de lignes reçues, et garde les
+  vignettes des pages comme des messages. Joué sur la pile : un envoi abandonné, vieilli de deux
+  jours, part ; la page, sa vignette et le PDF, vieillis aussi, restent.
+
+### Ce que cela coûte
+
+Une requête de plus par fichier, côté navigateur, contre la disparition d'un plafond qui faisait
+échouer l'usage le plus courant. Mesuré sur le build de production, avec trois photos de 12 Mpx
+(2,8 Mo chacune) : **3,5 s** pour les préparer et les envoyer, pendant que l'enseignant·e tape le
+titre ; puis l'action de publication — télécharger, redresser, réduire, réencoder et réécrire les
+trois pages — **1,1 à 1,4 s**, et **1,6 à 1,9 s** du clic au devoir affiché dans la semaine. La
+première mesure donnait 1,5 s d'action : l'encodage WebP de `sharp` y prenait 719 ms par page à son
+effort par défaut ; à l'effort 2, 321 ms, pour 2,5 % d'octets en plus à qualité égale
+(`lib/media.ts`). Les pages publiées pèsent environ 320 Ko pour 1 800 × 2 400 px, et l'original
+déposé est supprimé.
+
+## ADR-0072 — Plus de frontière de chargement : une action qui revalide sa page restait en suspens
+
+**Statut** : acceptée (2026-10-06) · remplace la partie « frontière de chargement » de l'ADR-0068 ·
+**Contexte** : en rejouant les e2e de la session 33 sur un build de production, le test « un
+parent partage une photo dans le groupe » a échoué une fois : la photo prête, le message tapé,
+« Envoyer » qui tourne, et rien. « Instable » n'est pas une cause ; voici ce qu'il a fallu pour
+trouver la vraie.
+
+### Ce qui a été mesuré
+
+- Un banc à part (un onglet, un groupe, un message par chargement de page) : **quatre à sept
+  envois sur dix restaient en suspens**, le message **enregistré en base** mais jamais affiché, le
+  bouton désactivé pour de bon. Un message texte suffit : les photos n'y sont pour rien.
+- **Le code d'avant la session fait pareil** (11 sur 16) : le défaut est en production depuis le
+  15 septembre.
+- Le serveur n'y est pour rien : l'action répond en 168 ms, le journal réseau de Chromium montre
+  le corps reçu en entier, et un `fetch` instrumenté dans la page montre le flux lu jusqu'au bout
+  par le client. C'est **l'application de la réponse** qui ne se fait pas : la transition React
+  attend une suspension qui ne se lève jamais — et une navigation lancée ensuite reste prise
+  derrière elle.
+- Écartés un à un, chacun par une mesure : le préchargement (bloqué : mêmes échecs), le service
+  worker (bloqué : mêmes échecs), l'action « marquer comme lu » du montage (bloquée : mêmes
+  échecs), le ramasse-miettes (forcé : pas pire).
+- Retirer `app/(app)/loading.tsx` : **0 sur 10**. Garder la frontière mais ôter la revalidation de
+  l'action : **0 sur 12**. C'est le défaut ouvert de Next
+  [vercel/next.js#66426](https://github.com/vercel/next.js/issues/66426) — une action qui appelle
+  `revalidatePath` sous un `loading.tsx` laisse son formulaire sans réponse ; contournements
+  connus : retirer l'un ou l'autre.
+
+### Pourquoi pas un contournement plus fin
+
+- **Retirer la revalidation de l'envoi** fonctionne pour ce bouton-là, mais la conversation porte
+  aussi les réactions, les sondages, le menu (sourdine, verrou, archive) et un `router.refresh()`
+  sur les votes : chacun revalide. Et `router.refresh()`, essayé pour remplacer la revalidation,
+  tombe dans le même piège — le second message n'apparaissait plus, et sur téléphone la barre
+  d'onglets ne naviguait plus du tout.
+- **Sortir la seule conversation de la frontière** (frontière descendue d'un cran dans chaque
+  rubrique, liste des messages dans un groupe de routes) : les envois passent à 0 sur 12… et
+  **le formulaire de devoir se met à bloquer**, 3 publications sur 8, maintenant qu'une frontière
+  l'enveloppe directement. La question n'est donc pas « quelle page », mais « toute page sous une
+  frontière dont une action revalide » — c'est-à-dire presque toutes.
+
+### La décision
+
+**Aucun `loading.tsx`** — ni dans `(app)`, ni dans l'administration, ni dans l'espace de classe ;
+`PageLoading` est supprimé. Le clic garde sa réponse immédiate : la barre sous l'onglet
+(`LinkPending`, ADR-0061) s'allume en 24 à 34 ms et dure tant que le serveur répond. Le
+préchargement des onglets reste (`prefetch={null}`) : sans frontière, il ne rapporte que l'arbre
+des routes, quelques centaines d'octets et aucune requête (ADR-0067).
+
+Mesuré sans frontière, sur le build : **32 passages e2e sur 32** pour l'espace devoirs (deux
+séries de seize, avec la même concurrence qui en avait fait échouer trois), et **0 échec** sur
+chaque banc — un envoi par chargement (12), deux envois puis aller-retour par la barre (6 tours
+sur téléphone), deux onglets qui envoient une photo en même temps (12), publication d'un
+devoir (8), « Fait » coché, décoché, recoché (15 bascules).
+
+### Ce que cela coûte
+
+Le squelette affiché en 42 à 55 ms après un clic sur un onglet disparaît : la page arrive quand
+le serveur a répondu, avec la barre sous l'onglet en attendant. C'est exactement le « silence »
+que l'ADR-0068 avait voulu combler, en moins silencieux qu'avant elle. **À rétablir quand Next
+aura corrigé #66426** — la frontière se remet en un fichier par rubrique, la mesure ci-dessus
+(un banc d'envois après chargement complet) dira si c'est le cas.

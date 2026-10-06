@@ -86,6 +86,17 @@ describe.each([
     expect(contrastRatio(vars["input"]!, vars["background"]!)).toBeGreaterThanOrEqual(3);
     expect(contrastRatio(vars["input"]!, vars["card"]!)).toBeGreaterThanOrEqual(3);
   });
+
+  // The ring of « Fait » is drawn in the colour of its subject: a control, so SC 1.4.11.
+  it.each(["blue", "green", "violet", "amber", "teal", "rose", "red", "slate"])(
+    "keeps the --tone-%s stroke at 3:1 against page and card",
+    (tone) => {
+      const value = vars[`tone-${tone}`];
+      expect(value, `--tone-${tone} missing`).toBeDefined();
+      expect(contrastRatio(value!, vars["background"]!)).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(value!, vars["card"]!)).toBeGreaterThanOrEqual(3);
+    },
+  );
 });
 
 describe("token parity between CSS and TypeScript", () => {

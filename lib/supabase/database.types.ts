@@ -926,13 +926,16 @@ export type Database = {
           caption: string | null
           consent_checked: boolean
           created_at: string
+          filename: string | null
           height: number | null
           id: string
           kind: Database["public"]["Enums"]["media_kind"]
           post_id: string
+          size_bytes: number | null
           sort_order: number
           storage_path: string
           tagged_student_ids: string[]
+          thumb_path: string | null
           width: number | null
         }
         Insert: {
@@ -940,13 +943,16 @@ export type Database = {
           caption?: string | null
           consent_checked?: boolean
           created_at?: string
+          filename?: string | null
           height?: number | null
           id?: string
           kind?: Database["public"]["Enums"]["media_kind"]
           post_id: string
+          size_bytes?: number | null
           sort_order?: number
           storage_path: string
           tagged_student_ids?: string[]
+          thumb_path?: string | null
           width?: number | null
         }
         Update: {
@@ -954,13 +960,16 @@ export type Database = {
           caption?: string | null
           consent_checked?: boolean
           created_at?: string
+          filename?: string | null
           height?: number | null
           id?: string
           kind?: Database["public"]["Enums"]["media_kind"]
           post_id?: string
+          size_bytes?: number | null
           sort_order?: number
           storage_path?: string
           tagged_student_ids?: string[]
+          thumb_path?: string | null
           width?: number | null
         }
         Relationships: [

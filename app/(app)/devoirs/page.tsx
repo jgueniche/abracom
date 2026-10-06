@@ -1,21 +1,20 @@
-import { BookOpenIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
+import { BookOpenIcon } from "lucide-react";
 import type { Metadata } from "next";
-import { Link } from "@/components/ui/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 
-import { MetaChip } from "@/components/domain/content-card";
-import { NewHomeworkButton } from "@/components/domain/new-homework-button";
 import { EmptyState } from "@/components/domain/empty-state";
+import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
+import { HomeworkWeek } from "@/components/domain/homework/homework-week";
+import { WeekNav } from "@/components/domain/homework/week-nav";
+import { NewHomeworkButton } from "@/components/domain/new-homework-button";
 import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
-import { Button } from "@/components/ui/button";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { canWriteInSchool } from "@/lib/permissions";
-import { plainExcerpt } from "@/lib/text";
-import { cn } from "@/lib/utils";
-import { toggleHomeworkSeen } from "@/server/actions/class-posts";
-import { getHomeworkDiary } from "@/server/queries/class-space";
+import { addDays, isDateKey, localDateKey, mondayOf } from "@/lib/calendar/dates";
+import { defaultWeek, pivotDay, SCHOOL_TIME_ZONE } from "@/lib/homework";
+import { canWriteInSchool, isSchoolAdmin } from "@/lib/permissions";
+import { attachmentViews } from "@/server/queries/attachments";
+import { getClassSizes, getHomeworkDiary } from "@/server/queries/class-space";
 import { getMyTeachingClasses } from "@/server/queries/classes";
 import { getMyChildren } from "@/server/queries/family";
 
@@ -24,27 +23,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
-const DAY_MS = 86_400_000;
-const iso = (date: Date) => date.toISOString().slice(0, 10);
-
-/** Monday of the week containing `date`, at noon UTC so no timezone shifts the day. */
-function mondayOf(date: Date): Date {
-  const monday = new Date(date);
-  monday.setUTCHours(12, 0, 0, 0);
-  monday.setUTCDate(monday.getUTCDate() - ((monday.getUTCDay() + 6) % 7));
-  return monday;
-}
-
-type Child = { id: string; firstName: string; className: string };
-
 /**
- * The homework diary — one chronological page, every class of the reader merged.
+ * The homework of the week — every class of the reader merged, one tick per child.
  *
- * Homework already existed, but only inside a single class and bucketed as
- * "overdue / this week / later". A parent with two children in two classes had
- * to open two tabs to answer the one question a weekday evening asks: what is
- * there to prepare. Here the week is the spine, the class is a label, and a
- * parent of several children can narrow to one of them.
+ * Session 17 made it a week rather than a class; session 33 makes it the place where homework
+ * is *done*: it opens on the day being prepared, shows the pages the teacher photographed, and
+ * the ring a child taps fills on the spot (ADR-0070).
  */
 export default async function DiaryPage({
   searchParams,
@@ -59,14 +43,12 @@ export default async function DiaryPage({
     getMyTeachingClasses(user.id),
   ]);
 
-  const asked =
-    semaine && /^\d{4}-\d{2}-\d{2}$/.test(semaine) ? new Date(`${semaine}T12:00:00Z`) : new Date();
-  const monday = mondayOf(Number.isNaN(asked.getTime()) ? new Date() : asked);
-  const sunday = new Date(monday.getTime() + 6 * DAY_MS);
-  const today = new Date();
-  const todayIso = iso(today);
-  const tomorrowIso = iso(new Date(today.getTime() + DAY_MS));
-  const isCurrentWeek = iso(mondayOf(today)) === iso(monday);
+  const now = new Date();
+  const today = localDateKey(now, SCHOOL_TIME_ZONE);
+  const pivot = pivotDay(now);
+  const opening = defaultWeek(now);
+  const monday = isDateKey(semaine) ? mondayOf(semaine) : opening;
+  const sunday = addDays(monday, 6);
 
   // A guardian is linked to their children through student_guardians, and each
   // child to a class through enrollments — so one reader can span several
@@ -75,93 +57,50 @@ export default async function DiaryPage({
   const selected = allChildren.find((child) => child.id === enfant)?.id ?? null;
   const shown = selected ? allChildren.filter((child) => child.id === selected) : allChildren;
 
-  const childrenByClass = new Map<string, Child[]>();
-  const classNames = new Map<string, string>();
+  const childrenByClass = new Map<string, Array<{ id: string; firstName: string }>>();
+  const classIds = new Set<string>();
   for (const child of shown)
     for (const enrolment of child.enrollments) {
       if (!enrolment.class) continue;
-      classNames.set(enrolment.class.id, enrolment.class.name);
+      classIds.add(enrolment.class.id);
       childrenByClass.set(enrolment.class.id, [
         ...(childrenByClass.get(enrolment.class.id) ?? []),
-        { id: child.id, firstName: child.first_name, className: enrolment.class.name },
+        { id: child.id, firstName: child.first_name },
       ]);
     }
-  for (const row of teaching) if (row.class) classNames.set(row.class.id, row.class.name);
-
-  const classIds = [...classNames.keys()];
-  const entries = await getHomeworkDiary(classIds, iso(monday), iso(sunday));
-
-  const byDay = new Map<string, typeof entries>();
-  for (const entry of entries) {
-    if (!entry.due_on) continue;
-    byDay.set(entry.due_on, [...(byDay.get(entry.due_on) ?? []), entry]);
-  }
-  // Monday to Friday always — an empty Thursday is information; the weekend
-  // only when something is actually due on it.
-  const days = Array.from({ length: 7 }, (_, index) =>
-    iso(new Date(monday.getTime() + index * DAY_MS)),
-  ).filter((day, index) => index < 5 || (byDay.get(day)?.length ?? 0) > 0);
-
-  const canTick = user.school ? canWriteInSchool(user.roles, user.school.id) : false;
-  const teacherView = teaching.length > 0 && allChildren.length === 0;
   const myClasses = teaching.flatMap((row) =>
     row.class ? [{ id: row.class.id, name: row.class.name }] : [],
   );
-  const childHref = (id: string | null) => {
+  // A filter on one child narrows the diary to that child's classes, teaching included.
+  if (!selected) for (const cls of myClasses) classIds.add(cls.id);
+  const teamClassIds = new Set(myClasses.map((cls) => cls.id));
+
+  const ids = [...classIds];
+  const [entries, sizes] = await Promise.all([
+    getHomeworkDiary(ids, monday, sunday),
+    getClassSizes(ids.filter((id) => teamClassIds.has(id))),
+  ]);
+  const attachments = await attachmentViews(entries.flatMap((entry) => entry.media));
+
+  const schoolId = user.school?.id ?? null;
+  const href = (week: string | null, child: string | null) => {
     const params = new URLSearchParams();
-    if (!isCurrentWeek) params.set("semaine", iso(monday));
-    if (id) params.set("enfant", id);
+    if (week && week !== opening) params.set("semaine", week);
+    if (child) params.set("enfant", child);
     const query = params.toString();
     return query ? `/devoirs?${query}` : "/devoirs";
-  };
-  const weekHref = (offset: number) => {
-    const params = new URLSearchParams({
-      semaine: iso(new Date(monday.getTime() + offset * 7 * DAY_MS)),
-    });
-    if (selected) params.set("enfant", selected);
-    return `/devoirs?${params.toString()}`;
   };
 
   return (
     <Column>
-      <PageHeader
-        eyebrow={t("week", {
-          from: format.dateTime(monday, { day: "numeric", month: "long" }),
-          to: format.dateTime(sunday, { day: "numeric", month: "long" }),
-        })}
-        title={t("title")}
-        description={teacherView ? t("subtitleTeacher") : t("subtitle")}
-        actions={
-          <>
-            <NewHomeworkButton classes={myClasses} />
-            <Button asChild variant="outline" size="icon" className="size-11">
-              <Link href={weekHref(-1)} aria-label={t("previousWeek")}>
-                <ChevronLeftIcon aria-hidden />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant={isCurrentWeek ? "secondary" : "default"}
-              className="min-h-11"
-              aria-current={isCurrentWeek ? "true" : undefined}
-            >
-              <Link href={childHref(selected)}>{t("thisWeek")}</Link>
-            </Button>
-            <Button asChild variant="outline" size="icon" className="size-11">
-              <Link href={weekHref(1)} aria-label={t("nextWeek")}>
-                <ChevronRightIcon aria-hidden />
-              </Link>
-            </Button>
-          </>
-        }
-      />
+      <PageHeader title={t("title")} actions={<NewHomeworkButton classes={myClasses} />} />
 
       {allChildren.length > 1 && (
-        <FilterChips label={t("title")} className="-mt-1">
+        <FilterChips label={t("filterChildren")} className="-mt-1">
           {[null, ...allChildren.map((child) => child.id)].map((id) => {
             const child = allChildren.find((item) => item.id === id);
             return (
-              <FilterChip key={id ?? "all"} href={childHref(id)} active={selected === id}>
+              <FilterChip key={id ?? "all"} href={href(monday, id)} active={selected === id}>
                 {child ? child.first_name : t("allChildren")}
               </FilterChip>
             );
@@ -169,154 +108,48 @@ export default async function DiaryPage({
         </FilterChips>
       )}
 
-      {classIds.length === 0 ? (
+      {ids.length === 0 ? (
         <EmptyState icon={BookOpenIcon} title={t("noClass")} description={t("noClassHint")} />
       ) : (
         <>
-          <p className="mb-3 text-sm text-muted-foreground">
-            {t("weekCount", { count: entries.length })}
-          </p>
-          {entries.length === 0 ? (
-            <EmptyState icon={BookOpenIcon} title={t("empty")} description={t("emptyHint")} />
-          ) : (
-            /*
-             * A week reads as a week: one continuous list, a rule between the
-             * days, the day that has nothing saying so on a single line. Each
-             * day used to be a rounded box — and an empty day a *dashed* box,
-             * the placeholder idiom of a mock-up — so five days with nothing to
-             * prepare took as much of the screen as the two that mattered.
-             */
-            <ol className="border-t border-rule">
-              {days.map((day) => {
-                const items = byDay.get(day) ?? [];
-                const isToday = day === todayIso;
-                const isTomorrow = day === tomorrowIso;
-                const isPast = day < todayIso;
-                const empty = items.length === 0;
-                return (
-                  <li
-                    key={day}
-                    className={cn(
-                      "relative border-b border-rule py-3.5",
-                      isToday &&
-                        "before:absolute before:inset-y-3 before:-left-3 before:w-[2px] before:rounded-full before:bg-primary sm:before:-left-4",
-                    )}
-                  >
-                    <p
-                      className={cn(
-                        "flex flex-wrap items-baseline gap-x-2 gap-y-1",
-                        !empty && "mb-3",
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "font-heading text-base first-letter:uppercase",
-                          empty && "text-muted-foreground",
-                          isToday && "text-primary",
-                        )}
-                      >
-                        {format.dateTime(new Date(`${day}T12:00:00Z`), {
-                          weekday: "long",
-                          day: "numeric",
-                          month: "long",
-                        })}
-                      </span>
-                      {isToday && <span className="eyebrow text-primary">{t("today")}</span>}
-                      {isTomorrow && <span className="eyebrow">{t("dueTomorrow")}</span>}
-                      {isPast && !empty && <span className="eyebrow text-brick">{t("late")}</span>}
-                      {empty && (
-                        <span className="text-sm text-muted-foreground">{t("nothingToday")}</span>
-                      )}
-                    </p>
-
-                    {empty ? null : (
-                      <ul className="flex flex-col gap-4">
-                        {items.map((entry) => {
-                          const concerned = childrenByClass.get(entry.class_id) ?? [];
-                          return (
-                            <li key={entry.id} className="border-l-2 border-primary/40 pl-3">
-                              <p className="eyebrow mb-0.5 flex flex-wrap items-center gap-x-2">
-                                <span className="text-primary">
-                                  {classNames.get(entry.class_id) ?? ""}
-                                </span>
-                                {entry.subject && <span>· {entry.subject}</span>}
-                                {concerned.length > 0 && allChildren.length > 1 && (
-                                  <span>
-                                    ·{" "}
-                                    {t("forChild", {
-                                      name: concerned.map((child) => child.firstName).join(", "),
-                                    })}
-                                  </span>
-                                )}
-                              </p>
-                              <p className="font-medium">{entry.title}</p>
-                              {entry.body_md && (
-                                <p className="mt-0.5 line-clamp-3 text-sm text-muted-foreground">
-                                  {plainExcerpt(entry.body_md, 240)}
-                                </p>
-                              )}
-                              <div className="mt-2 flex flex-wrap items-center gap-2">
-                                {/* a read-only guardian sees the homework but cannot tick it */}
-                                {!teacherView &&
-                                  canTick &&
-                                  concerned.map((child) => {
-                                    const done = entry.completions.some(
-                                      (completion) => completion.student_id === child.id,
-                                    );
-                                    return (
-                                      <form key={child.id} action={toggleHomeworkSeen}>
-                                        <input type="hidden" name="postId" value={entry.id} />
-                                        <input type="hidden" name="studentId" value={child.id} />
-                                        <input
-                                          type="hidden"
-                                          name="classId"
-                                          value={entry.class_id}
-                                        />
-                                        <input type="hidden" name="done" value={String(done)} />
-                                        <Button
-                                          type="submit"
-                                          size="sm"
-                                          variant={done ? "secondary" : "outline"}
-                                          className="min-h-11"
-                                          aria-pressed={done}
-                                          aria-label={t("seenFor", { name: child.firstName })}
-                                        >
-                                          <CheckIcon
-                                            aria-hidden
-                                            className={cn(!done && "opacity-40")}
-                                          />
-                                          {/* the button used to read "Noam" and
-                                              nothing else, so neither the eye nor
-                                              a screen reader could tell what it
-                                              toggled */}
-                                          {allChildren.length > 1
-                                            ? `${t("seen")} · ${child.firstName}`
-                                            : t("seen")}
-                                        </Button>
-                                      </form>
-                                    );
-                                  })}
-                                {teacherView && (
-                                  <MetaChip>
-                                    {t("seenBy", { count: entry.completions.length })}
-                                  </MetaChip>
-                                )}
-                                <Button asChild variant="ghost" size="sm" className="min-h-11">
-                                  <Link href={`/classes/${entry.class_id}/devoirs`}>
-                                    {t("openClass")}
-                                  </Link>
-                                </Button>
-                              </div>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
-          )}
+          <WeekNav
+            label={t("week", {
+              from: format.dateTime(new Date(`${monday}T12:00:00Z`), {
+                day: "numeric",
+                month: "long",
+                timeZone: "UTC",
+              }),
+              to: format.dateTime(new Date(`${addDays(monday, 4)}T12:00:00Z`), {
+                day: "numeric",
+                month: "long",
+                timeZone: "UTC",
+              }),
+            })}
+            previous={href(addDays(monday, -7), selected)}
+            next={href(addDays(monday, 7), selected)}
+            current={monday === opening ? null : href(opening, selected)}
+          />
+          <HomeworkWeek
+            monday={monday}
+            pivot={pivot >= monday && pivot <= sunday ? pivot : null}
+            today={today}
+            entries={entries}
+            attachments={attachments}
+            emptyAction={
+              myClasses.length > 0 ? (
+                <NewHomeworkButton classes={myClasses} variant="outline" />
+              ) : undefined
+            }
+            reader={{
+              childrenByClass,
+              canTick: schoolId ? canWriteInSchool(user.roles, schoolId) : false,
+              teamClassIds,
+              classSizes: sizes,
+              userId: user.id,
+              isAdmin: schoolId ? isSchoolAdmin(user.roles, schoolId) : false,
+              showClass: classIds.size > 1,
+            }}
+          />
         </>
       )}
     </Column>

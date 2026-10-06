@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 const POST_SELECT = `
   id, class_id, school_id, type, title, body_md, subject, due_on, published_at, visibility, created_at, updated_at, author_id,
   author:profiles!class_posts_author_profile_fkey ( id, first_name, last_name ),
-  media:class_post_media ( id, storage_path, kind, width, height, blurhash, caption, tagged_student_ids, sort_order ),
+  media:class_post_media ( id, storage_path, thumb_path, kind, width, height, blurhash, caption, filename, size_bytes, tagged_student_ids, sort_order ),
   completions:homework_completions ( student_id, done_at, marked_by_user_id )
 ` as const;
 
@@ -87,7 +87,10 @@ export async function getClassPost(classId: string, postId: string) {
  * Homework due between two dates, across every class the reader follows.
  *
  * This is what makes a cahier de texte out of a per-class list: a parent with
- * two children in two classes reads one diary, not two tabs.
+ * two children in two classes reads one diary, not two tabs. Drafts come back to
+ * the people allowed to read them — their author and the office (RLS) — and to
+ * nobody else, so a teacher finds the homework she has not published yet on the
+ * day it is set for, instead of in a list she has to go looking for.
  */
 export async function getHomeworkDiary(classIds: string[], from: string, to: string) {
   if (classIds.length === 0) return [];
@@ -98,13 +101,55 @@ export async function getHomeworkDiary(classIds: string[], from: string, to: str
     .in("class_id", classIds)
     .eq("type", "homework")
     .is("deleted_at", null)
-    .not("published_at", "is", null)
     .gte("due_on", from)
     .lte("due_on", to)
     .order("due_on")
-    .order("subject", { nullsFirst: false });
+    .order("subject", { nullsFirst: false })
+    .order("created_at");
   if (error) throw error;
-  return data;
+  return data.map((post) => ({
+    ...post,
+    media: [...post.media].sort((a, b) => a.sort_order - b.sort_order),
+  }));
+}
+
+/** One homework, wherever it is read from — a notification, the home page, a shared link. */
+export async function getHomework(postId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("class_posts")
+    .select(`${POST_SELECT}, class:classes ( id, name, school_id )`)
+    .eq("id", postId)
+    .eq("type", "homework")
+    .is("deleted_at", null)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  return { ...data, media: [...data.media].sort((a, b) => a.sort_order - b.sort_order) };
+}
+
+/**
+ * What the homework composer suggests: the class's weekly timetable (to place a homework on
+ * "the next lesson") and the subjects already used for its homework.
+ */
+export async function getHomeworkComposerContext(classId: string) {
+  const supabase = await createClient();
+  const [{ data: week }, { data: recent }] = await Promise.all([
+    supabase.rpc("class_week", { class_: classId }),
+    supabase
+      .from("class_posts")
+      .select("subject")
+      .eq("class_id", classId)
+      .eq("type", "homework")
+      .is("deleted_at", null)
+      .not("subject", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(40),
+  ]);
+  return {
+    slots: (week ?? []).map((slot) => ({ weekday: slot.weekday, subject: slot.subject })),
+    usedSubjects: (recent ?? []).map((row) => row.subject),
+  };
 }
 
 export type DiaryEntry = Awaited<ReturnType<typeof getHomeworkDiary>>[number];
@@ -217,4 +262,30 @@ export async function getWeeklySummary(classIds: string[]) {
   for (const row of recent ?? []) summary.get(row.class_id)!.posts++;
   for (const row of due ?? []) summary.get(row.class_id)!.homework++;
   return summary;
+}
+
+/** Pupils currently enrolled in each class — the denominator of « Fait : 12 / 24 ». */
+export async function getClassSizes(classIds: string[]): Promise<Map<string, number>> {
+  const sizes = new Map<string, number>();
+  if (classIds.length === 0) return sizes;
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("enrollments")
+    .select("class_id")
+    .in("class_id", classIds)
+    .is("left_on", null);
+  if (error) throw error;
+  for (const row of data ?? []) sizes.set(row.class_id, (sizes.get(row.class_id) ?? 0) + 1);
+  return sizes;
+}
+
+/** Whether the reader teaches this class — the team side of a homework page. */
+export async function isClassTeacher(classId: string, userId: string): Promise<boolean> {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("class_teachers")
+    .select("user_id", { count: "exact", head: true })
+    .eq("class_id", classId)
+    .eq("user_id", userId);
+  return (count ?? 0) > 0;
 }

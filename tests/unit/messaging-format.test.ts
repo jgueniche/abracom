@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { dayKey, parseAttachments, segmentMentions } from "@/lib/messaging/format";
+import { dayKey, isPhoto, parseAttachments, segmentMentions } from "@/lib/messaging/format";
 
 describe("segmentMentions", () => {
   it("highlights known members only, longest name first", () => {
@@ -42,5 +42,32 @@ describe("parseAttachments", () => {
       ]),
     ).toHaveLength(1);
     expect(parseAttachments("x")).toEqual([]);
+  });
+
+  it("keeps the size and the light rendition of a photo, and nothing malformed", () => {
+    const [photo] = parseAttachments([
+      {
+        path: "s/t/a.jpg",
+        name: "devoir.jpg",
+        size: 412_000,
+        mime: "image/jpeg",
+        width: 1536,
+        height: 2048,
+        thumb: "s/t/a.thumb.jpg",
+        color: "#f4f1ea",
+      },
+    ]);
+    expect(photo).toMatchObject({ width: 1536, height: 2048, thumb: "s/t/a.thumb.jpg" });
+    const [old] = parseAttachments([
+      { path: "s/t/b.jpg", name: "b.jpg", size: 1, mime: "image/jpeg", width: -3, color: "red" },
+    ]);
+    // a message sent before session 33 has neither: it shows the picture itself
+    expect(old?.width).toBeUndefined();
+    expect(old?.color).toBeUndefined();
+  });
+
+  it("tells a photo, shown in the conversation, from a document, linked", () => {
+    expect(isPhoto({ path: "p", name: "n", size: 1, mime: "image/jpeg" })).toBe(true);
+    expect(isPhoto({ path: "p", name: "n", size: 1, mime: "application/pdf" })).toBe(false);
   });
 });

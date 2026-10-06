@@ -33,7 +33,7 @@ export default async function JournalPage({
   searchParams: Promise<{ c?: string }>;
 }) {
   const [{ classId }, { c }] = await Promise.all([params, searchParams]);
-  const [{ cls, isTeacher, isStaff }, t, tSpace, format, posts] = await Promise.all([
+  const [{ isTeacher, isStaff }, t, tSpace, format, posts] = await Promise.all([
     requireClassAccess(classId),
     getTranslations("classSpace.journal"),
     getTranslations("classSpace"),
@@ -108,13 +108,7 @@ export default async function JournalPage({
                  grid and no menu at all, so an entry could be neither edited
                  nor removed from the only screen that shows it. One anatomy,
                  everywhere. */
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  students={[]}
-                  canManage={canManage}
-                  totalFamilies={cls.students.length}
-                />
+                <PostCard key={post.id} post={post} canManage={canManage} />
               ))}
             </div>
           </section>

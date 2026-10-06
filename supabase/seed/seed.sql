@@ -27,6 +27,28 @@ returns uuid language sql immutable as $$
   select (prefix || '0000000-0000-4000-8000-00000' || lpad(family::text, 3, '0') || '00' || lpad(member::text, 2, '0'))::uuid;
 $$;
 
+-- A school day: `school_day(1)` is the next weekday after today, `school_day(-1)` the previous one.
+-- Homework is due on school days; a seed that set it for a Saturday showed a diary nobody has.
+create or replace function pg_temp.school_day(offset_days int)
+returns date language plpgsql stable as $$
+declare
+  d date := current_date;
+  moved int := 0;
+begin
+  while moved < abs(offset_days) loop
+    d := d + sign(offset_days)::int;
+    if extract(isodow from d) <= 5 then moved := moved + 1; end if;
+  end loop;
+  return d;
+end
+$$;
+
+-- The weekday on or after `d`: a date that lands on a weekend moves to the Monday.
+create or replace function pg_temp.on_school_day(d date)
+returns date language sql immutable as $$
+  select case extract(isodow from d)::int when 6 then d + 2 when 7 then d + 1 else d end;
+$$;
+
 create or replace function pg_temp.create_user(
   id uuid, email text, first_name text, last_name text, locale text default 'fr', phone text default null
 ) returns void language plpgsql as $$
@@ -325,7 +347,7 @@ begin
         case when class_i <= 4 then 'À préparer : apporter une photo de famille' else 'Devoirs : lecture page ' || (10 + week * 4) end,
         case when class_i <= 4 then 'Pour le cahier de vie, merci d''apporter une photo de famille dans une enveloppe.' else 'Lire le texte et préparer trois questions.' end,
         case when class_i <= 4 then 'Langage' else 'Français' end,
-        (current_date + (4 - week * 7)),
+        pg_temp.on_school_day(current_date + (4 - week * 7)),
         now() - make_interval(days => 19 - week * 7));
       n := n + 1;
       insert into public.class_posts (id, school_id, class_id, author_id, type, title, body_md, published_at)
@@ -348,6 +370,59 @@ begin
   end loop;
 end
 $$;
+
+-- a week of homework in CP Oliviers (session 33) -------------------------------------
+-- Noam's class (parent-1's second child). A timetable, so that the homework composer can place
+-- a homework on "the next lesson" of its subject, and homework across subjects on the coming
+-- school days — one of them, already due, ticked « fait » by his mother.
+insert into public.class_timetable (school_id, class_id, weekday, starts_at, ends_at, subject, teacher_id, room, created_by)
+select pg_temp.uid('0', 1), pg_temp.uid('0', 517), slot.weekday, slot.starts_at::time, slot.ends_at::time,
+       slot.subject, slot.teacher, slot.room, pg_temp.uid('b', 5)
+from (values
+  (1, '08:30', '10:00', 'Français', pg_temp.uid('b', 5), null),
+  (1, '10:15', '11:30', 'Mathématiques', pg_temp.uid('b', 5), null),
+  (1, '13:30', '14:30', 'Hébreu', pg_temp.uid('b', 12), null),
+  (1, '14:45', '16:00', 'Questionner le monde', pg_temp.uid('b', 5), null),
+  (2, '08:30', '10:00', 'Français', pg_temp.uid('b', 5), null),
+  (2, '10:15', '11:30', 'Mathématiques', pg_temp.uid('b', 5), null),
+  (2, '13:30', '14:15', 'Anglais', pg_temp.uid('b', 11), 'Salle d''anglais'),
+  (2, '14:30', '16:00', 'Arts plastiques', pg_temp.uid('b', 5), null),
+  (3, '08:30', '10:00', 'Hébreu', pg_temp.uid('b', 12), null),
+  (3, '10:15', '11:30', 'Kodech', pg_temp.uid('b', 12), null),
+  (4, '08:30', '10:00', 'Français', pg_temp.uid('b', 5), null),
+  (4, '10:15', '11:30', 'Mathématiques', pg_temp.uid('b', 5), null),
+  (4, '13:30', '14:30', 'Hébreu', pg_temp.uid('b', 12), null),
+  (4, '14:45', '16:00', 'EPS', pg_temp.uid('b', 5), 'Gymnase'),
+  (5, '08:30', '10:00', 'Français', pg_temp.uid('b', 5), null),
+  (5, '10:15', '11:30', 'Mathématiques', pg_temp.uid('b', 5), null),
+  (5, '13:30', '14:15', 'Anglais', pg_temp.uid('b', 11), 'Salle d''anglais')
+) as slot (weekday, starts_at, ends_at, subject, teacher, room);
+
+insert into public.class_posts (id, school_id, class_id, author_id, type, title, body_md, subject, due_on, published_at) values
+  (pg_temp.uid('0', 1700 + 1), pg_temp.uid('0', 1), pg_temp.uid('0', 517), pg_temp.uid('b', 5), 'homework',
+   'Compter de 2 en 2 jusqu''à 30', 'À voix haute, puis en l''écrivant sur l''ardoise.',
+   'Mathématiques', pg_temp.school_day(-1), now() - interval '3 days'),
+  (pg_temp.uid('0', 1700 + 2), pg_temp.uid('0', 1), pg_temp.uid('0', 517), pg_temp.uid('b', 5), 'homework',
+   'Lire la page 24 du livre de lecture', 'Deux fois à voix haute, puis répondre aux trois questions du bas de la page.',
+   'Français', pg_temp.school_day(1), now() - interval '1 day'),
+  (pg_temp.uid('0', 1700 + 3), pg_temp.uid('0', 1), pg_temp.uid('0', 517), pg_temp.uid('b', 5), 'homework',
+   'Fiche d''additions n° 3', 'Les dix premières opérations seulement.',
+   'Mathématiques', pg_temp.school_day(1), now() - interval '1 day'),
+  (pg_temp.uid('0', 1700 + 4), pg_temp.uid('0', 1), pg_temp.uid('0', 517), pg_temp.uid('b', 12), 'homework',
+   'Réviser les lettres ש et ת', 'Les lire, puis les écrire trois fois chacune sur le cahier.',
+   'Hébreu', pg_temp.school_day(2), now() - interval '1 day'),
+  (pg_temp.uid('0', 1700 + 5), pg_temp.uid('0', 1), pg_temp.uid('0', 517), pg_temp.uid('b', 11), 'homework',
+   'Learn the colours song', 'Chanter le refrain avec les gestes, comme en classe.',
+   'Anglais', pg_temp.school_day(2), now() - interval '20 hours'),
+  (pg_temp.uid('0', 1700 + 6), pg_temp.uid('0', 1), pg_temp.uid('0', 517), pg_temp.uid('b', 5), 'homework',
+   'Apporter une feuille d''arbre pour l''herbier', 'Une feuille ramassée par terre, bien à plat dans un livre la veille.',
+   'Questionner le monde', pg_temp.school_day(3), now() - interval '20 hours'),
+  (pg_temp.uid('0', 1700 + 7), pg_temp.uid('0', 1), pg_temp.uid('0', 517), pg_temp.uid('b', 5), 'homework',
+   'Poésie : « L''automne », première strophe', 'À savoir réciter sans le cahier.',
+   'Français', pg_temp.school_day(5), now() - interval '20 hours');
+
+insert into public.homework_completions (post_id, student_id, marked_by_user_id, done_at)
+values (pg_temp.uid('0', 1700 + 1), pg_temp.person_uid('d', 1, 2), pg_temp.person_uid('c', 1, 1), now() - interval '2 days');
 
 -- individual notes for parent-1's first child (PS Tournesols)
 insert into public.individual_notes (id, school_id, student_id, author_id, body_md, visibility, kind, created_at) values
@@ -485,7 +560,7 @@ where user_id = any (array(select pg_temp.person_uid('c', f, p) from generate_se
 
 insert into public.forms (id, school_id, title, description_md, schema, audience, target_ids, per_student, opens_at, closes_at, created_by) values
   (pg_temp.uid('0', 3328 + 1), pg_temp.uid('0', 1), 'Fiche de rentrée 2026-2027',
-   'Merci de compléter une fiche par enfant avant le 30 septembre.',
+   'Merci de compléter une fiche par enfant avant la date de clôture.',
    '{"fields": [
       {"id": "allergies", "type": "textarea", "label": "Allergies, PAI, traitements", "required": false},
       {"id": "pickup", "type": "text", "label": "Personnes autorisées à récupérer l''enfant", "required": true},
@@ -493,7 +568,9 @@ insert into public.forms (id, school_id, title, description_md, schema, audience
       {"id": "lunch", "type": "choice", "label": "Déjeuner", "required": true, "options": ["Cantine", "Panier repas"]},
       {"id": "consent", "type": "yesno", "label": "J''autorise les sorties de proximité à pied", "required": true}
     ]}'::jsonb,
-   'school', '{}', true, now() - interval '15 days', '2026-09-30 23:59+02', pg_temp.uid('a', 1)),
+   -- Relative dates: a fixed closing day turned the seed's own form into a closed one, and two
+   -- pgTAP assertions red, the morning the calendar passed it.
+   'school', '{}', true, now() - interval '15 days', now() + interval '15 days', pg_temp.uid('a', 1)),
   (pg_temp.uid('0', 3328 + 2), pg_temp.uid('0', 1), 'Sondage : horaires de la garderie du soir',
    'Pour adapter la garderie aux besoins des familles (une réponse par famille).',
    '{"fields": [
@@ -518,8 +595,9 @@ from generate_series(1, 18) as f;
 
 insert into public.appointment_slots (id, school_id, class_id, teacher_id, starts_at, ends_at, location)
 select pg_temp.uid('0', 3584 + i), pg_temp.uid('0', 1), pg_temp.uid('0', 512 + 2), pg_temp.uid('b', 2),
-       '2026-10-05 16:30+02'::timestamptz + (i - 1) * interval '15 minutes',
-       '2026-10-05 16:45+02'::timestamptz + (i - 1) * interval '15 minutes', 'Salle 2'
+       -- three school days ahead, at 16:30 in Paris: a meeting slot is only bookable in the future
+       ((pg_temp.school_day(3) + time '16:30') at time zone 'Europe/Paris') + (i - 1) * interval '15 minutes',
+       ((pg_temp.school_day(3) + time '16:45') at time zone 'Europe/Paris') + (i - 1) * interval '15 minutes', 'Salle 2'
 from generate_series(1, 8) as i;
 update public.appointment_slots set booked_by = pg_temp.person_uid('c', 1, 1), student_id = pg_temp.person_uid('d', 1, 1), booked_at = now() - interval '2 days'
 where id = pg_temp.uid('0', 3584 + 2);

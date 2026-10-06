@@ -548,6 +548,37 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   lecture seule et l'enseignante lisent ; l'enseignante est renvoyée de l'écran de saisie. Vérifié :
   `pnpm check`, `pnpm build`, **499 assertions pgTAP**, 26 e2e (2 ignorés, l'invitation), axe à
   0 violation sérieuse à 390 et 1 440 px, en clair et en sombre.
+- **Session 33 — l'espace devoirs, et les photos qui passent enfin** (ADR-0070 à ADR-0072), joué
+  sur une pile Supabase réelle et sur un build de production. Le **cahier de texte** s'ouvre sur le
+  jour que l'on prépare (« Pour demain » le soir, « Pour aujourd'hui » jusqu'à midi, « Pour lundi »
+  dès le vendredi midi), la semaine en bandeau avec un anneau par jour, une couleur par matière ; les
+  **pages et documents** joints s'affichent sous chaque devoir, en grand sur la **fiche**
+  `/devoirs/[id]` qui s'imprime une page par feuille, et dans une **visionneuse** plein écran
+  (glissement, Imprimer, Télécharger) que partagent cahier de vie et messagerie. **« Fait » remplace
+  « Vu »** — rond coché à l'instant, l'équipe voit « Fait : 12 / 24 », jamais qui — **écart au
+  brief à valider par le porteur**. Le **composeur** a sa page (`/devoirs/nouveau`,
+  `/devoirs/[id]/modifier`) : pour quand (prochain cours de la matière lu dans l'emploi du temps),
+  matière en un toucher, « Photographier une page », « Donner aussi à » d'autres classes, brouillon.
+  **Le plafond de 1 Mo des Server Actions** faisait planter l'écran de conversation dès qu'un parent
+  envoyait une photo de téléphone (ADR-0071) : les fichiers partent désormais du navigateur droit
+  dans le bucket privé, réencodés sans EXIF, et l'action ne reçoit qu'une description vérifiée
+  contre Storage ; les **photos dans les conversations** (appareil, galerie, collage, mosaïque) en
+  découlent, et déposer dans le bucket `messages` exige le droit d'écrire dans le fil. **Trouvé en
+  chemin** : le seed rendait quatre assertions pgTAP rouges depuis le 1er octobre (dates figées) ;
+  `ops:storage-sweep` n'avait **jamais** rien balayé (schéma `storage` non exposé) et aurait, le
+  jour venu, supprimé toutes les vignettes puis, passé mille lignes, des photos publiées — il liste
+  désormais par l'API Storage et pagine ; et surtout **envoyer un message restait en suspens quatre
+  à sept fois sur dix** après un chargement de page, message enregistré mais jamais affiché, en
+  production depuis le 15 septembre : le défaut ouvert de Next **vercel/next.js#66426**
+  (`loading.tsx` + `revalidatePath`), qui touchait aussi le formulaire de devoir dès qu'une
+  frontière l'enveloppait. **Les frontières de chargement de l'ADR-0068 sont retirées**
+  (ADR-0072) : la barre sous l'onglet répond toujours au clic, le squelette disparaît jusqu'à ce
+  que Next corrige. Publication d'un devoir de trois pages : 1,1 à 1,4 s (WebP à l'effort 2, au lieu
+  de 1,5). Vérifié : `pnpm check` (208 tests), `pnpm build`, **529 assertions pgTAP**, e2e en mode
+  CI sur le build de production, axe à 0 violation sérieuse à 390 et 1 440 px en clair et en sombre
+  (hors `target-size` positionnel sous la barre épinglée du composeur). **Restent au porteur :
+  appliquer la migration avant de déployer** (le code lit des colonnes nouvelles), valider « Fait »
+  et l'absence de squelette, et essayer l'appareil photo et l'impression sur de vrais téléphones.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

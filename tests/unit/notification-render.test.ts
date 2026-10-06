@@ -33,6 +33,10 @@ describe("notification kinds", () => {
 describe("renderNotification", () => {
   it("links each kind to the right screen", () => {
     expect(hrefFor("announcement.new", { announcement_id: "a1" })).toBe("/annonces/a1");
+    expect(hrefFor("class_post.new", { class_id: "c1", type: "homework", post_id: "p1" })).toBe(
+      "/devoirs/p1",
+    );
+    // a notification queued before the payload named its post still lands on the class tab
     expect(hrefFor("class_post.new", { class_id: "c1", type: "homework" })).toBe(
       "/classes/c1/devoirs",
     );

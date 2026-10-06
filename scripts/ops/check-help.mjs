@@ -75,6 +75,9 @@ const ROLE_OVERRIDES = {
   "/classes/[classId]/evaluations": ["parent", "teacher", ...ADMIN],
   // `notFound()` for anyone who is not a teacher of the class or staff.
   "/classes/[classId]/publier": TEAM,
+  // The homework composer, new and edit: `notFound()` outside the team of the class.
+  "/devoirs/nouveau": TEAM,
+  "/devoirs/[postId]/modifier": TEAM,
   // Redirected back to the class: a cross-class reading, never a family one (ADR-0042).
   "/classes/[classId]/retards": TEAM,
   // A parent with nothing to publish is redirected home.

@@ -1,10 +1,13 @@
 "use client";
 
 import {
+  CameraIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   CornerDownRightIcon,
+  FileTextIcon,
   FlagIcon,
+  Loader2Icon,
   MoreHorizontalIcon,
   PaperclipIcon,
   ReplyIcon,
@@ -28,6 +31,8 @@ import {
 } from "react";
 
 import { UserAvatar } from "@/components/domain/user-avatar";
+import { useUploads } from "@/components/forms/use-uploads";
+import { MessageAttachments, useSignedPhotos } from "./message-attachments";
 import { PollCard, type ThreadPollView } from "./poll-card";
 import { PollComposer } from "./poll-composer";
 import { Button } from "@/components/ui/button";
@@ -49,11 +54,12 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   dayKey,
-  type MessageAttachment,
+  isPhoto,
   parseAttachments,
   REACTION_EMOJIS,
   segmentMentions,
 } from "@/lib/messaging/format";
+import { IMAGE_EDGES, messageFolder, UPLOAD_LIMITS } from "@/lib/uploads/shared";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import {
@@ -96,6 +102,8 @@ type Row =
 
 export function ThreadView({
   threadId,
+  schoolId,
+  signedUrls,
   initialMessages,
   members,
   meId,
@@ -109,6 +117,9 @@ export function ThreadView({
   polls = [],
 }: {
   threadId: string;
+  schoolId: string;
+  /** Photos of the first page of messages, signed with the page. */
+  signedUrls: Record<string, string>;
   initialMessages: Message[];
   members: Member[];
   meId: string;
@@ -137,13 +148,24 @@ export function ThreadView({
   const [unseen, setUnseen] = useState(0);
 
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
   const atBottomRef = useRef(true);
   const composerRef = useRef<{ focus: () => void }>(null);
 
   const memberMap = useMemo(() => new Map(members.map((m) => [m.id, m])), [members]);
   const memberNames = useMemo(() => members.map((m) => m.name), [members]);
   const memberLabels = useMemo(() => new Map(members.map((m) => [m.id, m.name])), [members]);
+  const photoPaths = useMemo(
+    () =>
+      messages.flatMap((message) =>
+        message.deleted_at
+          ? []
+          : parseAttachments(message.attachments)
+              .filter(isPhoto)
+              .flatMap((photo) => (photo.thumb ? [photo.path, photo.thumb] : [photo.path])),
+      ),
+    [messages],
+  );
+  const photos = useSignedPhotos(signedUrls, photoPaths);
   const pollsByMessage = useMemo(() => {
     const index = new Map<string, ThreadPollView>();
     for (const poll of polls) if (poll.messageId) index.set(poll.messageId, poll);
@@ -251,12 +273,26 @@ export function ThreadView({
     };
   }, [threadId, searchMode, meId, isAtBottom, markReadIfVisible, router]);
 
+  /**
+   * To the very end of the conversation. On a phone the page scrolls, not the thread, and the
+   * composer is pinned over its last lines: bringing the end marker into view left the last
+   * message — and the photos it carries — under the composer.
+   */
+  const scrollToEnd = useCallback((behavior: ScrollBehavior = "auto") => {
+    const scroller = scrollerRef.current;
+    if (scroller && scroller.scrollHeight > scroller.clientHeight + 1) {
+      scroller.scrollTo({ top: scroller.scrollHeight, behavior });
+      return;
+    }
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior });
+  }, []);
+
   // Follow the conversation only when the reader is already at the end of it.
   useEffect(() => {
     if (searchMode) return;
     if (!atBottomRef.current) return;
-    bottomRef.current?.scrollIntoView({ block: "end" });
-  }, [messages.length, searchMode]);
+    scrollToEnd();
+  }, [messages.length, searchMode, scrollToEnd]);
 
   function onScroll() {
     atBottomRef.current = isAtBottom();
@@ -267,7 +303,7 @@ export function ThreadView({
   }
 
   function jumpToBottom() {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    scrollToEnd("smooth");
     setUnseen(0);
   }
 
@@ -390,6 +426,8 @@ export function ThreadView({
                   }
                   canWrite={canWrite}
                   canModerate={canModerate}
+                  photoUrls={photos.urls}
+                  onPhotoExpired={photos.expired}
                   onReply={() => {
                     setReplyTo(row.message);
                     composerRef.current?.focus();
@@ -418,7 +456,6 @@ export function ThreadView({
             );
           })}
         </ol>
-        <div ref={bottomRef} />
       </div>
 
       {unseen > 0 && (
@@ -439,6 +476,7 @@ export function ThreadView({
         <Composer
           ref={composerRef}
           threadId={threadId}
+          schoolId={schoolId}
           hint={hint}
           replyTo={replyTo}
           replyName={
@@ -503,6 +541,8 @@ function MessageItem({
   replyTarget,
   canWrite,
   canModerate,
+  photoUrls,
+  onPhotoExpired,
   onReply,
   onReport,
   onModerate,
@@ -518,6 +558,8 @@ function MessageItem({
   replyTarget: Message | null;
   canWrite: boolean;
   canModerate: boolean;
+  photoUrls: ReadonlyMap<string, string>;
+  onPhotoExpired: (path: string) => void;
   onReply: () => void;
   onReport: () => void;
   onModerate: () => void;
@@ -564,7 +606,14 @@ function MessageItem({
         <div className="flex items-start gap-1">
           <div
             className={cn(
-              "max-w-[min(85%,42rem)] min-w-0 rounded-lg px-3 py-2 text-sm leading-[1.5]",
+              "max-w-[min(85%,42rem)] min-w-0 rounded-lg text-sm leading-[1.5]",
+              // Photos need a width of their own: a bubble sized by its text was narrower than
+              // the grid it carried, and the second photo overflowed it.
+              !message.deleted_at && attachments.some(isPhoto) && "w-[min(17.5rem,85%)]",
+              // A photo sent alone sits in a thin frame of the bubble, not in a padded card.
+              !message.deleted_at && attachments.length > 0 && !message.body && !replyTarget
+                ? "p-1"
+                : "px-3 py-2",
               mine
                 ? "rounded-br-sm bg-primary text-primary-foreground"
                 : "rounded-bl-sm border border-border bg-card text-card-foreground",
@@ -589,8 +638,8 @@ function MessageItem({
                   ? t("message.moderated", { reason: message.moderation_reason })
                   : t("message.deleted")}
               </p>
-            ) : (
-              <p className="break-words whitespace-pre-wrap">
+            ) : message.body ? (
+              <p dir="auto" className="break-words whitespace-pre-wrap">
                 {segmentMentions(message.body, memberNames).map((segment, i) =>
                   segment.mention ? (
                     <span key={i} className="font-semibold underline decoration-dotted">
@@ -601,23 +650,17 @@ function MessageItem({
                   ),
                 )}
               </p>
-            )}
+            ) : null}
             {!message.deleted_at && attachments.length > 0 && (
-              <ul className="mt-2 flex flex-col gap-1">
-                {attachments.map((file: MessageAttachment) => (
-                  <li key={file.path}>
-                    <a
-                      href={`/api/storage/messages?path=${encodeURIComponent(file.path)}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-1 underline"
-                    >
-                      <PaperclipIcon className="size-3 shrink-0" aria-hidden />
-                      {file.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <div className={cn(message.body && "mt-2")}>
+                <MessageAttachments
+                  attachments={attachments}
+                  urls={photoUrls}
+                  onExpired={onPhotoExpired}
+                  title={name}
+                  mine={mine}
+                />
+              </div>
             )}
           </div>
 
@@ -836,6 +879,7 @@ function DeleteDialog({
 function Composer({
   ref,
   threadId,
+  schoolId,
   hint,
   replyTo,
   replyName,
@@ -844,6 +888,7 @@ function Composer({
 }: {
   ref?: Ref<{ focus: () => void }>;
   threadId: string;
+  schoolId: string;
   hint?: string;
   replyTo: Message | null;
   replyName: string;
@@ -851,11 +896,24 @@ function Composer({
   onSent: (sent: NonNullable<SendState["sent"]>) => void;
 }) {
   const t = useTranslations("messaging");
+  const tAttachments = useTranslations("attachments");
   const [state, action, pending] = useActionState(sendMessage, initialSend);
   const formRef = useRef<HTMLFormElement>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
+  const camera = useRef<HTMLInputElement>(null);
+  const picker = useRef<HTMLInputElement>(null);
   const lastSent = useRef<string | null>(null);
-  const [files, setFiles] = useState<string[]>([]);
+  // A photo leaves the phone the moment it is chosen, re-encoded without its metadata: by the
+  // time the message is typed, it is there (ADR-0071).
+  const uploads = useUploads({
+    bucket: "messages",
+    folder: messageFolder(schoolId, threadId),
+    maxFiles: UPLOAD_LIMITS.messages.maxFiles,
+    maxPdfBytes: UPLOAD_LIMITS.messages.maxPdfBytes,
+    allowPdf: true,
+    image: { maxEdge: IMAGE_EDGES.message, quality: 0.84, thumbEdge: IMAGE_EDGES.thumb },
+    normalisedByServer: false,
+  });
 
   useEffect(() => {
     if (ref && typeof ref === "object") ref.current = { focus: () => textRef.current?.focus() };
@@ -866,11 +924,13 @@ function Composer({
       lastSent.current = state.sent.id;
       onSent(state.sent);
       formRef.current?.reset();
-      setFiles([]);
+      uploads.reset();
       // Resetting the form used to close the keyboard between two messages.
       textRef.current?.focus();
     }
-  }, [state, onSent]);
+  }, [state, onSent, uploads]);
+
+  const blocked = pending || uploads.busy || uploads.failed;
 
   return (
     <form
@@ -879,8 +939,17 @@ function Composer({
       // `bottom-16` was 64 px against a tab bar of 56 px plus 34 px of iPhone
       // safe area: 26 px of the composer, the Send button included, sat under it.
       className="sticky bottom-[calc(var(--nav-h)+0.5rem)] mt-4 flex flex-col gap-2 rounded-xl border border-border bg-card p-3 shadow-lift lg:bottom-2"
+      onPaste={(event) => {
+        // A screenshot pasted into the message joins it, as it would in any other messenger.
+        const pasted = Array.from(event.clipboardData.files);
+        if (pasted.length > 0) {
+          event.preventDefault();
+          uploads.add(pasted);
+        }
+      }}
     >
       <input type="hidden" name="threadId" value={threadId} />
+      <input type="hidden" name="attachments" value={JSON.stringify(uploads.messageUploads)} />
       {replyTo && (
         <div className="flex items-center justify-between gap-2 rounded-lg bg-muted px-2 py-1 text-xs text-muted-foreground">
           <input type="hidden" name="replyTo" value={replyTo.id} />
@@ -897,11 +966,72 @@ function Composer({
           </button>
         </div>
       )}
+      {uploads.items.length > 0 && (
+        <ul className="flex gap-2 overflow-x-auto pb-0.5" aria-label={t("composer.attached")}>
+          {uploads.items.map((item, index) => (
+            <li
+              key={item.id}
+              className={cn(
+                "relative size-16 shrink-0 overflow-hidden rounded-md border bg-muted",
+                item.status === "error" ? "border-destructive" : "border-border",
+              )}
+              aria-busy={item.status === "preparing" || item.status === "uploading"}
+            >
+              {item.kind === "image" && item.previewUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element -- a local blob: preview
+                <img src={item.previewUrl} alt="" className="size-full object-cover" />
+              ) : (
+                <span className="flex size-full flex-col items-center justify-center gap-0.5 p-1 text-center">
+                  <FileTextIcon aria-hidden className="size-4 text-muted-foreground" />
+                  <span className="line-clamp-2 text-[0.625rem] leading-tight break-all">
+                    {item.name}
+                  </span>
+                </span>
+              )}
+              {(item.status === "preparing" || item.status === "uploading") && (
+                <span className="absolute inset-0 flex items-center justify-center bg-background/45">
+                  <Loader2Icon aria-hidden className="size-4 animate-spin text-primary" />
+                </span>
+              )}
+              {item.status === "error" && (
+                <button
+                  type="button"
+                  onClick={() => uploads.retry(item.id)}
+                  className="absolute inset-x-0 bottom-0 bg-background/95 py-0.5 text-[0.625rem] font-semibold text-destructive"
+                >
+                  {tAttachments("retry")}
+                </button>
+              )}
+              <span className="sr-only" role="status">
+                {item.status === "done"
+                  ? tAttachments("ready", { name: tAttachments("photoN", { n: index + 1 }) })
+                  : item.status === "error"
+                    ? tAttachments(`error.${item.error ?? "failed"}`)
+                    : tAttachments("preparing")}
+              </span>
+              <button
+                type="button"
+                onClick={() => uploads.remove(item.id)}
+                aria-label={tAttachments("remove", {
+                  name:
+                    item.kind === "image" ? tAttachments("photoN", { n: index + 1 }) : item.name,
+                })}
+                className="absolute top-0 right-0 flex size-8 items-start justify-end p-0.5"
+              >
+                <span className="flex size-5 items-center justify-center rounded-full bg-background/90 ring-1 ring-border">
+                  <XIcon aria-hidden className="size-3" />
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
       <Textarea
         ref={textRef}
         name="body"
         rows={2}
         maxLength={5000}
+        dir="auto"
         placeholder={hint ?? t("composer.placeholder")}
         className="field-sizing-content max-h-40 resize-none"
         onKeyDown={(e) => {
@@ -911,45 +1041,75 @@ function Composer({
             typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
           if (e.key === "Enter" && !e.shiftKey && !touch) {
             e.preventDefault();
-            formRef.current?.requestSubmit();
+            if (!blocked) formRef.current?.requestSubmit();
           }
         }}
       />
-      {files.length > 0 && (
-        <ul className="flex flex-wrap gap-1">
-          {files.map((name) => (
-            <li
-              key={name}
-              className="flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground"
-            >
-              <PaperclipIcon className="size-3" aria-hidden />
-              {name}
-            </li>
-          ))}
-        </ul>
+      {uploads.refusal && (
+        <p role="alert" className="text-xs text-destructive">
+          {tAttachments(`refusal.${uploads.refusal}`)}
+        </p>
       )}
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <label className="flex min-h-11 cursor-pointer items-center gap-2 text-xs text-muted-foreground hover:text-foreground">
+        <div className="flex items-center gap-1">
+          {/* Two doors: the camera, on a phone — the page of tonight's homework is one tap
+              away — and the gallery or a file. */}
+          <button
+            type="button"
+            onClick={() => camera.current?.click()}
+            aria-label={tAttachments("takePhoto")}
+            className="hidden size-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground any-pointer-coarse:flex"
+          >
+            <CameraIcon aria-hidden className="size-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => picker.current?.click()}
+            className="flex min-h-11 items-center gap-2 rounded-md px-2.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
             <PaperclipIcon className="size-4" aria-hidden />
             <span className="sr-only sm:not-sr-only">{t("composer.attach")}</span>
-            <input
-              type="file"
-              name="files"
-              accept="image/*,application/pdf"
-              multiple
-              className="sr-only"
-              onChange={(e) => setFiles([...(e.target.files ?? [])].map((file) => file.name))}
-            />
-          </label>
+          </button>
+          <input
+            ref={camera}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden
+            onChange={(event) => {
+              uploads.add(event.currentTarget.files);
+              event.currentTarget.value = "";
+            }}
+          />
+          <input
+            ref={picker}
+            type="file"
+            accept="image/*,application/pdf"
+            multiple
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden
+            onChange={(event) => {
+              uploads.add(event.currentTarget.files);
+              event.currentTarget.value = "";
+            }}
+          />
           <PollComposer threadId={threadId} />
         </div>
         <div className="flex items-center gap-2">
           {state.status === "error" && (
-            <span className="text-xs text-destructive">{state.message}</span>
+            <span role="alert" className="text-xs text-destructive">
+              {state.message}
+            </span>
           )}
-          <Button type="submit" className="min-h-11" disabled={pending}>
-            <SendIcon aria-hidden />
+          <Button type="submit" className="min-h-11" disabled={blocked}>
+            {pending || uploads.busy ? (
+              <Loader2Icon aria-hidden className="animate-spin" />
+            ) : (
+              <SendIcon aria-hidden />
+            )}
             {t("composer.send")}
           </Button>
         </div>

@@ -1,30 +1,20 @@
-import { CheckIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
-import { ContentCard, EyebrowDot, MetaChip } from "@/components/domain/content-card";
+import { ContentCard, EyebrowDot } from "@/components/domain/content-card";
 import { Markdown } from "@/components/domain/markdown";
 import { MediaGrid } from "@/components/domain/media-grid";
 import { PostActions } from "@/components/domain/post-actions";
-import { Button } from "@/components/ui/button";
 import { plainExcerpt } from "@/lib/text";
-import { toggleHomeworkSeen } from "@/server/actions/class-posts";
 import type { ClassPost } from "@/server/queries/class-space";
 
 /** Past this many characters the body is folded behind "Lire la suite". */
 const FOLD_AT = 320;
 
-export async function PostCard({
-  post,
-  students,
-  canManage,
-  totalFamilies,
-}: {
-  post: ClassPost;
-  /** Children of the viewer in this class (parents) — used for the "vu" toggles. */
-  students: Array<{ id: string; first_name: string }>;
-  canManage: boolean;
-  totalFamilies?: number;
-}) {
+/**
+ * An entry of the cahier de vie. Homework used to share this card, « vu » buttons included; it
+ * has its own layout in the diary since session 33 (ADR-0070), so this card is the diary's only.
+ */
+export async function PostCard({ post, canManage }: { post: ClassPost; canManage: boolean }) {
   const [t, format] = await Promise.all([getTranslations("classSpace"), getFormatter()]);
   const isDraft = post.published_at === null;
   const body = post.body_md ?? "";
@@ -57,20 +47,6 @@ export async function PostCard({
             <>
               <EyebrowDot />
               {t("draft")}
-            </>
-          )}
-          {post.due_on && (
-            <>
-              <EyebrowDot />
-              <span className="text-brick">
-                {t("dueOn", {
-                  date: format.dateTime(new Date(post.due_on), {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                  }),
-                })}
-              </span>
             </>
           )}
         </>
@@ -106,7 +82,12 @@ export async function PostCard({
         ) : undefined
       }
       media={
-        <MediaGrid items={post.media} canDelete={canManage} limit={canManage ? undefined : 4} />
+        <MediaGrid
+          items={post.media}
+          title={post.title}
+          canDelete={canManage}
+          limit={canManage ? undefined : 4}
+        />
       }
       footer={
         <>
@@ -116,37 +97,6 @@ export async function PostCard({
               ? ` · ${format.dateTime(new Date(post.published_at), { dateStyle: "medium" })}`
               : ""}
           </span>
-          {post.type === "homework" &&
-            students.map((student) => {
-              const done = post.completions.some((c) => c.student_id === student.id);
-              return (
-                <form key={student.id} action={toggleHomeworkSeen} className="ml-auto">
-                  <input type="hidden" name="postId" value={post.id} />
-                  <input type="hidden" name="studentId" value={student.id} />
-                  <input type="hidden" name="classId" value={post.class_id} />
-                  <input type="hidden" name="done" value={String(done)} />
-                  <Button
-                    type="submit"
-                    variant={done ? "secondary" : "default"}
-                    size="sm"
-                    className="min-h-11"
-                    aria-pressed={done}
-                  >
-                    <CheckIcon aria-hidden />
-                    {done
-                      ? `${t("seen")} · ${student.first_name}`
-                      : t("markSeen", { name: student.first_name })}
-                  </Button>
-                </form>
-              );
-            })}
-          {post.type === "homework" && canManage && totalFamilies !== undefined && (
-            // The denominator was passed in as a prop and never printed:
-            // "Vu par 4" told nobody whether that was 4 out of 5 or 4 out of 27.
-            <MetaChip tone={post.completions.length >= totalFamilies ? "success" : "neutral"}>
-              {t("seenByTotal", { count: post.completions.length, total: totalFamilies })}
-            </MetaChip>
-          )}
         </>
       }
     />

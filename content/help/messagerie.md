@@ -5,13 +5,13 @@ routes: [/messages, /messages/[threadId], /messages/nouveau]
 topic: daily
 keywords: [messages, messagerie, écrire, conversation, pièce jointe, silencieux, signaler, fermé]
 since: 19
-reviewed: 2026-09-15
+reviewed: 2026-10-06
 ---
 
 L'onglet **Messages** liste vos conversations : le canal officiel de la classe en tête, puis les messages directs et les fils de classe.
 
 - « Nouveau message » propose les personnes que vous avez le droit de contacter, et seulement celles-là.
-- Une pièce jointe est une image ou un PDF de 10 Mo au plus.
+- Une pièce jointe est une photo ou un PDF de 10 Mo au plus. Les photos se prennent directement avec l'appareil du téléphone et s'affichent dans la conversation (voir « Envoyer une photo dans une conversation »).
 - `@Prénom` mentionne quelqu'un ; le menu de chaque message permet de répondre, de réagir, et de signaler.
 - « Mettre en silencieux » coupe les notifications d'un fil sans le quitter.
 - Les messages arrivent en direct, sans recharger la page.

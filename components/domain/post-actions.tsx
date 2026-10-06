@@ -31,7 +31,16 @@ import { deleteClassPost } from "@/server/actions/class-posts";
  * mistyped a due date had to delete the homework — in front of the families
  * who had already ticked it — and set it again.
  */
-export function PostActions({ postId, editHref }: { postId: string; editHref: string }) {
+export function PostActions({
+  postId,
+  editHref,
+  afterDelete,
+}: {
+  postId: string;
+  editHref: string;
+  /** Where to go once deleted, when the current page is the publication itself. */
+  afterDelete?: string;
+}) {
   const t = useTranslations("classSpace");
   const [confirming, setConfirming] = useState(false);
 
@@ -78,6 +87,7 @@ export function PostActions({ postId, editHref }: { postId: string; editHref: st
             </Button>
             <form action={deleteClassPost} onSubmit={() => setConfirming(false)}>
               <input type="hidden" name="postId" value={postId} />
+              {afterDelete && <input type="hidden" name="next" value={afterDelete} />}
               <Button type="submit" variant="destructive" className="min-h-11">
                 <Trash2Icon aria-hidden />
                 {t("post.delete")}

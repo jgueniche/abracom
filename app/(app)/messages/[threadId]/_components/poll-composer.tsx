@@ -45,7 +45,15 @@ export function PollComposer({ threadId }: { threadId: string }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button" variant="outline" size="icon" className="size-11" title={t("new")}>
+        {/* Drawn like its two neighbours, the camera and the paperclip: three ways to add to a
+            message, none of them louder than « Envoyer ». */}
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-11 text-muted-foreground hover:text-foreground"
+          title={t("new")}
+        >
           <BarChart3Icon aria-hidden />
           <span className="sr-only">{t("new")}</span>
         </Button>

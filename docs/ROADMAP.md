@@ -1056,6 +1056,70 @@ d'authentification par-dessus le shim du dépôt. Connexion réelle, six rôles.
       (`scripts/ops/apply-migrations.sh`) — sans elles, les deux écrans échouent, la table n'existant
       pas.
 
+## Session 33 — L'espace devoirs, et les photos qui passent enfin (2026-10-06, ADR-0070 à ADR-0072)
+
+Demandée par le porteur : un espace devoirs « ultra fluide et intuitif, très ludique », des pièces
+jointes affichées directement — la page de révision photographiée par l'enseignant·e, lue sur le
+téléphone ou imprimée si le cahier est resté à l'école — et des photos partagées dans les groupes de
+parents.
+
+- [x] **Cahier de texte repensé** (`/devoirs`, onglet Devoirs de la classe) : la semaine s'ouvre
+      sur **le jour préparé** (« Pour demain » le soir, « Pour aujourd'hui » jusqu'à midi, « Pour
+      lundi » dès le vendredi midi), semaine en bandeau avec un anneau de progression par jour, jours
+      passés rangés sous « Plus tôt cette semaine », une couleur par matière (huit, contraste testé).
+- [x] **« Fait » remplace « Vu »** — rond à cocher dessiné à l'instant (`useOptimistic`), une
+      célébration discrète, « Tout est fait » ; l'équipe voit « Fait : 12 / 24 », jamais qui.
+      **Écart au brief, à valider par le porteur.** L'autre parent de l'enfant peut décocher
+      (politique de suppression élargie, quatre assertions).
+- [x] **Pages et documents** : photos de pages (2 400 px, assez pour imprimer), PDF jusqu'à 20 Mo,
+      vignettes de 640 px écrites à la publication ; affichées sous chaque devoir, en grand sur la
+      **fiche** `/devoirs/[id]` qui s'imprime une page par feuille ; **visionneuse** plein écran
+      partagée (glissement, Imprimer, Télécharger) — cahier de vie et messagerie compris.
+- [x] **Composeur dédié** `/devoirs/nouveau` et `/devoirs/[id]/modifier` : pour quand (prochain cours
+      de la matière lu dans l'emploi du temps), matière en un toucher, « Photographier une page »,
+      « Donner aussi à » d'autres classes (fichiers copiés dans le bucket), brouillon, modification.
+- [x] **Fin du plafond de 1 Mo** (ADR-0071) : une photo de téléphone faisait planter tout l'écran de
+      conversation. Les fichiers partent du navigateur directement dans le bucket privé, réencodés
+      (sans EXIF ni GPS), avec progression ; l'action ne reçoit qu'une description vérifiée contre
+      Storage. Cahier de vie et messagerie sur la même chaîne.
+- [x] **Photos dans les conversations** : appareil photo, galerie, collage ; aperçu avant envoi ;
+      une photo en grand ou une mosaïque dans le fil. Le dépôt dans le bucket `messages` exige
+      désormais le droit d'écrire dans le fil (`can_post_in_thread`, six assertions).
+- [x] Migration `20261006090000_homework_attachments.sql`, `021_homework_attachments.sql`
+      (30 assertions) ; seed : sept devoirs de CP sur des jours d'école et l'emploi du temps du CP.
+- [x] Aide : `cahier-de-texte.md` réécrit, `donner-un-devoir.md` et `photos-dans-les-messages.md`
+      créés, cinq articles relus et redatés. `ops:check-help` vert.
+
+### Ce que les bancs ont trouvé
+
+- [x] **Le seed rendait quatre assertions pgTAP rouges depuis le 1er octobre** (dates figées), sur
+      `main` aussi : dates relatives.
+- [x] **`ops:storage-sweep` n'avait jamais rien balayé** (`PGRST106`, schéma `storage` non exposé),
+      et le jour où il aurait marché il aurait supprimé toutes les vignettes et, passé mille photos,
+      des photos publiées : il liste par l'API Storage, pagine, garde les vignettes. Joué : un envoi
+      abandonné part, la page et sa vignette restent.
+- [x] **Envoyer un message restait en suspens quatre à sept fois sur dix** après un chargement de
+      page — en production depuis le 15 septembre (ADR-0072). Cause : le défaut ouvert de Next
+      vercel/next.js#66426 (`loading.tsx` + `revalidatePath`) ; les frontières de chargement de
+      l'ADR-0068 sont retirées, la barre sous l'onglet reste. 0 échec sur tous les bancs ensuite.
+- [x] Focus clavier masqué par la barre « Publier » épinglée (SC 2.4.11) : corrigé.
+- [x] Publication d'un devoir de trois pages : 1,5 → 1,1–1,4 s d'action (WebP à l'effort 2).
+
+### Recette
+
+- [x] `pnpm check` (208 tests unitaires), `pnpm build`, **529 assertions pgTAP** sur la pile
+      Supabase et sur PostgreSQL 16, e2e en mode CI sur le build de production (dont quatre
+      nouveaux, répétés trente-deux fois sans échec).
+- [x] `axe` à 0 violation sérieuse sur les écrans touchés, à 390 et 1 440 px, en clair et en
+      sombre — hormis `target-size` sur le composeur à 390 px page en haut, positionnel (la barre
+      épinglée recouvre la barre d'outils tant qu'on n'a pas défilé), documenté dans l'ADR-0070.
+- [ ] **À valider par le porteur** : « Fait » à la place de « Vu » ; la disparition du squelette
+      au clic (ADR-0072) ; l'appareil photo et l'impression (AirPrint) sur de vrais téléphones —
+      joués ici en émulation.
+- [ ] **À appliquer en production, avant de déployer** : la migration
+      (`scripts/ops/apply-migrations.sh`). Le code lit les colonnes `thumb_path`, `filename` et
+      `size_bytes` : déployé sans elle, le cahier de texte et le cahier de vie échouent.
+
 ## Questions ouvertes (§15 du brief)
 
 Bloquantes pour la session 2 :

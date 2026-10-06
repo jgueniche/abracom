@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { requireCurrentUser } from "@/lib/auth/session";
+import { isPhoto, parseAttachments } from "@/lib/messaging/format";
+import { signedUrls } from "@/lib/storage-urls";
+import { createClient } from "@/lib/supabase/server";
 import { canWriteInSchool, hasSchoolRole, isSchoolStaff } from "@/lib/permissions";
 import {
   getMessages,
@@ -49,6 +52,18 @@ export default async function ThreadPage({
     getThreadPolls(threadId),
     getThreadMessagingState(threadId),
   ]);
+
+  // The photos of the messages on screen, signed in one request — thumbnails for the thread,
+  // full size for the viewer. Messages that arrive later are signed by the browser.
+  const photoPaths = messages.flatMap((message) =>
+    parseAttachments(message.attachments)
+      .filter(isPhoto)
+      .flatMap((photo) => (photo.thumb ? [photo.path, photo.thumb] : [photo.path])),
+  );
+  const signed =
+    photoPaths.length > 0
+      ? Object.fromEntries(await signedUrls(await createClient(), "messages", photoPaths))
+      : {};
 
   const members: Member[] = thread.members
     .filter((m) => m.profile)
@@ -234,6 +249,8 @@ export default async function ThreadPage({
 
         <ThreadView
           threadId={thread.id}
+          schoolId={thread.school_id}
+          signedUrls={signed}
           initialMessages={messages}
           members={members}
           meId={user.id}
