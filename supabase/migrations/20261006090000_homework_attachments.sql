@@ -10,7 +10,7 @@
 --               PDF's card, and given back when a family downloads it;
 --   size_bytes  printed beside a PDF ("240 Ko"), so a family on a phone plan
 --               knows what it is about to open;
---   thumb_path  a 480 px rendition written at publication, so that a week of
+--   thumb_path  a 640 px rendition written at publication, so that a week of
 --               homework with ten pages costs a few hundred kilobytes on a
 --               phone instead of ten full-resolution images.
 --
