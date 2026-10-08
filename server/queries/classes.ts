@@ -1,15 +1,16 @@
 import "server-only";
 
+import { getCurrentUser } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
 /** Classes taught by the signed-in teacher (any role) in the current year. */
 export async function getMyTeachingClasses(userId: string) {
-  const supabase = await createClient();
+  const [supabase, user] = await Promise.all([createClient(), getCurrentUser()]);
   const { data, error } = await supabase
     .from("class_teachers")
     .select(
       `role, subject,
-       class:classes ( id, name, room, archived,
+       class:classes ( id, school_id, name, room, archived,
          level:levels ( code, label_fr, label_en, sort_order ),
          school_year:school_years ( label, is_current ),
          enrollments ( count ) )`,
@@ -17,7 +18,14 @@ export async function getMyTeachingClasses(userId: string) {
     .eq("user_id", userId);
   if (error) throw error;
   return (data ?? [])
-    .filter((row) => row.class !== null && !row.class.archived && row.class.school_year?.is_current)
+    .filter(
+      (row) =>
+        row.class !== null &&
+        !row.class.archived &&
+        row.class.school_year?.is_current &&
+        // the classes of the school the reader works in (ADR-0074)
+        row.class.school_id === user?.school?.id,
+    )
     .sort((a, b) => (a.class!.level?.sort_order ?? 0) - (b.class!.level?.sort_order ?? 0));
 }
 

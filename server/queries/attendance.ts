@@ -1,15 +1,29 @@
 import "server-only";
 
+import { getCurrentUser } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
-/** The lists the caller may point on a given day, with the state of that day. */
+/**
+ * The lists the caller may point on a given day, with the state of that day —
+ * in the school the caller works in (ADR-0074). `my_attendance_lists()` answers
+ * for every school the caller may manage, and a platform administrator manages
+ * them all: the empty real school's dashboard listed the test school's roll
+ * calls. The function does not return the school, so the lists' own rows say
+ * it, read at the same time.
+ */
 export async function getMyAttendanceLists(onDate?: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("my_attendance_lists", {
-    on_date_: onDate ?? undefined,
-  });
+  const [user, { data, error }, { data: lists, error: listsError }] = await Promise.all([
+    getCurrentUser(),
+    supabase.rpc("my_attendance_lists", { on_date_: onDate ?? undefined }),
+    supabase.from("attendance_lists").select("id, school_id").eq("archived", false),
+  ]);
   if (error) throw error;
-  return data ?? [];
+  if (listsError) throw listsError;
+  const schoolId = user?.school?.id;
+  if (!schoolId) return data ?? [];
+  const here = new Set((lists ?? []).filter((l) => l.school_id === schoolId).map((l) => l.id));
+  return (data ?? []).filter((row) => here.has(row.list_id));
 }
 
 export type AttendanceListRow = Awaited<ReturnType<typeof getMyAttendanceLists>>[number];

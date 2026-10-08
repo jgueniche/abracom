@@ -3542,6 +3542,15 @@ export type Database = {
         Returns: undefined
       }
       close_poll: { Args: { poll_: string }; Returns: undefined }
+      create_family: {
+        Args: {
+          p_children: Json
+          p_family_name: string
+          p_parents: Json
+          p_school: string
+        }
+        Returns: string[]
+      }
       create_group_thread: {
         Args: {
           class_ids?: string[]
@@ -3549,6 +3558,10 @@ export type Database = {
           include_teachers?: boolean
           title_: string
         }
+        Returns: string
+      }
+      create_school: {
+        Args: { p_city?: string; p_name: string }
         Returns: string
       }
       create_thread_poll: {
@@ -3969,6 +3982,10 @@ export type Database = {
       school_timezone: { Args: { school_: string }; Returns: string }
       session_context: { Args: Record<PropertyKey, never>; Returns: Json }
       set_current_school_year: { Args: { year_id: string }; Returns: undefined }
+      set_test_school_password: {
+        Args: { p_password: string }
+        Returns: number
+      }
       set_image_rights: {
         Args: { signed: boolean; student: string }
         Returns: number

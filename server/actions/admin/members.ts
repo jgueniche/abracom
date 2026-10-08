@@ -7,6 +7,8 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
 import { assertSchoolContext } from "@/lib/auth/guards";
+import type { CredentialsState } from "@/lib/auth/credentials";
+import { temporaryPassword } from "@/lib/auth/temporary-password";
 import { getSupabasePublicConfig, publicEnv } from "@/lib/env";
 import { ForbiddenError } from "@/lib/permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -53,7 +55,17 @@ async function sendMagicLink(email: string, next = "/accueil"): Promise<boolean>
   return !error;
 }
 
-export async function inviteMember(_prev: ActionState, formData: FormData): Promise<ActionState> {
+/**
+ * Adds a member of the team. A new account is opened with a provisional
+ * password, shown once to whoever invites (ADR-0075): until the school's e-mail
+ * is connected, a sign-in link would not reach anyone outside the platform's
+ * team, and the person would wait for a message that never comes. An existing
+ * account keeps its password and simply gains the role.
+ */
+export async function inviteMember(
+  _prev: CredentialsState,
+  formData: FormData,
+): Promise<CredentialsState> {
   try {
     const t = await getTranslations("admin.members");
     const { user, schoolId } = await assertSchoolContext(["school_admin"]);
@@ -68,29 +80,38 @@ export async function inviteMember(_prev: ActionState, formData: FormData): Prom
 
     const supabase = await createClient();
     const admin = createAdminClient();
-    const account = await ensureAccount(admin, parsed.data);
+    const password = temporaryPassword();
+    const account = await ensureAccount(admin, { ...parsed.data, password });
     const added = await ensureMembership(supabase, schoolId, account.userId, parsed.data.role);
     if (!added) return { status: "error", message: t("alreadyMember") };
 
-    const sent = await sendMagicLink(parsed.data.email);
-    if (sent) {
-      await supabase
-        .from("memberships")
-        .update({ invited_at: new Date().toISOString(), invited_by: user.id })
-        .eq("school_id", schoolId)
-        .eq("user_id", account.userId)
-        .eq("role", parsed.data.role);
-    }
+    // The handover is the invitation: the batch of sign-in links leaves this one alone.
+    await supabase
+      .from("memberships")
+      .update({ invited_at: new Date().toISOString(), invited_by: user.id })
+      .eq("school_id", schoolId)
+      .eq("user_id", account.userId)
+      .eq("role", parsed.data.role);
     await logAudit(supabase, {
       schoolId,
       actorId: user.id,
       action: "membership.invite",
       entity: "memberships",
       entityId: account.userId,
-      diff: { role: parsed.data.role, created: account.created, sent },
+      diff: { role: parsed.data.role, created: account.created },
     });
     revalidatePath("/admin", "layout");
-    return { status: "success", message: sent ? t("invited") : t("invitedNoMail") };
+    return {
+      status: "success",
+      message: account.created ? t("invited") : t("invitedExisting"),
+      credentials: [
+        {
+          name: `${parsed.data.firstName} ${parsed.data.lastName}`,
+          email: parsed.data.email,
+          password: account.created ? password : null,
+        },
+      ],
+    };
   } catch (error) {
     return toActionError(error);
   }

@@ -5,12 +5,14 @@ routes: [/profil]
 topic: data
 keywords: [profil, coordonnées, téléphone, langue, mot de passe, photo, thème]
 since: 4
-reviewed: 2026-09-15
+reviewed: 2026-10-08
 ---
 
 **Mon profil**, sous votre photo en haut à droite, porte ce qui vous appartient : prénom, nom, téléphone, langue de l'interface, photo.
 
 La langue choisie ici suit votre compte d'un appareil à l'autre ; le sélecteur du menu ne change que l'appareil courant. Le thème clair, sombre ou automatique se règle dans le même menu.
+
+Le **mot de passe** se change dans Mon profil → **Sécurité**, avec la validation en deux étapes.
 
 :::roles teacher, staff, school_admin, super_admin
 La page porte aussi **Messages directs des familles** : l'interrupteur ferme ou ouvre votre propre porte. Fermé, une famille ne peut plus vous écrire directement — vos collègues, eux, vous joignent dans tous les cas, et vous continuez à écrire aux familles. Ce réglage est le vôtre ; le robinet que la direction règle pour toute l'école est un autre objet.

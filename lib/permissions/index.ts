@@ -91,6 +91,14 @@ export function canSeeAssessments(
   return hasSchoolRole(memberships, schoolId, ASSESSMENT_ROLES);
 }
 
+/** The memberships held in one school: a role held elsewhere opens nothing here (ADR-0074). */
+export function rolesIn(
+  memberships: readonly MembershipLike[],
+  schoolId: string | null | undefined,
+): MembershipLike[] {
+  return memberships.filter((m) => m.schoolId === schoolId);
+}
+
 export function schoolIdsFor(memberships: readonly MembershipLike[]): string[] {
   return [...new Set(activeMemberships(memberships).map((m) => m.schoolId))];
 }

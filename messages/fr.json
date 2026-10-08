@@ -211,16 +211,19 @@
       "notConfigured": "La connexion n'est pas encore disponible sur cet environnement.",
       "rateLimited": "Trop de demandes. Réessayez dans quelques minutes.",
       "linkError": "Ce lien est invalide ou a expiré. Demandez-en un nouveau.",
-      "noAccount": "Les comptes sont créés par l'école : adressez-vous au secrétariat ou à la direction, qui vous enverra une invitation par e-mail à l'adresse déjà connue de l'établissement.",
+      "noAccount": "Les comptes sont créés par l'école, jamais en ligne. Écrivez à l'adresse ci-dessous en indiquant vos nom et prénom — et ceux de votre conjoint —, ainsi que le nom, le prénom et la classe de chaque enfant : l'école vous communiquera vos identifiants.",
       "usePassword": "Se connecter avec un mot de passe",
       "useLink": "Recevoir un lien par e-mail",
       "passwordHint": "Réservé aux comptes auxquels l'école a attribué un mot de passe.",
       "password": "Mot de passe",
       "signIn": "Se connecter",
       "signingIn": "Connexion…",
-      "invalidCredentials": "Adresse e-mail ou mot de passe incorrect. Vous pouvez aussi recevoir un lien de connexion par e-mail.",
+      "invalidCredentials": "Adresse e-mail ou mot de passe incorrect. Mot de passe oublié ? L'école peut vous en donner un nouveau.",
       "unavailable": "Le service de connexion est momentanément indisponible. Réessayez dans un instant.",
-      "noAccountCta": "Pas de compte ? Demandez directement à l'école de vous créer votre compte"
+      "noAccountCta": "Pas de compte ? Demandez directement à l'école de vous créer votre compte",
+      "registrationSubject": "Ouverture de nos comptes {appName}",
+      "registrationBody": "Bonjour,\n\nNous souhaitons ouvrir nos comptes {appName}.\n\nÉcole :\n\nParent 1 — nom et prénom :\nAdresse e-mail :\nTéléphone :\n\nParent 2 (facultatif) — nom et prénom :\nAdresse e-mail :\nTéléphone :\n\nEnfants — nom, prénom et classe :\n1.\n2.\n\nMerci.",
+      "testSpace": "Espace de test"
     },
     "onboarding": {
       "title": "Bienvenue, faisons connaissance",
@@ -308,7 +311,10 @@
       "columnClass": "Classe",
       "columnLevel": "Niveau",
       "columnPupils": "Élèves",
-      "columnTeacher": "Enseignant·e"
+      "columnTeacher": "Enseignant·e",
+      "noClasses": "Aucune classe cette année. Une école commence par son année scolaire, puis ses classes ; les familles s'y inscrivent ensuite.",
+      "noClassesYears": "Années scolaires",
+      "noClassesClasses": "Classes"
     }
   },
   "family": {
@@ -363,7 +369,8 @@
   },
   "more": {
     "account": "Mon compte",
-    "help": "Aide"
+    "help": "Aide",
+    "switchSchool": "Changer d'école"
   },
   "roles": {
     "super_admin": "Super administrateur",
@@ -403,7 +410,8 @@
       "subtitle": "Les rubriques de gestion et où en est chacune.",
       "messaging": "Messagerie",
       "attendance": "Pointage",
-      "menus": "Menus"
+      "menus": "Menus",
+      "schools": "Écoles"
     },
     "years": {
       "title": "Années scolaires",
@@ -487,7 +495,7 @@
       "relation": "Lien",
       "isPrimary": "Responsable principal",
       "language": "Langue",
-      "guardianInvited": "Compte créé et rattaché (invitation à envoyer).",
+      "guardianInvited": "Compte créé et rattaché : transmettez ces identifiants.",
       "guardianLinked": "Compte existant rattaché.",
       "rights": "Droits",
       "canViewGrades": "Voit les évaluations",
@@ -516,7 +524,9 @@
       "imageRightsMarked": "Autorisation enregistrée.",
       "columnPupil": "Élève",
       "columnClass": "Classe",
-      "columnGuardians": "Responsables"
+      "columnGuardians": "Responsables",
+      "newFamily": "Nouvelle famille",
+      "searchSubmit": "Rechercher"
     },
     "members": {
       "title": "Utilisateurs",
@@ -528,7 +538,7 @@
       "role": "Rôle",
       "language": "Langue",
       "send": "Inviter",
-      "invited": "Invitation envoyée.",
+      "invited": "Compte créé : transmettez ces identifiants à la personne.",
       "invitedNoMail": "Compte créé, mais l'e-mail n'a pas pu partir : utilisez « Renvoyer un lien ».",
       "alreadyMember": "Cette personne a déjà ce rôle.",
       "invalid": "Vérifiez les champs.",
@@ -551,10 +561,11 @@
       "batchRemaining": "Restantes : {count}",
       "batchFailed": "Échecs : {count}",
       "showParents": "Afficher les parents ({count})",
-      "lastLink": "Dernier lien : {date}",
+      "lastLink": "Accès remis le {date}",
       "search": "Rechercher un membre",
       "searchPlaceholder": "Nom, prénom",
-      "truncated": "Seuls les {count} premiers résultats sont affichés : affinez la recherche."
+      "truncated": "Seuls les {count} premiers résultats sont affichés : affinez la recherche.",
+      "invitedExisting": "Cette personne avait déjà un compte : le rôle est ajouté, son mot de passe ne change pas."
     },
     "import": {
       "title": "Import CSV des familles",
@@ -625,7 +636,8 @@
       "publications": "Publications",
       "people": "Personnes",
       "moderation": "Modération",
-      "year": "Année et journal"
+      "year": "Année et journal",
+      "platform": "Plateforme"
     },
     "dashboard": {
       "title": "Tableau de bord",
@@ -760,6 +772,69 @@
       "visibleToFamilies": "Visible des familles",
       "archive": "Archiver",
       "outingHint": "La liste d'une sortie se crée depuis l'événement lui-même, dans <link>l'agenda</link>."
+    },
+    "passwords": {
+      "button": "Mot de passe provisoire",
+      "title": "Nouveau mot de passe provisoire — {name}",
+      "warning": "Le mot de passe actuel de {name} cessera de fonctionner. Un nouveau sera choisi à la prochaine connexion.",
+      "confirm": "Créer le mot de passe",
+      "refused": "Ce compte ne peut pas recevoir de mot de passe provisoire d'ici : il appartient à la direction, à la plateforme ou à une autre école."
+    },
+    "families": {
+      "title": "Nouvelle famille",
+      "subtitle": "Les parents et les enfants, tels que la famille les a envoyés. Les comptes des parents sont ouverts avec un mot de passe provisoire.",
+      "parentsLabel": "Parents",
+      "childrenLabel": "Enfants",
+      "credentialsLabel": "Identifiants à transmettre",
+      "parentN": "Parent {n}",
+      "childN": "Enfant {n}",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Adresse e-mail",
+      "phone": "Téléphone (facultatif)",
+      "relation": "Lien",
+      "language": "Langue",
+      "birthDate": "Date de naissance (facultatif)",
+      "class": "Classe",
+      "noClass": "Sans classe pour l'instant",
+      "noClasses": "Aucune classe n'existe encore cette année : les enfants seront inscrits sans classe, à placer plus tard depuis leur fiche.",
+      "addParent": "Ajouter un second parent",
+      "removeParent": "Retirer ce parent",
+      "addChild": "Ajouter un enfant",
+      "removeChild": "Retirer cet enfant",
+      "whatHappens": "Chaque parent reçoit un compte, rattaché à chacun des enfants. Un parent qui a déjà un compte garde son mot de passe.",
+      "submit": "Inscrire la famille",
+      "registered": "Famille inscrite.",
+      "another": "Inscrire une autre famille",
+      "familyName": "Famille {names}",
+      "invalid": "Vérifiez les champs : un prénom, un nom et une adresse e-mail par parent, un prénom et un nom par enfant.",
+      "sameEmail": "Les deux parents ne peuvent pas avoir la même adresse e-mail.",
+      "classUnknown": "Une des classes choisies n'est plus une classe de cette année : rechargez la page."
+    },
+    "schools": {
+      "title": "Écoles",
+      "subtitle": "Les écoles de la plateforme, l'ouverture d'une nouvelle et le mot de passe de l'espace de test.",
+      "listLabel": "Écoles de la plateforme",
+      "testBadge": "école test",
+      "openedOn": "ouverte le {date}",
+      "notMember": "vous n'y avez aucun rôle",
+      "openLabel": "Ouvrir une école",
+      "openHint": "Elle naît vide, avec ses neuf niveaux de la TPS au CM2 ; vous en recevez la direction, et elle apparaît dans « Changer d'école ».",
+      "name": "Nom de l'école",
+      "namePlaceholder": "Abravanel Levallois",
+      "city": "Ville",
+      "open": "Ouvrir l'école",
+      "opened": "{name} est ouverte.",
+      "goTo": "Aller dans {name}",
+      "invalid": "Le nom d'une école compte de 2 à 120 caractères.",
+      "testPasswordLabel": "Mot de passe de l'espace de test",
+      "testPasswordHint": "Celui que l'on tape sur la porte « Espace de test » de la page de connexion. Il change pour tous les comptes de l'école test, jamais pour un compte d'une vraie école.",
+      "testPassword": "Nouveau mot de passe",
+      "testPasswordConfirm": "Confirmez-le",
+      "testPasswordSubmit": "Changer le mot de passe",
+      "testPasswordTooShort": "Au moins 10 caractères : ce mot de passe ouvre une école entière.",
+      "testPasswordMismatch": "Les deux mots de passe ne sont pas identiques.",
+      "testPasswordSet": "{count, plural, one {# compte de l'école test a reçu le nouveau mot de passe.} other {# comptes de l'école test ont reçu le nouveau mot de passe.}}"
     }
   },
   "editor": {
@@ -1949,7 +2024,7 @@
   },
   "security": {
     "title": "Sécurité du compte",
-    "subtitle": "Validation en deux étapes avec une application d'authentification (TOTP).",
+    "subtitle": "Votre mot de passe et la validation en deux étapes.",
     "status": {
       "on": "Validation en deux étapes activée",
       "off": "La validation en deux étapes n'est pas activée."
@@ -1967,7 +2042,9 @@
     "disableHint": "Saisissez un code actuel pour désactiver la validation en deux étapes.",
     "disabled": "Validation en deux étapes désactivée.",
     "adminCannotDisable": "La direction ne peut pas désactiver la validation en deux étapes.",
-    "error": "Opération impossible pour le moment."
+    "error": "Opération impossible pour le moment.",
+    "passwordSection": "Mot de passe",
+    "mfaSection": "Validation en deux étapes"
   },
   "verification": {
     "title": "Vérification",
@@ -2381,5 +2458,66 @@
     },
     "chooseClass": "Pour quelle classe ?",
     "draftShort": "Brouillon"
+  },
+  "testSchool": {
+    "band": "École test : ses familles, ses classes et ses messages sont fictifs.",
+    "bandLabel": "École test",
+    "title": "Espace de test",
+    "intro": "L'école test reprend toute l'application, avec des familles, des classes et des messages fictifs. Entrez le mot de passe de l'espace de test, puis choisissez qui vous serez.",
+    "password": "Mot de passe de l'espace de test",
+    "personaLegend": "Entrer en tant que",
+    "personas": {
+      "direction": {
+        "name": "Direction",
+        "hint": "Tout l'établissement, administration comprise"
+      },
+      "secretariat": {
+        "name": "Secrétariat",
+        "hint": "Annonces, documents, absences — pas les évaluations"
+      },
+      "teacher": {
+        "name": "Enseignante",
+        "hint": "La classe de CP : devoirs, cahier de vie, emploi du temps"
+      },
+      "parent": {
+        "name": "Parent",
+        "hint": "Deux enfants, en petite section et en CP"
+      },
+      "guardian": {
+        "name": "Responsable en lecture seule",
+        "hint": "Un grand-parent, qui lit sans écrire"
+      }
+    },
+    "enter": "Entrer dans l'école test",
+    "entering": "Ouverture…",
+    "back": "Retour à la connexion",
+    "incomplete": "Entrez le mot de passe et choisissez qui vous serez.",
+    "wrongPassword": "Mot de passe incorrect.",
+    "rateLimited": "Trop de tentatives. Réessayez dans quelques minutes.",
+    "unavailable": "Le service de connexion est momentanément indisponible. Réessayez dans un instant."
+  },
+  "credentials": {
+    "onceOnly": "Ces mots de passe ne seront plus affichés : transmettez-les maintenant ou notez-les. Chacun en choisira un nouveau à sa première connexion.",
+    "existing": "Compte existant : son mot de passe ne change pas.",
+    "copyMessage": "Copier le message",
+    "copied": "Message copié",
+    "message": "Bonjour {name},\n\nVotre compte de l'école est prêt.\nAdresse : {url}\nIdentifiant : {email}\nMot de passe provisoire : {password}\n\nÀ la première connexion, vous choisirez votre propre mot de passe."
+  },
+  "password": {
+    "title": "Choisissez votre mot de passe",
+    "intro": "Le mot de passe donné par l'école ne sert qu'à cette première connexion. Choisissez le vôtre pour ouvrir {appName}.",
+    "current": "Mot de passe actuel",
+    "new": "Nouveau mot de passe",
+    "confirm": "Confirmez le nouveau mot de passe",
+    "hint": "Au moins {min} caractères.",
+    "submitChoose": "Enregistrer et continuer",
+    "submitChange": "Changer mon mot de passe",
+    "tooShort": "Le mot de passe doit faire au moins {min} caractères.",
+    "mismatch": "Les deux mots de passe ne sont pas identiques.",
+    "weak": "Ce mot de passe est trop facile à deviner : choisissez-en un autre.",
+    "wrongCurrent": "Le mot de passe actuel est incorrect.",
+    "rateLimited": "Trop de tentatives. Réessayez dans quelques minutes.",
+    "changed": "Mot de passe changé.",
+    "unavailable": "Ce compte n'a pas d'adresse de connexion : demandez à l'école de le vérifier."
   }
 }

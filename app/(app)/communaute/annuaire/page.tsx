@@ -7,7 +7,7 @@ import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { isSchoolStaff } from "@/lib/permissions";
+import { isSchoolStaff, rolesIn } from "@/lib/permissions";
 import { getMyTeachingClasses, getSchoolClasses } from "@/server/queries/classes";
 import { getClassDirectory, getMyDirectorySettings } from "@/server/queries/community";
 import { getMyChildren } from "@/server/queries/family";
@@ -44,7 +44,9 @@ export default async function DirectoryPage({
   for (const cls of schoolClasses) classes.set(cls.id, cls.name);
   const selected = c && classes.has(c) ? c : ([...classes.keys()][0] ?? null);
   const entries = selected ? await getClassDirectory(selected) : [];
-  const isParent = user.roles.some((r) => r.role === "parent" || r.role === "guardian");
+  const isParent = rolesIn(user.roles, user.school?.id).some(
+    (r) => r.role === "parent" || r.role === "guardian",
+  );
 
   return (
     <Column>

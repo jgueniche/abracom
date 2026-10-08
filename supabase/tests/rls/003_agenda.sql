@@ -131,7 +131,7 @@ select is(length((public.my_calendar_feed()).token), 48, 'a private feed token i
 select token as feed_token from public.calendar_feeds where user_id = :parent1 \gset
 select pg_temp.logout();
 select throws_ok('select public.my_calendar_feed()', '42501', null, 'anonymous users cannot create feeds');
-select is((select school_name from public.calendar_feed(:'feed_token')), 'École Abravanel Neuilly', 'the feed token resolves the school');
+select is((select school_name from public.calendar_feed(:'feed_token')), 'École test Kesher', 'the feed token resolves the school');
 select ok((select count(*) from public.calendar_feed_events(:'feed_token')) >= 13, 'the feed lists the events visible to its owner');
 select is((select count(*) from public.calendar_feed_events(:'feed_token') where id = :ev_class_ce1), 0::bigint, 'the feed hides other classes'' events');
 select is((select count(*) from public.calendar_feed_events('not-a-token')), 0::bigint, 'an unknown token yields nothing');

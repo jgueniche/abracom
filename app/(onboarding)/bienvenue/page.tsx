@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { getLegalStatus, needsOnboarding } from "@/lib/auth/legal";
-import { APP_HOME_PATH } from "@/lib/auth/routes";
+import { APP_HOME_PATH, PASSWORD_PATH } from "@/lib/auth/routes";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { appName } from "@/lib/env";
 
@@ -16,6 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function OnboardingPage() {
   const user = await requireCurrentUser();
+  if (user.passwordProvisional) redirect(PASSWORD_PATH);
   const legal = await getLegalStatus(user);
   if (!needsOnboarding(user, legal)) redirect(APP_HOME_PATH);
 

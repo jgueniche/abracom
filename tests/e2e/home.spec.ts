@@ -70,6 +70,20 @@ test.describe("entry points", () => {
 
     await page.getByText("Pas de compte ?").click();
     await expect(page.getByText(/comptes sont créés par l'école/)).toBeVisible();
+    // the address to write to, with the message already laid out
+    const address = page.getByRole("link", { name: "jeremy.gueniche@gmail.com" });
+    await expect(address).toHaveAttribute("href", /^mailto:jeremy\.gueniche@gmail\.com\?subject=/);
+    await expect(address).toHaveAttribute("href", /Enfants/);
+  });
+
+  test("keeps the test school's door in a corner of the sign-in page", async ({ page }) => {
+    await page.goto("/connexion");
+    await page.getByRole("link", { name: "Espace de test" }).click();
+
+    await expect(page).toHaveURL(/\/essai$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Espace de test");
+    await expect(page.getByRole("radio")).toHaveCount(5);
+    await expect(page.getByRole("radio", { name: /^Direction/ })).toBeChecked();
   });
 
   test("sends baseline security headers", async ({ request }) => {

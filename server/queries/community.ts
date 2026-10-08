@@ -1,5 +1,6 @@
 import "server-only";
 
+import { inCurrentSchool } from "@/lib/auth/session";
 import { parseFormSchema } from "@/lib/forms";
 import { createClient } from "@/lib/supabase/server";
 
@@ -46,7 +47,7 @@ export async function getClassBirthdays(classId: string) {
 // ── classifieds ──────────────────────────────────────────────────────────────
 
 const CLASSIFIED_SELECT = `
-  id, category, title, body, status, expires_at, created_at, updated_at, author_id, moderated_at,
+  id, school_id, category, title, body, status, expires_at, created_at, updated_at, author_id, moderated_at,
   author:profiles!community_posts_author_profile_fkey ( first_name, last_name )
 ` as const;
 
@@ -62,9 +63,7 @@ export async function getClassifieds(options: { category?: CommunityCategory | n
     .order("created_at", { ascending: false })
     .limit(100);
   if (options.category) query = query.eq("category", options.category);
-  const { data, error } = await query;
-  if (error) throw error;
-  return data ?? [];
+  return inCurrentSchool(query);
 }
 
 export async function getMyClassifieds(userId: string) {
@@ -139,13 +138,12 @@ const FORM_SELECT = `school_id,
 /** Open forms addressed to the caller (RLS), with the caller's own responses embedded. */
 export async function getForms() {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("forms")
-    .select(FORM_SELECT)
-    .is("deleted_at", null)
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return (data ?? []).map((form) => ({ ...form, fields: parseFormSchema(form.schema) }));
+  const data = await inCurrentSchool(
+    supabase.from("forms").select(FORM_SELECT).is("deleted_at", null).order("created_at", {
+      ascending: false,
+    }),
+  );
+  return data.map((form) => ({ ...form, fields: parseFormSchema(form.schema) }));
 }
 
 export type FormSummary = Awaited<ReturnType<typeof getForms>>[number];

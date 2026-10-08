@@ -53,8 +53,12 @@
 6. **Premier compte de direction** : `scripts/ops/create-account.sql` (psql ou éditeur SQL, mot de passe
    jamais committé — ADR-0028) ; la validation en deux étapes n'est demandée à la première connexion
    que si l'école l'exige (`modules.security.mfaRequired`, ADR-0030), à activer avant la production.
-7. **Données réelles** : import CSV des familles depuis l'administration, puis invitations par lots.
-   Ne jamais rejouer `seed.sql` en production.
+7. **Données réelles** : l'école réelle s'ouvre depuis Gestion → Plateforme → Écoles (ADR-0074) ;
+   les familles s'y inscrivent par Gestion → Familles → Nouvelle famille, ou par l'import CSV, avec un
+   mot de passe provisoire tant que les courriels ne partent pas (ADR-0075). L'école de démonstration
+   reste à côté comme **école test** (`modules.test`), ouverte par la porte « Espace de test » et le
+   mot de passe réglé dans Gestion → Écoles (ADR-0073) ; `superadmin@demo.local` n'y a **aucun rôle de
+   plateforme**. Ne jamais rejouer `seed.sql` en production : il lui rendrait ce rôle.
 8. **Vérifications** : `SMOKE_BASE_URL=https://… SMOKE_PASSWORD=… pnpm test:smoke` (connexion des comptes
    de démo et écrans principaux de chaque rôle), `pnpm perf https://…/connexion`, push de test depuis
    Notifications → Préférences, e-mail de test, un cycle complet annonce → accusé de lecture.

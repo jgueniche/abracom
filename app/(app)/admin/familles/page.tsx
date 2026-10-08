@@ -1,4 +1,4 @@
-import { ChevronRightIcon, SearchIcon } from "lucide-react";
+import { ChevronRightIcon, SearchIcon, UsersRoundIcon } from "lucide-react";
 import { Link } from "@/components/ui/link";
 import { getTranslations } from "next-intl/server";
 
@@ -18,6 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { requireSchoolStaff } from "@/lib/auth/guards";
+import { isSchoolAdmin } from "@/lib/permissions";
 import { getAdminClasses, searchStudents } from "@/server/queries/admin";
 
 import { StudentForm } from "./student-form";
@@ -28,7 +29,7 @@ export default async function StudentsPage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const { q = "" } = await searchParams;
-  const { schoolId } = await requireSchoolStaff();
+  const { user, schoolId } = await requireSchoolStaff();
   const [t, students, classes] = await Promise.all([
     getTranslations("admin.students"),
     searchStudents(schoolId, q),
@@ -37,20 +38,36 @@ export default async function StudentsPage({
 
   return (
     <Column width="full">
-      <PageHeader title={t("title")} description={t("subtitle")} />
-      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <PageHeader
+        title={t("title")}
+        description={t("subtitle")}
+        actions={
+          // registering a family opens accounts: the direction's alone (ADR-0075)
+          isSchoolAdmin(user.roles, schoolId) ? (
+            <Button asChild>
+              <Link href="/admin/familles/nouvelle">
+                <UsersRoundIcon aria-hidden />
+                {t("newFamily")}
+              </Link>
+            </Button>
+          ) : undefined
+        }
+      />
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="flex flex-col gap-4">
+          {/* The button says one word: its sentence-long label pushed the form nine
+              pixels past a 390 px screen and left the field four letters wide. */}
           <form className="flex gap-2" role="search">
             <Input
               name="q"
               defaultValue={q}
               placeholder={t("searchHint")}
               aria-label={t("search")}
-              className="min-h-11"
+              className="min-h-11 min-w-0 flex-1"
             />
-            <Button type="submit" variant="outline" className="min-h-11">
+            <Button type="submit" variant="outline" className="min-h-11 shrink-0">
               <SearchIcon aria-hidden />
-              {t("search")}
+              {t("searchSubmit")}
             </Button>
           </form>
           <SectionHeader label={t("title")} count={students.length} className="mt-1" />

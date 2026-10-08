@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
+import { CredentialsList } from "@/components/domain/credentials-list";
 import { ActionMessage } from "@/components/forms/action-message";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { Input } from "@/components/ui/input";
@@ -14,15 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { noCredentials } from "@/lib/auth/credentials";
 import { RELATIONS } from "@/lib/import/families";
-import { idle } from "@/server/actions/admin/_shared-client";
 import { linkGuardian } from "@/server/actions/admin/students";
 
 export function LinkGuardianForm({ studentId }: { studentId: string }) {
   const t = useTranslations("admin.students");
   const tFamily = useTranslations("family");
   const tCommon = useTranslations("common");
-  const [state, action] = useActionState(linkGuardian, idle);
+  const [state, action] = useActionState(linkGuardian, noCredentials);
   return (
     <form action={action} className="grid gap-3 sm:grid-cols-2">
       <input type="hidden" name="studentId" value={studentId} />
@@ -71,6 +72,7 @@ export function LinkGuardianForm({ studentId }: { studentId: string }) {
       </label>
       <div className="flex flex-col gap-2 sm:col-span-2">
         <ActionMessage status={state.status} message={state.message} />
+        {state.credentials && <CredentialsList credentials={state.credentials} />}
         <SubmitButton className="self-start">{t("linkGuardian")}</SubmitButton>
       </div>
     </form>

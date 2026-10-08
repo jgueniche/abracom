@@ -5,7 +5,7 @@ routes: [/accueil]
 topic: daily
 keywords: [accueil, aujourd'hui, tableau de bord, à faire, enfants, classes]
 since: 19
-reviewed: 2026-09-15
+reviewed: 2026-10-08
 ---
 
 :::roles parent, guardian
@@ -30,4 +30,10 @@ Si une liste de pointage vous concerne aujourd'hui, elle passe au-dessus de tout
 
 :::roles staff, school_admin, super_admin
 L'accueil est un **tableau de bord** : nombre d'élèves, de familles, de classes, et la proportion de comptes parents activés sur les comptes invités — le chiffre qui dit si les familles sont réellement entrées dans l'application. La liste des classes de l'année suit.
+
+Une école qui vient d'ouvrir n'a encore aucune classe : la page le dit, et mène aux **Années scolaires** puis aux **Classes**, dans cet ordre — les familles s'inscrivent ensuite.
+:::
+
+:::roles super_admin
+Tout ce que montre le tableau de bord est celui de l'école choisie sous votre photo, jamais un mélange des écoles où vous avez un rôle.
 :::

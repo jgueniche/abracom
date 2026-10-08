@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
+import { CredentialsList } from "@/components/domain/credentials-list";
 import { ActionMessage } from "@/components/forms/action-message";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { Input } from "@/components/ui/input";
@@ -14,14 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { idle } from "@/server/actions/admin/_shared-client";
+import { noCredentials } from "@/lib/auth/credentials";
 import { inviteMember } from "@/server/actions/admin/members";
 
 export function InviteForm() {
   const t = useTranslations("admin.members");
   const tRoles = useTranslations("roles");
   const tCommon = useTranslations("common");
-  const [state, action] = useActionState(inviteMember, idle);
+  const [state, action] = useActionState(inviteMember, noCredentials);
   return (
     <form action={action} className="grid gap-3 sm:grid-cols-2">
       <div className="flex flex-col gap-2 sm:col-span-2">
@@ -65,6 +66,7 @@ export function InviteForm() {
       </div>
       <div className="flex flex-col gap-2 sm:col-span-2">
         <ActionMessage status={state.status} message={state.message} />
+        {state.credentials && <CredentialsList credentials={state.credentials} />}
         <SubmitButton className="self-start">{t("send")}</SubmitButton>
       </div>
     </form>

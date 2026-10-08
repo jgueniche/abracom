@@ -1,7 +1,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Kesher demo seed — ENTIRELY FICTIONAL (brief §14). Deterministic ids so the
 -- RLS tests and the e2e flows can reference them:
---   school            00000000-0000-4000-8000-000000000001
+--   school            00000000-0000-4000-8000-000000000001   « École test Kesher » (modules.test)
 --   school year       00000000-0000-4000-8000-000000000010
 --   levels            00000000-0000-4000-8000-0000000001NN   (NN = 01 TPS … 09 CM2)
 --   classes           00000000-0000-4000-8000-0000000002NN   (NN = 01 … 06)
@@ -10,6 +10,9 @@
 --   guardians (users) c0000000-0000-4000-8000-00000FFF00PP   (family FFF, PP = 01/02 parents, 03 guardian)
 --   students          d0000000-0000-4000-8000-00000FFF00SS   (family FFF, child SS)
 --   families          e0000000-0000-4000-8000-000000000FFF
+-- The school is the test school of the platform (ADR-0073): in production it lives beside the
+-- real ones, and its accounts share one private password, the « Espace de test » door's. Never
+-- replay this seed on production — it would give superadmin@demo.local its role back.
 -- Demo accounts (password "demo-password" for local development only):
 --   admin@demo.local, staff@demo.local, superadmin@demo.local, teacher-ps@demo.local,
 --   teacher-NN@demo.local, parent-1@demo.local (family 001, 2 children), parent-en@demo.local
@@ -83,9 +86,9 @@ $$;
 -- school ----------------------------------------------------------------------
 insert into public.schools (id, slug, name, city, address, timezone, locale_default, modules, latitude, longitude)
 values (
-  pg_temp.uid('0', 1), 'abravanel-neuilly', 'École Abravanel Neuilly', 'Neuilly-sur-Seine',
-  '203 avenue Achille Peretti, 92200 Neuilly-sur-Seine', 'Europe/Paris', 'fr',
-  '{"announcements": true, "classes": true, "messaging": true, "agenda": true, "community": true, "assessments": {"scores": false}, "directory": true, "marketplace": true}'::jsonb,
+  pg_temp.uid('0', 1), 'ecole-test', 'École test Kesher', 'Neuilly-sur-Seine',
+  null, 'Europe/Paris', 'fr',
+  '{"test": true, "announcements": true, "classes": true, "messaging": true, "agenda": true, "community": true, "assessments": {"scores": false}, "directory": true, "marketplace": true}'::jsonb,
   48.8847, 2.2686
 );
 
@@ -247,10 +250,12 @@ end
 $$;
 
 -- legal texts ---------------------------------------------------------------------
+-- E'' strings: a plain literal kept « \n\n » as four characters, and the onboarding screen
+-- printed them between the title and the text.
 insert into public.legal_documents (id, school_id, kind, version, locale, body_md) values
-  (pg_temp.uid('f', 1), pg_temp.uid('0', 1), 'terms', '1.0', 'fr', '# Conditions générales d''utilisation (texte de démonstration)\n\nTexte fictif à remplacer par la direction.'),
-  (pg_temp.uid('f', 2), pg_temp.uid('0', 1), 'charter', '1.0', 'fr', '# Charte de bonne conduite (texte de démonstration)\n\nRespect, bienveillance, confidentialité.'),
-  (pg_temp.uid('f', 3), pg_temp.uid('0', 1), 'privacy', '1.0', 'fr', '# Politique de confidentialité (texte de démonstration)\n\nDonnées hébergées en Union européenne.');
+  (pg_temp.uid('f', 1), pg_temp.uid('0', 1), 'terms', '1.0', 'fr', E'# Conditions générales d''utilisation (texte de démonstration)\n\nTexte fictif à remplacer par la direction.'),
+  (pg_temp.uid('f', 2), pg_temp.uid('0', 1), 'charter', '1.0', 'fr', E'# Charte de bonne conduite (texte de démonstration)\n\nRespect, bienveillance, confidentialité.'),
+  (pg_temp.uid('f', 3), pg_temp.uid('0', 1), 'privacy', '1.0', 'fr', E'# Politique de confidentialité (texte de démonstration)\n\nDonnées hébergées en Union européenne.');
 
 -- assessment periods and skill catalog (PS, MS, GS) ---------------------------------
 insert into public.assessment_periods (id, school_id, school_year_id, label, starts_on, ends_on, sort_order) values

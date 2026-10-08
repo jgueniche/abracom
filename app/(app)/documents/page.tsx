@@ -9,7 +9,7 @@ import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { isSchoolStaff } from "@/lib/permissions";
+import { isSchoolStaff, rolesIn } from "@/lib/permissions";
 import { getDocumentsForUser, groupByFolder } from "@/server/queries/documents";
 import { getMyChildren } from "@/server/queries/family";
 
@@ -28,7 +28,9 @@ export default async function DocumentsPage() {
     getDocumentsForUser(),
     getMyChildren(),
   ]);
-  const isParent = user.roles.some((r) => r.role === "parent" && r.status === "active");
+  const isParent = rolesIn(user.roles, user.school?.id).some(
+    (r) => r.role === "parent" && r.status === "active",
+  );
   const canPublish = user.school ? isSchoolStaff(user.roles, user.school.id) : false;
   const groups = groupByFolder(documents);
 

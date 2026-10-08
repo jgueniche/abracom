@@ -211,16 +211,19 @@
       "notConfigured": "Sign-in is not available on this environment yet.",
       "rateLimited": "Too many requests. Try again in a few minutes.",
       "linkError": "This link is invalid or has expired. Request a new one.",
-      "noAccount": "Accounts are created by the school: ask the office or the head teacher, who will send an invitation to the address the school already has on file.",
+      "noAccount": "Accounts are created by the school, never online. Write to the address below with your first and last name — and your partner's — and the first name, last name and class of each child: the school will send you your sign-in details.",
       "usePassword": "Sign in with a password",
       "useLink": "Get a link by e-mail",
       "passwordHint": "Only for accounts the school has given a password to.",
       "password": "Password",
       "signIn": "Sign in",
       "signingIn": "Signing in…",
-      "invalidCredentials": "Wrong e-mail address or password. You can also get a sign-in link by e-mail.",
+      "invalidCredentials": "Wrong e-mail address or password. Forgot your password? The school can give you a new one.",
       "unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment.",
-      "noAccountCta": "No account? Ask the school directly to create one for you"
+      "noAccountCta": "No account? Ask the school directly to create one for you",
+      "registrationSubject": "Opening our {appName} accounts",
+      "registrationBody": "Hello,\n\nWe would like to open our {appName} accounts.\n\nSchool:\n\nParent 1 — first and last name:\nE-mail address:\nPhone:\n\nParent 2 (optional) — first and last name:\nE-mail address:\nPhone:\n\nChildren — first name, last name and class:\n1.\n2.\n\nThank you.",
+      "testSpace": "Test space"
     },
     "onboarding": {
       "title": "Welcome, let's get acquainted",
@@ -308,7 +311,10 @@
       "columnClass": "Class",
       "columnLevel": "Level",
       "columnPupils": "Pupils",
-      "columnTeacher": "Teacher"
+      "columnTeacher": "Teacher",
+      "noClasses": "No class this year. A school starts with its school year, then its classes; the families are registered into them afterwards.",
+      "noClassesYears": "School years",
+      "noClassesClasses": "Classes"
     }
   },
   "family": {
@@ -363,7 +369,8 @@
   },
   "more": {
     "account": "My account",
-    "help": "Help"
+    "help": "Help",
+    "switchSchool": "Switch school"
   },
   "roles": {
     "super_admin": "Super administrator",
@@ -403,7 +410,8 @@
       "subtitle": "The management sections and where each one stands.",
       "messaging": "Messaging",
       "attendance": "Attendance",
-      "menus": "Menus"
+      "menus": "Menus",
+      "schools": "Schools"
     },
     "years": {
       "title": "School years",
@@ -487,7 +495,7 @@
       "relation": "Relation",
       "isPrimary": "Primary guardian",
       "language": "Language",
-      "guardianInvited": "Account created and linked (invitation to send).",
+      "guardianInvited": "Account created and linked: hand over these sign-in details.",
       "guardianLinked": "Existing account linked.",
       "rights": "Rights",
       "canViewGrades": "Sees assessments",
@@ -516,7 +524,9 @@
       "imageRightsMarked": "Consent recorded.",
       "columnPupil": "Pupil",
       "columnClass": "Class",
-      "columnGuardians": "Guardians"
+      "columnGuardians": "Guardians",
+      "newFamily": "New family",
+      "searchSubmit": "Search"
     },
     "members": {
       "title": "Users",
@@ -528,7 +538,7 @@
       "role": "Role",
       "language": "Language",
       "send": "Invite",
-      "invited": "Invitation sent.",
+      "invited": "Account created: hand these sign-in details to the person.",
       "invitedNoMail": "Account created, but the e-mail could not be sent: use “Resend a link”.",
       "alreadyMember": "This person already has this role.",
       "invalid": "Check the fields.",
@@ -551,10 +561,11 @@
       "batchRemaining": "Remaining: {count}",
       "batchFailed": "Failures: {count}",
       "showParents": "Show parents ({count})",
-      "lastLink": "Last link: {date}",
+      "lastLink": "Access given on {date}",
       "search": "Search a member",
       "searchPlaceholder": "Last name, first name",
-      "truncated": "Only the first {count} results are shown: narrow the search."
+      "truncated": "Only the first {count} results are shown: narrow the search.",
+      "invitedExisting": "This person already had an account: the role is added, their password does not change."
     },
     "import": {
       "title": "Families CSV import",
@@ -625,7 +636,8 @@
       "publications": "Publications",
       "people": "People",
       "moderation": "Moderation",
-      "year": "Year and log"
+      "year": "Year and log",
+      "platform": "Platform"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -760,6 +772,69 @@
       "visibleToFamilies": "Visible to families",
       "archive": "Archive",
       "outingHint": "An outing's list is created from the event itself, in the <link>agenda</link>."
+    },
+    "passwords": {
+      "button": "Temporary password",
+      "title": "New temporary password — {name}",
+      "warning": "{name}'s current password will stop working. A new one will be chosen at the next sign-in.",
+      "confirm": "Create the password",
+      "refused": "This account cannot be given a temporary password from here: it belongs to the head teachers, to the platform or to another school."
+    },
+    "families": {
+      "title": "New family",
+      "subtitle": "The parents and the children, as the family sent them. The parents' accounts are opened with a temporary password.",
+      "parentsLabel": "Parents",
+      "childrenLabel": "Children",
+      "credentialsLabel": "Sign-in details to hand over",
+      "parentN": "Parent {n}",
+      "childN": "Child {n}",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "E-mail address",
+      "phone": "Phone (optional)",
+      "relation": "Relation",
+      "language": "Language",
+      "birthDate": "Date of birth (optional)",
+      "class": "Class",
+      "noClass": "No class for now",
+      "noClasses": "No class exists yet this year: the children will be registered without one, to be placed later from their record.",
+      "addParent": "Add a second parent",
+      "removeParent": "Remove this parent",
+      "addChild": "Add a child",
+      "removeChild": "Remove this child",
+      "whatHappens": "Each parent gets an account, linked to each of the children. A parent who already has an account keeps their password.",
+      "submit": "Register the family",
+      "registered": "Family registered.",
+      "another": "Register another family",
+      "familyName": "{names} family",
+      "invalid": "Check the fields: a first name, a last name and an e-mail address per parent, a first and last name per child.",
+      "sameEmail": "The two parents cannot share the same e-mail address.",
+      "classUnknown": "One of the chosen classes is no longer a class of this year: reload the page."
+    },
+    "schools": {
+      "title": "Schools",
+      "subtitle": "The platform's schools, opening a new one, and the test space password.",
+      "listLabel": "Schools of the platform",
+      "testBadge": "test school",
+      "openedOn": "opened on {date}",
+      "notMember": "you hold no role there",
+      "openLabel": "Open a school",
+      "openHint": "It starts empty, with its nine levels from pre-nursery to Year 5; you get its direction, and it shows in « Switch school ».",
+      "name": "Name of the school",
+      "namePlaceholder": "Abravanel Levallois",
+      "city": "City",
+      "open": "Open the school",
+      "opened": "{name} is open.",
+      "goTo": "Go to {name}",
+      "invalid": "A school's name has 2 to 120 characters.",
+      "testPasswordLabel": "Test space password",
+      "testPasswordHint": "The one typed at the « Test space » door of the sign-in page. It changes for every account of the test school, never for an account of a real school.",
+      "testPassword": "New password",
+      "testPasswordConfirm": "Confirm it",
+      "testPasswordSubmit": "Change the password",
+      "testPasswordTooShort": "At least 10 characters: this password opens a whole school.",
+      "testPasswordMismatch": "The two passwords are not the same.",
+      "testPasswordSet": "{count, plural, one {# test school account received the new password.} other {# test school accounts received the new password.}}"
     }
   },
   "editor": {
@@ -1949,7 +2024,7 @@
   },
   "security": {
     "title": "Account security",
-    "subtitle": "Two-step verification with an authenticator app (TOTP).",
+    "subtitle": "Your password and two-step verification.",
     "status": {
       "on": "Two-step verification is on",
       "off": "Two-step verification is off."
@@ -1967,7 +2042,9 @@
     "disableHint": "Type a current code to disable two-step verification.",
     "disabled": "Two-step verification disabled.",
     "adminCannotDisable": "The head of school cannot disable two-step verification.",
-    "error": "The operation is not possible right now."
+    "error": "The operation is not possible right now.",
+    "passwordSection": "Password",
+    "mfaSection": "Two-step verification"
   },
   "verification": {
     "title": "Verification",
@@ -2381,5 +2458,66 @@
     },
     "chooseClass": "For which class?",
     "draftShort": "Draft"
+  },
+  "testSchool": {
+    "band": "Test school: its families, classes and messages are fictitious.",
+    "bandLabel": "Test school",
+    "title": "Test space",
+    "intro": "The test school holds the whole application, with fictitious families, classes and messages. Enter the test space password, then choose who you will be.",
+    "password": "Test space password",
+    "personaLegend": "Enter as",
+    "personas": {
+      "direction": {
+        "name": "Head teacher",
+        "hint": "The whole school, administration included"
+      },
+      "secretariat": {
+        "name": "School office",
+        "hint": "Announcements, documents, absences — not assessments"
+      },
+      "teacher": {
+        "name": "Teacher",
+        "hint": "The Year 1 class: homework, class diary, timetable"
+      },
+      "parent": {
+        "name": "Parent",
+        "hint": "Two children, in nursery and in Year 1"
+      },
+      "guardian": {
+        "name": "Read-only guardian",
+        "hint": "A grandparent, who reads without writing"
+      }
+    },
+    "enter": "Enter the test school",
+    "entering": "Opening…",
+    "back": "Back to sign-in",
+    "incomplete": "Enter the password and choose who you will be.",
+    "wrongPassword": "Wrong password.",
+    "rateLimited": "Too many attempts. Try again in a few minutes.",
+    "unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment."
+  },
+  "credentials": {
+    "onceOnly": "These passwords will not be shown again: hand them over now or write them down. Each person will choose a new one at their first sign-in.",
+    "existing": "Existing account: its password does not change.",
+    "copyMessage": "Copy the message",
+    "copied": "Message copied",
+    "message": "Hello {name},\n\nYour school account is ready.\nAddress: {url}\nSign-in: {email}\nTemporary password: {password}\n\nAt your first sign-in, you will choose your own password."
+  },
+  "password": {
+    "title": "Choose your password",
+    "intro": "The password the school gave you only serves for this first sign-in. Choose your own to open {appName}.",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm the new password",
+    "hint": "At least {min} characters.",
+    "submitChoose": "Save and continue",
+    "submitChange": "Change my password",
+    "tooShort": "The password must be at least {min} characters long.",
+    "mismatch": "The two passwords are not the same.",
+    "weak": "This password is too easy to guess: choose another one.",
+    "wrongCurrent": "The current password is wrong.",
+    "rateLimited": "Too many attempts. Try again in a few minutes.",
+    "changed": "Password changed.",
+    "unavailable": "This account has no sign-in address: ask the school to check it."
   }
 }

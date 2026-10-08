@@ -1,9 +1,10 @@
 import "server-only";
 
+import { inCurrentSchool } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
 const DOC_SELECT = `
-  id, title, description_md, storage_path, mime, size_bytes, audience, target_ids, requires_signature,
+  id, school_id, title, description_md, storage_path, mime, size_bytes, audience, target_ids, requires_signature,
   signature_per_student, purpose, version, published_at, created_at, deleted_at, folder_id,
   folder:document_folders ( id, name, sort_order ),
   signatures:document_signatures ( id, user_id, student_id, signed_at )
@@ -12,14 +13,14 @@ const DOC_SELECT = `
 /** Documents visible to the user (RLS), grouped by folder, with their own signatures. */
 export async function getDocumentsForUser() {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("documents")
-    .select(DOC_SELECT)
-    .is("deleted_at", null)
-    .not("published_at", "is", null)
-    .order("published_at", { ascending: false });
-  if (error) throw error;
-  return data;
+  return inCurrentSchool(
+    supabase
+      .from("documents")
+      .select(DOC_SELECT)
+      .is("deleted_at", null)
+      .not("published_at", "is", null)
+      .order("published_at", { ascending: false }),
+  );
 }
 
 export async function getDocument(id: string) {

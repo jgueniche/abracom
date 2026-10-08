@@ -1,23 +1,21 @@
 ---
 title: Se connecter la première fois
 roles: all
-routes: [/connexion, /bienvenue]
+routes: [/connexion, /mot-de-passe, /bienvenue]
 topic: signin
-keywords: [connexion, invitation, mot de passe, lien magique, identifiant, première fois, oublié]
+keywords: [connexion, invitation, mot de passe, mot de passe provisoire, identifiant, première fois, oublié, inscription, pas de compte]
 since: 17
-reviewed: 2026-09-12
+reviewed: 2026-10-08
 ---
 
-L'école crée votre compte : on ne s'inscrit pas soi-même. Vous recevez une invitation par courriel ; le lien qu'elle contient ouvre votre accès et vous connecte directement.
+L'école crée votre compte : on ne s'inscrit pas soi-même. Elle vous remet votre **identifiant** — l'adresse de courriel que vous lui avez donnée — et un **mot de passe provisoire**, par message ou de vive voix.
 
-Ensuite, sur la page de connexion :
+Sur la page de connexion, tapez-les tels quels. L'application vous demande alors de **choisir votre propre mot de passe**, au moins huit caractères : le provisoire ne sert qu'une fois, et rien ne s'ouvre avant ce choix.
 
-- **Identifiant et mot de passe** — c'est la voie principale. Votre identifiant est l'adresse de courriel que l'école a enregistrée.
-- **Recevoir un lien par courriel** — la seconde voie, sans mot de passe. Vous recevez un lien à usage unique : ouvrez-le sur le même appareil et dans le même navigateur que celui où vous l'avez demandé.
-- Mot de passe oublié : prenez le lien par courriel, puis changez-le depuis Mon profil.
+Viennent ensuite votre prénom, votre nom, votre langue, puis l'acceptation des conditions d'utilisation, de la charte et de la politique de confidentialité. Cette étape est obligatoire : tant qu'elle n'est pas faite, les autres écrans restent fermés. L'acceptation est horodatée et conservée.
 
-Le lien d'invitation comme le lien de connexion ne servent qu'une fois et expirent. S'il ne fonctionne plus, redemandez-en un depuis la page de connexion.
+**Mot de passe oublié ?** Demandez à l'école de vous en donner un nouveau, provisoire lui aussi : vous en choisirez un autre en vous connectant. Une fois connecté, vous changez le vôtre quand vous voulez, depuis Mon profil → Sécurité.
 
-À la première connexion, l'application vous demande votre prénom, votre nom, votre langue, puis l'acceptation des conditions d'utilisation, de la charte et de la politique de confidentialité. Cette étape est obligatoire : tant qu'elle n'est pas faite, les autres écrans restent fermés. L'acceptation est horodatée et conservée.
+La page de connexion propose aussi de **recevoir un lien par courriel**, sans mot de passe : ouvrez-le sur le même appareil et dans le même navigateur que celui où vous l'avez demandé. Il ne sert qu'une fois et expire.
 
-Le bloc « Pas de compte ? » de la page de connexion explique quoi faire si vous n'avez rien reçu : c'est l'école qui crée les accès, pas vous.
+**Pas de compte ?** Le bloc du même nom, sur la page de connexion, donne l'adresse à laquelle écrire, et prépare le message : le nom et le prénom de chaque parent, son adresse de courriel, et le nom, le prénom et la classe de chaque enfant. L'école crée les comptes et vous communique vos identifiants.

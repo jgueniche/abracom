@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireClassAccess } from "@/lib/auth/class-access";
 import { localDateKey } from "@/lib/calendar/dates";
 import { TIME_ZONE } from "@/lib/i18n/config";
-import { canSeeAssessments, isSchoolAdmin } from "@/lib/permissions";
+import { canSeeAssessments, isSchoolAdmin, rolesIn } from "@/lib/permissions";
 import type { AssessmentLevel } from "@/lib/assessments";
 import {
   currentPeriod,
@@ -48,6 +48,7 @@ export default async function AssessmentsPage({
     getLocale(),
   ]);
   const isAdmin = isSchoolAdmin(user.roles, cls.school_id);
+  const here = rolesIn(user.roles, cls.school_id);
   const editor = isTeacher || isAdmin;
   // The tab is hidden for these roles (ClassTabs); this guards the direct URL.
   if (!editor && !canSeeAssessments(user.roles, cls.school_id))
@@ -227,8 +228,8 @@ export default async function AssessmentsPage({
               <CardContent className="flex flex-col gap-4">
                 {mine.length === 0 ? (
                   <p className="text-sm text-muted-foreground">
-                    {user.roles.some((r) => r.role === "guardian") &&
-                    !user.roles.some((r) => r.role === "parent")
+                    {here.some((r) => r.role === "guardian") &&
+                    !here.some((r) => r.role === "parent")
                       ? t("readOnly")
                       : t("nothingPublished")}
                   </p>

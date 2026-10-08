@@ -1116,9 +1116,8 @@ parents.
 - [ ] **À valider par le porteur** : « Fait » à la place de « Vu » ; la disparition du squelette
       au clic (ADR-0072) ; l'appareil photo et l'impression (AirPrint) sur de vrais téléphones —
       joués ici en émulation.
-- [ ] **À appliquer en production, avant de déployer** : la migration
-      (`scripts/ops/apply-migrations.sh`). Le code lit les colonnes `thumb_path`, `filename` et
-      `size_bytes` : déployé sans elle, le cahier de texte et le cahier de vie échouent.
+- [x] **Appliquée en production** le 2026-10-08, avant le déploiement : la migration et son
+      inscription dans `supabase_migrations.schema_migrations`.
 
 ## Questions ouvertes (§15 du brief)
 

@@ -2127,3 +2127,133 @@ le serveur a répondu, avec la barre sous l'onglet en attendant. C'est exactemen
 que l'ADR-0068 avait voulu combler, en moins silencieux qu'avant elle. **À rétablir quand Next
 aura corrigé #66426** — la frontière se remet en un fichier par rubrique, la mesure ci-dessus
 (un banc d'envois après chargement complet) dira si c'est le cas.
+
+## ADR-0073 — Une école test à côté des vraies, ouverte par une porte et un mot de passe
+
+**Statut** : acceptée (2026-10-08) · **Contexte** : la vraie école va se remplir de vraies
+familles. Le porteur veut garder l'école de démonstration comme banc d'essai — pour que la
+direction essaie une fonction, ou la montre, sans qu'aucune famille réelle ne voie quoi que ce
+soit — et qu'on n'y entre que si l'on en a le mot de passe, par « un petit coin » de la page de
+connexion.
+
+### La décision
+
+- **L'école de démonstration devient « École test Kesher »** (`slug` `ecole-test`) et le dit dans
+  ses modules : `modules.test = true`. Rien d'autre ne la distingue : mêmes tables, mêmes droits,
+  mêmes politiques RLS — une école test qui se comporterait autrement ne testerait rien.
+- **Un bandeau** en tête de chaque page rappelle qu'on y est (`aside` étiqueté « École test »).
+  Il n'est pas collant : il accueille chaque page puis s'efface au défilement, ce qui laisse à
+  l'en-tête sa hauteur et au focus son `scroll-padding` (SC 2.4.11, session 26).
+- **La porte** : un lien discret « Espace de test » au bas de la page de connexion mène à
+  `/essai` — un mot de passe, et le personnage qu'on veut être : direction, secrétariat,
+  enseignante de CP, parent de deux enfants, grand-parent en lecture seule. C'est une connexion
+  par mot de passe ordinaire sur un compte fixe (`*@demo.local`), donc comptée et freinée par
+  Supabase Auth comme toute autre ; puis **l'action vérifie que le compte ouvert n'appartient qu'à
+  l'école test** — ni à une vraie école, ni à la plateforme — et le referme sinon.
+- **Un seul mot de passe** pour tous les comptes de l'école test, réglé par l'administrateur de la
+  plateforme (Gestion → Écoles) au moyen de `set_test_school_password`, réservée à la clé de
+  service. La fonction ne touche **jamais** un administrateur de plateforme ni quelqu'un qui
+  appartient aussi à une vraie école, quoi qu'on lui ait ajouté dans l'école test.
+- **En production, le compte de démonstration `superadmin@demo.local` perd son rôle** de
+  plateforme : avec un mot de passe partagé, il aurait ouvert toutes les écoles. Le seed garde ce
+  rôle en local (les tests pgTAP s'en servent), et dit en tête de fichier qu'il ne doit jamais être
+  rejoué en production.
+
+### Ce qui a été écarté
+
+Une seconde base ou un second déploiement pour les essais : deux choses à tenir à jour, et la
+direction aurait essayé autre chose que ce qu'elle utilise. Un mot de passe par personnage :
+autant de secrets à transmettre pour un banc d'essai fictif.
+
+## ADR-0074 — Plusieurs écoles, et l'école où l'on travaille se choisit
+
+**Statut** : acceptée (2026-10-08) · **Contexte** : le schéma est multi-établissement depuis la
+session 3 (`school_id` partout), mais l'application ne savait en montrer qu'une : `user.school`
+valait « la première adhésion active », sans recours, et rien ne créait une école ni ses niveaux
+(le seed les écrivait). La vraie école, Abravanel Neuilly, s'ouvre vide ; Levallois pourra suivre.
+
+### La décision
+
+- **L'école courante se choisit** : un cookie `kesher-school`, relu à chaque requête **à travers
+  les adhésions actives** (`pickSchool`) — une valeur forgée, ou une école quittée, est ignorée. Sans
+  choix, c'est la première **vraie** école : l'école test est plus ancienne que toutes, et qui
+  appartient aux deux vient pour la vraie. Changer d'école oublie la perspective choisie dans
+  l'autre (elle peut ne pas exister ici).
+- **Un rôle tenu ailleurs n'ouvre rien ici** : les perspectives se calculent sur les rôles de
+  l'école courante (`rolesIn`), et les quelques écrans qui testaient « est-il parent ? » sans
+  dire où (accueil, Ma famille, annuaire, documents, évaluations, menu du compte) le disent
+  désormais. `getMyChildren()` et `getMyTeachingClasses()` ne rendent que ce qui est de l'école
+  courante. L'administrateur de la plateforme garde ses droits partout, comme avant.
+- **Les listes du lecteur ne montrent que l'école courante** — annonces, accusés dus, agenda,
+  documents, petites annonces, formulaires (`inCurrentSchool`). Elles demandaient aux RLS « que
+  puis-je lire ? », et l'administrateur de la plateforme peut tout lire : le tableau d'affichage de
+  la vraie école lui aurait montré les circulaires fictives de l'école test. Le filtre s'applique
+  à la réponse, la requête partant en même temps que la session, pour ne rien coûter
+  (ADR-0061). Même chose pour les listes de pointage du jour : vu en regardant, le tableau de
+  bord de la vraie école, vide, proposait « Appel du matin, 11 enfants attendus » — l'appel de
+  l'école test. Restent communes à toutes les écoles d'une personne ce qui est à elle : ses
+  conversations, ses notifications, sa recherche.
+- **Le sélecteur** vit dans le menu sous la photo : il y écrit le nom de l'école courante (sur
+  téléphone, l'en-tête n'a pas la place de le faire) et, dès deux écoles, la liste pour passer de
+  l'une à l'autre.
+- **Ouvrir une école** : Gestion → Plateforme → **Écoles**, réservée à l'administrateur de la
+  plateforme. `create_school` (`security definer`, car aucune politique d'une école qui n'existe
+  pas encore ne peut admettre sa première ligne) crée l'école, son adresse (`slug` tiré du nom,
+  sans accents, suffixé s'il est pris), **ses neuf niveaux** de la TPS au CM2, et donne la
+  direction à son créateur, si bien qu'elle apparaît aussitôt dans son sélecteur. L'école naît
+  vide : année scolaire, classes et familles viennent ensuite, par les écrans existants.
+
+### Ce qui reste à la charge du porteur
+
+Les **textes légaux** (CGU, charte, politique de confidentialité) sont rattachés à une école :
+ceux qui existent sont les textes de démonstration de l'école test. Une école ouverte n'en a
+aucun, et l'accueil d'un nouveau compte n'a alors rien à faire accepter. Ils ne s'inventent pas
+(CLAUDE.md §9.3) : ils sont à fournir avant l'arrivée des vraies familles.
+
+## ADR-0075 — Les familles inscrites par l'école, avec un mot de passe provisoire
+
+**Statut** : acceptée (2026-10-08) · **Contexte** : le porteur veut que l'école tienne elle-même
+les inscriptions — pas d'auto-inscription : une famille écrit à une adresse, avec le nom des
+parents et des enfants et leurs classes, et la direction crée tout. L'envoi de courriels (Resend)
+viendra plus tard : d'ici là, un lien de connexion n'atteint que les membres de l'équipe du projet
+Supabase, et un parent attendrait un message qui ne vient jamais.
+
+### La décision
+
+- **La page de connexion nomme l'adresse** (`lib/registration.ts`, jeremy.gueniche@gmail.com
+  pour l'instant) sous « Pas de compte ? », et le lien `mailto:` **prépare le message** : école,
+  chaque parent (nom, prénom, adresse, téléphone), chaque enfant (nom, prénom, classe).
+- **Nouvelle famille** (`/admin/familles/nouvelle`, direction seule — elle ouvre des comptes) :
+  un ou deux parents, un à huit enfants, leur classe de l'année si elle existe. Les comptes des
+  parents s'ouvrent d'abord (un compte d'authentification n'est pas une ligne que la base écrit),
+  puis **tout le reste en une transaction** (`create_family`, `security invoker` : les politiques
+  décident ligne à ligne) — famille, enfants, inscriptions, liens, adhésions « invitées ». Si la
+  transaction refuse, **les comptes ouverts l'instant d'avant sont supprimés** : sans cela, un
+  second essai les aurait trouvés « existants » et personne n'aurait jamais vu leur mot de passe.
+- **Le mot de passe provisoire** : douze caractères tirés de trente et un, sans rien qui se
+  confonde à la lecture (ni l/1, ni o/0, ni i), en trois groupes de quatre — environ 59 bits.
+  **Affiché une seule fois**, jamais stocké ailleurs que haché par Supabase Auth, avec « Copier le
+  message » qui prend le texte prêt à envoyer. Le compte porte `app_metadata.password_provisional`,
+  lu dans le jeton : **rien ne s'ouvre** (`/mot-de-passe`) tant que la personne n'a pas choisi le
+  sien, au moins huit caractères. L'écriture passe par la clé de service, qui lève la marque dans
+  le même appel. **Supabase Auth ferme alors toutes les sessions du compte**, celle-ci comprise
+  (mesuré : le jeton de rafraîchissement n'existe plus — c'est l'e2e qui l'a montré, le parent
+  revenant à la page de connexion) : le navigateur se reconnecte aussitôt avec le nouveau mot de
+  passe, et les autres appareils sont déconnectés à leur prochain rafraîchissement, ce qu'un
+  changement de mot de passe doit faire.
+- **Les mêmes mots de passe provisoires** pour un membre de l'équipe invité et pour un responsable
+  rattaché à un élève : un compte nouveau en reçoit un, un compte existant garde le sien.
+- **« Mot de passe provisoire »** sur une ligne d'Utilisateurs ou à côté d'un responsable remplace
+  un mot de passe oublié — c'est la seule voie tant que les courriels ne partent pas. Elle est
+  étroite, parce qu'elle remplace un secret : la direction seule ; jamais soi-même ; jamais un
+  administrateur de plateforme ; et, sauf si c'est la plateforme qui le demande, ni un membre de la
+  direction (un directeur prendrait le compte d'un autre), ni quelqu'un qui appartient aussi à une
+  autre école (cette école-là n'a rien demandé). Journalisée (`account.temporary_password`).
+- **Changer mon mot de passe** (Mon profil → Sécurité) demande l'actuel, vérifié par une connexion
+  à part, sans session, aussitôt refermée.
+
+### Ce qui a été écarté
+
+Un mot de passe choisi par la direction : il aurait circulé, et resservi. Un lien d'activation :
+il demande les courriels, précisément ce qui manque. Remettre le mot de passe provisoire à
+l'écran une seconde fois : un secret qu'on peut réafficher est un secret stocké.

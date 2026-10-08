@@ -6,7 +6,7 @@ import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { requireSchoolStaff } from "@/lib/auth/guards";
-import { isSchoolAdmin } from "@/lib/permissions";
+import { isSchoolAdmin, isSuperAdmin } from "@/lib/permissions";
 import { getAdminCounts } from "@/server/queries/school";
 
 import { adminGroupsFor } from "./_components/groups";
@@ -36,7 +36,7 @@ export default async function AdminIndexPage() {
     getTranslations("admin.groups"),
     getAdminCounts(schoolId),
   ]);
-  const groups = adminGroupsFor(isSchoolAdmin(user.roles, schoolId));
+  const groups = adminGroupsFor(isSchoolAdmin(user.roles, schoolId), isSuperAdmin(user.roles));
 
   return (
     <Column>

@@ -9,7 +9,7 @@ import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { EmptyState } from "@/components/domain/empty-state";
 import { requireCurrentUser } from "@/lib/auth/session";
-import { canSeeAssessments } from "@/lib/permissions";
+import { canSeeAssessments, rolesIn } from "@/lib/permissions";
 import { getMyChildren } from "@/server/queries/family";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -39,8 +39,9 @@ export default async function FamilyPage() {
     getTranslations("classSpace.tabs"),
     getMyChildren(),
   ]);
+  const here = rolesIn(user.roles, user.school?.id);
   const readOnly =
-    user.roles.some((r) => r.role === "guardian") && !user.roles.some((r) => r.role === "parent");
+    here.some((r) => r.role === "guardian") && !here.some((r) => r.role === "parent");
   // The page announces "no assessments, no messaging" and then offered an
   // Évaluations row six lines below it.
   const showAssessments = user.school ? canSeeAssessments(user.roles, user.school.id) : false;
