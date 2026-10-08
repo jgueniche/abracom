@@ -579,6 +579,41 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   (hors `target-size` positionnel sous la barre épinglée du composeur). **Restent au porteur :
   appliquer la migration avant de déployer** (le code lit des colonnes nouvelles), valider « Fait »
   et l'absence de squelette, et essayer l'appareil photo et l'impression sur de vrais téléphones.
+- **Session 34 — plusieurs écoles, une école test, des familles inscrites par l'école** (ADR-0073
+  à ADR-0075), jouée sur une pile Supabase réelle et sur un build de production. L'école de
+  démonstration devient **« École test Kesher »** (`modules.test`) : un bandeau le rappelle en tête
+  de chaque page, et l'on y entre par la porte **« Espace de test »** au coin de la page de
+  connexion (`/essai`) — un mot de passe, puis le personnage voulu (direction, secrétariat,
+  enseignante de CP, parent, grand-parent en lecture seule) — qui referme tout compte appartenant
+  aussi à une vraie école ou à la plateforme. **Plusieurs écoles** : l'école courante se choisit
+  dans le menu sous la photo (cookie relu à travers les adhésions, la vraie école par défaut), un
+  rôle tenu ailleurs n'ouvre rien ici, et Gestion → Plateforme → **Écoles** ouvre une école vide
+  avec ses neuf niveaux (`create_school`) et règle le mot de passe de test
+  (`set_test_school_password`, clé de service, jamais un administrateur ni un compte d'une vraie
+  école). **Familles inscrites par l'école** : la page de connexion donne l'adresse d'inscription
+  (jeremy.gueniche@gmail.com) et prépare le message ; **Nouvelle famille**
+  (`/admin/familles/nouvelle`, `create_family` en une transaction) inscrit un ou deux parents et
+  jusqu'à huit enfants ; chaque compte neuf reçoit un **mot de passe provisoire** affiché une
+  seule fois, à remplacer avant tout (`/mot-de-passe`) ; « Mot de passe provisoire » remplace un
+  oubli (règles étroites, journalisé) ; Mon profil → Sécurité change le sien. **Trouvé par l'e2e
+  ou en regardant** : changer un mot de passe par la clé de service **ferme toutes les sessions du
+  compte** — le parent revenait à la connexion, il est désormais reconnecté ; les listes du
+  lecteur (annonces, agenda, documents, petites annonces, formulaires) et **le pointage du jour**
+  ne filtraient que par les RLS, si bien que le tableau de bord vide de la vraie école proposait à
+  l'administrateur de plateforme l'appel du matin de l'école test ; un sous-menu d'écoles qui
+  écrivait sur ses propres noms à 390 px ; une recherche de familles qui débordait de 9 px ; des
+  textes légaux de démonstration qui affichaient « \n\n » ; aucun état vide pour une école sans
+  classe. Vérifié : `pnpm check` (220 tests), `pnpm build`, **561 assertions pgTAP** sur les deux
+  chemins, **42 e2e** (les trois nouveaux répétés 24 fois sans échec), axe à 0 violation sérieuse
+  sur 61 captures à 390 et 1 440 px en clair et en sombre. **En production (2026-10-08)** : la
+  migration est appliquée ; l'école de démonstration s'appelle « École test Kesher » ; **Abravanel
+  Neuilly** existe, vide, avec ses neuf niveaux, et le compte yahoo.fr en a la direction (il reste
+  seul administrateur de la plateforme) ; `superadmin@demo.local` est suspendu et son mot de passe
+  remplacé par un secret jeté. **Le code n'est pas encore déployé** : il vit sur
+  `claude/espace-devoirs` avec la session 33, `main` n'en a rien. **Restent au porteur** : fusionner
+  la branche ; fournir les **textes légaux de la vraie école** (aucun n'existe : l'accueil d'un
+  compte n'a rien à faire accepter) ; créer l'année scolaire puis les classes ; communiquer le mot
+  de passe de test à la direction.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

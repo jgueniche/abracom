@@ -1119,6 +1119,63 @@ parents.
 - [x] **Appliquée en production** le 2026-10-08, avant le déploiement : la migration et son
       inscription dans `supabase_migrations.schema_migrations`.
 
+## Session 34 — Plusieurs écoles, une école test, des familles inscrites par l'école (2026-10-08, ADR-0073 à ADR-0075)
+
+Demandée par le porteur : garder l'école fictive comme banc d'essai pour la direction, accessible
+par un mot de passe depuis un coin de la page de connexion ; créer la vraie école, Abravanel
+Neuilly, vide, et pouvoir en ouvrir d'autres (Levallois) ; des inscriptions tenues par l'école —
+une famille écrit, l'école crée les comptes — avec un mot de passe provisoire en attendant Resend.
+
+- [x] **École test** (ADR-0073) : « École test Kesher », `modules.test`, bandeau sur chaque page,
+      porte « Espace de test » (`/essai`) avec cinq personnages, refus de tout compte qui
+      appartient aussi à une vraie école ou à la plateforme ; mot de passe commun réglé par
+      `set_test_school_password` (clé de service).
+- [x] **Plusieurs écoles** (ADR-0074) : école courante choisie dans le menu du compte (cookie
+      validé, vraie école par défaut) ; rôles, enfants, classes et listes du lecteur limités à
+      l'école courante ; Gestion → Plateforme → Écoles (`create_school`, neuf niveaux).
+- [x] **Familles inscrites par l'école** (ADR-0075) : adresse d'inscription et message préparé sur
+      la page de connexion ; Nouvelle famille (`create_family`, une transaction, comptes supprimés
+      si elle refuse) ; mots de passe provisoires affichés une fois (équipe invitée, responsable
+      rattaché, famille) ; changement forcé à la première connexion ; « Mot de passe provisoire »
+      pour un oubli ; « Changer mon mot de passe ».
+- [x] Migration `20261008090000_schools_and_families.sql`, `022_schools_and_families.sql`
+      (32 assertions) ; seed : l'école s'appelle « École test Kesher », textes légaux sans
+      « \n » littéraux.
+- [x] Aide : `espace-de-test.md`, `ecoles-de-la-plateforme.md`, `inscrire-une-famille.md` créés ;
+      quatorze articles relus et redatés. `ops:check-help` vert.
+
+### Ce que les bancs ont trouvé
+
+- [x] **Changer un mot de passe par la clé de service ferme toutes les sessions du compte** — mesuré
+      à part (« Refresh Token Not Found ») après que l'e2e a vu le parent revenir à la connexion :
+      la session est rouverte avec le nouveau mot de passe.
+- [x] **Le tableau de bord vide de la vraie école montrait l'appel de l'école test** à
+      l'administrateur de plateforme, qui peut tout lire : listes du lecteur et pointage du jour
+      filtrés sur l'école courante.
+- [x] Sous-menu d'écoles illisible à 390 px (coche sur le nom) : la liste est dans le menu.
+- [x] Recherche de familles qui débordait de 9 px (colonne de grille sans `minmax(0, 1fr)`).
+- [x] Aucun état vide pour une école sans classe : la page mène aux années puis aux classes.
+- [x] Le banc a servi une fois un build supprimé (chunks en `text/html`, ADR-0061) : relancé,
+      chunk vérifié en JavaScript avant chaque capture.
+
+### Recette
+
+- [x] `pnpm check` (220 tests unitaires), `pnpm build`, **561 assertions pgTAP** sur la pile
+      Supabase et sur PostgreSQL 16, **42 e2e** en mode CI sur le build (les trois nouveaux
+      répétés vingt-quatre fois sans échec).
+- [x] `axe` à 0 violation sérieuse sur 61 captures (connexion, porte de test, accueil, menu,
+      familles, nouvelle famille et son résultat, utilisateurs et son dialogue, mot de passe,
+      sécurité, écoles, gestion, la vraie école vide), à 390 et 1 440 px, en clair et en sombre.
+- [x] **En production** (2026-10-08) : migration appliquée et inscrite ; école de démonstration
+      renommée « École test Kesher » (`modules.test`, sans adresse) ; **Abravanel Neuilly** créée
+      (neuf niveaux, adresse et coordonnées reprises de l'ancienne fiche, direction au compte
+      yahoo.fr, seul administrateur de plateforme actif) ; `superadmin@demo.local` suspendu et
+      son mot de passe remplacé ; textes légaux de démonstration nettoyés de leurs « \n ».
+- [ ] **À faire par le porteur** : fusionner `claude/espace-devoirs` (sessions 33 et 34) — la
+      production tourne encore sur la session 32 ; fournir les textes légaux de la vraie école ;
+      créer l'année scolaire puis les classes ; transmettre le mot de passe de test à la
+      direction (ou le changer dans Gestion → Écoles une fois déployé).
+
 ## Questions ouvertes (§15 du brief)
 
 Bloquantes pour la session 2 :
