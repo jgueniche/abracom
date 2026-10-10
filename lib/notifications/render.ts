@@ -18,6 +18,14 @@ export function hrefFor(kind: string, payload: Record<string, unknown>): string 
     return `/annonces/${payload.announcement_id}`;
   }
   if (kind.startsWith("document.")) return "/documents";
+  // A new homework opens on its own page — its pages ready to read or print (ADR-0070).
+  if (
+    kind === "class_post.new" &&
+    payload.type === "homework" &&
+    typeof payload.post_id === "string"
+  ) {
+    return `/devoirs/${payload.post_id}`;
+  }
   if (kind === "class_post.new" && typeof payload.class_id === "string") {
     const section =
       payload.type === "homework" ? "/devoirs" : payload.type === "journal" ? "/cahier" : "";

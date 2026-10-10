@@ -89,7 +89,7 @@ export async function getTodayForParent(
       kind: "homework",
       title: row.title,
       detail: [row.class?.name, row.subject].filter(Boolean).join(" · ") || null,
-      href: "/devoirs",
+      href: `/devoirs/${row.id}`,
       urgent: row.due_on === today,
     });
   }
@@ -214,8 +214,12 @@ export async function getTeacherQueue(
       kind: "draft",
       title: row.title,
       detail: classNames.get(row.class_id) ?? null,
-      // Editing exists since ADR-0059: the draft reopens where it was left.
-      href: `/classes/${row.class_id}/publier?post=${row.id}`,
+      // Editing exists since ADR-0059: the draft reopens where it was left — a homework in the
+      // homework composer, an entry of the cahier de vie in the class's.
+      href:
+        row.type === "homework"
+          ? `/devoirs/${row.id}/modifier`
+          : `/classes/${row.class_id}/publier?post=${row.id}`,
       urgent: false,
     });
   }

@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { Column } from "@/components/layouts/column";
@@ -16,9 +16,9 @@ export default async function PublishPage({
   searchParams,
 }: {
   params: Promise<{ classId: string }>;
-  searchParams: Promise<{ type?: string; post?: string }>;
+  searchParams: Promise<{ type?: string; post?: string; retour?: string }>;
 }) {
-  const [{ classId }, { type, post: postId }] = await Promise.all([params, searchParams]);
+  const [{ classId }, { type, post: postId, retour }] = await Promise.all([params, searchParams]);
   const [{ cls, isTeacher, isStaff }, t] = await Promise.all([
     requireClassAccess(classId),
     getTranslations("classSpace.post"),
@@ -38,26 +38,33 @@ export default async function PublishPage({
       ? (type as PostType)
       : "journal";
 
+  // Homework has its own composer in the homework space since session 33 (ADR-0070); the old
+  // addresses — bookmarks, the teacher's queue of drafts — still land on it.
+  if (defaultType === "homework")
+    redirect(
+      existing
+        ? `/devoirs/${existing.id}/modifier`
+        : `/devoirs/nouveau?classe=${classId}${retour === "classe" ? "&retour=classe" : ""}`,
+    );
+
   return (
     <Column width="index">
       <Card>
         <CardHeader>
-          <CardTitle>
-            {existing ? t("editTitle") : defaultType === "homework" ? t("newHomework") : t("new")}
-          </CardTitle>
+          <CardTitle>{existing ? t("editTitle") : t("new")}</CardTitle>
         </CardHeader>
         <CardContent>
           <PostForm
             classId={classId}
+            schoolId={cls.school_id}
+            postId={existing?.id ?? globalThis.crypto.randomUUID()}
             defaultType={defaultType}
             post={
               existing
                 ? {
-                    id: existing.id,
                     title: existing.title,
                     bodyMd: existing.body_md ?? "",
                     subject: existing.subject,
-                    dueOn: existing.due_on,
                     visibility: existing.visibility,
                   }
                 : undefined

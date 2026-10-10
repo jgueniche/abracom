@@ -1,10 +1,15 @@
 export const LOGIN_PATH = "/connexion";
 export const APP_HOME_PATH = "/accueil";
 export const ONBOARDING_PATH = "/bienvenue";
+/** Where an account with a provisional password chooses its own (ADR-0075). */
+export const PASSWORD_PATH = "/mot-de-passe";
+/** The door of the test school, reached from a corner of the sign-in page (ADR-0073). */
+export const TEST_SPACE_PATH = "/essai";
 
 /** Paths reachable without a session (the session cookie is still refreshed). */
 const PUBLIC_PREFIXES = [
   "/connexion",
+  "/essai",
   "/auth/",
   "/dev/",
   "/manifest.webmanifest",
@@ -53,3 +58,5 @@ function hasControlCharacter(value: string): boolean {
 }
 
 export const PERSPECTIVE_COOKIE = "kesher-perspective";
+/** The school chosen in the selector, for someone who belongs to several (ADR-0074). */
+export const SCHOOL_COOKIE = "kesher-school";

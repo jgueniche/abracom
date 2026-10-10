@@ -1,4 +1,14 @@
-export type MessageAttachment = { path: string; name: string; size: number; mime: string };
+export type MessageAttachment = {
+  path: string;
+  name: string;
+  size: number;
+  mime: string;
+  /** Photos sent since session 33 carry their size and a light rendition (ADR-0071). */
+  width?: number;
+  height?: number;
+  thumb?: string;
+  color?: string;
+};
 
 /** Splits a message body into text and `@Mention` segments matching known member names. */
 export function segmentMentions(
@@ -36,13 +46,33 @@ export function dayKey(iso: string, timeZone = "Europe/Paris"): string {
 
 export function parseAttachments(value: unknown): MessageAttachment[] {
   if (!Array.isArray(value)) return [];
-  return value.filter(
-    (item): item is MessageAttachment =>
-      typeof item === "object" &&
-      item !== null &&
-      typeof (item as MessageAttachment).path === "string" &&
-      typeof (item as MessageAttachment).name === "string",
-  );
+  return value.flatMap((item): MessageAttachment[] => {
+    if (typeof item !== "object" || item === null) return [];
+    const raw = item as Record<string, unknown>;
+    if (typeof raw.path !== "string" || typeof raw.name !== "string") return [];
+    const positive = (n: unknown) =>
+      typeof n === "number" && Number.isFinite(n) && n > 0 ? Math.round(n) : undefined;
+    return [
+      {
+        path: raw.path,
+        name: raw.name,
+        size: typeof raw.size === "number" ? raw.size : 0,
+        mime: typeof raw.mime === "string" ? raw.mime : "",
+        width: positive(raw.width),
+        height: positive(raw.height),
+        thumb: typeof raw.thumb === "string" ? raw.thumb : undefined,
+        color:
+          typeof raw.color === "string" && /^#[0-9a-f]{6}$/i.test(raw.color)
+            ? raw.color
+            : undefined,
+      },
+    ];
+  });
+}
+
+/** A photo, as opposed to a document: shown in the conversation rather than linked. */
+export function isPhoto(attachment: MessageAttachment): boolean {
+  return /^image\/(jpeg|png|webp)$/.test(attachment.mime);
 }
 
 export const REACTION_EMOJIS = ["👍", "❤️", "🙏", "😊", "🎉"] as const;

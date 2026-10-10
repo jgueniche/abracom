@@ -3,8 +3,10 @@ import type { Metadata } from "next";
 import { Link } from "@/components/ui/link";
 import { getTranslations } from "next-intl/server";
 
+import { PasswordForm } from "@/components/forms/password-form";
 import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
+import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getMfaStatus } from "@/lib/auth/mfa";
@@ -45,11 +47,18 @@ export default async function SecurityPage({
           {t("requiredNotice")}
         </p>
       )}
-      <Card className="max-w-xl">
-        <CardContent>
-          <TotpSetup enrolled={status.enrolled} isAdmin={isAdmin} />
-        </CardContent>
-      </Card>
+      <section className="mb-10">
+        <SectionHeader label={t("passwordSection")} />
+        <PasswordForm mode="change" email={user.email} />
+      </section>
+      <section>
+        <SectionHeader label={t("mfaSection")} />
+        <Card className="max-w-xl">
+          <CardContent>
+            <TotpSetup enrolled={status.enrolled} isAdmin={isAdmin} />
+          </CardContent>
+        </Card>
+      </section>
     </Column>
   );
 }

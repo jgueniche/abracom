@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { AppShell } from "@/components/layouts/app-shell";
 import { buildLegalStatus, fetchLegalRows, needsOnboarding } from "@/lib/auth/legal";
 import { isMfaEnrolled } from "@/lib/auth/mfa";
-import { ONBOARDING_PATH } from "@/lib/auth/routes";
+import { ONBOARDING_PATH, PASSWORD_PATH } from "@/lib/auth/routes";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { mfaRequiredFor } from "@/lib/auth/policy";
 
@@ -18,6 +18,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     fetchLegalRows(),
     isMfaEnrolled(),
   ]);
+  // A password the school gave is replaced before anything opens (ADR-0075).
+  if (user.passwordProvisional) redirect(PASSWORD_PATH);
   const legal = buildLegalStatus(user, legalRows);
   const mfa = { enrolled: mfaEnrolled, verified: user.aal === "aal2" };
   if (needsOnboarding(user, legal)) redirect(ONBOARDING_PATH);

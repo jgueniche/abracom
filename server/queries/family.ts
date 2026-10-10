@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 const CHILD_SELECT = `
   relation, is_primary, can_view_grades, can_message,
   student:students (
-    id, first_name, last_name, birth_date, photo_path, allergies_note, image_rights_signed_at, status,
+    id, school_id, first_name, last_name, birth_date, photo_path, allergies_note, image_rights_signed_at, status,
     enrollments (
       id, joined_on, left_on,
       class:classes (
@@ -40,21 +40,25 @@ export async function getMyChildren() {
   if (error) throw error;
 
   const today = new Date().toISOString().slice(0, 10);
-  return (data ?? [])
-    .filter((row) => row.student !== null)
-    .map((row) => ({
-      ...row,
-      student: {
-        ...row.student!,
-        // The database allows a single open enrolment per pupil (ADR-0034), but
-        // a class change closes the old one on the day it opens the new, and
-        // both pass this filter for a day. The open one comes first so the
-        // screens that read a single enrolment always read the current class.
-        enrollments: row
-          .student!.enrollments.filter((e) => e.left_on === null || e.left_on >= today)
-          .sort((a, b) => (a.left_on === null ? 0 : 1) - (b.left_on === null ? 0 : 1)),
-      },
-    }));
+  return (
+    (data ?? [])
+      // the children of the school the reader works in: a parent with one child in Neuilly and
+      // one in Levallois sees each in its school, as every other page does (ADR-0074)
+      .filter((row) => row.student !== null && row.student.school_id === user.school?.id)
+      .map((row) => ({
+        ...row,
+        student: {
+          ...row.student!,
+          // The database allows a single open enrolment per pupil (ADR-0034), but
+          // a class change closes the old one on the day it opens the new, and
+          // both pass this filter for a day. The open one comes first so the
+          // screens that read a single enrolment always read the current class.
+          enrollments: row
+            .student!.enrollments.filter((e) => e.left_on === null || e.left_on >= today)
+            .sort((a, b) => (a.left_on === null ? 0 : 1) - (b.left_on === null ? 0 : 1)),
+        },
+      }))
+  );
 }
 
 export type ChildWithClass = Awaited<ReturnType<typeof getMyChildren>>[number];

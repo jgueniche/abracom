@@ -160,11 +160,10 @@ export function BottomNav({
             <li key={href} className="min-w-0">
               <Link
                 href={href}
-                // The five tabs are the likeliest next clicks. With a loading
-                // boundary in place, prefetching one fetches the shell and the
-                // loading state only — one invocation, one `session_context()`,
-                // kept five minutes — and the click then answers at once from
-                // the cache instead of waiting for the network (ADR-0068).
+                // The five tabs are the likeliest next clicks. There is no
+                // loading boundary any more (ADR-0072): a prefetch now fetches
+                // the route tree only, a few hundred bytes and no query, and the
+                // bar under the tab (`LinkPending`) answers the click.
                 prefetch={null}
                 aria-current={active ? "page" : undefined}
                 aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}

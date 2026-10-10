@@ -166,42 +166,64 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
       </dl>
 
       <SectionHeader label={t("admin.classesTitle")} count={classes.length || undefined} />
-      <Table>
-        <TableHeader>
-          <TableRow className="hover:bg-transparent">
-            <TableHead>{t("admin.columnClass")}</TableHead>
-            <TableHead>{t("admin.columnLevel")}</TableHead>
-            <TableHead className="text-right">{t("admin.columnPupils")}</TableHead>
-            <TableHead>{t("admin.columnTeacher")}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {/* six inert cards on the opening screen of the direction, while the
-              same cards open the class space from a teacher's home */}
-          {classes.map((c) => (
-            <TableRow key={c.id}>
-              <TableCell className="font-medium">
-                <Link
-                  href={`/classes/${c.id}`}
-                  className="after:absolute after:inset-0 hover:underline hover:underline-offset-[3px]"
-                >
-                  {c.name}
-                </Link>
-              </TableCell>
-              <TableCell className="text-muted-foreground">{c.level?.code}</TableCell>
-              <TableCell className="text-right text-muted-foreground tabular-nums">
-                {c.enrollments[0]?.count ?? 0}
-              </TableCell>
-              <TableCell className="text-muted-foreground">
-                {c.class_teachers
-                  .filter((ct) => ct.role === "main" && ct.profile)
-                  .map((ct) => `${ct.profile!.first_name} ${ct.profile!.last_name}`)
-                  .join(", ") || tFamily("teacherRole.main")}
-              </TableCell>
+      {classes.length === 0 ? (
+        // A school just opened has no year and no class: an empty table under
+        // its four headings said nothing about what comes first.
+        <div className="flex flex-col gap-1">
+          <p className="text-sm text-pretty text-muted-foreground">{t("admin.noClasses")}</p>
+          <div className="flex flex-wrap gap-x-5">
+            <Link
+              href="/admin/annees"
+              className="inline-flex min-h-11 items-center text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              {t("admin.noClassesYears")}
+            </Link>
+            <Link
+              href="/admin/classes"
+              className="inline-flex min-h-11 items-center text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              {t("admin.noClassesClasses")}
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead>{t("admin.columnClass")}</TableHead>
+              <TableHead>{t("admin.columnLevel")}</TableHead>
+              <TableHead className="text-right">{t("admin.columnPupils")}</TableHead>
+              <TableHead>{t("admin.columnTeacher")}</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {/* six inert cards on the opening screen of the direction, while the
+                same cards open the class space from a teacher's home */}
+            {classes.map((c) => (
+              <TableRow key={c.id}>
+                <TableCell className="font-medium">
+                  <Link
+                    href={`/classes/${c.id}`}
+                    className="after:absolute after:inset-0 hover:underline hover:underline-offset-[3px]"
+                  >
+                    {c.name}
+                  </Link>
+                </TableCell>
+                <TableCell className="text-muted-foreground">{c.level?.code}</TableCell>
+                <TableCell className="text-right text-muted-foreground tabular-nums">
+                  {c.enrollments[0]?.count ?? 0}
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {c.class_teachers
+                    .filter((ct) => ct.role === "main" && ct.profile)
+                    .map((ct) => `${ct.profile!.first_name} ${ct.profile!.last_name}`)
+                    .join(", ") || tFamily("teacherRole.main")}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </Column>
   );
 }

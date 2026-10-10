@@ -1056,6 +1056,126 @@ d'authentification par-dessus le shim du dépôt. Connexion réelle, six rôles.
       (`scripts/ops/apply-migrations.sh`) — sans elles, les deux écrans échouent, la table n'existant
       pas.
 
+## Session 33 — L'espace devoirs, et les photos qui passent enfin (2026-10-06, ADR-0070 à ADR-0072)
+
+Demandée par le porteur : un espace devoirs « ultra fluide et intuitif, très ludique », des pièces
+jointes affichées directement — la page de révision photographiée par l'enseignant·e, lue sur le
+téléphone ou imprimée si le cahier est resté à l'école — et des photos partagées dans les groupes de
+parents.
+
+- [x] **Cahier de texte repensé** (`/devoirs`, onglet Devoirs de la classe) : la semaine s'ouvre
+      sur **le jour préparé** (« Pour demain » le soir, « Pour aujourd'hui » jusqu'à midi, « Pour
+      lundi » dès le vendredi midi), semaine en bandeau avec un anneau de progression par jour, jours
+      passés rangés sous « Plus tôt cette semaine », une couleur par matière (huit, contraste testé).
+- [x] **« Fait » remplace « Vu »** — rond à cocher dessiné à l'instant (`useOptimistic`), une
+      célébration discrète, « Tout est fait » ; l'équipe voit « Fait : 12 / 24 », jamais qui.
+      **Écart au brief, à valider par le porteur.** L'autre parent de l'enfant peut décocher
+      (politique de suppression élargie, quatre assertions).
+- [x] **Pages et documents** : photos de pages (2 400 px, assez pour imprimer), PDF jusqu'à 20 Mo,
+      vignettes de 640 px écrites à la publication ; affichées sous chaque devoir, en grand sur la
+      **fiche** `/devoirs/[id]` qui s'imprime une page par feuille ; **visionneuse** plein écran
+      partagée (glissement, Imprimer, Télécharger) — cahier de vie et messagerie compris.
+- [x] **Composeur dédié** `/devoirs/nouveau` et `/devoirs/[id]/modifier` : pour quand (prochain cours
+      de la matière lu dans l'emploi du temps), matière en un toucher, « Photographier une page »,
+      « Donner aussi à » d'autres classes (fichiers copiés dans le bucket), brouillon, modification.
+- [x] **Fin du plafond de 1 Mo** (ADR-0071) : une photo de téléphone faisait planter tout l'écran de
+      conversation. Les fichiers partent du navigateur directement dans le bucket privé, réencodés
+      (sans EXIF ni GPS), avec progression ; l'action ne reçoit qu'une description vérifiée contre
+      Storage. Cahier de vie et messagerie sur la même chaîne.
+- [x] **Photos dans les conversations** : appareil photo, galerie, collage ; aperçu avant envoi ;
+      une photo en grand ou une mosaïque dans le fil. Le dépôt dans le bucket `messages` exige
+      désormais le droit d'écrire dans le fil (`can_post_in_thread`, six assertions).
+- [x] Migration `20261006090000_homework_attachments.sql`, `021_homework_attachments.sql`
+      (30 assertions) ; seed : sept devoirs de CP sur des jours d'école et l'emploi du temps du CP.
+- [x] Aide : `cahier-de-texte.md` réécrit, `donner-un-devoir.md` et `photos-dans-les-messages.md`
+      créés, cinq articles relus et redatés. `ops:check-help` vert.
+
+### Ce que les bancs ont trouvé
+
+- [x] **Le seed rendait quatre assertions pgTAP rouges depuis le 1er octobre** (dates figées), sur
+      `main` aussi : dates relatives.
+- [x] **`ops:storage-sweep` n'avait jamais rien balayé** (`PGRST106`, schéma `storage` non exposé),
+      et le jour où il aurait marché il aurait supprimé toutes les vignettes et, passé mille photos,
+      des photos publiées : il liste par l'API Storage, pagine, garde les vignettes. Joué : un envoi
+      abandonné part, la page et sa vignette restent.
+- [x] **Envoyer un message restait en suspens quatre à sept fois sur dix** après un chargement de
+      page — en production depuis le 15 septembre (ADR-0072). Cause : le défaut ouvert de Next
+      vercel/next.js#66426 (`loading.tsx` + `revalidatePath`) ; les frontières de chargement de
+      l'ADR-0068 sont retirées, la barre sous l'onglet reste. 0 échec sur tous les bancs ensuite.
+- [x] Focus clavier masqué par la barre « Publier » épinglée (SC 2.4.11) : corrigé.
+- [x] Publication d'un devoir de trois pages : 1,5 → 1,1–1,4 s d'action (WebP à l'effort 2).
+
+### Recette
+
+- [x] `pnpm check` (208 tests unitaires), `pnpm build`, **529 assertions pgTAP** sur la pile
+      Supabase et sur PostgreSQL 16, e2e en mode CI sur le build de production (dont quatre
+      nouveaux, répétés trente-deux fois sans échec).
+- [x] `axe` à 0 violation sérieuse sur les écrans touchés, à 390 et 1 440 px, en clair et en
+      sombre — hormis `target-size` sur le composeur à 390 px page en haut, positionnel (la barre
+      épinglée recouvre la barre d'outils tant qu'on n'a pas défilé), documenté dans l'ADR-0070.
+- [ ] **À valider par le porteur** : « Fait » à la place de « Vu » ; la disparition du squelette
+      au clic (ADR-0072) ; l'appareil photo et l'impression (AirPrint) sur de vrais téléphones —
+      joués ici en émulation.
+- [x] **Appliquée en production** le 2026-10-08, avant le déploiement : la migration et son
+      inscription dans `supabase_migrations.schema_migrations`.
+
+## Session 34 — Plusieurs écoles, une école test, des familles inscrites par l'école (2026-10-08, ADR-0073 à ADR-0075)
+
+Demandée par le porteur : garder l'école fictive comme banc d'essai pour la direction, accessible
+par un mot de passe depuis un coin de la page de connexion ; créer la vraie école, Abravanel
+Neuilly, vide, et pouvoir en ouvrir d'autres (Levallois) ; des inscriptions tenues par l'école —
+une famille écrit, l'école crée les comptes — avec un mot de passe provisoire en attendant Resend.
+
+- [x] **École test** (ADR-0073) : « École test Kesher », `modules.test`, bandeau sur chaque page,
+      porte « Espace de test » (`/essai`) avec cinq personnages, refus de tout compte qui
+      appartient aussi à une vraie école ou à la plateforme ; mot de passe commun réglé par
+      `set_test_school_password` (clé de service).
+- [x] **Plusieurs écoles** (ADR-0074) : école courante choisie dans le menu du compte (cookie
+      validé, vraie école par défaut) ; rôles, enfants, classes et listes du lecteur limités à
+      l'école courante ; Gestion → Plateforme → Écoles (`create_school`, neuf niveaux).
+- [x] **Familles inscrites par l'école** (ADR-0075) : adresse d'inscription et message préparé sur
+      la page de connexion ; Nouvelle famille (`create_family`, une transaction, comptes supprimés
+      si elle refuse) ; mots de passe provisoires affichés une fois (équipe invitée, responsable
+      rattaché, famille) ; changement forcé à la première connexion ; « Mot de passe provisoire »
+      pour un oubli ; « Changer mon mot de passe ».
+- [x] Migration `20261008090000_schools_and_families.sql`, `022_schools_and_families.sql`
+      (32 assertions) ; seed : l'école s'appelle « École test Kesher », textes légaux sans
+      « \n » littéraux.
+- [x] Aide : `espace-de-test.md`, `ecoles-de-la-plateforme.md`, `inscrire-une-famille.md` créés ;
+      quatorze articles relus et redatés. `ops:check-help` vert.
+
+### Ce que les bancs ont trouvé
+
+- [x] **Changer un mot de passe par la clé de service ferme toutes les sessions du compte** — mesuré
+      à part (« Refresh Token Not Found ») après que l'e2e a vu le parent revenir à la connexion :
+      la session est rouverte avec le nouveau mot de passe.
+- [x] **Le tableau de bord vide de la vraie école montrait l'appel de l'école test** à
+      l'administrateur de plateforme, qui peut tout lire : listes du lecteur et pointage du jour
+      filtrés sur l'école courante.
+- [x] Sous-menu d'écoles illisible à 390 px (coche sur le nom) : la liste est dans le menu.
+- [x] Recherche de familles qui débordait de 9 px (colonne de grille sans `minmax(0, 1fr)`).
+- [x] Aucun état vide pour une école sans classe : la page mène aux années puis aux classes.
+- [x] Le banc a servi une fois un build supprimé (chunks en `text/html`, ADR-0061) : relancé,
+      chunk vérifié en JavaScript avant chaque capture.
+
+### Recette
+
+- [x] `pnpm check` (220 tests unitaires), `pnpm build`, **561 assertions pgTAP** sur la pile
+      Supabase et sur PostgreSQL 16, **42 e2e** en mode CI sur le build (les trois nouveaux
+      répétés vingt-quatre fois sans échec).
+- [x] `axe` à 0 violation sérieuse sur 61 captures (connexion, porte de test, accueil, menu,
+      familles, nouvelle famille et son résultat, utilisateurs et son dialogue, mot de passe,
+      sécurité, écoles, gestion, la vraie école vide), à 390 et 1 440 px, en clair et en sombre.
+- [x] **En production** (2026-10-08) : migration appliquée et inscrite ; école de démonstration
+      renommée « École test Kesher » (`modules.test`, sans adresse) ; **Abravanel Neuilly** créée
+      (neuf niveaux, adresse et coordonnées reprises de l'ancienne fiche, direction au compte
+      yahoo.fr, seul administrateur de plateforme actif) ; `superadmin@demo.local` suspendu et
+      son mot de passe remplacé ; textes légaux de démonstration nettoyés de leurs « \n ».
+- [ ] **À faire par le porteur** : fusionner `claude/espace-devoirs` (sessions 33 et 34) — la
+      production tourne encore sur la session 32 ; fournir les textes légaux de la vraie école ;
+      créer l'année scolaire puis les classes ; transmettre le mot de passe de test à la
+      direction (ou le changer dans Gestion → Écoles une fois déployé).
+
 ## Questions ouvertes (§15 du brief)
 
 Bloquantes pour la session 2 :

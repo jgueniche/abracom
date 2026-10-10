@@ -2,7 +2,7 @@
 
 import { BoldIcon, EyeIcon, ItalicIcon, LinkIcon, ListIcon, PencilIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useId, useRef, useState } from "react";
+import { type ReactNode, useId, useRef, useState } from "react";
 
 import { Markdown } from "@/components/domain/markdown";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ export function MarkdownEditor({
 }: {
   name: string;
   defaultValue?: string;
-  label: string;
+  label: ReactNode;
   rows?: number;
   required?: boolean;
 }) {
@@ -57,7 +57,8 @@ export function MarkdownEditor({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between gap-2">
+      {/* A long label keeps its line: on a phone the toolbar goes underneath instead. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
         <label htmlFor={id} className="text-sm font-medium">
           {label}
         </label>

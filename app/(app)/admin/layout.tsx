@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { requireSchoolStaff } from "@/lib/auth/guards";
-import { isSchoolAdmin } from "@/lib/permissions";
+import { isSchoolAdmin, isSuperAdmin } from "@/lib/permissions";
 
 import { AdminNav } from "./_components/admin-nav";
 
@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const isAdmin = isSchoolAdmin(user.roles, schoolId);
   return (
     <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8 2xl:grid-cols-[17rem_minmax(0,1fr)] 2xl:gap-12">
-      <AdminNav isAdmin={isAdmin} />
+      <AdminNav isAdmin={isAdmin} isPlatform={isSuperAdmin(user.roles)} />
       <div className="min-w-0">{children}</div>
     </div>
   );

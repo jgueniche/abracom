@@ -4,7 +4,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 
-import { LOGIN_PATH, PERSPECTIVE_COOKIE } from "@/lib/auth/routes";
+import { LOGIN_PATH, PERSPECTIVE_COOKIE, SCHOOL_COOKIE } from "@/lib/auth/routes";
+import { pickSchool, schoolsOf } from "@/lib/auth/school-choice";
 import { MissingSupabaseConfigError } from "@/lib/env";
 import {
   type MembershipLike,
@@ -31,10 +32,15 @@ export type CurrentUser = {
   memberships: Array<Tables<"memberships"> & { school: SchoolSummary | null }>;
   /** Normalised memberships for `lib/permissions`. */
   roles: MembershipLike[];
+  /** Perspectives the user holds in the current school (a platform administrator: everywhere). */
   perspectives: Perspective[];
   perspective: Perspective | null;
-  /** First active school (single-school users). */
+  /** The school the application works in: the one chosen in the selector, or the first. */
   school: SchoolSummary | null;
+  /** Every school the user may work in, for the selector (ADR-0074). */
+  schools: SchoolSummary[];
+  /** The password was given by the school and must be replaced at sign-in (ADR-0075). */
+  passwordProvisional: boolean;
 };
 
 /**
@@ -163,7 +169,13 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     role: m.role,
     status: m.status,
   }));
-  const requested = (await cookies()).get(PERSPECTIVE_COOKIE)?.value;
+  const cookieStore = await cookies();
+  const school = pickSchool(rows, cookieStore.get(SCHOOL_COOKIE)?.value);
+  // A role held in another school opens nothing here: the director of Neuilly who is a
+  // parent in Levallois is offered the parent perspective only in Levallois.
+  const here = roles.filter((r) => r.role === "super_admin" || r.schoolId === school?.id);
+  const requested = cookieStore.get(PERSPECTIVE_COOKIE)?.value;
+  const appMetadata = claims?.claims?.app_metadata as Record<string, unknown> | undefined;
 
   return {
     id: userId,
@@ -173,9 +185,11 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     phone: context?.phone ?? null,
     memberships: rows,
     roles,
-    perspectives: perspectivesFor(roles),
-    perspective: resolvePerspective(roles, requested),
-    school: rows.find((m) => m.status === "active")?.school ?? rows[0]?.school ?? null,
+    perspectives: perspectivesFor(here),
+    perspective: resolvePerspective(here, requested),
+    school,
+    schools: schoolsOf(rows),
+    passwordProvisional: appMetadata?.password_provisional === true,
   };
 });
 
@@ -184,6 +198,25 @@ export async function requireCurrentUser(): Promise<CurrentUser> {
   const user = await getCurrentUser();
   if (!user) redirect(LOGIN_PATH);
   return user;
+}
+
+/**
+ * Keeps the rows of the school the reader works in (ADR-0074).
+ *
+ * The reader-side lists — announcements, agenda, documents, classifieds, forms —
+ * ask RLS « what may I read? », and a platform administrator may read every
+ * school: the real school's notice board showed the test school's circulars.
+ * The query is passed in already running, so the filter waits for the session
+ * the page has asked for anyway, never the other way round (ADR-0061).
+ */
+export async function inCurrentSchool<T extends { school_id: string }>(
+  query: PromiseLike<{ data: T[] | null; error: unknown }>,
+): Promise<T[]> {
+  const [user, { data, error }] = await Promise.all([getCurrentUser(), query]);
+  if (error) throw error;
+  const rows = data ?? [];
+  const schoolId = user?.school?.id;
+  return schoolId ? rows.filter((row) => row.school_id === schoolId) : rows;
 }
 
 function emptyProfile(id: string): Tables<"profiles"> {

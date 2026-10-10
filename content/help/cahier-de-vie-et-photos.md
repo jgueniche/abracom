@@ -5,7 +5,7 @@ routes: [/classes/[classId]/cahier]
 topic: daily
 keywords: [cahier de vie, photos, galerie, droit à l'image, tag, mois]
 since: 7
-reviewed: 2026-09-14
+reviewed: 2026-10-06
 ---
 
 Le cahier de vie est le journal de la classe, rangé par mois : ce que l'équipe a écrit, et les photos qui l'accompagnent quand il y en a. Un billet sans photo s'y affiche comme les autres.
@@ -13,11 +13,11 @@ Le cahier de vie est le journal de la classe, rangé par mois : ce que l'équipe
 Trois catégories y cohabitent — **Vie de classe**, **Information**, **Rappel** — et les pastilles en haut de la page filtrent dessus. C'est une commodité de lecture, pas trois endroits : tout est dans le même cahier.
 
 :::roles parent, guardian
-Les photos s'affichent dans l'application ; leur téléchargement peut être désactivé par l'école. Elles sont stockées dans un espace privé et ne sont accessibles qu'aux familles de la classe et à l'équipe.
+Les photos s'affichent dans l'application ; les toucher les ouvre en plein écran, où l'on passe de l'une à l'autre — y compris celles qu'une liste replie sous « +3 ». Elles sont stockées dans un espace privé et ne sont accessibles qu'aux familles de la classe et à l'équipe.
 :::
 
 :::roles teacher, staff, school_admin, super_admin
-Vous publiez jusqu'à vingt photos à la fois depuis le composeur de la classe. Elles sont compressées sur votre téléphone, puis retraitées côté serveur : redressées, réduites à 1600 px, converties, **métadonnées supprimées** — la position GPS d'une photo de classe ne part jamais avec elle.
+Vous publiez jusqu'à vingt photos à la fois depuis le composeur de la classe, prises avec l'appareil du téléphone ou choisies dans la galerie. Elles partent dès qu'elles sont choisies, compressées sur votre téléphone, puis sont retraitées côté serveur à la publication : redressées, réduites à 1600 px, converties, **métadonnées supprimées** — la position GPS d'une photo de classe ne part jamais avec elle.
 
 Vous ne pouvez identifier un élève sur une photo que si sa famille a signé le **droit à l'image**. Les autres prénoms n'apparaissent pas dans la liste, et un enregistrement forcé est refusé par la base. Avant de publier, une case vous demande d'attester qu'aucun enfant sans autorisation n'apparaît sur les images : c'est une attestation, l'application ne sait pas reconnaître les visages.
 

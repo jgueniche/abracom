@@ -11,7 +11,7 @@ async function seriousViolations(page: Page) {
 }
 
 test.describe("accessibility (axe, WCAG 2.1 AA)", () => {
-  for (const path of ["/connexion", "/hors-ligne"]) {
+  for (const path of ["/connexion", "/essai", "/hors-ligne"]) {
     test(`${path} has no serious or critical violation`, async ({ page }) => {
       await page.goto(path);
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

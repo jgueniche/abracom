@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
+import type { CredentialsState } from "@/lib/auth/credentials";
 import { assertSchoolContext } from "@/lib/auth/guards";
+import { temporaryPassword } from "@/lib/auth/temporary-password";
 import { RELATIONS } from "@/lib/import/families";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -190,8 +192,14 @@ const guardianSchema = z.object({
   locale: z.enum(["fr", "en"]),
 });
 
-/** Links a guardian (existing account or a new invited one) to a student. */
-export async function linkGuardian(_prev: ActionState, formData: FormData): Promise<ActionState> {
+/**
+ * Links a guardian (existing account or a new invited one) to a student. A new
+ * account comes with a provisional password, shown once (ADR-0075).
+ */
+export async function linkGuardian(
+  _prev: CredentialsState,
+  formData: FormData,
+): Promise<CredentialsState> {
   try {
     const t = await getTranslations("admin.students");
     const { user, schoolId } = await assertSchoolContext(["school_admin"]);
@@ -216,11 +224,13 @@ export async function linkGuardian(_prev: ActionState, formData: FormData): Prom
     if (!student) return { status: "error", message: t("invalid") };
 
     const admin = createAdminClient();
+    const password = temporaryPassword();
     const account = await ensureAccount(admin, {
       email: parsed.data.email,
       firstName: parsed.data.firstName,
       lastName: parsed.data.lastName,
       locale: parsed.data.locale,
+      password,
     });
     await ensureMembership(supabase, schoolId, account.userId, "parent");
 
@@ -247,6 +257,15 @@ export async function linkGuardian(_prev: ActionState, formData: FormData): Prom
     return {
       status: "success",
       message: account.created ? t("guardianInvited") : t("guardianLinked"),
+      credentials: account.created
+        ? [
+            {
+              name: `${parsed.data.firstName} ${parsed.data.lastName}`.trim(),
+              email: parsed.data.email,
+              password,
+            },
+          ]
+        : undefined,
     };
   } catch (error) {
     return toActionError(error);

@@ -10,10 +10,11 @@ import { NotificationBell } from "@/components/layouts/notification-bell";
 import { PerspectiveSwitcher } from "@/components/layouts/perspective-switcher";
 import { InstallPrompt } from "@/components/layouts/pwa";
 import { SearchBox } from "@/components/layouts/search-box";
+import { isTestSchool } from "@/lib/auth/school-choice";
 import { type CurrentUser, displayName, initials } from "@/lib/auth/session";
 import { helpIndexFor } from "@/lib/help/articles";
 import { helpRolesFor } from "@/lib/help/roles";
-import { canUseMessaging } from "@/lib/permissions";
+import { canUseMessaging, rolesIn } from "@/lib/permissions";
 import { appName } from "@/lib/env";
 import { getUnreadMessageCount } from "@/server/queries/messaging";
 
@@ -32,13 +33,17 @@ import { getUnreadMessageCount } from "@/server/queries/messaging";
  * avatar under the 44 px touch target the project mandates.
  */
 export async function AppShell({ user, children }: { user: CurrentUser; children: ReactNode }) {
-  const [tc, unreadMessages, helpIndex] = await Promise.all([
+  const [tc, tt, unreadMessages, helpIndex] = await Promise.all([
     getTranslations("common"),
+    getTranslations("testSchool"),
     getUnreadMessageCount(),
     helpIndexFor(helpRolesFor(user.roles)),
   ]);
   const perspective = user.perspective ?? "parent";
-  const isParent = user.roles.some((r) => r.role === "parent" || r.role === "guardian");
+  // A parent in another school has no family to show in this one (ADR-0074).
+  const isParent = rolesIn(user.roles, user.school?.id).some(
+    (r) => r.role === "parent" || r.role === "guardian",
+  );
   // A read-only guardian has no messaging at all: no tab, no "New message".
   const canMessage = user.school ? canUseMessaging(user.roles, user.school.id) : false;
   const showStyleGuide =
@@ -52,6 +57,17 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
       >
         {tc("skipToContent")}
       </a>
+      {/* Not sticky: it greets every page and scrolls away, so the header keeps its height. */}
+      {isTestSchool(user.school) && (
+        <aside
+          aria-label={tt("bandLabel")}
+          className="border-b border-warning/40 bg-warning/10 text-warning"
+        >
+          <p className="mx-auto w-full max-w-[110rem] px-4 py-1.5 text-xs font-medium md:px-6 lg:px-8 2xl:px-12">
+            {tt("band")}
+          </p>
+        </aside>
+      )}
       <header className="sticky top-0 z-40 border-b border-border/80 bg-background">
         <div className="mx-auto flex h-14 w-full max-w-[110rem] items-stretch gap-3 px-4 md:px-6 lg:h-16 lg:px-8 2xl:px-12">
           <Link
@@ -92,6 +108,8 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
               initials={initials(user.profile)}
               isParent={isParent}
               showStyleGuide={showStyleGuide}
+              schools={user.schools.map(({ id, name }) => ({ id, name }))}
+              currentSchoolId={user.school?.id ?? null}
             />
           </div>
         </div>

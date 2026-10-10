@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { locales, type Locale } from "@/lib/i18n/config";
 import { setLocale } from "@/lib/i18n/locale";
+import { switchSchool } from "@/server/actions/school";
 
 import { useSignOut } from "./sign-out-button";
 
@@ -47,17 +48,24 @@ import { useSignOut } from "./sign-out-button";
  */
 /** Menu rows are touch targets like any other (project rule: ≥ 44 px). */
 const ROW = "min-h-11 px-2";
+/** A radio row keeps its right padding: the check mark is drawn there. */
+const RADIO_ROW = "min-h-11 pl-2";
 
 export function AccountMenu({
   name,
   initials,
   isParent,
   showStyleGuide,
+  schools,
+  currentSchoolId,
 }: {
   name: string;
   initials: string;
   isParent: boolean;
   showStyleGuide: boolean;
+  /** The schools this person works in; the selector shows from two (ADR-0074). */
+  schools: { id: string; name: string }[];
+  currentSchoolId: string | null;
 }) {
   const t = useTranslations("nav");
   const tc = useTranslations("common");
@@ -67,6 +75,17 @@ export function AccountMenu({
   const { setTheme } = useTheme();
   const { signOut, pending } = useSignOut();
   const [localePending, startLocale] = useTransition();
+  const [schoolPending, startSchool] = useTransition();
+  const currentSchool = schools.find((school) => school.id === currentSchoolId);
+
+  function onSchoolChange(value: string) {
+    if (value === currentSchoolId) return;
+    const data = new FormData();
+    data.set("school", value);
+    startSchool(async () => {
+      await switchSchool(data);
+    });
+  }
 
   return (
     <DropdownMenu>
@@ -78,7 +97,37 @@ export function AccountMenu({
         <ChevronDownIcon className="size-4" aria-hidden />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
-        <DropdownMenuLabel className="truncate">{name}</DropdownMenuLabel>
+        <DropdownMenuLabel className="flex flex-col gap-0.5">
+          <span className="truncate">{name}</span>
+          {/* The header hides the school's name on a phone; it is read here. */}
+          {currentSchool && schools.length < 2 && (
+            <span className="truncate text-xs font-normal text-muted-foreground">
+              {currentSchool.name}
+            </span>
+          )}
+        </DropdownMenuLabel>
+        {/* In the menu itself, not in a submenu: beside a 240 px menu on a phone,
+            a submenu had a third of the screen left and wrote over its own names. */}
+        {schools.length > 1 && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+              {tm("switchSchool")}
+            </DropdownMenuLabel>
+            <DropdownMenuRadioGroup value={currentSchoolId ?? ""} onValueChange={onSchoolChange}>
+              {schools.map((school) => (
+                <DropdownMenuRadioItem
+                  key={school.id}
+                  value={school.id}
+                  disabled={schoolPending}
+                  className={RADIO_ROW}
+                >
+                  <span className="truncate">{school.name}</span>
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className={ROW}>
           <Link href="/profil">
@@ -127,7 +176,7 @@ export function AccountMenu({
               onValueChange={(value) => startLocale(() => void setLocale(value as Locale))}
             >
               {locales.map((item) => (
-                <DropdownMenuRadioItem key={item} value={item} className={ROW}>
+                <DropdownMenuRadioItem key={item} value={item} className={RADIO_ROW}>
                   {tc(`locale.${item}`)}
                 </DropdownMenuRadioItem>
               ))}

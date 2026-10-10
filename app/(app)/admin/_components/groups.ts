@@ -7,7 +7,8 @@
  *
  * `adminOnly` entries belong to the direction alone. The secretariat used to
  * see them in the sidebar, click them, and be sent back to the home page
- * without a word — two of its twelve entries were dead.
+ * without a word — two of its twelve entries were dead. `platformOnly` ones
+ * belong to the platform administrator: the list of schools (ADR-0074).
  *
  * Shared by the navigation (a client component) and the section index (a server
  * component), so the two can never drift apart.
@@ -49,20 +50,25 @@ export const ADMIN_GROUPS = [
       { href: "/admin/journal", key: "audit", adminOnly: true },
     ],
   },
+  {
+    key: "platform",
+    items: [{ href: "/admin/ecoles", key: "schools", platformOnly: true }],
+  },
 ] as const satisfies ReadonlyArray<{
   key: string;
-  items: ReadonlyArray<{ href: string; key: string; adminOnly?: boolean }>;
+  items: ReadonlyArray<{ href: string; key: string; adminOnly?: boolean; platformOnly?: boolean }>;
 }>;
 
 export type AdminItem = { href: string; key: string };
 export type AdminGroup = { key: string; items: AdminItem[] };
 
 /** The families this reader may actually open, empty ones dropped. */
-export function adminGroupsFor(isAdmin: boolean): AdminGroup[] {
+export function adminGroupsFor(isAdmin: boolean, isPlatform = false): AdminGroup[] {
   return ADMIN_GROUPS.map((group) => ({
     key: group.key,
     items: group.items
       .filter((item) => isAdmin || !("adminOnly" in item && item.adminOnly))
+      .filter((item) => isPlatform || !("platformOnly" in item && item.platformOnly))
       .map((item) => ({ href: item.href, key: item.key })),
   })).filter((group) => group.items.length > 0);
 }

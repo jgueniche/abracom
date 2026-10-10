@@ -548,6 +548,72 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   lecture seule et l'enseignante lisent ; l'enseignante est renvoyée de l'écran de saisie. Vérifié :
   `pnpm check`, `pnpm build`, **499 assertions pgTAP**, 26 e2e (2 ignorés, l'invitation), axe à
   0 violation sérieuse à 390 et 1 440 px, en clair et en sombre.
+- **Session 33 — l'espace devoirs, et les photos qui passent enfin** (ADR-0070 à ADR-0072), joué
+  sur une pile Supabase réelle et sur un build de production. Le **cahier de texte** s'ouvre sur le
+  jour que l'on prépare (« Pour demain » le soir, « Pour aujourd'hui » jusqu'à midi, « Pour lundi »
+  dès le vendredi midi), la semaine en bandeau avec un anneau par jour, une couleur par matière ; les
+  **pages et documents** joints s'affichent sous chaque devoir, en grand sur la **fiche**
+  `/devoirs/[id]` qui s'imprime une page par feuille, et dans une **visionneuse** plein écran
+  (glissement, Imprimer, Télécharger) que partagent cahier de vie et messagerie. **« Fait » remplace
+  « Vu »** — rond coché à l'instant, l'équipe voit « Fait : 12 / 24 », jamais qui — **écart au
+  brief à valider par le porteur**. Le **composeur** a sa page (`/devoirs/nouveau`,
+  `/devoirs/[id]/modifier`) : pour quand (prochain cours de la matière lu dans l'emploi du temps),
+  matière en un toucher, « Photographier une page », « Donner aussi à » d'autres classes, brouillon.
+  **Le plafond de 1 Mo des Server Actions** faisait planter l'écran de conversation dès qu'un parent
+  envoyait une photo de téléphone (ADR-0071) : les fichiers partent désormais du navigateur droit
+  dans le bucket privé, réencodés sans EXIF, et l'action ne reçoit qu'une description vérifiée
+  contre Storage ; les **photos dans les conversations** (appareil, galerie, collage, mosaïque) en
+  découlent, et déposer dans le bucket `messages` exige le droit d'écrire dans le fil. **Trouvé en
+  chemin** : le seed rendait quatre assertions pgTAP rouges depuis le 1er octobre (dates figées) ;
+  `ops:storage-sweep` n'avait **jamais** rien balayé (schéma `storage` non exposé) et aurait, le
+  jour venu, supprimé toutes les vignettes puis, passé mille lignes, des photos publiées — il liste
+  désormais par l'API Storage et pagine ; et surtout **envoyer un message restait en suspens quatre
+  à sept fois sur dix** après un chargement de page, message enregistré mais jamais affiché, en
+  production depuis le 15 septembre : le défaut ouvert de Next **vercel/next.js#66426**
+  (`loading.tsx` + `revalidatePath`), qui touchait aussi le formulaire de devoir dès qu'une
+  frontière l'enveloppait. **Les frontières de chargement de l'ADR-0068 sont retirées**
+  (ADR-0072) : la barre sous l'onglet répond toujours au clic, le squelette disparaît jusqu'à ce
+  que Next corrige. Publication d'un devoir de trois pages : 1,1 à 1,4 s (WebP à l'effort 2, au lieu
+  de 1,5). Vérifié : `pnpm check` (208 tests), `pnpm build`, **529 assertions pgTAP**, e2e en mode
+  CI sur le build de production, axe à 0 violation sérieuse à 390 et 1 440 px en clair et en sombre
+  (hors `target-size` positionnel sous la barre épinglée du composeur). **Restent au porteur :
+  appliquer la migration avant de déployer** (le code lit des colonnes nouvelles), valider « Fait »
+  et l'absence de squelette, et essayer l'appareil photo et l'impression sur de vrais téléphones.
+- **Session 34 — plusieurs écoles, une école test, des familles inscrites par l'école** (ADR-0073
+  à ADR-0075), jouée sur une pile Supabase réelle et sur un build de production. L'école de
+  démonstration devient **« École test Kesher »** (`modules.test`) : un bandeau le rappelle en tête
+  de chaque page, et l'on y entre par la porte **« Espace de test »** au coin de la page de
+  connexion (`/essai`) — un mot de passe, puis le personnage voulu (direction, secrétariat,
+  enseignante de CP, parent, grand-parent en lecture seule) — qui referme tout compte appartenant
+  aussi à une vraie école ou à la plateforme. **Plusieurs écoles** : l'école courante se choisit
+  dans le menu sous la photo (cookie relu à travers les adhésions, la vraie école par défaut), un
+  rôle tenu ailleurs n'ouvre rien ici, et Gestion → Plateforme → **Écoles** ouvre une école vide
+  avec ses neuf niveaux (`create_school`) et règle le mot de passe de test
+  (`set_test_school_password`, clé de service, jamais un administrateur ni un compte d'une vraie
+  école). **Familles inscrites par l'école** : la page de connexion donne l'adresse d'inscription
+  (jeremy.gueniche@gmail.com) et prépare le message ; **Nouvelle famille**
+  (`/admin/familles/nouvelle`, `create_family` en une transaction) inscrit un ou deux parents et
+  jusqu'à huit enfants ; chaque compte neuf reçoit un **mot de passe provisoire** affiché une
+  seule fois, à remplacer avant tout (`/mot-de-passe`) ; « Mot de passe provisoire » remplace un
+  oubli (règles étroites, journalisé) ; Mon profil → Sécurité change le sien. **Trouvé par l'e2e
+  ou en regardant** : changer un mot de passe par la clé de service **ferme toutes les sessions du
+  compte** — le parent revenait à la connexion, il est désormais reconnecté ; les listes du
+  lecteur (annonces, agenda, documents, petites annonces, formulaires) et **le pointage du jour**
+  ne filtraient que par les RLS, si bien que le tableau de bord vide de la vraie école proposait à
+  l'administrateur de plateforme l'appel du matin de l'école test ; un sous-menu d'écoles qui
+  écrivait sur ses propres noms à 390 px ; une recherche de familles qui débordait de 9 px ; des
+  textes légaux de démonstration qui affichaient « \n\n » ; aucun état vide pour une école sans
+  classe. Vérifié : `pnpm check` (220 tests), `pnpm build`, **561 assertions pgTAP** sur les deux
+  chemins, **42 e2e** (les trois nouveaux répétés 24 fois sans échec), axe à 0 violation sérieuse
+  sur 61 captures à 390 et 1 440 px en clair et en sombre. **En production (2026-10-08)** : la
+  migration est appliquée ; l'école de démonstration s'appelle « École test Kesher » ; **Abravanel
+  Neuilly** existe, vide, avec ses neuf niveaux, et le compte yahoo.fr en a la direction (il reste
+  seul administrateur de la plateforme) ; `superadmin@demo.local` est suspendu et son mot de passe
+  remplacé par un secret jeté. **Le code n'est pas encore déployé** : il vit sur
+  `claude/espace-devoirs` avec la session 33, `main` n'en a rien. **Restent au porteur** : fusionner
+  la branche ; fournir les **textes légaux de la vraie école** (aucun n'existe : l'accueil d'un
+  compte n'a rien à faire accepter) ; créer l'année scolaire puis les classes ; communiquer le mot
+  de passe de test à la direction.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

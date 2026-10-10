@@ -10,6 +10,12 @@ export type AccountInput = {
   lastName: string;
   locale: "fr" | "en";
   phone?: string | null;
+  /**
+   * A provisional password for an account that does not exist yet (ADR-0075):
+   * the school hands it over, and the person replaces it at their first
+   * sign-in. An existing account keeps its own — it is never overwritten here.
+   */
+  password?: string;
 };
 export type AccountResult = { userId: string; created: boolean };
 
@@ -31,6 +37,9 @@ export async function ensureAccount(
     email: input.email,
     email_confirm: true,
     user_metadata: { first_name: input.firstName, last_name: input.lastName, locale: input.locale },
+    ...(input.password
+      ? { password: input.password, app_metadata: { password_provisional: true } }
+      : {}),
   });
   if (error || !data.user) throw new Error(error?.message ?? "createUser failed");
   if (input.phone) {

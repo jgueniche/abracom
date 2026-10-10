@@ -211,16 +211,19 @@
       "notConfigured": "Sign-in is not available on this environment yet.",
       "rateLimited": "Too many requests. Try again in a few minutes.",
       "linkError": "This link is invalid or has expired. Request a new one.",
-      "noAccount": "Accounts are created by the school: ask the office or the head teacher, who will send an invitation to the address the school already has on file.",
+      "noAccount": "Accounts are created by the school, never online. Write to the address below with your first and last name — and your partner's — and the first name, last name and class of each child: the school will send you your sign-in details.",
       "usePassword": "Sign in with a password",
       "useLink": "Get a link by e-mail",
       "passwordHint": "Only for accounts the school has given a password to.",
       "password": "Password",
       "signIn": "Sign in",
       "signingIn": "Signing in…",
-      "invalidCredentials": "Wrong e-mail address or password. You can also get a sign-in link by e-mail.",
+      "invalidCredentials": "Wrong e-mail address or password. Forgot your password? The school can give you a new one.",
       "unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment.",
-      "noAccountCta": "No account? Ask the school directly to create one for you"
+      "noAccountCta": "No account? Ask the school directly to create one for you",
+      "registrationSubject": "Opening our {appName} accounts",
+      "registrationBody": "Hello,\n\nWe would like to open our {appName} accounts.\n\nSchool:\n\nParent 1 — first and last name:\nE-mail address:\nPhone:\n\nParent 2 (optional) — first and last name:\nE-mail address:\nPhone:\n\nChildren — first name, last name and class:\n1.\n2.\n\nThank you.",
+      "testSpace": "Test space"
     },
     "onboarding": {
       "title": "Welcome, let's get acquainted",
@@ -308,7 +311,10 @@
       "columnClass": "Class",
       "columnLevel": "Level",
       "columnPupils": "Pupils",
-      "columnTeacher": "Teacher"
+      "columnTeacher": "Teacher",
+      "noClasses": "No class this year. A school starts with its school year, then its classes; the families are registered into them afterwards.",
+      "noClassesYears": "School years",
+      "noClassesClasses": "Classes"
     }
   },
   "family": {
@@ -363,7 +369,8 @@
   },
   "more": {
     "account": "My account",
-    "help": "Help"
+    "help": "Help",
+    "switchSchool": "Switch school"
   },
   "roles": {
     "super_admin": "Super administrator",
@@ -403,7 +410,8 @@
       "subtitle": "The management sections and where each one stands.",
       "messaging": "Messaging",
       "attendance": "Attendance",
-      "menus": "Menus"
+      "menus": "Menus",
+      "schools": "Schools"
     },
     "years": {
       "title": "School years",
@@ -487,7 +495,7 @@
       "relation": "Relation",
       "isPrimary": "Primary guardian",
       "language": "Language",
-      "guardianInvited": "Account created and linked (invitation to send).",
+      "guardianInvited": "Account created and linked: hand over these sign-in details.",
       "guardianLinked": "Existing account linked.",
       "rights": "Rights",
       "canViewGrades": "Sees assessments",
@@ -516,7 +524,9 @@
       "imageRightsMarked": "Consent recorded.",
       "columnPupil": "Pupil",
       "columnClass": "Class",
-      "columnGuardians": "Guardians"
+      "columnGuardians": "Guardians",
+      "newFamily": "New family",
+      "searchSubmit": "Search"
     },
     "members": {
       "title": "Users",
@@ -528,7 +538,7 @@
       "role": "Role",
       "language": "Language",
       "send": "Invite",
-      "invited": "Invitation sent.",
+      "invited": "Account created: hand these sign-in details to the person.",
       "invitedNoMail": "Account created, but the e-mail could not be sent: use “Resend a link”.",
       "alreadyMember": "This person already has this role.",
       "invalid": "Check the fields.",
@@ -551,10 +561,11 @@
       "batchRemaining": "Remaining: {count}",
       "batchFailed": "Failures: {count}",
       "showParents": "Show parents ({count})",
-      "lastLink": "Last link: {date}",
+      "lastLink": "Access given on {date}",
       "search": "Search a member",
       "searchPlaceholder": "Last name, first name",
-      "truncated": "Only the first {count} results are shown: narrow the search."
+      "truncated": "Only the first {count} results are shown: narrow the search.",
+      "invitedExisting": "This person already had an account: the role is added, their password does not change."
     },
     "import": {
       "title": "Families CSV import",
@@ -625,7 +636,8 @@
       "publications": "Publications",
       "people": "People",
       "moderation": "Moderation",
-      "year": "Year and log"
+      "year": "Year and log",
+      "platform": "Platform"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -760,6 +772,69 @@
       "visibleToFamilies": "Visible to families",
       "archive": "Archive",
       "outingHint": "An outing's list is created from the event itself, in the <link>agenda</link>."
+    },
+    "passwords": {
+      "button": "Temporary password",
+      "title": "New temporary password — {name}",
+      "warning": "{name}'s current password will stop working. A new one will be chosen at the next sign-in.",
+      "confirm": "Create the password",
+      "refused": "This account cannot be given a temporary password from here: it belongs to the head teachers, to the platform or to another school."
+    },
+    "families": {
+      "title": "New family",
+      "subtitle": "The parents and the children, as the family sent them. The parents' accounts are opened with a temporary password.",
+      "parentsLabel": "Parents",
+      "childrenLabel": "Children",
+      "credentialsLabel": "Sign-in details to hand over",
+      "parentN": "Parent {n}",
+      "childN": "Child {n}",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "E-mail address",
+      "phone": "Phone (optional)",
+      "relation": "Relation",
+      "language": "Language",
+      "birthDate": "Date of birth (optional)",
+      "class": "Class",
+      "noClass": "No class for now",
+      "noClasses": "No class exists yet this year: the children will be registered without one, to be placed later from their record.",
+      "addParent": "Add a second parent",
+      "removeParent": "Remove this parent",
+      "addChild": "Add a child",
+      "removeChild": "Remove this child",
+      "whatHappens": "Each parent gets an account, linked to each of the children. A parent who already has an account keeps their password.",
+      "submit": "Register the family",
+      "registered": "Family registered.",
+      "another": "Register another family",
+      "familyName": "{names} family",
+      "invalid": "Check the fields: a first name, a last name and an e-mail address per parent, a first and last name per child.",
+      "sameEmail": "The two parents cannot share the same e-mail address.",
+      "classUnknown": "One of the chosen classes is no longer a class of this year: reload the page."
+    },
+    "schools": {
+      "title": "Schools",
+      "subtitle": "The platform's schools, opening a new one, and the test space password.",
+      "listLabel": "Schools of the platform",
+      "testBadge": "test school",
+      "openedOn": "opened on {date}",
+      "notMember": "you hold no role there",
+      "openLabel": "Open a school",
+      "openHint": "It starts empty, with its nine levels from pre-nursery to Year 5; you get its direction, and it shows in « Switch school ».",
+      "name": "Name of the school",
+      "namePlaceholder": "Abravanel Levallois",
+      "city": "City",
+      "open": "Open the school",
+      "opened": "{name} is open.",
+      "goTo": "Go to {name}",
+      "invalid": "A school's name has 2 to 120 characters.",
+      "testPasswordLabel": "Test space password",
+      "testPasswordHint": "The one typed at the « Test space » door of the sign-in page. It changes for every account of the test school, never for an account of a real school.",
+      "testPassword": "New password",
+      "testPasswordConfirm": "Confirm it",
+      "testPasswordSubmit": "Change the password",
+      "testPasswordTooShort": "At least 10 characters: this password opens a whole school.",
+      "testPasswordMismatch": "The two passwords are not the same.",
+      "testPasswordSet": "{count, plural, one {# test school account received the new password.} other {# test school accounts received the new password.}}"
     }
   },
   "editor": {
@@ -1019,18 +1094,10 @@
     "seenBy": "{count, plural, =0 {Nobody has seen it yet} one {# family has seen it} other {# families have seen it}}",
     "week": {
       "title": "This week",
-      "thisWeek": "This week",
-      "nextWeek": "Next week",
-      "later": "Later",
-      "noHomework": "No upcoming homework.",
-      "overdue": "Overdue",
       "summary": "{posts, plural, =0 {No post} one {# post} other {# posts}} this week · {homework, plural, =0 {no homework} one {# homework} other {# homework items}} due"
     },
     "post": {
       "new": "New post",
-      "kind": "What are you publishing?",
-      "kindJournal": "Class diary entry",
-      "kindHomework": "Homework",
       "category": "Category",
       "categoryHint": "Files the entry in the class diary; families can filter on it.",
       "edit": "Edit",
@@ -1040,9 +1107,8 @@
       "title": "Title",
       "body": "Body",
       "subject": "Subject (optional)",
-      "dueOn": "To prepare for",
       "visibility": "Visibility",
-      "media": "Photos (up to 20, compressed, metadata removed)",
+      "media": "Photos",
       "tag": "Students on the photos (signed image rights only)",
       "noRights": "image rights not signed",
       "publish": "Publish",
@@ -1050,18 +1116,20 @@
       "saved": "Draft saved.",
       "published": "Post sent to the families.",
       "invalid": "Check the title and the body.",
-      "dueRequired": "Give a date for homework.",
       "saveError": "Could not save.",
       "uploadError": "Could not upload a photo.",
       "imageRightsBlocked": "A tagged student has no signed image rights.",
       "delete": "Delete",
       "deleteMedia": "Remove photo",
-      "compressing": "Compressing photos…",
       "consent": "I confirm that no child without a signed image-rights consent appears on these photos.",
       "consentRequired": "Please confirm that the photos show no child without consent.",
       "deleteConfirm": "This post and its photos will be removed for every family.",
       "cancel": "Cancel",
-      "newHomework": "New homework"
+      "newHomework": "New homework",
+      "mediaHint": "Up to twenty photos, uploaded as soon as they are chosen, resized and without metadata.",
+      "homeworkElsewhere": "Setting homework?",
+      "homeworkLink": "It has its own form",
+      "publishing": "Publishing…"
     },
     "journal": {
       "empty": "The class diary is still empty.",
@@ -1146,7 +1214,6 @@
       "signatureNameRequired": "Enter the name signing the note.",
       "statementRequired": "Write the note before signing it."
     },
-    "seenByTotal": "Seen by {count} / {total}",
     "readMore": "Read more",
     "actions": "Post actions",
     "students": "{count, plural, one {# pupil} other {# pupils}}",
@@ -1174,11 +1241,12 @@
     "composer": {
       "placeholder": "Your message… (@Name to mention)",
       "send": "Send",
-      "attach": "Attach (image or PDF, 10 MB)",
+      "attach": "Photo or PDF",
       "replyingTo": "Replying to {name}",
       "cancel": "Cancel",
       "readOnly": "Your access is read-only.",
-      "closed": "This conversation is closed."
+      "closed": "This conversation is closed.",
+      "attached": "Files attached to the message"
     },
     "message": {
       "reply": "Reply",
@@ -1956,7 +2024,7 @@
   },
   "security": {
     "title": "Account security",
-    "subtitle": "Two-step verification with an authenticator app (TOTP).",
+    "subtitle": "Your password and two-step verification.",
     "status": {
       "on": "Two-step verification is on",
       "off": "Two-step verification is off."
@@ -1974,7 +2042,9 @@
     "disableHint": "Type a current code to disable two-step verification.",
     "disabled": "Two-step verification disabled.",
     "adminCannotDisable": "The head of school cannot disable two-step verification.",
-    "error": "The operation is not possible right now."
+    "error": "The operation is not possible right now.",
+    "passwordSection": "Password",
+    "mfaSection": "Two-step verification"
   },
   "verification": {
     "title": "Verification",
@@ -2103,30 +2173,48 @@
     "homeworkHint": "Due on a date, with a per-family “seen” receipt."
   },
   "diary": {
-    "title": "Homework diary",
-    "subtitle": "What has to be prepared, day by day.",
-    "subtitleTeacher": "What you set, day by day.",
-    "thisWeek": "This week",
+    "title": "Homework",
     "previousWeek": "Previous week",
     "nextWeek": "Next week",
     "week": "{from} to {to}",
     "nothingToday": "Nothing to prepare",
-    "empty": "No homework this week.",
-    "emptyHint": "Homework set by teachers shows up here, on the day it is due.",
-    "today": "Today",
-    "tomorrow": "Tomorrow",
-    "late": "Overdue",
+    "empty": "Nothing to prepare this week.",
+    "emptyHint": "Homework appears here on the day it is due, with the pages the teacher joined to it.",
     "forChild": "for {name}",
-    "seenBy": "{count, plural, =0 {Nobody ticked it} one {# pupil ticked it} other {# pupils ticked it}}",
-    "openClass": "Open the class",
     "noClass": "No class is linked to you yet.",
     "allChildren": "All",
-    "dueTomorrow": "Due tomorrow",
-    "weekCount": "{count, plural, =0 {No homework} one {# piece of homework} other {# pieces of homework}} this week",
     "newHomework": "New homework",
-    "seen": "Seen",
-    "seenFor": "Mark the homework as seen for {name}",
-    "noClassHint": "The homework diary will open as soon as a class is linked to you."
+    "noClassHint": "Homework will show here as soon as a class is linked to you.",
+    "backToCurrentWeek": "Back to the current week",
+    "filterChildren": "Show the homework of",
+    "weekDays": "Days of the week",
+    "stripNothing": "nothing to prepare",
+    "stripProgress": "{done} of {total} done",
+    "stripCount": "{count, plural, one {# homework} other {# homework}}",
+    "weekProgress": "{done} of {total} done this week",
+    "weekComplete": "The whole week is done. Well done!",
+    "dayProgress": "{done} / {total} done",
+    "dayComplete": "All done",
+    "forToday": "For today",
+    "forTomorrow": "For tomorrow",
+    "forWeekday": "For {day}",
+    "readyToday": "Everything is ready for today. Well done!",
+    "readyNext": "{day}, everything is ready. Well done!",
+    "nothingForPivot": "Nothing to prepare {day}.",
+    "earlierThisWeek": "Earlier this week",
+    "draft": "Draft",
+    "teamOnly": "Team only",
+    "readMore": "Read more",
+    "doneByTotal": "Done: {count} / {total}",
+    "doneLabel": "“{title}”: done",
+    "doneFor": "“{title}”: done for {name}",
+    "doneState": "Done",
+    "todoState": "To do",
+    "tickError": "The tick was not saved. Check the connection and try again.",
+    "backToWeek": "All the homework of the week",
+    "dueOn": "Due {date}",
+    "givenBy": "Set on {date} by {name}",
+    "markDone": "Mark as done"
   },
   "attendance": {
     "title": "Attendance",
@@ -2273,5 +2361,163 @@
       "delete": "Delete this menu",
       "view": "View as families do"
     }
+  },
+  "attachments": {
+    "takePage": "Photograph a page",
+    "takePhoto": "Take a photo",
+    "addFiles": "Add a file",
+    "addPhotos": "Add photos",
+    "dropHint": "or drop them here",
+    "pageN": "Page {n}",
+    "photoN": "Photo {n}",
+    "preparing": "Preparing the photo…",
+    "uploading": "Uploading: {percent}%",
+    "ready": "{name} ready",
+    "retry": "Retry",
+    "remove": "Remove {name}",
+    "rotate": "Rotate {name}",
+    "pending": "Files are still uploading…",
+    "failedHint": "A file did not go through: retry it or remove it.",
+    "refusal": {
+      "count": "You have reached the maximum number of files.",
+      "type": "Only photos and PDFs are accepted.",
+      "tooLarge": "This file is too large (20 MB at most for a PDF)."
+    },
+    "error": {
+      "type": "Unsupported format",
+      "tooLarge": "File too large",
+      "forbidden": "Not allowed here",
+      "network": "Connection lost",
+      "auth": "Session expired: reload the page",
+      "failed": "Upload failed"
+    }
+  },
+  "viewer": {
+    "title": "Attachment",
+    "position": "{n} of {total}",
+    "print": "Print",
+    "download": "Download",
+    "close": "Close",
+    "previous": "Previous page",
+    "next": "Next page",
+    "openPage": "Enlarge page {n} of {total}: {title}",
+    "openPhoto": "Enlarge photo {n} of {total}",
+    "pdf": "PDF",
+    "opensInNewTab": "(opens in a new tab)"
+  },
+  "homeworkComposer": {
+    "newTitle": "New homework",
+    "editTitle": "Edit homework",
+    "when": "Due when?",
+    "tomorrow": "Tomorrow",
+    "dayWithLesson": "{day}, next {subject} lesson",
+    "otherDate": "Other date",
+    "pickDate": "Date the work is due",
+    "nextLesson": "Next {subject} lesson: {day}.",
+    "subject": "Subject",
+    "optional": "(optional)",
+    "otherSubject": "Other",
+    "subjectPlaceholder": "E.g. Poetry, Hebrew, Science…",
+    "what": "To do",
+    "whatPlaceholder": "E.g. Learn the poem, first verse",
+    "details": "Details",
+    "pages": "Pages and documents",
+    "pagesHint": "A photographed page shows as it is at home, ready to print if the book stayed at school.",
+    "joined": "Already attached",
+    "removeJoined": "Remove {name}",
+    "keepJoined": "Keep {name}",
+    "willBeRemoved": "Will be removed",
+    "alsoFor": "Also give it to",
+    "alsoForHint": "The same homework, with the same pages, in your other classes.",
+    "options": "Options",
+    "optionsHint": "Visible to: families",
+    "visibility": "Visible to",
+    "visibilityParents": "The families of the class",
+    "visibilityStaff": "The team only",
+    "publish": "Publish the homework",
+    "saveChanges": "Save changes",
+    "draft": "Save as draft",
+    "dueRequired": "Choose the day the work is due.",
+    "titleRequired": "Write what there is to do.",
+    "invalid": "Check the homework: a field is not valid.",
+    "tooManyFiles": "Ten files at most per homework.",
+    "saveError": "The homework could not be saved. Try again.",
+    "notAllowed": "Only the class team can set homework here.",
+    "notAuthor": "Only the author of the homework, or the direction, can edit it.",
+    "published": "Homework published: families can already see it.",
+    "publishedMany": "Homework published in {count} classes.",
+    "savedDraft": "Draft saved: only you can see it.",
+    "updated": "Homework updated.",
+    "copyFailed": "It could not be copied for: {classes}.",
+    "upload": {
+      "path": "A file is not where it should be: remove it and add it again.",
+      "missing": "A file did not arrive: remove it and add it again.",
+      "type": "A file is neither a photo nor a readable PDF.",
+      "tooLarge": "A PDF is over 20 MB.",
+      "process": "A page could not be prepared. Try again."
+    },
+    "chooseClass": "For which class?",
+    "draftShort": "Draft"
+  },
+  "testSchool": {
+    "band": "Test school: its families, classes and messages are fictitious.",
+    "bandLabel": "Test school",
+    "title": "Test space",
+    "intro": "The test school holds the whole application, with fictitious families, classes and messages. Enter the test space password, then choose who you will be.",
+    "password": "Test space password",
+    "personaLegend": "Enter as",
+    "personas": {
+      "direction": {
+        "name": "Head teacher",
+        "hint": "The whole school, administration included"
+      },
+      "secretariat": {
+        "name": "School office",
+        "hint": "Announcements, documents, absences — not assessments"
+      },
+      "teacher": {
+        "name": "Teacher",
+        "hint": "The Year 1 class: homework, class diary, timetable"
+      },
+      "parent": {
+        "name": "Parent",
+        "hint": "Two children, in nursery and in Year 1"
+      },
+      "guardian": {
+        "name": "Read-only guardian",
+        "hint": "A grandparent, who reads without writing"
+      }
+    },
+    "enter": "Enter the test school",
+    "entering": "Opening…",
+    "back": "Back to sign-in",
+    "incomplete": "Enter the password and choose who you will be.",
+    "wrongPassword": "Wrong password.",
+    "rateLimited": "Too many attempts. Try again in a few minutes.",
+    "unavailable": "The sign-in service is temporarily unavailable. Please try again in a moment."
+  },
+  "credentials": {
+    "onceOnly": "These passwords will not be shown again: hand them over now or write them down. Each person will choose a new one at their first sign-in.",
+    "existing": "Existing account: its password does not change.",
+    "copyMessage": "Copy the message",
+    "copied": "Message copied",
+    "message": "Hello {name},\n\nYour school account is ready.\nAddress: {url}\nSign-in: {email}\nTemporary password: {password}\n\nAt your first sign-in, you will choose your own password."
+  },
+  "password": {
+    "title": "Choose your password",
+    "intro": "The password the school gave you only serves for this first sign-in. Choose your own to open {appName}.",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm the new password",
+    "hint": "At least {min} characters.",
+    "submitChoose": "Save and continue",
+    "submitChange": "Change my password",
+    "tooShort": "The password must be at least {min} characters long.",
+    "mismatch": "The two passwords are not the same.",
+    "weak": "This password is too easy to guess: choose another one.",
+    "wrongCurrent": "The current password is wrong.",
+    "rateLimited": "Too many attempts. Try again in a few minutes.",
+    "changed": "Password changed.",
+    "unavailable": "This account has no sign-in address: ask the school to check it."
   }
 }

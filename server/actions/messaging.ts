@@ -7,14 +7,19 @@ import { z } from "zod";
 
 import { requireCurrentUser } from "@/lib/auth/session";
 import { type MessageAttachment, REACTION_EMOJIS } from "@/lib/messaging/format";
-import { safeFileName } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
+import {
+  isFileInFolder,
+  messageFolder,
+  messageUploadSchema,
+  parseUploadList,
+  UPLOAD_LIMITS,
+} from "@/lib/uploads/shared";
 import { logAudit } from "@/server/audit";
 import { getMessagesBefore } from "@/server/queries/messaging";
 
 import { type ActionState, field, optional, toActionError, uuid } from "./admin/_shared";
 
-const MESSAGE_ATTACHMENT_MAX = 10 * 1024 * 1024;
 const MESSAGE_MIME = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
 
 const sendSchema = z.object({
@@ -45,11 +50,16 @@ export async function sendMessage(_prev: SendState, formData: FormData): Promise
       replyTo: optional(formData, "replyTo"),
     });
     if (!parsed.success) return { status: "error", message: t("invalid") };
-    const files = formData
-      .getAll("files")
-      .filter((f): f is File => f instanceof File && f.size > 0)
-      .slice(0, 3);
-    if (!parsed.data.body && files.length === 0) return { status: "error", message: t("invalid") };
+    // The files are already in the thread's folder: the browser wrote them as soon as they were
+    // chosen (ADR-0071). Sending them through this action capped a message at 1 MB — a photo
+    // taken with a phone crashed the conversation. What arrives here is their description,
+    // checked against what Storage actually holds.
+    const declared = parseUploadList(formData.get("attachments"), messageUploadSchema).slice(
+      0,
+      UPLOAD_LIMITS.messages.maxFiles,
+    );
+    if (!parsed.data.body && declared.length === 0)
+      return { status: "error", message: t("invalid") };
 
     const supabase = await createClient();
     const { data: thread } = await supabase
@@ -59,17 +69,40 @@ export async function sendMessage(_prev: SendState, formData: FormData): Promise
       .maybeSingle();
     if (!thread) return { status: "error", message: t("sendError") };
 
-    const attachments: MessageAttachment[] = [];
-    for (const file of files) {
-      if (file.size > MESSAGE_ATTACHMENT_MAX || !MESSAGE_MIME.has(file.type))
-        return { status: "error", message: t("fileType") };
-      const path = `${thread.school_id}/${parsed.data.threadId}/${safeFileName(file.name)}`;
-      const { error } = await supabase.storage
-        .from("messages")
-        .upload(path, file, { contentType: file.type, upsert: false });
-      if (error) return { status: "error", message: t("uploadError") };
-      attachments.push({ path, name: file.name.slice(0, 120), size: file.size, mime: file.type });
-    }
+    const folder = messageFolder(thread.school_id, parsed.data.threadId);
+    const bucket = supabase.storage.from("messages");
+    const checked = await Promise.all(
+      declared.map(async (upload): Promise<MessageAttachment | null> => {
+        if (!isFileInFolder(upload.path, folder)) return null;
+        if (upload.thumb && !isFileInFolder(upload.thumb, folder)) return null;
+        const { data: stored } = await bucket.info(upload.path);
+        const mime = stored?.contentType ?? "";
+        if (
+          !stored ||
+          !MESSAGE_MIME.has(mime) ||
+          (stored.size ?? 0) > UPLOAD_LIMITS.messages.maxPdfBytes
+        )
+          return null;
+        const attachment: MessageAttachment = {
+          path: upload.path,
+          name: upload.name,
+          size: stored.size ?? upload.size,
+          mime,
+        };
+        if (mime.startsWith("image/")) {
+          if (upload.width && upload.height) {
+            attachment.width = upload.width;
+            attachment.height = upload.height;
+          }
+          if (upload.thumb) attachment.thumb = upload.thumb;
+          if (upload.color) attachment.color = upload.color;
+        }
+        return attachment;
+      }),
+    );
+    if (checked.some((attachment) => attachment === null))
+      return { status: "error", message: t("fileType") };
+    const attachments = checked as MessageAttachment[];
 
     const { data, error } = await supabase
       .from("messages")
@@ -83,8 +116,8 @@ export async function sendMessage(_prev: SendState, formData: FormData): Promise
       .select("id, thread_id, author_id, body, attachments, reply_to, created_at")
       .single();
     if (error) {
-      if (attachments.length > 0)
-        await supabase.storage.from("messages").remove(attachments.map((a) => a.path));
+      // The files stay where they are, so that sending again works; if nobody does,
+      // ops:storage-sweep removes them after a day.
       return {
         status: "error",
         message: error.code === "42501" ? t("notAllowed") : t("sendError"),

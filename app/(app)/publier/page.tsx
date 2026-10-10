@@ -42,7 +42,7 @@ export default async function PublishPage() {
 
   const targets = [
     { key: "journal", href: (id: string) => `/classes/${id}/publier?type=journal` },
-    { key: "homework", href: (id: string) => `/classes/${id}/publier?type=homework` },
+    { key: "homework", href: (id: string) => `/devoirs/nouveau?classe=${id}` },
     { key: "note", href: (id: string) => `/classes/${id}/mots` },
   ] as const;
 

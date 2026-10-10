@@ -45,6 +45,16 @@
      shade lighter than the edge that closes the plane itself. Twenty-odd files
      were improvising it with `border-border/70`, `/60` or `/50`. */
   --color-rule: var(--rule);
+  /* The colour of a subject in the cahier de texte (lib/homework.ts → subjectTone): a stroke
+     the eye finds again from day to day. Never the only carrier — the subject is written. */
+  --color-tone-blue: var(--tone-blue);
+  --color-tone-green: var(--tone-green);
+  --color-tone-violet: var(--tone-violet);
+  --color-tone-amber: var(--tone-amber);
+  --color-tone-teal: var(--tone-teal);
+  --color-tone-rose: var(--tone-rose);
+  --color-tone-red: var(--tone-red);
+  --color-tone-slate: var(--tone-slate);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -179,6 +189,16 @@
      never by a rule louder than the label above it. */
   --input: oklch(0.584 0.034 255);
   --ring: oklch(0.412 0.206 262.9);
+  /* Subjects (ADR-0070): eight strokes, each at least 4:1 on the white page — they draw a
+     ring a child taps, so they are held to the 3:1 of a control, with room to spare. */
+  --tone-blue: oklch(0.53 0.17 262);
+  --tone-green: oklch(0.53 0.12 152);
+  --tone-violet: oklch(0.52 0.17 300);
+  --tone-amber: oklch(0.6 0.13 65);
+  --tone-teal: oklch(0.54 0.09 200);
+  --tone-rose: oklch(0.55 0.17 355);
+  --tone-red: oklch(0.54 0.18 28);
+  --tone-slate: oklch(0.55 0.03 257);
   /* 8 px. The previous 14 px turned a 44 px field into a lozenge and a 32 px
      button into a pill — the single loudest tell of the generic look. */
   --radius: 0.5rem;
@@ -217,6 +237,14 @@
   --rule: oklch(0.35 0.048 255.6);
   --input: oklch(0.62 0.032 256.4); /* 3:1 on card and page (SC 1.4.11) */
   --ring: oklch(0.769 0.117 261.6);
+  --tone-blue: oklch(0.74 0.12 262);
+  --tone-green: oklch(0.76 0.13 152);
+  --tone-violet: oklch(0.74 0.13 300);
+  --tone-amber: oklch(0.8 0.12 70);
+  --tone-teal: oklch(0.77 0.09 200);
+  --tone-rose: oklch(0.75 0.13 355);
+  --tone-red: oklch(0.74 0.14 28);
+  --tone-slate: oklch(0.74 0.03 257);
   --soft-shadow: 0 1px 0 oklch(1 0 0 / 4%) inset;
   --lift-shadow: 0 1px 0 oklch(1 0 0 / 6%) inset, 0 22px 48px -26px oklch(0 0 0 / 72%);
 }
@@ -238,6 +266,15 @@
      */
     scroll-padding-top: 4.5rem;
     scroll-padding-bottom: calc(var(--nav-h) + 0.75rem);
+  }
+  /*
+   * The same, for a form whose actions are pinned above the tab bar (the
+   * homework composer): the bar hides another 3.5 rem of the viewport, and the
+   * editor's toolbar, reached with Tab, stopped underneath it — 39 px of a
+   * 44 px button. The room left is the bar's height plus its offset.
+   */
+  html:has([data-pinned-actions]) {
+    scroll-padding-bottom: calc(var(--nav-h) + 4.75rem);
   }
   /*
    * Tailwind v4 dropped v3's opinionated `cursor: pointer` on buttons and
@@ -354,6 +391,70 @@
   .tnum {
     font-variant-numeric: tabular-nums;
   }
+  /*
+   * « Fait » — the one place where the interface celebrates (ADR-0070). The ring fills with a
+   * short overshoot, the tick draws itself, and eight dots of the subject's colour fly out. A
+   * reader who asked for less motion gets the filled ring and nothing else (see below).
+   */
+  .tick-pop {
+    animation: tick-pop 340ms cubic-bezier(0.2, 0.9, 0.3, 1.35);
+  }
+  .tick-draw path,
+  .tick-draw polyline {
+    stroke-dasharray: 24;
+    animation: tick-draw 260ms 80ms ease-out both;
+  }
+  .tick-burst {
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    margin: -2px 0 0 -2px;
+    border-radius: 9999px;
+    box-shadow:
+      0 -15px currentColor,
+      10.6px -10.6px currentColor,
+      15px 0 currentColor,
+      10.6px 10.6px currentColor,
+      0 15px currentColor,
+      -10.6px 10.6px currentColor,
+      -15px 0 currentColor,
+      -10.6px -10.6px currentColor;
+    opacity: 0;
+    animation: tick-burst 560ms ease-out;
+  }
+}
+
+@keyframes tick-pop {
+  0% {
+    transform: scale(0.7);
+  }
+  55% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes tick-draw {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes tick-burst {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
 }
 
 /*
@@ -431,5 +532,52 @@
     content: " (" attr(href) ")";
     font-size: 0.75em;
     color: #444;
+  }
+
+  /*
+   * A homework's pages print one per sheet, as large as the sheet allows: the page of a
+   * revision book a child left at school comes out of the family printer as a page.
+   */
+  [data-print-pages] > * + * {
+    break-before: page;
+  }
+  [data-print-pages] img {
+    display: block;
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 96vh !important;
+    margin: 0 auto;
+    break-inside: avoid;
+  }
+
+  /*
+   * The viewer prints the picture on screen and nothing else — not a screenshot of the
+   * application around it.
+   */
+  html[data-print-scope="viewer"] body > :not([data-print-keep]) {
+    display: none !important;
+  }
+  html[data-print-scope="viewer"] [data-viewer-chrome],
+  html[data-print-scope="viewer"] [data-viewer-stage] button {
+    display: none !important;
+  }
+  html[data-print-scope="viewer"] [data-print-keep] {
+    position: static !important;
+    background: none !important;
+    animation: none !important;
+  }
+  html[data-print-scope="viewer"] [data-viewer-stage] {
+    display: block !important;
+    padding: 0 !important;
+  }
+  html[data-print-scope="viewer"] [data-viewer-image] {
+    display: block;
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 96vh !important;
+    margin: 0 auto;
+    opacity: 1 !important;
   }
 }

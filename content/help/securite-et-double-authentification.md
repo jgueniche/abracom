@@ -5,10 +5,12 @@ routes: [/profil/securite, /verification]
 topic: data
 keywords: [sécurité, 2FA, double authentification, TOTP, code, application d'authentification, mot de passe]
 since: 14
-reviewed: 2026-09-15
+reviewed: 2026-10-08
 ---
 
 Mon profil → **Sécurité** porte le mot de passe et la validation en deux étapes.
+
+**Changer mon mot de passe** demande l'actuel, puis le nouveau deux fois — au moins huit caractères. Votre gestionnaire de mots de passe peut le proposer et l'enregistrer. Vous restez connecté sur cet appareil ; vos autres appareils vous demanderont le nouveau mot de passe. Si vous ne connaissez plus l'actuel, c'est l'école qui vous en donne un provisoire.
 
 La **validation en deux étapes** ajoute un code à six chiffres, changé toutes les trente secondes, en plus du mot de passe. L'activation se fait avec une application d'authentification sur votre téléphone : scannez le code affiché, puis saisissez un premier code pour confirmer. Sans cette confirmation, rien n'est activé — on ne se verrouille pas dehors par accident.
 

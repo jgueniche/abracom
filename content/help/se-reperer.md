@@ -5,7 +5,7 @@ routes: [/ecole]
 topic: signin
 keywords: [navigation, onglets, menu, avatar, perspective, rôle, école, se repérer, où trouver]
 since: 17
-reviewed: 2026-09-16
+reviewed: 2026-10-08
 ---
 
 La barre du bas sur téléphone — la barre du haut sur ordinateur — porte cinq destinations, et elles ne sont pas les mêmes pour tout le monde : elles dépendent de votre rôle.
@@ -27,6 +27,8 @@ Quand vous touchez un onglet, **un trait apparaît dessous** le temps que la pag
 **L'onglet École** rassemble tout ce que l'établissement vous adresse ou vous demande : annonces et circulaires, agenda, menus de la semaine, documents, formulaires, communauté.
 
 **Le menu sous votre photo**, en haut à droite, contient ce qui est personnel : votre profil, vos notifications, cette aide, la langue, le thème clair ou sombre, et la déconnexion. Il n'y a pas d'onglet « Plus » : chaque destination porte son nom.
+
+Ce menu rappelle aussi **l'école où vous êtes** — sur téléphone, l'en-tête n'a pas la place de l'écrire. Si vous appartenez à deux écoles, **Changer d'école** passe de l'une à l'autre : tout ce que vous voyez ensuite est celui de l'école choisie.
 
 Si vous avez plusieurs rôles — parent et enseignant, par exemple — un sélecteur apparaît dans l'en-tête pour passer de l'un à l'autre. Il change la navigation, jamais vos droits.
 

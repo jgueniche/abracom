@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
 import type { CurrentUser } from "@/lib/auth/session";
+import { rolesIn } from "@/lib/permissions";
 
 import { UpcomingEvents, upcomingEventsFor } from "@/app/(app)/agenda/_components/upcoming-events";
 import { getPendingAcknowledgements } from "@/server/queries/announcements";
@@ -26,7 +27,9 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
     getTodayForParent(
       user.id,
       user.school?.timezone ?? "Europe/Paris",
-      user.roles.some((role) => role.role === "parent" && role.status === "active"),
+      rolesIn(user.roles, user.school?.id).some(
+        (role) => role.role === "parent" && role.status === "active",
+      ),
     ),
     upcomingEventsFor(user.id),
   ]);

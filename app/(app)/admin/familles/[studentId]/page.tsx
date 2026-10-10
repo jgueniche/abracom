@@ -13,6 +13,7 @@ import { isSchoolAdmin } from "@/lib/permissions";
 import { enrollStudent, setImageRights, unlinkGuardian } from "@/server/actions/admin/students";
 import { getAdminClasses, getStudentDetail } from "@/server/queries/admin";
 
+import { TemporaryPasswordButton } from "../../_components/temporary-password-button";
 import { StudentForm } from "../student-form";
 import { GuardianFlagsForm } from "./guardian-flags-form";
 import { LinkGuardianForm } from "./link-guardian-form";
@@ -177,14 +178,21 @@ export default async function StudentDetailPage({
                     </p>
                   </div>
                   {admin && (
-                    <form action={unlinkGuardian}>
-                      <input type="hidden" name="studentId" value={student.id} />
-                      <input type="hidden" name="userId" value={g.user_id} />
-                      <Button type="submit" variant="ghost" size="sm" className="min-h-11">
-                        <UserMinusIcon aria-hidden />
-                        {t("unlink")}
-                      </Button>
-                    </form>
+                    <div className="flex flex-wrap gap-1">
+                      {/* When a parent calls because they cannot sign in, it is here that one looks. */}
+                      <TemporaryPasswordButton
+                        userId={g.user_id}
+                        name={g.profile ? `${g.profile.first_name} ${g.profile.last_name}` : ""}
+                      />
+                      <form action={unlinkGuardian}>
+                        <input type="hidden" name="studentId" value={student.id} />
+                        <input type="hidden" name="userId" value={g.user_id} />
+                        <Button type="submit" variant="ghost" size="sm" className="min-h-11">
+                          <UserMinusIcon aria-hidden />
+                          {t("unlink")}
+                        </Button>
+                      </form>
+                    </div>
                   )}
                 </div>
                 <GuardianFlagsForm

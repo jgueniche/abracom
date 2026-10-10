@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { requireSchoolStaff } from "@/lib/auth/guards";
-import { isSchoolAdmin } from "@/lib/permissions";
+import { isSchoolAdmin, isSuperAdmin } from "@/lib/permissions";
 import {
   removeMembership,
   resendInvitation,
@@ -16,6 +16,7 @@ import {
 import { getMembers, MEMBERS_PAGE_SIZE } from "@/server/queries/admin";
 
 import { InviteForm } from "./invite-form";
+import { TemporaryPasswordButton } from "../_components/temporary-password-button";
 import { SendInvitations } from "./send-invitations";
 
 type Member = Awaited<ReturnType<typeof getMembers>>["team"][number];
@@ -34,6 +35,7 @@ export default async function MembersPage({
     getMembers(schoolId, q),
   ]);
   const admin = isSchoolAdmin(user.roles, schoolId);
+  const platform = isSuperAdmin(user.roles);
 
   const row = (m: Member) => (
     <li key={m.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
@@ -71,6 +73,13 @@ export default async function MembersPage({
           </form>
           {admin && m.user_id !== user.id && (
             <>
+              {/* A director's password is the platform's to replace, not a fellow director's. */}
+              {(m.role !== "school_admin" || platform) && (
+                <TemporaryPasswordButton
+                  userId={m.user_id}
+                  name={m.profile ? `${m.profile.first_name} ${m.profile.last_name}` : ""}
+                />
+              )}
               <form action={setMembershipStatus}>
                 <input type="hidden" name="membershipId" value={m.id} />
                 <input

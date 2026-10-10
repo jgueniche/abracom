@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { CurrentUser } from "@/lib/auth/session";
+import { type CurrentUser, inCurrentSchool } from "@/lib/auth/session";
 import { isSchoolStaff } from "@/lib/permissions";
 import { createClient } from "@/lib/supabase/server";
 import { getMyTeachingClasses } from "@/server/queries/classes";
@@ -54,14 +54,15 @@ function withMine<T extends { rsvps: RsvpRow[]; slots: Array<{ sort_order: numbe
 /** Events overlapping [from, to) visible to the signed-in user (RLS), oldest first. */
 export async function getAgendaEvents(userId: string, from: string, to: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("events")
-    .select(EVENT_LIST_SELECT)
-    .is("deleted_at", null)
-    .lt("starts_at", to)
-    .or(`starts_at.gte.${from},ends_at.gte.${from}`)
-    .order("starts_at");
-  if (error) throw error;
+  const data = await inCurrentSchool(
+    supabase
+      .from("events")
+      .select(EVENT_LIST_SELECT)
+      .is("deleted_at", null)
+      .lt("starts_at", to)
+      .or(`starts_at.gte.${from},ends_at.gte.${from}`)
+      .order("starts_at"),
+  );
   return data.map((row) => withMine(row, userId));
 }
 
@@ -82,16 +83,17 @@ export type AgendaEvent = Awaited<ReturnType<typeof getAgendaEvents>>[number];
  */
 export async function getUpcomingEvents(userId: string, from: string, limit = 3) {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("events")
-    .select(EVENT_LIST_SELECT)
-    .is("deleted_at", null)
-    .neq("kind", "holiday")
-    .gte("starts_at", from)
-    .eq("rsvps.user_id", userId)
-    .order("starts_at")
-    .limit(limit);
-  if (error) throw error;
+  const data = await inCurrentSchool(
+    supabase
+      .from("events")
+      .select(EVENT_LIST_SELECT)
+      .is("deleted_at", null)
+      .neq("kind", "holiday")
+      .gte("starts_at", from)
+      .eq("rsvps.user_id", userId)
+      .order("starts_at")
+      .limit(limit),
+  );
   return data.map((row) => withMine(row, userId));
 }
 

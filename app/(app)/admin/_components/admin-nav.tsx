@@ -9,13 +9,13 @@ import { cn } from "@/lib/utils";
 
 import { adminGroupsFor } from "./groups";
 
-export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
+export function AdminNav({ isAdmin, isPlatform }: { isAdmin: boolean; isPlatform: boolean }) {
   const t = useTranslations("admin.nav");
   const tg = useTranslations("admin.groups");
   const tAdmin = useTranslations("admin");
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
-  const groups = adminGroupsFor(isAdmin);
+  const groups = adminGroupsFor(isAdmin, isPlatform);
   const current = groups.flatMap((g) => g.items).find((item) => isActive(item.href));
 
   return (

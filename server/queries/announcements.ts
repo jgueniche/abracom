@@ -1,9 +1,10 @@
 import "server-only";
 
+import { inCurrentSchool } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
 const LIST_SELECT = `
-  id, title, title_en, body_md, body_md_en, locale, audience, target_ids, pinned, requires_ack,
+  id, school_id, title, title_en, body_md, body_md_en, locale, audience, target_ids, pinned, requires_ack,
   published_at, expires_at, created_at, updated_at, deleted_at, template, document_id, author_id,
   author:profiles!announcements_author_profile_fkey ( first_name, last_name ),
   attachments:announcement_attachments ( id, filename, size_bytes, mime, storage_path ),
@@ -20,15 +21,16 @@ function withMyRead<
 /** Announcements visible to the signed-in user (RLS), pinned first, with their own read status. */
 export async function getAnnouncementsForUser(userId: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("announcements")
-    .select(LIST_SELECT)
-    .is("deleted_at", null)
-    .not("published_at", "is", null)
-    .order("pinned", { ascending: false })
-    .order("published_at", { ascending: false })
-    .limit(100);
-  if (error) throw error;
+  const data = await inCurrentSchool(
+    supabase
+      .from("announcements")
+      .select(LIST_SELECT)
+      .is("deleted_at", null)
+      .not("published_at", "is", null)
+      .order("pinned", { ascending: false })
+      .order("published_at", { ascending: false })
+      .limit(100),
+  );
   // A receipt still owed comes first: the home screen counts them, and the
   // reader used to land on the full list and hunt for the accented card —
   // seventh of eight on the demonstration data set.
@@ -51,17 +53,16 @@ export async function getAnnouncement(userId: string, id: string) {
 /** Published announcements that require an acknowledgement the user has not given yet. */
 export async function getPendingAcknowledgements(userId: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("announcements")
-    .select("id, title, published_at, reads:announcement_reads ( user_id, acked_at )")
-    .eq("requires_ack", true)
-    .is("deleted_at", null)
-    .not("published_at", "is", null)
-    .order("published_at", { ascending: false });
-  if (error) throw error;
-  return (data ?? []).filter(
-    (a) => !a.reads.some((r) => r.user_id === userId && r.acked_at !== null),
+  const data = await inCurrentSchool(
+    supabase
+      .from("announcements")
+      .select("id, school_id, title, published_at, reads:announcement_reads ( user_id, acked_at )")
+      .eq("requires_ack", true)
+      .is("deleted_at", null)
+      .not("published_at", "is", null)
+      .order("published_at", { ascending: false }),
   );
+  return data.filter((a) => !a.reads.some((r) => r.user_id === userId && r.acked_at !== null));
 }
 
 export type AnnouncementStatus = "draft" | "scheduled" | "published" | "expired";
