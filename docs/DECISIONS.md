@@ -2356,7 +2356,12 @@ do nothing`, conversation directe reprise si elle existe. Testé : un second pas
   ou push. Les fils sont marqués lus jusqu'à deux jours en arrière.
 - **La migration l'appelle une fois** ; en local les migrations passent avant le seed, il n'y a pas
   encore d'école test et l'appel ne fait rien (le seed et ses 563 assertions pgTAP ne bougent
-  pas). Une ligne de `supabase/jobs/cron.sql` le rejoue chaque nuit.
+  pas). **Une seconde migration (`20261018090200`) la planifie chaque nuit**, à 4 h 15 UTC, là où
+  pg_cron est installé — la production depuis la V1 ; une pile locale ou le shim de la CI n'en ont
+  pas et passent. Elle ne demande aucun secret : la poser dans `supabase/jobs/cron.sql`, rejoué à la
+  main, aurait laissé l'école test vieillir sur tout projet où personne n'y pense. `cron.sql` garde
+  la même ligne pour un projet neuf, où il passe après les migrations ; même nom de tâche, l'une
+  remplace l'autre. Le tout part en production avec le workflow « Deploy database » à la fusion.
 - **Le cahier de texte s'ouvre sur le premier jour qui a des devoirs** quand la semaine préparée
   n'en a aucun et qu'il tombe dans le mois — pendant les vacances, « Pour lundi · 2 novembre »
   plutôt que deux semaines vides. La requête part avec les autres : le cas courant ne paie rien.

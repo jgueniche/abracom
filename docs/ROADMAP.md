@@ -1209,10 +1209,16 @@ Kesher — latence, données de test, lisibilité » (Claude Docs).
       347 devoirs, 1 495 « faits », 42 billets, 390 messages, 17 conversations privées.
 - [x] Le cahier de texte s'ouvre sur le premier jour qui a des devoirs quand la semaine préparée
       n'en a pas (vacances).
-- [ ] **À faire par le porteur** : appliquer les deux migrations en production
-      (`SUPABASE_ACCESS_TOKEN=… scripts/ops/apply-migrations.sh hhmqtavmfgjeacsweasz`) — la seconde
-      remplit l'école test aussitôt — puis exécuter le bloc 6 de `supabase/jobs/cron.sql` pour le
-      rafraîchissement nocturne. Aucun connecteur de la session n'atteignait ce projet.
+- [x] Le rafraîchissement nocturne part avec les migrations (`20261018090200`, là où pg_cron
+      existe — la production depuis la V1) : plus de bloc de `cron.sql` à rejouer à la main. Joué en
+      local au niveau exact de la production (47 migrations + seed, puis les trois nouvelles, une
+      transaction chacune) : 4,5 s pour le premier remplissage, aucune livraison d'e-mail ni de push,
+      une seule tâche après deux passages de la migration et un de `cron.sql`.
+- [ ] **En production à la fusion** : le workflow « Deploy database » applique les trois migrations
+      à chaque push sur `main` qui touche `supabase/migrations` (il l'a fait à chaque fusion depuis
+      septembre). Le lancer sur la branche avant la fusion a été refusé à l'intégration GitHub de la
+      session (403) ; le porteur peut le faire d'un clic (Actions → Deploy database → Run workflow,
+      branche `claude/dreamy-faraday-1nt8hv`).
 
 ### Lisibilité (ADR-0078)
 

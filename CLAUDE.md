@@ -630,17 +630,21 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   autour de la date du jour — devoirs de six semaines en arrière à huit en avant (vacances et fériés
   respectés), « faits », cahier de vie, conversations, annonces, événements, menus, mots —,
   idempotente, limitée aux écoles `modules.test`, sans aucune notification ; la migration l'appelle,
-  `cron.sql` la rejoue chaque nuit ; le cahier de texte s'ouvre sur le premier jour qui a des devoirs
+  une autre la planifie chaque nuit là où pg_cron existe (plus de bloc de `cron.sql` à rejouer à la
+  main) ; le cahier de texte s'ouvre sur le premier jour qui a des devoirs
   pendant les vacances. (3) **L'espace plutôt que le trait et la boîte** : plus de filet dans les
   en-têtes de section, plus de cadre autour des listes, des groupes, des formulaires ni des états
   vides (`Card` devient un groupe sans cadre), plus de rond dans un rond, des lignes à deux niveaux
   avec un bord gauche régulier — la grammaire de l'onglet Messages, appliquée partout ; la doctrine du
   module de design est mise à jour. Vérifié : `pnpm check`, `pnpm build`, 563 assertions pgTAP sur
-  les deux chemins, 42 e2e (invitation comprise), axe à 0 violation sérieuse. **Restent au porteur :
-  appliquer les deux migrations en production** (aucun connecteur de la session n'atteignait le projet
-  Supabase de Kesher) et le bloc 6 de `supabase/jobs/cron.sql`, puis dire si le premier clic est
-  enfin rapide. Au passage : sept articles d'aide échouaient déjà `ops:check-help` sur `main` (une
-  fusion datée après leur relecture) — redatés après relecture.
+  les deux chemins, 42 e2e (invitation comprise), axe à 0 violation sérieuse. **Rien à faire à la
+  main côté Supabase** : à la fusion, le workflow « Deploy database » applique les trois migrations,
+  tâche de nuit comprise (rejoué en local au niveau exact de la production : 4,5 s, aucune livraison
+  d'e-mail ni de push). Le lancer sur la branche avant la fusion a été refusé à l'intégration GitHub
+  de la session (403), et le connecteur Supabase de la session pointe sur un autre compte. **Reste au
+  porteur** : fusionner, puis dire si le premier clic est enfin rapide. Au passage : sept articles
+  d'aide échouaient déjà `ops:check-help` sur `main` (une fusion datée après leur relecture) —
+  redatés après relecture.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
