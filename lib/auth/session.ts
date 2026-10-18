@@ -41,6 +41,11 @@ export type CurrentUser = {
   schools: SchoolSummary[];
   /** The password was given by the school and must be replaced at sign-in (ADR-0075). */
   passwordProvisional: boolean;
+  /**
+   * The classes of the current school the reader teaches or has a child in, so that the
+   * "Classe" tab can lead straight to the only one (ADR-0076); `null` when unknown.
+   */
+  classIds: string[] | null;
 };
 
 /**
@@ -84,6 +89,8 @@ export type SessionContext = {
   mfaEnrolled: boolean | null;
   unreadMessages: number | null;
   unreadNotifications: number | null;
+  /** The classes the reader teaches or has a child in, every school; `null` when not answered. */
+  classes: Array<{ id: string; school_id: string }> | null;
 };
 
 function asArray<T>(value: unknown): T[] {
@@ -113,6 +120,8 @@ export const getSessionContext = cache(async (): Promise<SessionContext | null> 
       mfaEnrolled: row.mfaEnrolled === true,
       unreadMessages: Number(row.unreadMessages ?? 0),
       unreadNotifications: Number(row.unreadNotifications ?? 0),
+      // Absent from a database that has not received the migration yet (ADR-0076).
+      classes: Array.isArray(row.classes) ? asArray(row.classes) : null,
     };
   }
 
@@ -138,6 +147,7 @@ export const getSessionContext = cache(async (): Promise<SessionContext | null> 
     mfaEnrolled: null,
     unreadMessages: null,
     unreadNotifications: null,
+    classes: null,
   };
 });
 
@@ -190,6 +200,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     school,
     schools: schoolsOf(rows),
     passwordProvisional: appMetadata?.password_provisional === true,
+    classIds: context?.classes?.filter((c) => c.school_id === school?.id).map((c) => c.id) ?? null,
   };
 });
 

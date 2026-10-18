@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
 import { LinkPending } from "@/components/layouts/link-pending";
+import { TabPrefetch } from "@/components/layouts/tab-prefetch";
 import { cn } from "@/lib/utils";
 
 // "Fil" was the unfiltered union of Homework and Journal — the same posts
@@ -83,16 +84,20 @@ export function ClassTabs({
   })).filter((group) => group.tabs.length > 0);
 
   return (
-    // Tabs, drawn as tabs: a rule under each family and a mark under the one
-    // you are on. The row used to be eight filled pills, which read as eight
-    // buttons competing with the page's actual action — and then, once they
-    // were quiet, the opposite fault: 13 px of muted grey under card titles
-    // set at 18 px. Navigation is the layer a reader needs at a glance; the
-    // content is read once they have arrived. This row is now the larger of
-    // the two.
+    // Tabs, drawn as tabs: a mark under the one you are on. The row used to be
+    // eight filled pills, which read as eight buttons competing with the page's
+    // actual action — and then, once they were quiet, the opposite fault: 13 px
+    // of muted grey under card titles set at 18 px. Navigation is the layer a
+    // reader needs at a glance; the content is read once they have arrived.
+    // Each family also drew a rule across the whole column, two long lines over
+    // every page of the class: the short mark under the current tab is enough
+    // to say where you are (ADR-0078).
     <nav aria-label={t("aria")} className="-mx-4 mb-7 flex flex-col px-4">
+      {/* The everyday family is loaded before it is clicked, like the main bar (ADR-0076);
+          the record kept on each pupil is opened less often and waits for the click. */}
+      <TabPrefetch hrefs={GROUPS[0].tabs.map((tab) => `${base}/${tab.segment}`)} />
       {groups.map((group) => (
-        <div key={group.key} className="flex items-stretch gap-3 border-b border-border">
+        <div key={group.key} className="flex items-stretch gap-3">
           <span className="eyebrow flex shrink-0 items-center">
             {t(`group${group.key === "class" ? "Class" : "Follow"}`)}
           </span>
