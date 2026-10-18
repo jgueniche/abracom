@@ -1176,6 +1176,69 @@ une famille écrit, l'école crée les comptes — avec un mot de passe provisoi
       créer l'année scolaire puis les classes ; transmettre le mot de passe de test à la
       direction (ou le changer dans Gestion → Écoles une fois déployé).
 
+## Session 35 — Latence, école test vivante, lisibilité (2026-10-18, ADR-0076 à ADR-0078)
+
+Trois demandes du porteur : « le premier clic sur un onglet est long, le suivant rapide, et après
+une pause c'est de nouveau lent » ; « alimente beaucoup plus l'espace de test, des devoirs sur les
+six ou sept semaines à venir, des messages » ; « trop de cases dans des cases, des traits longs
+partout — seul l'onglet Messages est clair ». Page de suivi tenue pendant la session : « Audit
+Kesher — latence, données de test, lisibilité » (Claude Docs).
+
+### Latence (ADR-0076)
+
+- [x] Banc `scripts/perf/tabs.mjs` : les onglets réels du lecteur, première visite, revisite, puis
+      **vraie pause de 330 s en arrière-plan** ; requêtes RSC et appels à la base comptés.
+- [x] `TabPrefetch` : les cinq onglets de la barre préchargés **données comprises**, une fois la page
+      posée, après chaque navigation, au retour au premier plan, et chaque minute d'usage actif
+      (arrêt après dix minutes sans geste ; rien en économie de données). Idem pour la famille
+      « Classe » de l'espace de classe.
+- [x] L'onglet « Classe » mène droit à la classe quand il n'y en a qu'une (`session_context()` rend
+      les classes du lecteur ; migration `20261018090000`, deux assertions pgTAP).
+- [x] Mesuré en local, 40 ms de latence : premier clic **42–86 ms** au lieu de 119–188 ms, et
+      45–86 ms au retour d'une pause de 5 min 30 ; base bridée à 15 % d'un processeur (l'offre
+      gratuite) : médiane **56 ms** au lieu de 234 ms (jusqu'à 401 ms).
+- [ ] **À vérifier en production** : le ressenti du porteur. Reste hors du code : le démarrage à
+      froid Vercel et le palier de calcul Supabase.
+
+### École test (ADR-0077)
+
+- [x] `refresh_test_school_content()` (migration `20261018090100`) : emplois du temps, devoirs de
+      six semaines en arrière à huit en avant (vacances et fériés respectés, travail des vacances
+      pour la rentrée), « faits », cahier de vie, conversations, annonces, événements, menus, mots.
+      Idempotente, limitée aux écoles `modules.test`, ne prévient personne. Premier passage local :
+      347 devoirs, 1 495 « faits », 42 billets, 390 messages, 17 conversations privées.
+- [x] Le cahier de texte s'ouvre sur le premier jour qui a des devoirs quand la semaine préparée
+      n'en a pas (vacances).
+- [ ] **À faire par le porteur** : appliquer les deux migrations en production
+      (`SUPABASE_ACCESS_TOKEN=… scripts/ops/apply-migrations.sh hhmqtavmfgjeacsweasz`) — la seconde
+      remplit l'école test aussitôt — puis exécuter le bloc 6 de `supabase/jobs/cron.sql` pour le
+      rafraîchissement nocturne. Aucun connecteur de la session n'atteignait ce projet.
+
+### Lisibilité (ADR-0078)
+
+- [x] `SectionHeader` sans filet ; `RowList`, `Card`, `EmptyState`, `HubGrid`, `IndexList`,
+      `ContentCard`, `ChildClassCard`, `StudentCard` sans cadre ; avatars sans anneau ; filtres sans
+      contour ; étiquettes « outline » en teinte ; `Table` sans filet de ligne.
+- [x] Écrans repris : trois accueils (nature écrite une fois par série, date en ancre des
+      événements), espace de classe (onglets sans filets, cahier de vie en colonne de lecture,
+      emploi du temps ancré sur l'heure, mots, absences, rendez-vous, retards, évaluations),
+      cahier de texte (semaine sans ronds), agenda (plus de filet par jour, un événement de
+      plusieurs jours écrit une fois), école, famille, communauté, documents, recherche,
+      notifications, aide, profil, administration.
+- [x] Doctrine du module de design (`.claude/skills/design-review/SKILL.md`) mise à jour.
+- [x] Aide : six articles corrigés sur le fond (accueil, cahier de texte, agenda, espace de
+      classe, se repérer, cahier de vie), quarante-quatre relus et redatés — dont sept qui
+      échouaient déjà sur `main` : la fusion du 10 octobre a daté leurs écrans après leur
+      relecture.
+
+### Recette
+
+- [x] `pnpm check` (220 tests unitaires), `pnpm build`, **563 assertions pgTAP** sur la pile
+      Supabase et sur PostgreSQL 16, **42 e2e** en mode CI sur le build, invitation comprise.
+- [x] `axe` à 0 violation sérieuse sur les écrans repris (parent, enseignante, direction), à 390 et
+      1 440 px, en clair et en sombre — après correction d'un contraste introduit en route
+      (brouillon atténué par opacité).
+
 ## Questions ouvertes (§15 du brief)
 
 Bloquantes pour la session 2 :

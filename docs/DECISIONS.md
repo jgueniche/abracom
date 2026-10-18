@@ -2257,3 +2257,158 @@ Supabase, et un parent attendrait un message qui ne vient jamais.
 Un mot de passe choisi par la direction : il aurait circulé, et resservi. Un lien d'activation :
 il demande les courriels, précisément ce qui manque. Remettre le mot de passe provisoire à
 l'écran une seconde fois : un secret qu'on peut réafficher est un secret stocké.
+
+## ADR-0076 — Les onglets chargés d'avance, données comprises
+
+**Statut** : acceptée (2026-10-18) · complète l'ADR-0067 et l'ADR-0072 · **Contexte** : septième
+signalement du même symptôme, dans les mots du porteur : « le premier clic sur un onglet est long ;
+j'y reviens, c'est rapide ; j'attends un peu, c'est de nouveau lent ». Le symptôme décrit, mot pour
+mot, le réglage en place : une page déjà vue est gardée cinq minutes par le routeur
+(`staleTimes`), et rien n'est chargé d'avance pour une page jamais ouverte — depuis l'ADR-0072, le
+préchargement d'un lien ne rapporte que l'arbre des routes, quelques centaines d'octets et aucune
+donnée. Chaque premier clic était donc un aller-retour complet : contrôle de session, fonction,
+deux à dix requêtes, transfert — 585 à 884 ms mesurés en septembre depuis le bac à sable.
+
+### Ce qui a été mesuré
+
+Banc `scripts/perf/tabs.mjs` (nouveau) : Chromium piloté, latence réseau émulée de 40 ms, build
+de production, pile Supabase locale ; il lit les onglets que le lecteur a réellement (la barre du
+téléphone), les clique un par un, trois fois — première visite, revisite, puis après **une vraie
+pause de 330 s en arrière-plan** — et compte les requêtes RSC et les appels à la base de chaque
+clic.
+
+| clic sur un onglet (local, 40 ms) | avant                                    | après                        |
+| --------------------------------- | ---------------------------------------- | ---------------------------- |
+| première visite                   | 119–188 ms                               | **42–86 ms**, aucune requête |
+| revisite                          | 41–53 ms                                 | 47–64 ms                     |
+| après 5 min 30 en arrière-plan    | aller-retour                             | **45–86 ms**, aucune requête |
+| onglet « Classe » d'un parent     | **3 allers-retours** (deux redirections) | 64 ms, aucun                 |
+
+### La décision
+
+- **`TabPrefetch`** (`components/layouts/tab-prefetch.tsx`) appelle `router.prefetch(href)` pour
+  chaque onglet de la barre — un préchargement _complet_ : la page est rendue avec ses données et
+  gardée `staleTimes.static` (cinq minutes). Demander de nouveau ne coûte rien tant que la copie
+  est fraîche ; une copie expirée, ou vidée par une mutation (`revalidatePath`), est redemandée.
+  Il le fait **une fois la page posée** (rappel d'inactivité, un onglet toutes les 250 ms plutôt
+  que tous ensemble), **après chaque navigation**, **quand l'application revient au premier
+  plan** — le cas du téléphone, et du « après une pause, c'est de nouveau lent » — et **chaque
+  minute tant que la page est visible et qu'on s'en sert**. Dix minutes sans geste arrêtent la
+  minuterie : un onglet oublié sur un bureau ne rend pas quatre pages toutes les cinq minutes pour
+  personne. Une connexion en économie de données ne précharge rien.
+- La même chose pour la **première famille d'onglets de l'espace de classe** (cahier de vie,
+  devoirs, mots, emploi du temps) ; le suivi (absences, retards, évaluations, rendez-vous) attend
+  le clic.
+- **L'onglet « Classe » mène droit à la classe** quand le lecteur n'en a qu'une :
+  `session_context()` rend désormais les classes du lecteur (enseignées, ou celles de ses enfants
+  — `guardian_class_ids`, la règle des RLS), dans l'aller-retour qu'il paie déjà. `/classes`
+  redirigeait vers `/classes/<id>`, qui redirigeait vers son cahier : trois allers-retours, et un
+  onglet préchargé qui ne contenait qu'une redirection. Base sans la migration : le lien reste
+  `/classes`, comme avant.
+- Les liens de la barre ne préchargent plus eux-mêmes (`prefetch={false}`) : ils n'auraient
+  rapporté que l'arbre des routes, une invocation par onglet pour rien.
+
+### Pourquoi c'est sans risque, et ce que cela coûte
+
+Rendre une page ne fait rien d'autre que lire : les accusés de lecture et les « vu » partent du
+navigateur une fois la page montée (vérifié : aucune écriture dans les pages ni dans
+`server/queries`). Le prix est côté serveur : jusqu'à quatre rendus de page par vue et par
+tranche de cinq minutes d'usage actif, au lieu d'un rendu par clic. Pour une école de quelques
+centaines de familles, c'est l'ordre de grandeur d'un usage normal ; c'est à surveiller sur
+l'offre Hobby de Vercel (temps de calcul actif).
+
+### Ce qui reste
+
+Le **démarrage à froid** (une fonction Vercel neuve, environ une seconde) et le **temps de la base
+sur l'offre gratuite de Supabase** décident toujours de la première page après l'ouverture de
+l'application, et d'un clic qui précède la fin du préchargement. Les deux leviers sont hors du
+code : l'offre de calcul Supabase, et une instance gardée chaude côté Vercel.
+
+## ADR-0077 — L'école test vit au présent
+
+**Statut** : acceptée (2026-10-18) · **Contexte** : l'École test Kesher de la production a été
+remplie par le seed le 9 septembre et jamais rejouée : ses dates relatives se sont figées ce
+jour-là. Ses devoirs tombent fin août et début septembre, ses conversations datent d'un mois. Le
+porteur la veut « beaucoup plus alimentée — des devoirs sur les six ou sept semaines à venir, des
+messages — pour voir ce que ça donne ».
+
+### La décision
+
+- **`refresh_test_school_content()`** (migration `20261018090100`), `security definer`, réservée à
+  la clé de service. Pour chaque école `modules @> '{"test": true}'` — et aucune autre —, de six
+  semaines en arrière à huit en avant : un emploi du temps pour chaque classe qui n'en a pas ; des
+  devoirs pour chaque jour de classe, rangés par matière selon cet emploi du temps (deux ou trois
+  par jour en élémentaire, deux par semaine en maternelle), « faits » par trois élèves sur quatre
+  quand la date est passée ; un billet de cahier de vie par semaine et un rappel une semaine sur
+  deux ; des conversations (groupe des parents, canal officiel, enseignante ↔ familles, direction
+  ↔ familles) ; des annonces, des événements du trimestre, les menus des semaines à venir, des mots.
+  Les pages, les sons, les tables, les lettres hébraïques et la paracha avancent avec la semaine.
+- **Les vacances sont respectées** : un jour couvert par un événement « vacances » de l'école ou
+  férié n'a pas de devoir ; le travail des vacances est donné pour le jour de la rentrée. Le
+  programme lointain est daté du début de période — sinon le fil « Dans vos classes » de
+  l'enseignante aurait montré soixante devoirs publiés le jour même.
+- **Rejouer ne double rien** : identifiants tirés de ce que la ligne est (`demo_id`), `on conflict
+do nothing`, conversation directe reprise si elle existe. Testé : un second passage insère zéro
+  ligne.
+- **Personne n'est prévenu** : les publications portent `notified_at` ; les notifications créées
+  par les déclencheurs pendant l'appel sont supprimées, sauf celles des messages des deux derniers
+  jours (non lues, pour que l'école test ait l'air habitée), et aucune livraison ne part par e-mail
+  ou push. Les fils sont marqués lus jusqu'à deux jours en arrière.
+- **La migration l'appelle une fois** ; en local les migrations passent avant le seed, il n'y a pas
+  encore d'école test et l'appel ne fait rien (le seed et ses 563 assertions pgTAP ne bougent
+  pas). Une ligne de `supabase/jobs/cron.sql` le rejoue chaque nuit.
+- **Le cahier de texte s'ouvre sur le premier jour qui a des devoirs** quand la semaine préparée
+  n'en a aucun et qu'il tombe dans le mois — pendant les vacances, « Pour lundi · 2 novembre »
+  plutôt que deux semaines vides. La requête part avec les autres : le cas courant ne paie rien.
+
+### Ce qui a été écarté
+
+Rejouer le seed en production : il rendrait son rôle à `superadmin@demo.local`. Des photos de
+démonstration : un billet ne s'affiche qu'avec son fichier dans le stockage privé, que cette
+session ne peut pas atteindre.
+
+## ADR-0078 — L'espace plutôt que le trait et la boîte
+
+**Statut** : acceptée (2026-10-18) · prolonge l'ADR-0051 (« le trait plutôt que la boîte ») et
+corrige ce qu'elle avait laissé · **Contexte** : « beaucoup trop de cases dans des cases ; sur
+l'accueil les sections ne sont pas bien séparées ; à l'intérieur, des rectangles dans des
+rectangles ; arrête de mettre des traits énormes et très longs partout. Le seul endroit réussi est
+l'onglet Messages : pas de rond dans des ronds, les distinctions sont claires. »
+
+### Le diagnostic
+
+Chaque section était un libellé suivi d'un filet jusqu'au bord (`SectionHeader`, 46 emplois),
+puis d'une boîte bordée (`RowList`, `Card` — 69 emplois —, `EmptyState`), elle-même découpée par
+des filets. La frontière d'une section ressemblait donc à celle d'une boîte, et l'œil ne savait
+plus ce qui contenait quoi. En sombre, `--card` étant plus clair que la page, chaque boîte
+devenait un panneau. Messages échappe à ce schéma : aucune boîte autour de la liste, aucun filet
+entre les lignes, des groupes nommés par un petit libellé, un avatar qui donne un bord gauche.
+
+### La décision
+
+1. **Une seule boîte par élément, et seulement s'il se manipule** : champ, bulle, photo, case à
+   cocher en carte, bouton. `Card` devient un groupe sans cadre, sans fond, sans ombre, sans
+   retrait ; `EmptyState`, `RowList`, `HubGrid`, `IndexList`, les fiches (`StudentCard`,
+   `ChildClassCard`), le cahier de vie (`ContentCard`) perdent les leurs.
+2. **L'espace sépare** : 48 px entre deux sections d'accueil (`mb-12`), 40 px ailleurs ; quelques
+   pixels entre deux lignes, et le survol (`hover:bg-muted`) révèle la ligne.
+3. **Aucun filet long** : plus de filet dans `SectionHeader`, sous les onglets de classe, entre les
+   jours de l'agenda, entre les lignes des listes. Restent la barre du haut, celle du bas, et le
+   trait court sous l'onglet actif.
+4. **Un bord gauche régulier** : `Row` reçoit `leading` ; la date est l'ancre d'un événement,
+   l'heure celle d'un créneau d'emploi du temps, l'avatar celle d'un enfant.
+5. **Deux lignes plutôt qu'une ligne coupée**, et une nature qui se répète ne s'écrit qu'une fois,
+   au-dessus de sa série (« À signer » au-dessus des deux pièces à signer).
+6. **Pas de rond dans un rond** : l'avatar perd son anneau, la case « fait » sa cible ronde, la
+   semaine du cahier de texte ses trois marques rondes par jour (date dans un disque, anneau de
+   progression, compte en capsule) — un chiffre, et une coche quand tout est fait.
+
+Au passage : l'agenda ne répète plus quinze fois « Vacances de la Toussaint (suite) » — un
+événement de plusieurs jours apparaît une fois, avec ses dates ; le cahier de vie passe d'une
+grille de cartes à une colonne de lecture ; les mots individuels perdent leur étiquette bleue
+pleine au profit d'un premier mot de ligne.
+
+### Ce qui a été écarté
+
+Changer la palette ou la typographie : le grief portait sur la composition, pas sur la couleur.
+Retirer aussi les boîtes des contrôles (cases d'option, boutons) : elles sont ce qu'on touche.
