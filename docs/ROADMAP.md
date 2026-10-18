@@ -1214,11 +1214,10 @@ Kesher — latence, données de test, lisibilité » (Claude Docs).
       local au niveau exact de la production (47 migrations + seed, puis les trois nouvelles, une
       transaction chacune) : 4,5 s pour le premier remplissage, aucune livraison d'e-mail ni de push,
       une seule tâche après deux passages de la migration et un de `cron.sql`.
-- [ ] **En production à la fusion** : le workflow « Deploy database » applique les trois migrations
-      à chaque push sur `main` qui touche `supabase/migrations` (il l'a fait à chaque fusion depuis
-      septembre). Le lancer sur la branche avant la fusion a été refusé à l'intégration GitHub de la
-      session (403) ; le porteur peut le faire d'un clic (Actions → Deploy database → Run workflow,
-      branche `claude/dreamy-faraday-1nt8hv`).
+- [x] **Fusionnée le 2026-10-18** : la fusion déclenche le workflow « Deploy database », qui
+      applique les trois migrations à chaque push sur `main` touchant `supabase/migrations` (il l'a
+      fait à chaque fusion depuis septembre) — rien à lancer à la main. Le lancer sur la branche avant
+      la fusion avait été refusé à l'intégration GitHub de la session (403).
 
 ### Lisibilité (ADR-0078)
 

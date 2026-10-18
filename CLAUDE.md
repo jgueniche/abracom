@@ -637,14 +637,14 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   vides (`Card` devient un groupe sans cadre), plus de rond dans un rond, des lignes à deux niveaux
   avec un bord gauche régulier — la grammaire de l'onglet Messages, appliquée partout ; la doctrine du
   module de design est mise à jour. Vérifié : `pnpm check`, `pnpm build`, 563 assertions pgTAP sur
-  les deux chemins, 42 e2e (invitation comprise), axe à 0 violation sérieuse. **Rien à faire à la
-  main côté Supabase** : à la fusion, le workflow « Deploy database » applique les trois migrations,
-  tâche de nuit comprise (rejoué en local au niveau exact de la production : 4,5 s, aucune livraison
-  d'e-mail ni de push). Le lancer sur la branche avant la fusion a été refusé à l'intégration GitHub
-  de la session (403), et le connecteur Supabase de la session pointe sur un autre compte. **Reste au
-  porteur** : fusionner, puis dire si le premier clic est enfin rapide. Au passage : sept articles
-  d'aide échouaient déjà `ops:check-help` sur `main` (une fusion datée après leur relecture) —
-  redatés après relecture.
+  les deux chemins, 42 e2e (invitation comprise), axe à 0 violation sérieuse. **Fusionnée dans
+  `main` le 2026-10-18** : la fusion déclenche le workflow « Deploy database », qui applique les trois
+  migrations, tâche de nuit comprise — rien à lancer à la main (rejoué en local au niveau exact de la
+  production : 4,5 s, aucune livraison d'e-mail ni de push). Le connecteur Supabase de la session
+  pointe sur un autre compte, et lancer ce workflow avant la fusion a été refusé à son intégration
+  GitHub (403). **Reste au porteur** : dire si le premier clic est enfin rapide. Au passage : sept
+  articles d'aide échouaient déjà `ops:check-help` sur `main` (une fusion datée après leur
+  relecture) — redatés après relecture.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
