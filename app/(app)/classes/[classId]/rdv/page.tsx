@@ -101,14 +101,14 @@ export default async function AppointmentsPage({
                 label={format.dateTime(new Date(`${day}T12:00:00Z`), { dateStyle: "full" })}
                 count={t("slots", { count: list.length })}
               />
-              <ul className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-1">
                 {list.map((slot) => {
                   const mine = slot.booked_by === user.id;
                   const booked = slot.booked_by !== null;
                   return (
                     <li
                       key={slot.id}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3"
+                      className="flex flex-wrap items-center justify-between gap-3 py-2"
                     >
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-medium">

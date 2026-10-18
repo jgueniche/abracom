@@ -85,7 +85,7 @@ export function AbsenceForm({
           without a printer. The school still decides whether it justifies the
           absence — signing submits, it does not grant. */}
       {canSign && (
-        <div className="flex flex-col gap-3 rounded-xl border border-border p-3 sm:col-span-2">
+        <div className="flex flex-col gap-3 pt-1 sm:col-span-2">
           <label className="flex min-h-11 cursor-pointer items-start gap-3 text-sm">
             <input
               type="checkbox"

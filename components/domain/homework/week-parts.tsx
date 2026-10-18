@@ -30,14 +30,20 @@ export type StripDay = {
  * The list used to give every day its own line, so a week with two homework spent the whole
  * first screen of a phone saying « Rien à préparer » five times. The strip says it in one row —
  * a day with nothing is simply a day with nothing under it — and the list below only holds days
- * that hold something. For a family, each day's mark fills as its homework is ticked.
+ * that hold something. For a family, each day's figure turns into a tick once its homework is
+ * done.
+ *
+ * It used to stack three round marks per day — the date in a filled disc, a ring that filled
+ * underneath, a count in a capsule — over a rule across the whole column: the "ronds dans des
+ * ronds" the porteur asked to see gone (ADR-0078). A day is now a weekday, a date and a figure;
+ * the day being prepared carries the short mark a current tab carries.
  */
 export function WeekStrip({ days, ticks }: { days: StripDay[]; ticks: boolean }) {
   const t = useTranslations("diary");
   return (
     <nav aria-label={t("weekDays")}>
       <ol
-        className="grid border-b border-rule"
+        className="grid"
         style={{ gridTemplateColumns: `repeat(${days.length}, minmax(0, 1fr))` }}
       >
         {days.map((day) => (
@@ -65,21 +71,27 @@ function StripCell({ day, ticks }: { day: StripDay; ticks: boolean }) {
       </span>
       <span
         className={cn(
-          "flex size-8 items-center justify-center rounded-full text-base tabular-nums",
-          day.today && "bg-primary font-semibold text-primary-foreground",
-          !day.today && day.pivot && "font-semibold text-primary",
+          "flex h-8 items-center justify-center text-lg leading-none tabular-nums",
+          (day.today || day.pivot) && "font-semibold text-primary",
           !day.today && !day.pivot && day.past && "text-muted-foreground",
         )}
       >
         {day.date}
       </span>
-      <span className="flex h-5 items-center" aria-hidden>
+      <span
+        className="flex h-4 items-center text-[0.6875rem] font-semibold tabular-nums"
+        aria-hidden
+      >
         {day.count === 0 ? null : ticks && progress.total > 0 ? (
-          <ProgressRing done={progress.done} total={progress.total} />
+          progress.done >= progress.total ? (
+            <CheckIcon className="tick-pop size-3.5 text-success" strokeWidth={3} />
+          ) : (
+            <span className="text-muted-foreground">
+              {progress.done}/{progress.total}
+            </span>
+          )
         ) : (
-          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-secondary px-1 text-[0.625rem] font-semibold text-secondary-foreground tabular-nums">
-            {day.count}
-          </span>
+          <span className="text-muted-foreground">{day.count}</span>
         )}
       </span>
       {day.pivot && (
@@ -109,41 +121,11 @@ function StripCell({ day, ticks }: { day: StripDay; ticks: boolean }) {
     <a
       href={`#jour-${day.day}`}
       aria-current={day.pivot ? "date" : undefined}
-      className={cn(classes, "rounded-md transition-colors hover:bg-muted/70")}
+      className={cn(classes, "rounded-md transition-colors hover:bg-muted")}
     >
       {inner}
       <span className="sr-only">{spoken}</span>
     </a>
-  );
-}
-
-/** A ring that fills as the day's homework is ticked, and turns into a tick when it is full. */
-export function ProgressRing({ done, total }: { done: number; total: number }) {
-  const complete = total > 0 && done >= total;
-  if (complete)
-    return (
-      <span className="tick-pop flex size-4 items-center justify-center rounded-full bg-success text-success-foreground">
-        <CheckIcon className="size-3" strokeWidth={3.5} />
-      </span>
-    );
-  const radius = 6;
-  const circumference = 2 * Math.PI * radius;
-  return (
-    <svg viewBox="0 0 16 16" className="size-4 -rotate-90">
-      <circle cx="8" cy="8" r={radius} fill="none" stroke="var(--border)" strokeWidth="2.5" />
-      <circle
-        cx="8"
-        cy="8"
-        r={radius}
-        fill="none"
-        stroke="var(--success)"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeDasharray={circumference}
-        strokeDashoffset={circumference * (1 - (total ? done / total : 0))}
-        className="transition-[stroke-dashoffset] duration-300"
-      />
-    </svg>
   );
 }
 

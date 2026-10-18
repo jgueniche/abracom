@@ -108,9 +108,7 @@ function FamilyFormRound({
         {parents.map((parent, index) => (
           <fieldset
             key={index}
-            className={
-              index > 0 ? "flex flex-col gap-4 border-t border-rule pt-5" : "flex flex-col gap-4"
-            }
+            className={index > 0 ? "flex flex-col gap-4 pt-8" : "flex flex-col gap-4"}
           >
             {/* The legend is the fieldset's first child, or it names nothing. */}
             <legend className="mb-3 text-sm font-semibold">{t("parentN", { n: index + 1 })}</legend>
@@ -228,9 +226,7 @@ function FamilyFormRound({
         {children.map((child, index) => (
           <fieldset
             key={child.key}
-            className={
-              index > 0 ? "flex flex-col gap-4 border-t border-rule pt-5" : "flex flex-col gap-4"
-            }
+            className={index > 0 ? "flex flex-col gap-4 pt-8" : "flex flex-col gap-4"}
           >
             <legend className="mb-3 text-sm font-semibold">{t("childN", { n: index + 1 })}</legend>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -320,7 +316,7 @@ function FamilyFormRound({
         {classes.length === 0 && <p className="text-xs text-muted-foreground">{t("noClasses")}</p>}
       </section>
 
-      <div className="flex flex-col gap-3 border-t border-rule pt-5">
+      <div className="flex flex-col gap-3 pt-5">
         <p className="text-xs text-pretty text-muted-foreground">{t("whatHappens")}</p>
         <ActionMessage status={state.status} message={state.message} />
         <SubmitButton className="self-start">{t("submit")}</SubmitButton>

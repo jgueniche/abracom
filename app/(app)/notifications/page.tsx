@@ -57,7 +57,7 @@ export default async function NotificationsPage() {
           action={{ href: "/notifications/preferences", label: t("preferences") }}
         />
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-1">
           {notifications.map((n) => {
             const payload = (n.payload ?? {}) as Record<string, unknown>;
             const rendered = renderNotification(n.kind, payload, (key, values) =>
@@ -66,13 +66,21 @@ export default async function NotificationsPage() {
             const label = rendered.title;
             const href = rendered.href;
             const body = (
+              // Unread is said by weight and a dot in the margin, the way Messages says it — not by
+              // a tinted, framed panel (ADR-0078).
               <div
                 className={cn(
-                  "rounded-xl border p-3",
-                  !n.read_at && "border-primary/40 bg-primary/5",
+                  "relative -mx-3 rounded-lg px-3 py-2.5",
+                  href && "transition-colors hover:bg-muted",
                 )}
               >
-                <p className="font-medium">{label}</p>
+                {!n.read_at && (
+                  <span
+                    aria-hidden
+                    className="absolute top-4 left-0 size-1.5 -translate-x-1/2 rounded-full bg-primary"
+                  />
+                )}
+                <p className={cn(n.read_at ? "font-medium" : "font-semibold")}>{label}</p>
                 {rendered.body && <p className="text-sm text-muted-foreground">{rendered.body}</p>}
                 <p className="text-xs text-muted-foreground">
                   {format.dateTime(new Date(n.created_at), {

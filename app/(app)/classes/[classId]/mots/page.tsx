@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireClassAccess } from "@/lib/auth/class-access";
+import { cn } from "@/lib/utils";
 import { markNoteRead } from "@/server/actions/individual-notes";
 import { getIndividualNotesForStudents } from "@/server/queries/class-space";
 
@@ -30,7 +31,7 @@ export default async function NotesPage({ params }: { params: Promise<{ classId:
 
   return (
     <Column>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-10">
         {canWrite && (
           <PraiseRow
             classId={classId}
@@ -67,25 +68,28 @@ export default async function NotesPage({ params }: { params: Promise<{ classId:
         {notesByStudent
           .filter((s) => s.notes.length > 0)
           .map(({ student, notes }) => (
-            <section key={student.id} className="flex flex-col">
-              <SectionHeader label={`${student.first_name} ${student.last_name}`} />
+            <section key={student.id} className="flex flex-col gap-5">
+              <SectionHeader
+                label={`${student.first_name} ${student.last_name}`}
+                className="mb-0"
+              />
               {notes.map((note) => {
                 const mine = note.reads.find((r) => r.user_id === user.id);
                 return (
                   <Card key={note.id}>
                     <CardContent className="flex flex-col gap-3">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge
-                          variant={
-                            note.kind === "concern"
-                              ? "destructive"
-                              : note.kind === "praise"
-                                ? "default"
-                                : "secondary"
-                          }
+                      {/* The nature of the note is the first word of its dateline: a filled blue
+                          tag on every note shouted the most ordinary fact on the page (ADR-0078).
+                          A concern keeps its colour, being the exception. */}
+                      <div className="eyebrow flex flex-wrap items-center gap-x-1.5 gap-y-1 tracking-normal normal-case">
+                        <span
+                          className={cn(
+                            "font-semibold tracking-[0.085em] uppercase",
+                            note.kind === "concern" ? "text-destructive" : "text-foreground/80",
+                          )}
                         >
                           {t(`kinds.${note.kind}`)}
-                        </Badge>
+                        </span>
                         <span className="text-xs text-muted-foreground">
                           {note.author
                             ? t("from", {

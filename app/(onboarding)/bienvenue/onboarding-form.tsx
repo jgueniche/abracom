@@ -112,7 +112,7 @@ export function OnboardingForm({
         <legend className="mb-1 font-medium">{t("legalTitle")}</legend>
         <p className="text-sm text-muted-foreground">{t("legalHint")}</p>
         {legal.map((doc) => (
-          <div key={doc.id} className="flex flex-col gap-2 rounded-xl border p-3">
+          <div key={doc.id} className="flex flex-col gap-2 py-2">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="font-medium">

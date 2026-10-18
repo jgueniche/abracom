@@ -1,5 +1,4 @@
 import { CheckCircle2Icon } from "lucide-react";
-import { Link } from "@/components/ui/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 import { AttendanceToday } from "@/components/domain/attendance-today";
@@ -8,8 +7,6 @@ import { Row, RowList } from "@/components/domain/row-list";
 import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { SectionHeader } from "@/components/layouts/section-header";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CurrentUser } from "@/lib/auth/session";
 import { levelLabel } from "@/lib/levels";
 
@@ -63,7 +60,7 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
       />
       <AttendanceToday />
 
-      <section className="mb-10">
+      <section className="mb-12">
         <SectionHeader label={t("teacher.queue")} count={queue.length || undefined} />
         {queue.length === 0 ? (
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -72,12 +69,18 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
           </p>
         ) : (
           <RowList>
-            {queue.map((item) => (
+            {queue.map((item, index) => (
               <Row
                 key={item.key}
                 href={item.href}
                 urgent={item.urgent}
-                kind={t(`teacher.queueKinds.${item.kind}`)}
+                // named once over its run of rows (ADR-0078)
+                kind={
+                  index === 0 || queue[index - 1]!.kind !== item.kind
+                    ? t(`teacher.queueKinds.${item.kind}`)
+                    : undefined
+                }
+                className={index > 0 && queue[index - 1]!.kind !== item.kind ? "mt-3" : undefined}
                 title={item.title}
                 trailing={
                   item.kind === "draft" ? undefined : (
@@ -93,17 +96,24 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
         )}
       </section>
 
-      <section className="mb-10">
+      <section className="mb-12">
         <SectionHeader label={t("teacher.activity")} count={activity.length || undefined} />
         {activity.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("teacher.activityNothing")}</p>
         ) : (
           <RowList>
-            {activity.map((item) => (
+            {activity.map((item, index) => (
               <Row
                 key={item.key}
                 href={item.href}
-                kind={t(`teacher.activityKinds.${item.kind}`)}
+                kind={
+                  index === 0 || activity[index - 1]!.kind !== item.kind
+                    ? t(`teacher.activityKinds.${item.kind}`)
+                    : undefined
+                }
+                className={
+                  index > 0 && activity[index - 1]!.kind !== item.kind ? "mt-3" : undefined
+                }
                 title={item.title}
                 detail={item.detail}
                 trailing={
@@ -122,41 +132,29 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
         {classes.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("teacher.noClasses")}</p>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
+          // Her classes as a list, like everything else on the screen: each one was a framed card
+          // holding two framed tags (ADR-0078).
+          <RowList>
             {classes.map((row) => {
               const cls = row.class!;
               const summary = summaries.get(cls.id) ?? { posts: 0, homework: 0 };
               return (
-                <Link key={cls.id} href={`/classes/${cls.id}`} className="block">
-                  <Card className="h-full transition-colors hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_16%)] hover:bg-muted/50">
-                    <CardHeader>
-                      <div className="mb-0.5 flex items-center gap-1.5">
-                        <Badge variant="secondary">{cls.level?.code}</Badge>
-                        <Badge variant="outline">
-                          {tFamily(`teacherRole.${row.role}`)}
-                          {row.subject ? ` · ${row.subject}` : ""}
-                        </Badge>
-                      </div>
-                      <CardTitle>{cls.name}</CardTitle>
-                      <CardDescription>
-                        {/* the label prefixed "Salle" onto a room already named
-                          "Salle 1", which read "Salle Salle 1" */}
-                        {cls.room ? cls.room : levelLabel(cls.level, locale)}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-0.5 text-xs text-muted-foreground">
-                      <span>
-                        {t("teacher.students", { count: cls.enrollments[0]?.count ?? 0 })}
-                      </span>
-                      <span>
-                        {tWeek("summary", { posts: summary.posts, homework: summary.homework })}
-                      </span>
-                    </CardContent>
-                  </Card>
-                </Link>
+                <Row
+                  key={cls.id}
+                  href={`/classes/${cls.id}`}
+                  kind={`${cls.level?.code ?? ""} · ${tFamily(`teacherRole.${row.role}`)}${row.subject ? ` · ${row.subject}` : ""}`}
+                  title={cls.name}
+                  // the label prefixed "Salle" onto a room already named "Salle 1", which read
+                  // "Salle Salle 1": the room, or the level when there is no room
+                  detail={[
+                    cls.room ?? levelLabel(cls.level, locale),
+                    t("teacher.students", { count: cls.enrollments[0]?.count ?? 0 }),
+                    tWeek("summary", { posts: summary.posts, homework: summary.homework }),
+                  ].join(" · ")}
+                />
               );
             })}
-          </div>
+          </RowList>
         )}
       </section>
     </Column>

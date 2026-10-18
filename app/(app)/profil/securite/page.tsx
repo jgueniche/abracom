@@ -43,7 +43,7 @@ export default async function SecurityPage({
       </Button>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {requis === "1" && !status.enrolled && (
-        <p className="mb-4 rounded-xl border border-primary bg-primary/5 p-3 text-sm" role="alert">
+        <p className="mb-6 border-l-2 border-primary pl-3 text-sm" role="alert">
           {t("requiredNotice")}
         </p>
       )}

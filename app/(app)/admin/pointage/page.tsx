@@ -65,15 +65,12 @@ export default async function AdminAttendancePage() {
                 description={t("noListHint")}
               />
             ) : (
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-6">
                 {lists.map((list) => {
                   const managers = list.managers ?? [];
                   const managerIds = new Set(managers.map((m) => m.user_id));
                   return (
-                    <li
-                      key={list.id}
-                      className="flex flex-col gap-3 rounded-xl border border-border p-3"
-                    >
+                    <li key={list.id} className="flex flex-col gap-3">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="text-sm font-semibold">{list.name}</span>
                         <Badge variant="outline">{t(`kinds.${list.kind}`)}</Badge>

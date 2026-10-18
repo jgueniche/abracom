@@ -55,7 +55,9 @@ export function DoneToggle({
       className={cn(
         "relative flex shrink-0 items-center justify-center rounded-full border-2 transition-colors",
         size === "lg" ? "size-7" : "size-6",
-        done ? cn(classes.fill, celebrations > 0 && "tick-pop") : cn(classes.ring, "bg-card"),
+        done
+          ? cn(classes.fill, celebrations > 0 && "tick-pop")
+          : cn(classes.ring, "bg-background group-hover/tick:bg-muted"),
         // a state to read, not a control: the read-only ring is dashed, so it does not ask a tap
         !done && readOnly && "border-dashed",
       )}
@@ -100,8 +102,10 @@ export function DoneToggle({
         toggle(postId, studentId);
       }}
       className={cn(
+        // The circle is the control: the round hover target drawn around it made a ring inside a
+        // ring (ADR-0078). The 44 px target stays, invisible.
         "group/tick -m-2 flex min-h-11 min-w-11 items-center gap-2 rounded-full p-2 transition-colors",
-        "hover:bg-muted/70 focus-visible:outline-2 focus-visible:outline-offset-0",
+        "focus-visible:outline-2 focus-visible:outline-offset-0",
       )}
     >
       {ring}

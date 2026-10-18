@@ -5,12 +5,12 @@ routes: [/devoirs, /devoirs/[postId], /classes/[classId]/devoirs]
 topic: daily
 keywords: [devoirs, cahier de texte, à préparer, fait, cocher, pages, photo, imprimer, semaine, demain]
 since: 33
-reviewed: 2026-10-06
+reviewed: 2026-10-18
 ---
 
-L'onglet **Devoirs** est le cahier de texte. Il s'ouvre sur **le jour que l'on prépare** : « Pour demain » le soir, « Pour aujourd'hui » le matin jusqu'à midi, « Pour lundi » à partir du vendredi midi et pendant le week-end — la semaine affichée est alors la suivante.
+L'onglet **Devoirs** est le cahier de texte. Il s'ouvre sur **le jour que l'on prépare** : « Pour demain » le soir, « Pour aujourd'hui » le matin jusqu'à midi, « Pour lundi » à partir du vendredi midi et pendant le week-end — la semaine affichée est alors la suivante. Pendant les vacances, quand rien n'est donné pour les jours qui viennent, il s'ouvre sur le premier jour qui a des devoirs — en général celui de la rentrée.
 
-En haut, la **semaine en un coup d'œil** : les cinq jours, chacun avec ce qu'il contient. Toucher un jour descend jusqu'à ses devoirs. Les flèches passent d'une semaine à l'autre ; « Revenir à la semaine en cours » ramène au jour préparé. Les jours déjà passés de la semaine sont rangés en bas, sous « Plus tôt cette semaine ».
+En haut, la **semaine en un coup d'œil** : les cinq jours, chacun avec le nombre de devoirs qu'il contient (ou, pour un parent, combien sont faits ; une coche quand tout l'est). Toucher un jour descend jusqu'à ses devoirs. Les flèches passent d'une semaine à l'autre ; « Revenir à la semaine en cours » ramène au jour préparé. Les jours déjà passés de la semaine sont rangés en bas, sous « Plus tôt cette semaine ».
 
 Chaque devoir porte sa **matière**, toujours de la même couleur d'un jour à l'autre — le français en bleu, les mathématiques en vert, l'hébreu en violet — et ce qu'il y a à faire. Les **pages et documents** joints par l'enseignant·e s'affichent directement sous le devoir : une photo de la page du cahier de révision, une fiche en PDF.
 

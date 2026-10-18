@@ -176,12 +176,12 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                 <CardTitle>{t("slots.title")}</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="flex flex-col gap-4">
+                <ul className="flex flex-col gap-5">
                   {event.slots.map((slot) => {
                     const mine = slot.signups.some((s) => s.user_id === user.id);
                     const full = slot.signups.length >= slot.needed;
                     return (
-                      <li key={slot.id} className="flex flex-col gap-2 rounded-xl border p-3">
+                      <li key={slot.id} className="flex flex-col gap-2">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <p className="font-medium">{slot.label}</p>
                           <Badge variant={full ? "outline" : "secondary"}>
@@ -280,7 +280,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
 
         <div className="flex flex-col gap-4">
           {event.requires_rsvp && (
-            <Card className={closed ? "bg-muted/40" : "border-primary"}>
+            <Card>
               <CardHeader>
                 <CardTitle>{t("rsvp.title")}</CardTitle>
                 <CardDescription>

@@ -111,7 +111,7 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
       />
       <AttendanceToday />
 
-      <section className="mb-10">
+      <section className="mb-12">
         <SectionHeader label={tDash("queue")} count={queue.length || undefined} />
         {/* The three homes now open on the same object — "what is waiting on
             you" — so they are drawn by the same component. This one had its own
@@ -141,9 +141,9 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
         )}
       </section>
 
-      {/* Four figures are four figures, not four boxes: a strip between two
-          rules, which is what a school's key numbers look like on paper. */}
-      <dl className="mb-10 grid grid-cols-2 gap-x-10 gap-y-6 border-y border-rule py-5 sm:grid-cols-4">
+      {/* Four figures are four figures, not four boxes — and not a strip between two rules
+          either (ADR-0078): the numbers themselves are the shape. */}
+      <dl className="mb-12 grid grid-cols-2 gap-x-10 gap-y-6 sm:grid-cols-4">
         {tiles.map((tile) => (
           <div key={tile.label}>
             <dt className="eyebrow">{tile.label}</dt>

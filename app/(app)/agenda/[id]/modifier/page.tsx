@@ -75,7 +75,7 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
             taken: s.signups.length,
           }))}
         />
-        <div className="border-t pt-6">
+        <div className="pt-6">
           <DeleteEventButton id={event.id} />
         </div>
       </div>

@@ -174,7 +174,7 @@ export async function HomeworkWeek({
             {isPivot ? t("nothingForPivot", { day: pivotName.toLowerCase() }) : t("nothingToday")}
           </p>
         ) : (
-          <ul className="divide-y divide-rule">
+          <ul className="flex flex-col gap-1">
             {items.map((entry) => (
               <li key={entry.id}>
                 <HomeworkEntry
@@ -212,7 +212,7 @@ export async function HomeworkWeek({
           {upcomingDays.map((day) => renderDay(day))}
           {earlierDays.length > 0 && (
             <div className="flex flex-col gap-5">
-              <p className="eyebrow border-t border-rule pt-5">{t("earlierThisWeek")}</p>
+              <p className="eyebrow pt-3">{t("earlierThisWeek")}</p>
               {earlierDays.map((day) => renderDay(day, true))}
             </div>
           )}

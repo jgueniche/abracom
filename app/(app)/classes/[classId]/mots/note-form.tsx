@@ -46,7 +46,7 @@ export function NoteForm({
           />
           {t("allStudents")}
         </label>
-        <div className="grid grid-cols-2 gap-1 border-t border-rule pt-2 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-1 pt-1 sm:grid-cols-3">
           {students.map((s) => (
             <label key={s.id} className="flex min-h-11 items-center gap-2 text-sm">
               <input

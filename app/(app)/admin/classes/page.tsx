@@ -27,12 +27,12 @@ export default async function ClassesPage() {
     <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
       <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col gap-1">
           {classes.map((c) => (
             <li key={c.id}>
               <Link
                 href={`/admin/classes/${c.id}`}
-                className="flex items-center gap-4 rounded-xl border p-4 hover:bg-muted/60"
+                className="-mx-3 flex items-center gap-4 rounded-lg px-3 py-3 transition-colors hover:bg-muted"
               >
                 <Badge variant="secondary">{c.level?.code}</Badge>
                 <div className="min-w-0 flex-1">

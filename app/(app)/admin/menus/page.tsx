@@ -125,7 +125,7 @@ export default async function AdminMenusPage({
 
       {/* The state of the week, and the ways out of it: see it as the
           families do, copy last week, or remove it. One line, not a card. */}
-      <div className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-rule pb-4">
+      <div className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-2">
         <p className="text-sm text-muted-foreground">
           {menu
             ? t("admin.published", {

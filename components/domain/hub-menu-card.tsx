@@ -33,12 +33,12 @@ export function HubMenuCard({
   const t = useTranslations("publish");
 
   return (
-    <li className="border-b border-rule">
+    <li>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="group -mx-3 flex min-h-14 w-[calc(100%+1.5rem)] items-baseline gap-4 rounded-md px-3 py-3.5 text-left transition-colors hover:bg-muted/50"
+            className="group -mx-3 flex min-h-14 w-[calc(100%+1.5rem)] items-baseline gap-4 rounded-lg px-3 py-3 text-left transition-colors hover:bg-muted"
           >
             <span className="min-w-0 flex-1">
               <span className="block text-base font-semibold tracking-[-0.006em]">{title}</span>

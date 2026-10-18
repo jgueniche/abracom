@@ -10,9 +10,11 @@ import { cn } from "@/lib/utils";
  * rounded-full border px-4`, filled solid primary when selected — and the row
  * came out as a line of blue capsules that outweighed the page's own action.
  *
- * A filter is a state, not a command: selected is a tint and a ring of its own
- * colour, the rest is a plain outlined tag. The touch target stays at 44 px on
- * a phone and drops to 32 px where a pointer is doing the work.
+ * A filter is a state, not a command. Only the selected one has a shape — a
+ * tint of its own colour; the others are words that tint under the pointer. A
+ * row of outlined tags was one more row of rectangles above a page of them
+ * (ADR-0078). The touch target stays at 44 px on a phone and drops to 36 px
+ * where a pointer is doing the work.
  */
 export function FilterChip({
   href,
@@ -30,10 +32,10 @@ export function FilterChip({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "inline-flex min-h-11 shrink-0 items-center rounded-md border px-3 text-sm font-medium whitespace-nowrap transition-colors md:min-h-9",
+        "inline-flex min-h-11 shrink-0 items-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors md:min-h-9",
         active
-          ? "border-primary/45 bg-primary/10 font-semibold text-primary"
-          : "border-border bg-card text-foreground/70 hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_18%)] hover:text-foreground",
+          ? "bg-primary/10 font-semibold text-primary"
+          : "text-foreground/70 hover:bg-muted hover:text-foreground",
         className,
       )}
     >

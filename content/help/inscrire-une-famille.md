@@ -5,7 +5,7 @@ routes: [/admin/familles/nouvelle]
 topic: manage
 keywords: [inscription, nouvelle famille, parent, enfant, compte, mot de passe provisoire, identifiants, courriel d'inscription]
 since: 34
-reviewed: 2026-10-08
+reviewed: 2026-10-18
 ---
 
 Les familles ne s'inscrivent pas elles-mêmes : elles écrivent à l'adresse indiquée sous « Pas de compte ? » de la page de connexion, en donnant le nom et le prénom de chaque parent, son adresse de courriel, et le nom, le prénom et la classe de chaque enfant. La direction saisit ce courriel une fois.

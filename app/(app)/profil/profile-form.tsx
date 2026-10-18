@@ -95,7 +95,7 @@ export function ProfileForm({
           </SelectContent>
         </Select>
       </div>
-      <div className="flex items-center justify-between gap-4 rounded-xl border p-3">
+      <div className="flex items-center justify-between gap-4">
         <div className="flex flex-col">
           <Label htmlFor="showHebrewDate">{t("hebrewDate")}</Label>
           <p className="text-sm text-muted-foreground">{t("hebrewDateHint")}</p>

@@ -199,7 +199,7 @@ export function EventForm({
         </div>
       </div>
 
-      <fieldset className="flex flex-col gap-3 rounded-xl border p-3">
+      <fieldset className="flex flex-col gap-3">
         <label className="flex min-h-11 items-center gap-2 text-sm font-medium">
           <input
             type="checkbox"

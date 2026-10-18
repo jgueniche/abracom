@@ -142,7 +142,7 @@ export default async function HomeworkPage({ params }: { params: Promise<{ postI
 
       <HomeworkPages items={views} title={homework.title} />
 
-      <footer className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-rule pt-3 text-xs text-muted-foreground">
+      <footer className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
         {homework.author && (
           <span>
             {t("givenBy", {

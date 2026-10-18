@@ -89,8 +89,10 @@ export default async function JournalPage({
       </Column>
     );
 
+  // A diary is read, entry after entry: one column at reading measure, the entries set apart
+  // by space — the two-column grid of framed cards is what ADR-0078 took apart.
   return (
-    <Column>
+    <Column width="text">
       <div className="flex flex-col gap-10">
         {filters}
         {[...months.entries()].map(([month, items]) => (
@@ -102,7 +104,7 @@ export default async function JournalPage({
               })}
               count={items.length}
             />
-            <div className="grid gap-3 lg:grid-cols-2">
+            <div className="flex flex-col gap-9">
               {items.map((post) => (
                 /* The journal used to render its own card — a title, a photo
                  grid and no menu at all, so an entry could be neither edited

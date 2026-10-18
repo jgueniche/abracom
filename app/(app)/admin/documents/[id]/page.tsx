@@ -85,7 +85,7 @@ export default async function AdminDocumentPage({ params }: { params: Promise<{ 
             {missing.length === 0 ? (
               <p className="text-sm">{t("allSigned")}</p>
             ) : (
-              <ScrollRegion label={t("signatures")} className="overflow-x-auto rounded-xl border">
+              <ScrollRegion label={t("signatures")} className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-muted/50 text-left">
                     <tr>

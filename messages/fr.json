@@ -1410,6 +1410,7 @@
     "deleteConfirm": "Supprimer cet événement ? Les réponses et inscriptions seront perdues.",
     "back": "Retour à l'agenda",
     "allDay": "Toute la journée",
+    "allDayRange": "Du {from} au {to}",
     "continued": "(suite)",
     "shabbat": "Chabbat",
     "candles": "Allumage des bougies {time}",

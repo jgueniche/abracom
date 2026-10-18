@@ -36,7 +36,7 @@ export function ImportWizard() {
         <CardContent className="flex flex-col gap-4">
           <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {(Object.keys(commit.counts) as Array<keyof typeof commit.counts>).map((key) => (
-              <div key={key} className="rounded-xl border p-3">
+              <div key={key}>
                 <dt className="text-xs text-muted-foreground">{t(`counts.${key}`)}</dt>
                 <dd className="text-2xl font-semibold tabular-nums">{commit.counts![key]}</dd>
               </div>
@@ -102,7 +102,7 @@ export function ImportWizard() {
               </div>
             )}
             {preview.issues && preview.issues.length > 0 && (
-              <div className="max-h-72 overflow-auto rounded-xl border">
+              <div className="max-h-72 overflow-auto">
                 <table className="w-full text-sm">
                   <caption className="sr-only">{t("issues")}</caption>
                   <tbody>
@@ -120,7 +120,7 @@ export function ImportWizard() {
               </div>
             )}
             {ready && (
-              <form action={commitAction} className="border-t pt-4">
+              <form action={commitAction} className="pt-4">
                 <input type="hidden" name="csvText" value={preview.csvText} />
                 <SubmitButton pendingLabel={t("importing")}>
                   <UploadIcon aria-hidden />

@@ -40,7 +40,9 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "relative border-b border-rule transition-colors last:border-b-0 hover:bg-muted/50 data-[state=selected]:bg-muted",
+        // Rows are told apart by their height and the pointer, not by a rule across the
+        // column under each of them (ADR-0078); the head keeps the one line a register needs.
+        "relative transition-colors hover:bg-muted/60 data-[state=selected]:bg-muted",
         className,
       )}
       {...props}
@@ -53,7 +55,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-head"
       className={cn(
-        "border-b border-border pb-1.5 text-left align-bottom text-[0.6875rem] leading-4 font-medium tracking-[0.085em] whitespace-nowrap text-muted-foreground uppercase first:pl-0 last:pr-0",
+        "border-b border-rule pb-1.5 text-left align-bottom text-[0.6875rem] leading-4 font-medium tracking-[0.085em] whitespace-nowrap text-muted-foreground uppercase first:pl-0 last:pr-0",
         "px-2",
         className,
       )}

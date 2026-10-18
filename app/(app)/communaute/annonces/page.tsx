@@ -88,20 +88,20 @@ export default async function ClassifiedsPage({
           action={canPost ? { href: "/communaute/annonces/nouvelle", label: t("new") } : undefined}
         />
       ) : (
-        <ul className="flex flex-col gap-3">
+        // An index of small ads rather than a stack of framed panels (ADR-0078): the category
+        // and the date make the dateline, the title follows in the families' own words.
+        <ul className="flex flex-col gap-1">
           {posts.map((post) => (
             <li key={post.id}>
               <Link
                 href={`/communaute/annonces/${post.id}`}
-                className="block rounded-xl border p-4 hover:bg-muted/60"
+                className="-mx-3 block rounded-lg px-3 py-3 transition-colors hover:bg-muted"
               >
-                <div className="mb-1 flex flex-wrap items-center gap-2">
-                  <Badge variant="secondary">{t(`categories.${post.category}`)}</Badge>
-                  <span className="text-xs text-muted-foreground">
-                    {format.dateTime(new Date(post.created_at), { dateStyle: "medium" })}
-                  </span>
-                </div>
-                <p className="font-heading text-lg font-semibold">{post.title}</p>
+                <p className="eyebrow mb-1">
+                  {t(`categories.${post.category}`)} ·{" "}
+                  {format.dateTime(new Date(post.created_at), { dateStyle: "medium" })}
+                </p>
+                <p className="font-heading text-base leading-snug">{post.title}</p>
                 <p className="line-clamp-2 text-sm text-muted-foreground">{post.body}</p>
                 {post.author && (
                   <p className="mt-1 text-xs text-muted-foreground">
@@ -116,12 +116,12 @@ export default async function ClassifiedsPage({
       {mine.length > 0 && (
         <section className="mt-10">
           <SectionHeader label={t("mine")} count={mine.length} />
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-0.5">
             {mine.map((post) => (
               <li key={post.id}>
                 <Link
                   href={`/communaute/annonces/${post.id}`}
-                  className="flex items-center gap-3 rounded-xl border p-3 hover:bg-muted/60"
+                  className="-mx-3 flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted"
                 >
                   <Badge variant={STATUS_VARIANT[post.status]}>{t(`status.${post.status}`)}</Badge>
                   <span className="min-w-0 flex-1 truncate font-medium">{post.title}</span>

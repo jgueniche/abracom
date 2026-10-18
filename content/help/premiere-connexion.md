@@ -5,7 +5,7 @@ routes: [/connexion, /mot-de-passe, /bienvenue]
 topic: signin
 keywords: [connexion, invitation, mot de passe, mot de passe provisoire, identifiant, première fois, oublié, inscription, pas de compte]
 since: 17
-reviewed: 2026-10-08
+reviewed: 2026-10-18
 ---
 
 L'école crée votre compte : on ne s'inscrit pas soi-même. Elle vous remet votre **identifiant** — l'adresse de courriel que vous lui avez donnée — et un **mot de passe provisoire**, par message ou de vive voix.

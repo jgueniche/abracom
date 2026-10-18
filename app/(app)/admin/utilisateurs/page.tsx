@@ -119,7 +119,7 @@ export default async function MembersPage({
               <CardTitle>{t("team")}</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="divide-y">{members.team.map(row)}</ul>
+              <ul className="flex flex-col">{members.team.map(row)}</ul>
             </CardContent>
           </Card>
           <Card>
@@ -154,7 +154,7 @@ export default async function MembersPage({
                 <summary className="flex min-h-11 cursor-pointer items-center text-sm font-medium text-primary">
                   {t("showParents", { count: members.parentsTotal })}
                 </summary>
-                <ul className="divide-y">{members.parents.map(row)}</ul>
+                <ul className="flex flex-col">{members.parents.map(row)}</ul>
               </details>
             </CardContent>
           </Card>

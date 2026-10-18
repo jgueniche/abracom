@@ -201,7 +201,7 @@ export default async function AssessmentsPage({
   const children = cls.students.filter((s) => myStudentIds.includes(s.id));
   return (
     <Column>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-12">
         {selector}
         {children.map((child) => {
           const mine = rows.filter((r) => r.student_id === child.id);
@@ -243,11 +243,13 @@ export default async function AssessmentsPage({
                       return (
                         <div key={group.domain}>
                           <h3 className="mb-2 font-medium">{group.domain}</h3>
-                          <ul className="flex flex-col gap-1">
+                          <ul className="flex flex-col">
                             {items.map(({ skill, row }) => (
+                              // a skill per line, its level at the end — not a framed row inside a
+                              // framed card (ADR-0078)
                               <li
                                 key={skill.id}
-                                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm"
+                                className="flex flex-wrap items-center justify-between gap-2 py-1.5 text-sm"
                               >
                                 <span>
                                   {skill.label}
@@ -277,7 +279,7 @@ export default async function AssessmentsPage({
                       );
                     })}
                     {remark && (
-                      <div className="rounded-xl bg-muted/40 p-3 text-sm">
+                      <div className="text-sm">
                         <p className="mb-1 font-medium">{t("remark")}</p>
                         <p className="whitespace-pre-line">{remark.body}</p>
                       </div>

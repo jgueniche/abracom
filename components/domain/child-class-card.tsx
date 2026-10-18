@@ -1,4 +1,3 @@
-import { ChevronRightIcon } from "lucide-react";
 import { Link } from "@/components/ui/link";
 import { getLocale, getTranslations } from "next-intl/server";
 
@@ -32,48 +31,51 @@ export async function ChildClassCard({ child }: { child: ChildWithClass }) {
   const cls = student.enrollments[0]?.class ?? null;
   const name = `${student.first_name} ${student.last_name}`;
 
+  // No frame and no inner rule (ADR-0078): the avatar is the left edge, as in Messages, and the
+  // four places to go are words under the name rather than a toolbar under a line.
   return (
-    <article className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
+    <article className="flex items-start gap-3">
       <Link
         prefetch={false}
         href={cls ? `/classes/${cls.id}` : "/famille"}
-        className="flex items-center gap-3 px-3.5 py-3 transition-colors hover:bg-muted/50"
+        className="shrink-0 rounded-full"
+        tabIndex={-1}
+        aria-hidden
       >
         <UserAvatar
           name={name}
           initials={`${student.first_name.charAt(0)}${student.last_name.charAt(0)}`}
-          className="size-9"
-        />
-        <span className="flex min-w-0 flex-col">
-          <span className="truncate text-sm font-semibold">{name}</span>
-          <span className="meta truncate">
-            {cls
-              ? `${cls.name}${cls.level ? ` · ${levelLabel(cls.level, locale)}` : ""}`
-              : t("noClass")}
-          </span>
-        </span>
-        <ChevronRightIcon
-          className="ml-auto size-3.5 shrink-0 text-muted-foreground/60"
-          aria-hidden
+          className="size-10"
         />
       </Link>
-      {cls && (
-        <nav
-          aria-label={cls.name}
-          className="flex flex-wrap gap-0.5 border-t border-rule px-1.5 py-1"
+      <div className="flex min-w-0 flex-col">
+        <Link
+          prefetch={false}
+          href={cls ? `/classes/${cls.id}` : "/famille"}
+          className="flex min-h-6 items-center text-[0.9375rem] font-semibold hover:underline hover:decoration-foreground/25 hover:underline-offset-[3px]"
         >
-          {SHORTCUTS.map((shortcut) => (
-            <Link
-              prefetch={false}
-              key={shortcut.key}
-              href={`/classes/${cls.id}/${shortcut.segment}`}
-              className="flex min-h-11 items-center rounded-md px-2 text-[0.8125rem] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:min-h-8"
-            >
-              {tTabs(shortcut.key)}
-            </Link>
-          ))}
-        </nav>
-      )}
+          {name}
+        </Link>
+        <span className="meta truncate">
+          {cls
+            ? `${cls.name}${cls.level ? ` · ${levelLabel(cls.level, locale)}` : ""}`
+            : t("noClass")}
+        </span>
+        {cls && (
+          <nav aria-label={cls.name} className="-ml-2 flex flex-wrap gap-x-0.5">
+            {SHORTCUTS.map((shortcut) => (
+              <Link
+                prefetch={false}
+                key={shortcut.key}
+                href={`/classes/${cls.id}/${shortcut.segment}`}
+                className="flex min-h-11 items-center rounded-md px-2 text-[0.8125rem] font-medium text-primary transition-colors hover:bg-muted md:min-h-9"
+              >
+                {tTabs(shortcut.key)}
+              </Link>
+            ))}
+          </nav>
+        )}
+      </div>
     </article>
   );
 }

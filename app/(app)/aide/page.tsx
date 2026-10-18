@@ -91,13 +91,13 @@ export default async function HelpPage() {
                 />
                 {/* A table of contents, not twenty-six boxes: the help index
                     is the one screen whose whole job is to let the eye run down
-                    a list of titles. */}
-                <ul className="border-t border-rule">
+                    a list of titles — down a run of titles, not of rules (ADR-0078). */}
+                <ul className="flex flex-col gap-0.5">
                   {group.articles.map((article) => (
-                    <li key={article.slug} className="border-b border-rule">
+                    <li key={article.slug}>
                       <Link
                         href={`/aide/${article.slug}`}
-                        className="-mx-3 flex min-h-11 flex-col justify-center rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50"
+                        className="-mx-3 flex min-h-11 flex-col justify-center rounded-lg px-3 py-2.5 transition-colors hover:bg-muted"
                       >
                         <span className="text-sm font-medium">{article.title}</span>
                         <span className="mt-0.5 line-clamp-1 text-[0.8125rem] text-muted-foreground">

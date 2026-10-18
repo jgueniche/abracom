@@ -33,7 +33,6 @@ export async function UpcomingEvents({
   return (
     <section className="mt-2">
       <SectionHeader
-        rule={false}
         label={t("title")}
         action={
           <Button asChild variant="ghost" size="sm">
@@ -47,9 +46,9 @@ export async function UpcomingEvents({
       {events.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("empty")}</p>
       ) : (
-        <ul className="border-t border-rule">
+        <ul className="flex flex-col gap-0.5">
           {events.map((event) => (
-            <li key={event.id} className="border-b border-rule">
+            <li key={event.id}>
               <EventCard event={event} showDate />
             </li>
           ))}

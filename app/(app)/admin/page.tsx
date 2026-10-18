@@ -55,10 +55,10 @@ export default async function AdminIndexPage() {
                 const count = counts[item.key];
                 const waiting = WAITING.has(item.key) && (count ?? 0) > 0;
                 return (
-                  <li key={item.href} className="border-b border-rule last:border-b-0">
+                  <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="-mx-2 flex min-h-11 items-baseline gap-3 rounded-md px-2 text-sm transition-colors hover:bg-muted/50 md:min-h-9"
+                      className="-mx-2 flex min-h-11 items-center gap-3 rounded-md px-2 text-sm transition-colors hover:bg-muted md:min-h-9"
                     >
                       <span className="min-w-0 flex-1 truncate font-medium">{tNav(item.key)}</span>
                       {count !== undefined && (

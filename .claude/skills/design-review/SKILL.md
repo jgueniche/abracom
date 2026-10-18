@@ -17,7 +17,7 @@ est une **liste de contrôle et un corpus de référence**, pas une autorité : 
 contredit un ADR de `docs/DECISIONS.md`, l'ADR gagne, et on écrit pourquoi.
 
 En particulier, **ne jamais** lancer son générateur de design system sur ce dépôt :
-Kesher a déjà le sien, justifié dans les ADR 0031, 0032, 0051, 0052, 0053 et 0054,
+Kesher a déjà le sien, justifié dans les ADR 0031, 0032, 0051, 0052, 0053, 0054 et 0078,
 et matérialisé par `app/globals.css`, `/dev/ui` et les composants partagés. Un second
 document « Master » serait une seconde source de vérité, c'est-à-dire aucune.
 
@@ -72,13 +72,30 @@ Toute page porte une `<Column>`. Il n'y a pas d'exception « cet écran est spé
 | un registre à colonnes                  | `Table`                             |
 | un sommaire de destinations             | `HubCard` en lignes                 |
 | **une grille de cartes**                | presque jamais — le prouver d'abord |
+| un formulaire, une section, un vide     | jamais encadré (ADR-0078)           |
 
-### Le trait plutôt que la boîte (ADR-0051)
+### L'espace plutôt que le trait et la boîte (ADR-0078, qui prolonge l'ADR-0051)
 
-`--radius: 8px`, le filet (`--rule`) au lieu de l'ombre, pas d'aplat pour marquer un
-onglet. Ce qui attend le lecteur est **une barre de 2 px dans la marge**, pas une
-pastille colorée. Une icône décorative par ligne : non. Un statut répété à l'identique
-sur dix lignes : non — on ne nomme que l'exception.
+Le modèle est l'onglet **Messages**, le seul écran que le porteur a cité comme clair :
+aucune boîte autour d'une liste, aucun filet entre les lignes, des groupes nommés par
+un petit libellé, un avatar qui donne un bord gauche régulier.
+
+- **Une seule boîte par élément, et seulement s'il se manipule** : un champ, une bulle
+  de message, une photo, une case à cocher en carte. Jamais autour d'une liste, d'une
+  section, d'un formulaire ou d'un état vide. `Card` est un groupe sans cadre.
+- **L'espace sépare** : 40 à 48 px entre deux sections (`mb-12`, `gap-10`), quelques
+  pixels entre deux lignes, et le survol (`hover:bg-muted`) révèle la ligne.
+- **Aucun filet long** hors de la barre du haut et de celle du bas. `SectionHeader` n'a
+  plus de filet ; un onglet actif garde son trait court de 2 px.
+- **Un bord gauche régulier** : avatar, date, heure en tête de ligne (`Row` a `leading`).
+- **Deux lignes plutôt qu'une ligne coupée** : la nature en `.eyebrow`, le titre dessous ;
+  une nature qui se répète ne s'écrit qu'une fois, au-dessus de sa série.
+- **Pas de rond dans un rond** : un avatar est un disque sans anneau, une case « fait »
+  n'a pas de cible ronde autour d'elle.
+
+Ce qui attend le lecteur reste **une barre de 2 px dans la marge**, pas une pastille
+colorée. Une icône décorative par ligne : non. Un statut répété à l'identique sur dix
+lignes : non — on ne nomme que l'exception.
 
 ## 2. La boucle qui trouve les défauts
 

@@ -101,12 +101,12 @@ export function WhatsNewList({ items }: { items: WhatsNewItem[] }) {
       <p className="mb-4 text-sm text-muted-foreground" role="status">
         {count > 0 ? `${t("sinceLastVisit")} · ${t("badge", { count })}` : t("seen")}
       </p>
-      <ul className="flex flex-col gap-2">
+      <ul className="flex flex-col gap-0.5">
         {items.map((item) => (
           <li key={item.slug}>
             <Link
               href={`/aide/${item.slug}`}
-              className="flex min-h-11 flex-col rounded-xl border p-3 transition-colors hover:border-primary/40 hover:bg-muted/50"
+              className="-mx-3 flex min-h-11 flex-col rounded-lg px-3 py-2.5 transition-colors hover:bg-muted"
             >
               <span className="mb-1 flex flex-wrap items-center gap-2">
                 <span className="font-medium">{item.title}</span>

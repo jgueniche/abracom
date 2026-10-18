@@ -36,7 +36,8 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center rounded-xl border border-border bg-card/60 px-6 py-8 text-center",
+        // No frame (ADR-0078): an absence drawn as a box was one more rectangle on the page.
+        "flex flex-col items-center px-6 py-10 text-center",
         className,
       )}
     >

@@ -57,7 +57,7 @@ export default async function ClassDetailPage({
             {cls.class_teachers.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t("noTeachers")}</p>
             ) : (
-              <ul className="divide-y">
+              <ul className="flex flex-col">
                 {cls.class_teachers.map((ct) => (
                   <li key={ct.user_id} className="flex items-center justify-between gap-3 py-2">
                     <div>
@@ -109,7 +109,7 @@ export default async function ClassDetailPage({
             {cls.enrollments.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t("noStudents")}</p>
             ) : (
-              <ul className="divide-y">
+              <ul className="flex flex-col">
                 {cls.enrollments.map((e) => (
                   <li key={e.id} className="py-2">
                     <Link

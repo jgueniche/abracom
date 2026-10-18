@@ -70,12 +70,9 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
         {absences.length === 0 ? (
           <EmptyState icon={CalendarXIcon} title={t("empty")} description={t("emptyHint")} />
         ) : (
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-1">
             {absences.map((a) => (
-              <li
-                key={a.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3"
-              >
+              <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 py-2.5">
                 <div>
                   <p className="font-medium">
                     {a.student ? `${a.student.first_name} ${a.student.last_name} · ` : ""}

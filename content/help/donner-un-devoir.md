@@ -5,7 +5,7 @@ routes: [/devoirs/nouveau, /devoirs/[postId]/modifier]
 topic: publish
 keywords: [devoir, nouveau devoir, photo, page, photographier, PDF, fiche, matière, date, prochain cours, plusieurs classes]
 since: 33
-reviewed: 2026-10-06
+reviewed: 2026-10-18
 ---
 
 **« Nouveau devoir »** se trouve dans l'onglet Devoirs, sur l'accueil, dans l'onglet Devoirs de la classe et sur la page Publier. Si vous avez plusieurs classes, il vous demande d'abord laquelle. Le formulaire pose les questions dans l'ordre où l'on y pense :

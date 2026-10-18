@@ -5,7 +5,7 @@ routes: [/ecole]
 topic: signin
 keywords: [navigation, onglets, menu, avatar, perspective, rôle, école, se repérer, où trouver]
 since: 17
-reviewed: 2026-10-08
+reviewed: 2026-10-18
 ---
 
 La barre du bas sur téléphone — la barre du haut sur ordinateur — porte cinq destinations, et elles ne sont pas les mêmes pour tout le monde : elles dépendent de votre rôle.
@@ -22,7 +22,7 @@ Accueil, Devoirs, Classe, Messages, École. Sur ordinateur, la barre ajoute Publ
 Tableau de bord, Publier, Messages, École, Gestion. Sur ordinateur, la barre ajoute Agenda et Pointage.
 :::
 
-Quand vous touchez un onglet, **un trait apparaît dessous** le temps que la page arrive : c'est l'application qui vous dit qu'elle a entendu. S'il reste longtemps, c'est le réseau, pas votre geste.
+Les onglets de la barre sont **chargés d'avance**, pendant que vous lisez la page ouverte : les toucher les ouvre aussitôt, même la première fois. Quand l'application revient au premier plan après une pause, elle les recharge d'elle-même. Si un onglet n'était pas encore prêt, **un trait apparaît dessous** le temps que la page arrive : c'est l'application qui vous dit qu'elle a entendu. S'il reste longtemps, c'est le réseau, pas votre geste.
 
 **L'onglet École** rassemble tout ce que l'établissement vous adresse ou vous demande : annonces et circulaires, agenda, menus de la semaine, documents, formulaires, communauté.
 
