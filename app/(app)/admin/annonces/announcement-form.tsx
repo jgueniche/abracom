@@ -118,7 +118,7 @@ export function AnnouncementForm({
         required
       />
 
-      <details className="rounded-xl border p-3">
+      <details>
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-medium">
           {t("fields.translation")}
         </summary>

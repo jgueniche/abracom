@@ -136,7 +136,7 @@ export default async function MessagingControlPage() {
                   return (
                     <li
                       key={w.id}
-                      className="flex flex-col gap-2 rounded-xl border border-border p-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3"
+                      className="flex flex-col gap-2 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3"
                     >
                       <Badge variant={w.kind === "open" ? "secondary" : "destructive"}>
                         {t(`windowKinds.${w.kind}`)}
@@ -201,7 +201,7 @@ export default async function MessagingControlPage() {
                     key={channel.thread_id}
                     // On a 390 px screen the class name was squeezed to "CE1…"
                     // by two buttons sharing its line: they get their own row.
-                    className="flex flex-col gap-2 rounded-xl border border-border p-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3"
+                    className="flex flex-col gap-2 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">

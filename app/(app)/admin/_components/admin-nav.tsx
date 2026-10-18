@@ -23,7 +23,7 @@ export function AdminNav({ isAdmin, isPlatform }: { isAdmin: boolean; isPlatform
       {/* Phone and tablet: folded. Four open families cost about 830 px — the
           whole first screen — before the title of the page you asked for. */}
       <details className="mb-5 lg:hidden">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-medium">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-lg bg-muted px-3 text-sm font-medium">
           <span className="eyebrow">{tAdmin("title")}</span>
           <span className="min-w-0 flex-1 truncate">
             {current ? t(current.key) : tAdmin("nav.all")}
@@ -34,17 +34,17 @@ export function AdminNav({ isAdmin, isPlatform }: { isAdmin: boolean; isPlatform
           {groups.map((group) => (
             <div key={group.key}>
               <p className="eyebrow mb-1.5">{tg(group.key)}</p>
-              <ul className="flex flex-wrap gap-2">
+              <ul className="-ml-2.5 flex flex-wrap gap-1">
                 {group.items.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
                       aria-current={isActive(item.href) ? "page" : undefined}
                       className={cn(
-                        "flex min-h-11 items-center rounded-md border px-2.5 text-sm font-medium transition-colors",
+                        "flex min-h-11 items-center rounded-md px-2.5 text-sm font-medium transition-colors",
                         isActive(item.href)
-                          ? "border-primary/45 bg-primary/10 font-semibold text-primary"
-                          : "border-border bg-card text-foreground/70 hover:text-foreground",
+                          ? "bg-primary/10 font-semibold text-primary"
+                          : "text-foreground/70 hover:bg-muted hover:text-foreground",
                       )}
                     >
                       {t(item.key)}
@@ -64,7 +64,7 @@ export function AdminNav({ isAdmin, isPlatform }: { isAdmin: boolean; isPlatform
       >
         {groups.map((group) => (
           <div key={group.key}>
-            <p className="eyebrow mb-2 border-b border-rule pb-1.5">{tg(group.key)}</p>
+            <p className="eyebrow mb-2">{tg(group.key)}</p>
             <ul className="flex flex-col gap-0.5">
               {group.items.map((item) => (
                 <li key={item.href}>
@@ -75,7 +75,7 @@ export function AdminNav({ isAdmin, isPlatform }: { isAdmin: boolean; isPlatform
                       "relative flex min-h-9 items-center rounded-md px-2.5 text-sm font-medium transition-colors",
                       isActive(item.href)
                         ? "bg-muted font-semibold text-foreground before:absolute before:inset-y-1.5 before:left-0 before:w-[2px] before:rounded-full before:bg-primary"
-                        : "text-foreground/70 hover:bg-muted/60 hover:text-foreground",
+                        : "text-foreground/70 hover:bg-muted hover:text-foreground",
                     )}
                   >
                     {t(item.key)}

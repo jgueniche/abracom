@@ -74,7 +74,7 @@ export default async function StudentDetailPage({
                   status: student.status,
                 }}
               />
-              <form action={enrollStudent} className="flex flex-col gap-2 border-t pt-4">
+              <form action={enrollStudent} className="flex flex-col gap-2 pt-4">
                 <input type="hidden" name="studentId" value={student.id} />
                 <label htmlFor="classId" className="text-sm font-medium">
                   {t("enroll")}
@@ -150,7 +150,7 @@ export default async function StudentDetailPage({
               <p className="text-sm text-muted-foreground">{t("noGuardians")}</p>
             )}
             {student.guardians.map((g) => (
-              <div key={g.user_id} className="flex flex-col gap-3 rounded-xl border p-3">
+              <div key={g.user_id} className="flex flex-col gap-3 py-2">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
                     <p className="font-medium">
@@ -208,7 +208,7 @@ export default async function StudentDetailPage({
               </div>
             ))}
             {admin && (
-              <div className="border-t pt-4">
+              <div className="pt-4">
                 <p className="mb-3 font-medium">{t("linkGuardian")}</p>
                 <LinkGuardianForm studentId={student.id} />
               </div>

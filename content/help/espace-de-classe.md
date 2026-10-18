@@ -5,10 +5,10 @@ routes: [/classes, /classes/[classId]]
 topic: daily
 keywords: [classe, cahier de vie, publications, onglets, équipe, info, rappel]
 since: 17
-reviewed: 2026-10-08
+reviewed: 2026-10-18
 ---
 
-L'onglet **Classe** ouvre l'espace de la classe, sur le **cahier de vie** : ce que la classe a vécu, mois par mois, billets et photos.
+L'onglet **Classe** ouvre l'espace de la classe, sur le **cahier de vie** : ce que la classe a vécu, mois par mois, billets et photos. Quand vous n'avez qu'une classe — un enfant, ou une seule classe où vous enseignez —, il y mène directement.
 
 Les onglets sont rangés en deux familles, sur deux lignes :
 

@@ -98,11 +98,11 @@ export default async function AgendaPage({
     const startKey = localDateKey(event.starts_at, timezone);
     const endKey =
       event.all_day && event.ends_at ? localDateKey(event.ends_at, timezone) : startKey;
-    let key = startKey < from ? from : startKey;
-    const stop = endKey > last ? last : endKey;
-    while (key <= stop) {
-      dayOf(key).events.push({ event, continued: key !== startKey });
-      key = addDays(key, 1);
+    // A run of days is named once, on its first day of the month, with its dates: the holidays
+    // used to fill fifteen days in a row with « Vacances de la Toussaint (suite) » (ADR-0078).
+    const first = startKey < from ? from : startKey;
+    if (first <= (endKey > last ? last : endKey)) {
+      dayOf(first).events.push({ event, continued: first !== startKey });
     }
   }
   for (const item of jewish) dayOf(item.date).jewish.push(item);
@@ -141,7 +141,7 @@ export default async function AgendaPage({
 
       {/* Today's date is a dateline, not a banner: three lines in a box across
           the top of the page announced the day the reader is already living. */}
-      <p className="mb-7 flex flex-wrap items-baseline gap-x-2.5 gap-y-1 border-b border-rule pb-4">
+      <p className="mb-8 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
         <span className="eyebrow">{t("today")}</span>
         <span className="font-heading text-base capitalize">
           {format.dateTime(noon(today), { dateStyle: "full" })}
@@ -183,7 +183,7 @@ export default async function AgendaPage({
           action={canEdit ? { href: "/agenda/nouveau", label: t("new") } : undefined}
         />
       ) : (
-        <ol className="-mx-2 flex flex-col border-t border-rule">
+        <ol className="flex flex-col gap-1">
           {keys.map((key) => {
             const day = days.get(key)!;
             const shabbat = isoWeekday(key) === 6;
@@ -193,17 +193,21 @@ export default async function AgendaPage({
             return (
               <li
                 key={key}
-                className={cn(
-                  // One rule per day, always: it is the day that is the unit of
-                  // this list. The rule used to belong to the event list, so a
-                  // day carrying only a candle-lighting time drew a line with
-                  // nothing under it and then the gap of a whole day.
-                  "grid gap-2 border-b border-rule px-2 py-3.5 sm:grid-cols-[8rem_1fr]",
-                  key === today && "bg-primary/5",
-                )}
+                // The day is the unit of this list, and its date the left edge every
+                // line of it hangs from — the avatar of Messages. A rule under every
+                // day and a tinted band for today made a month a ruled ledger with a
+                // blue stripe in it (ADR-0078); today is now said in its own colour,
+                // and marked in the margin.
+                className="relative grid gap-2 py-3 sm:grid-cols-[8rem_1fr]"
               >
+                {key === today && (
+                  <span
+                    aria-hidden
+                    className="absolute inset-y-3 -left-3 w-[2px] rounded-full bg-primary"
+                  />
+                )}
                 <div className="flex flex-wrap items-baseline gap-x-2 sm:flex-col sm:gap-0">
-                  <p className="font-semibold capitalize">
+                  <p className={cn("font-semibold capitalize", key === today && "text-primary")}>
                     {format.dateTime(noon(key), { weekday: "short", day: "numeric" })}
                   </p>
                   <p className="meta">{hebrewDate(key, hebcalLocale)}</p>
@@ -257,7 +261,7 @@ export default async function AgendaPage({
                     </div>
                   )}
                   {day.events.length > 0 && (
-                    <ul className="flex flex-col divide-y divide-rule">
+                    <ul className="flex flex-col gap-0.5">
                       {day.events.map(({ event, continued }) => (
                         <li key={event.id}>
                           <EventCard event={event} continued={continued} />

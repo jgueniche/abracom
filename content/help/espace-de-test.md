@@ -5,7 +5,7 @@ routes: [/essai]
 topic: signin
 keywords: [test, école test, essai, démonstration, fictif, espace de test, mot de passe de test, rôle]
 since: 34
-reviewed: 2026-10-08
+reviewed: 2026-10-18
 ---
 
 À côté de la vraie école vit une **école test**, entièrement fictive : ses familles, ses classes, ses devoirs et ses messages sont inventés. On y essaie une fonction avant de s'en servir pour de vrai, sans qu'aucune famille réelle ne voie quoi que ce soit.

@@ -95,7 +95,8 @@ export async function StudentCard({
           )}
         </CardContent>
       )}
-      {footer && <div className="border-t border-rule px-1.5 py-1">{footer}</div>}
+      {/* the destinations follow the record after a little space, not under a rule (ADR-0078) */}
+      {footer && <div className="-ml-2.5">{footer}</div>}
     </Card>
   );
 }

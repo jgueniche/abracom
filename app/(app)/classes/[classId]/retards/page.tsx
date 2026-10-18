@@ -77,13 +77,13 @@ export default async function LatePage({
             <p className="text-sm text-muted-foreground">
               {t("summary", { count: total, pupils: rows.length })}
             </p>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-1">
               {rows.map((row) => (
                 <li
                   key={row.student_id}
                   // A name that wraps used to let the counts slide into the middle
                   // of it at 390 px: the name owns its line, the counts follow.
-                  className="flex flex-col gap-1 rounded-xl border border-border p-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4"
+                  className="flex flex-col gap-1 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4"
                 >
                   <span className="min-w-0 font-medium sm:flex-1">
                     {row.first_name} {row.last_name}

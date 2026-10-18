@@ -81,12 +81,10 @@ export default async function DirectoryPage({
               {entries.length === 0 ? (
                 <p className="text-sm text-muted-foreground">{t("empty")}</p>
               ) : (
-                <ul className="grid gap-3 sm:grid-cols-2">
+                // A directory set like a directory — names apart by space, not each in a box (ADR-0078).
+                <ul className="grid gap-x-10 gap-y-6 sm:grid-cols-2">
                   {entries.map((entry) => (
-                    <li
-                      key={entry.user_id}
-                      className="flex flex-col gap-1 rounded-xl border p-4 text-sm"
-                    >
+                    <li key={entry.user_id} className="flex flex-col gap-0.5 text-sm">
                       <p className="font-heading font-semibold">
                         {entry.first_name} {entry.last_name}
                         {entry.relation && (

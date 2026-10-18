@@ -110,17 +110,20 @@ export default async function MenusPage({
         />
       ) : (
         <>
-          <RowList>
+          <RowList className="gap-6">
             {menu.days.map((day) => {
               const key = addDays(monday, day.day - 1);
               const isToday = key === today;
               const courses = COURSES.filter((course) => day[COLUMN_OF[course]]);
               return (
-                <li key={day.id} className="relative px-3.5 py-3">
+                <li key={day.id} className="relative">
                   {/* the day that is being asked about, marked in the margin
                       and in words — never by colour alone */}
                   {isToday && (
-                    <span aria-hidden className="absolute inset-y-0 left-0 w-[2px] bg-primary" />
+                    <span
+                      aria-hidden
+                      className="absolute inset-y-0.5 -left-3 w-[2px] rounded-full bg-primary"
+                    />
                   )}
                   <p className="mb-1.5 flex flex-wrap items-baseline gap-x-2">
                     <span

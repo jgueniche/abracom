@@ -177,8 +177,10 @@ export function MatrixForm({
       </div>
       <p className="text-xs text-muted-foreground">{t("legend")}</p>
 
-      <details className="rounded-xl border p-3">
-        <summary className="cursor-pointer font-medium">{t("remarks")}</summary>
+      <details>
+        <summary className="flex min-h-11 cursor-pointer items-center font-medium">
+          {t("remarks")}
+        </summary>
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
           {students.map((student) => (
             <label key={student.id} className="flex flex-col gap-1 text-sm">

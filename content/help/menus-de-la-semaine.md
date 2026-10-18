@@ -5,7 +5,7 @@ routes: [/ecole/menus, /admin/menus]
 topic: daily
 keywords: [menu, menus, cantine, repas, déjeuner, goûter, entrée, plat, dessert, semaine, sans gluten]
 since: 32
-reviewed: 2026-09-16
+reviewed: 2026-10-18
 ---
 
 **École → Menus de la semaine** dit ce que les enfants mangent à la cantine, jour par jour : entrée, plat, accompagnement, dessert et goûter, avec parfois une remarque de l'école — « sans gluten disponible », « goûter de Chabbat ».

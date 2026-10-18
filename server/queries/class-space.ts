@@ -113,6 +113,27 @@ export async function getHomeworkDiary(classIds: string[], from: string, to: str
   }));
 }
 
+/**
+ * The first day, from `from` on, that holds homework in these classes — what the diary opens on
+ * when the week being prepared holds none (the holidays), instead of a week of empty days.
+ */
+export async function getNextHomeworkDay(classIds: string[], from: string): Promise<string | null> {
+  if (classIds.length === 0) return null;
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("class_posts")
+    .select("due_on")
+    .in("class_id", classIds)
+    .eq("type", "homework")
+    .is("deleted_at", null)
+    .gte("due_on", from)
+    .order("due_on")
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return data?.due_on ?? null;
+}
+
 /** One homework, wherever it is read from — a notification, the home page, a shared link. */
 export async function getHomework(postId: string) {
   const supabase = await createClient();

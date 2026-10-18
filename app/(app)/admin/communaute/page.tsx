@@ -33,12 +33,9 @@ export default async function AdminCommunityPage() {
       {posts.length === 0 ? (
         <EmptyState icon={ShieldCheckIcon} title={t("empty")} description={t("emptyHint")} />
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-3">
           {posts.map((post) => (
-            <li
-              key={post.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3"
-            >
+            <li key={post.id} className="flex flex-wrap items-center justify-between gap-3 py-2">
               <div className="min-w-0 flex-1">
                 <div className="mb-1 flex flex-wrap items-center gap-2">
                   <Badge variant={STATUS_VARIANT[post.status]}>{tc(`status.${post.status}`)}</Badge>

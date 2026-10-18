@@ -25,7 +25,7 @@ export function SlotEditor({
   const [state, action] = useActionState(addSlot, idle);
 
   return (
-    <section className="flex flex-col gap-3 rounded-xl border p-3">
+    <section className="flex flex-col gap-3">
       <SectionHeader
         label={t("slots")}
         count={slots.length || undefined}

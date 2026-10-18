@@ -83,7 +83,7 @@ export function MenuForm({
         );
       })}
 
-      <div className="flex flex-col gap-3 border-t border-rule pt-5">
+      <div className="flex flex-col gap-3 pt-5">
         <ActionMessage status={state.status} message={state.message} />
         <SubmitButton className="self-start" pendingLabel={t("admin.saving")}>
           {t("admin.save")}

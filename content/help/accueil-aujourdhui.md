@@ -5,15 +5,15 @@ routes: [/accueil]
 topic: daily
 keywords: [accueil, aujourd'hui, tableau de bord, à faire, enfants, classes]
 since: 19
-reviewed: 2026-10-08
+reviewed: 2026-10-18
 ---
 
 :::roles parent, guardian
-En haut de l'accueil, le bloc **Aujourd'hui** rassemble ce qui attend quelque chose de vous ce jour-là, et rien d'autre : un devoir à préparer, un mot de l'enseignant·e, une pièce à signer, un événement du jour, un pointage, une annonce à confirmer. Quand il n'y a rien, il le dit — « Rien n'attend de vous aujourd'hui » — au lieu de laisser une liste vide.
+En haut de l'accueil, le bloc **Aujourd'hui** rassemble ce qui attend quelque chose de vous ce jour-là, et rien d'autre : un devoir à préparer, un mot de l'enseignant·e, une pièce à signer, un événement du jour, un pointage, une annonce à confirmer. Les lignes de même nature se suivent sous un seul libellé — « À signer » au-dessus des deux pièces à signer. Quand il n'y a rien, il le dit — « Rien n'attend de vous aujourd'hui » — au lieu de laisser une liste vide.
 
-Sous ce bloc, **Mes enfants** : une carte par enfant, qui ouvre directement l'espace de sa classe (devoirs, cahier de vie, mots, absences). La fiche de l'enfant elle-même — allergies, responsables, droit à l'image — est dans Ma famille, sous votre photo.
+Sous ce bloc, **Mes enfants** : une ligne par enfant, son nom et sa classe, avec quatre liens qui ouvrent directement l'espace de sa classe (cahier de vie, devoirs, mots, absences). La fiche de l'enfant elle-même — allergies, responsables, droit à l'image — est dans Ma famille, sous votre photo.
 
-Une annonce dont l'école attend votre confirmation est un point du bloc Aujourd'hui comme un autre, en tête de liste et marquée d'un trait rouge dans la marge : il n'y a pas de second endroit où la chercher.
+Une annonce dont l'école attend votre confirmation est un point du bloc Aujourd'hui comme un autre, en tête de liste, son libellé en rouge et marquée d'un trait rouge dans la marge : il n'y a pas de second endroit où la chercher.
 :::
 
 :::roles teacher

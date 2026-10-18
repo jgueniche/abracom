@@ -19,6 +19,7 @@ import { useTranslations } from "next-intl";
 
 import type { Perspective } from "@/lib/permissions";
 import { LinkPending } from "@/components/layouts/link-pending";
+import { TabPrefetch } from "@/components/layouts/tab-prefetch";
 import { cn } from "@/lib/utils";
 
 type Label =
@@ -36,6 +37,8 @@ type Label =
 
 type Item = {
   href: string;
+  /** What the tab answers to when it is the current place, if not its own href. */
+  match?: string;
   label: Label;
   icon: typeof HouseIcon;
   badge?: boolean;
@@ -111,16 +114,26 @@ const DESKTOP_EXTRA: Record<Perspective, Item[]> = {
   admin: [AGENDA, ATTENDANCE],
 };
 
-/** The bar this reader actually gets: no messaging entry for a read-only guardian. */
-function itemsFor(perspective: Perspective, canMessage: boolean): Item[] {
-  const items = ITEMS[perspective];
-  if (canMessage) return items;
-  return items.map((item) => (item.href === "/messages" ? AGENDA : item));
+/**
+ * The bar this reader actually gets: no messaging entry for a read-only guardian, and a
+ * "Classe" tab that leads straight to the class when there is only one (ADR-0076) — `/classes`
+ * redirected to `/classes/<id>`, which redirected to its cahier: three round trips, and a
+ * prefetched tab holding nothing but a redirection.
+ */
+function itemsFor(perspective: Perspective, canMessage: boolean, classHref: string): Item[] {
+  return ITEMS[perspective].map((item) => {
+    if (item.href === "/messages" && !canMessage) return AGENDA;
+    if (item.href === "/classes") return { ...item, href: classHref, match: "/classes" };
+    return item;
+  });
 }
 
 function useActive() {
   const pathname = usePathname();
-  return (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  return ({ href, match }: Item) => {
+    const prefix = match ?? href;
+    return pathname === prefix || pathname.startsWith(`${prefix}/`);
+  };
 }
 
 function Count({ value }: { value: number }) {
@@ -139,58 +152,64 @@ export function BottomNav({
   perspective,
   unreadMessages = 0,
   canMessage = true,
+  classHref = "/classes",
 }: {
   perspective: Perspective;
   unreadMessages?: number;
   canMessage?: boolean;
+  classHref?: string;
 }) {
   const t = useTranslations("nav");
   const isActive = useActive();
+  const items = itemsFor(perspective, canMessage, classHref);
 
   return (
-    <nav
-      aria-label={t("home")}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background pb-[env(safe-area-inset-bottom)] lg:hidden"
-    >
-      <ul className="mx-auto grid max-w-lg grid-cols-5">
-        {itemsFor(perspective, canMessage).map(({ href, label, short, icon: Icon, badge }) => {
-          const active = isActive(href);
-          const count = badge ? unreadMessages : 0;
-          return (
-            <li key={href} className="min-w-0">
-              <Link
-                href={href}
-                // The five tabs are the likeliest next clicks. There is no
-                // loading boundary any more (ADR-0072): a prefetch now fetches
-                // the route tree only, a few hundred bytes and no query, and the
-                // bar under the tab (`LinkPending`) answers the click.
-                prefetch={null}
-                aria-current={active ? "page" : undefined}
-                aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
-                className={cn(
-                  // The active tab is marked by a rule on the bar's own edge,
-                  // the way a tab is marked; the colour alone left two tabs
-                  // looking alike at a glance on a 390 px bar.
-                  "relative flex min-h-14 flex-col items-center justify-center gap-1 px-0.5 text-xs leading-none font-medium text-foreground/70 transition-colors",
-                  active &&
-                    "font-semibold text-primary after:absolute after:top-0 after:h-[2px] after:w-7 after:rounded-full after:bg-primary",
-                )}
-              >
-                <span className="relative">
-                  <Icon className="size-5" aria-hidden />
-                  {count > 0 && <Count value={count} />}
-                </span>
-                {/* "Tableau de bord" wrapped onto two lines and spilled out of
+    <>
+      <TabPrefetch hrefs={items.map((item) => item.href)} />
+      <nav
+        aria-label={t("home")}
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background pb-[env(safe-area-inset-bottom)] lg:hidden"
+      >
+        <ul className="mx-auto grid max-w-lg grid-cols-5">
+          {items.map((item) => {
+            const { href, label, short, icon: Icon, badge } = item;
+            const active = isActive(item);
+            const count = badge ? unreadMessages : 0;
+            return (
+              <li key={href} className="min-w-0">
+                <Link
+                  href={href}
+                  // The five tabs are loaded, data included, by <TabPrefetch>
+                  // (ADR-0076); the link's own prefetch would only fetch the
+                  // route tree (ADR-0072), one more invocation per tab for nothing.
+                  prefetch={false}
+                  aria-current={active ? "page" : undefined}
+                  aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
+                  className={cn(
+                    // The active tab is marked by a rule on the bar's own edge,
+                    // the way a tab is marked; the colour alone left two tabs
+                    // looking alike at a glance on a 390 px bar.
+                    "relative flex min-h-14 flex-col items-center justify-center gap-1 px-0.5 text-xs leading-none font-medium text-foreground/70 transition-colors",
+                    active &&
+                      "font-semibold text-primary after:absolute after:top-0 after:h-[2px] after:w-7 after:rounded-full after:bg-primary",
+                  )}
+                >
+                  <span className="relative">
+                    <Icon className="size-5" aria-hidden />
+                    {count > 0 && <Count value={count} />}
+                  </span>
+                  {/* "Tableau de bord" wrapped onto two lines and spilled out of
                     its column, over the page behind the bar, on every screen
                     of the direction. */}
-                <span className="max-w-full truncate">{t(short ?? label)}</span>
-                {!active && <LinkPending className="top-0 w-7" />}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+                  <span className="max-w-full truncate">{t(short ?? label)}</span>
+                  {!active && <LinkPending className="top-0 w-7" />}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </>
   );
 }
 
@@ -199,28 +218,33 @@ export function TopNav({
   perspective,
   unreadMessages = 0,
   canMessage = true,
+  classHref = "/classes",
 }: {
   perspective: Perspective;
   unreadMessages?: number;
   canMessage?: boolean;
+  classHref?: string;
 }) {
   const t = useTranslations("nav");
   const isActive = useActive();
-  const items = itemsFor(perspective, canMessage);
+  const items = itemsFor(perspective, canMessage, classHref);
   const extra = DESKTOP_EXTRA[perspective].filter(
     (candidate) => !items.some((item) => item.href === candidate.href),
   );
 
   return (
     <nav aria-label={t("home")} className="hidden items-stretch gap-0.5 self-stretch lg:flex">
-      {[...items, ...extra].map(({ href, label, badge }) => {
-        const active = isActive(href);
+      {[...items, ...extra].map((item) => {
+        const { href, label, badge } = item;
+        const active = isActive(item);
         const count = badge ? unreadMessages : 0;
         return (
           <Link
             key={href}
             href={href}
-            prefetch={null}
+            // The five tabs of the phone bar are loaded by <TabPrefetch> (ADR-0076); the desktop
+            // extras keep the link's own prefetch, which costs an invocation and no query.
+            prefetch={extra.includes(item) ? null : false}
             aria-current={active ? "page" : undefined}
             aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
             className={cn(

@@ -14,7 +14,7 @@ import { addDays, isDateKey, localDateKey, mondayOf } from "@/lib/calendar/dates
 import { defaultWeek, pivotDay, SCHOOL_TIME_ZONE } from "@/lib/homework";
 import { canWriteInSchool, isSchoolAdmin } from "@/lib/permissions";
 import { attachmentViews } from "@/server/queries/attachments";
-import { getClassSizes, getHomeworkDiary } from "@/server/queries/class-space";
+import { getClassSizes, getHomeworkDiary, getNextHomeworkDay } from "@/server/queries/class-space";
 import { getMyTeachingClasses } from "@/server/queries/classes";
 import { getMyChildren } from "@/server/queries/family";
 
@@ -45,10 +45,10 @@ export default async function DiaryPage({
 
   const now = new Date();
   const today = localDateKey(now, SCHOOL_TIME_ZONE);
-  const pivot = pivotDay(now);
-  const opening = defaultWeek(now);
-  const monday = isDateKey(semaine) ? mondayOf(semaine) : opening;
-  const sunday = addDays(monday, 6);
+  let pivot = pivotDay(now);
+  let opening = defaultWeek(now);
+  let monday = isDateKey(semaine) ? mondayOf(semaine) : opening;
+  let sunday = addDays(monday, 6);
 
   // A guardian is linked to their children through student_guardians, and each
   // child to a class through enrollments — so one reader can span several
@@ -76,10 +76,34 @@ export default async function DiaryPage({
   const teamClassIds = new Set(myClasses.map((cls) => cls.id));
 
   const ids = [...classIds];
-  const [entries, sizes] = await Promise.all([
+  const opensHere = !isDateKey(semaine);
+  const first = await Promise.all([
     getHomeworkDiary(ids, monday, sunday),
     getClassSizes(ids.filter((id) => teamClassIds.has(id))),
+    // Asked alongside, so that the common case pays nothing for it.
+    opensHere ? getNextHomeworkDay(ids, pivot) : Promise.resolve(null),
   ]);
+  let [entries, sizes] = first;
+  const nextDay = first[2];
+  // During the holidays the day being prepared holds nothing, and neither does the week: the
+  // diary opened on two weeks of empty days. It now opens on the first day that holds homework —
+  // « Pour lundi · 2 novembre » — when that day is within a month (ADR-0077).
+  if (
+    opensHere &&
+    nextDay &&
+    nextDay > sunday &&
+    nextDay <= addDays(pivot, 31) &&
+    !entries.some((entry) => entry.due_on !== null && entry.due_on >= pivot)
+  ) {
+    pivot = nextDay;
+    opening = mondayOf(nextDay);
+    monday = opening;
+    sunday = addDays(monday, 6);
+    [entries, sizes] = await Promise.all([
+      getHomeworkDiary(ids, monday, sunday),
+      getClassSizes(ids.filter((id) => teamClassIds.has(id))),
+    ]);
+  }
   const attachments = await attachmentViews(entries.flatMap((entry) => entry.media));
 
   const schoolId = user.school?.id ?? null;

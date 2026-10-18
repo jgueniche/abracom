@@ -49,88 +49,92 @@ export default async function DocumentsPage() {
         {groups.map((group) => (
           <section key={group.name || "none"} className="flex flex-col">
             <SectionHeader label={group.name || t("noFolder")} count={group.items.length} />
-            {group.items.map((doc) => {
-              const mine = doc.signatures.filter((s) => s.user_id === user.id);
-              const familySigned = mine.find((s) => s.student_id === null);
-              return (
-                <Card key={doc.id}>
-                  <CardContent className="flex flex-col gap-3">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      {/* Every row on this page is a document: the file glyph
+            {/* one document after another, apart by space rather than each in a frame (ADR-0078) */}
+            <div className="flex flex-col gap-7">
+              {group.items.map((doc) => {
+                const mine = doc.signatures.filter((s) => s.user_id === user.id);
+                const familySigned = mine.find((s) => s.student_id === null);
+                return (
+                  <Card key={doc.id}>
+                    <CardContent className="flex flex-col gap-3">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        {/* Every row on this page is a document: the file glyph
                           in front of each title was saying so a fourth time,
                           after the page title, the section label and the kind
                           printed on the line below. */}
-                      <div className="flex min-w-0 items-start gap-3">
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold">{doc.title}</p>
-                          <p className="meta">
-                            {t(`purpose.${doc.purpose}`)} · {t("version", { version: doc.version })}
-                            {doc.published_at
-                              ? ` · ${format.dateTime(new Date(doc.published_at), { dateStyle: "medium" })}`
-                              : ""}
-                          </p>
+                        <div className="flex min-w-0 items-start gap-3">
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold">{doc.title}</p>
+                            <p className="meta">
+                              {t(`purpose.${doc.purpose}`)} ·{" "}
+                              {t("version", { version: doc.version })}
+                              {doc.published_at
+                                ? ` · ${format.dateTime(new Date(doc.published_at), { dateStyle: "medium" })}`
+                                : ""}
+                            </p>
+                          </div>
                         </div>
+                        <Button asChild variant="outline" size="sm" className="shrink-0">
+                          <a href={`/documents/${doc.id}/fichier`}>
+                            <DownloadIcon aria-hidden />
+                            {t("download")}
+                          </a>
+                        </Button>
                       </div>
-                      <Button asChild variant="outline" size="sm" className="shrink-0">
-                        <a href={`/documents/${doc.id}/fichier`}>
-                          <DownloadIcon aria-hidden />
-                          {t("download")}
-                        </a>
-                      </Button>
-                    </div>
-                    {doc.requires_signature && (
-                      <div className="flex flex-col gap-3 border-t border-rule pt-3">
-                        {!isParent ? (
-                          <p className="text-sm text-muted-foreground">{t("readOnlyGuardian")}</p>
-                        ) : doc.signature_per_student ? (
-                          children.map((child) => {
-                            const signed = doc.signatures.find(
-                              (s) => s.student_id === child.student.id,
-                            );
-                            const name = `${child.student.first_name} ${child.student.last_name}`;
-                            return signed ? (
-                              <p
-                                key={child.student.id}
-                                className="flex items-start gap-1.5 text-xs text-success"
-                              >
-                                <CheckCircle2Icon
-                                  className="mt-0.5 size-3.5 shrink-0"
-                                  aria-hidden
+                      {doc.requires_signature && (
+                        <div className="flex flex-col gap-3">
+                          {!isParent ? (
+                            <p className="text-sm text-muted-foreground">{t("readOnlyGuardian")}</p>
+                          ) : doc.signature_per_student ? (
+                            children.map((child) => {
+                              const signed = doc.signatures.find(
+                                (s) => s.student_id === child.student.id,
+                              );
+                              const name = `${child.student.first_name} ${child.student.last_name}`;
+                              return signed ? (
+                                <p
+                                  key={child.student.id}
+                                  className="flex items-start gap-1.5 text-xs text-success"
+                                >
+                                  <CheckCircle2Icon
+                                    className="mt-0.5 size-3.5 shrink-0"
+                                    aria-hidden
+                                  />
+                                  {t("signedFor", {
+                                    name,
+                                    date: format.dateTime(new Date(signed.signed_at), {
+                                      dateStyle: "medium",
+                                    }),
+                                  })}
+                                </p>
+                              ) : (
+                                <SignForm
+                                  key={child.student.id}
+                                  documentId={doc.id}
+                                  studentId={child.student.id}
+                                  label={t("signFor", { name })}
                                 />
-                                {t("signedFor", {
-                                  name,
-                                  date: format.dateTime(new Date(signed.signed_at), {
-                                    dateStyle: "medium",
-                                  }),
-                                })}
-                              </p>
-                            ) : (
-                              <SignForm
-                                key={child.student.id}
-                                documentId={doc.id}
-                                studentId={child.student.id}
-                                label={t("signFor", { name })}
-                              />
-                            );
-                          })
-                        ) : familySigned ? (
-                          <p className="flex items-start gap-1.5 text-xs text-success">
-                            <CheckCircle2Icon className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-                            {t("signedOn", {
-                              date: format.dateTime(new Date(familySigned.signed_at), {
-                                dateStyle: "medium",
-                              }),
-                            })}
-                          </p>
-                        ) : (
-                          <SignForm documentId={doc.id} label={t("sign")} />
-                        )}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
+                              );
+                            })
+                          ) : familySigned ? (
+                            <p className="flex items-start gap-1.5 text-xs text-success">
+                              <CheckCircle2Icon className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+                              {t("signedOn", {
+                                date: format.dateTime(new Date(familySigned.signed_at), {
+                                  dateStyle: "medium",
+                                }),
+                              })}
+                            </p>
+                          ) : (
+                            <SignForm documentId={doc.id} label={t("sign")} />
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
           </section>
         ))}
       </div>

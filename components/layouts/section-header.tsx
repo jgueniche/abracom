@@ -11,33 +11,32 @@ import { cn } from "@/lib/utils";
  * set bigger than the page title it sat under. None of that was a decision;
  * each one was whatever the file next to it happened to do.
  *
- * A section is not a second title. It is a label, a count, a rule that carries
- * the eye to the far edge, and — if there is one — the way out of the section,
- * set at the right end where a reader looks for it. The rule is what gives a
- * screen its structure once the headings stop shouting.
+ * A section is not a second title. It is a label, a count, and — if there is
+ * one — the way out of the section, set at the right end where a reader looks
+ * for it.
+ *
+ * It used to draw a rule from the label to the far edge, and the rule was what
+ * the porteur pointed at (ADR-0078): with a bordered list right under it, a
+ * section boundary looked exactly like a box boundary, and a page of sections
+ * read as a stack of frames. A section now starts where the white space before
+ * it ends — the way the Messages tab names its groups — and the space between
+ * sections is the caller's (`mt-10`, `gap-10`), never a line.
  */
 export function SectionHeader({
   label,
   count,
   hint,
   action,
-  /**
-   * The rule that carries the eye to the far edge. It is what gives a page its
-   * structure — and what turns into a two-pixel stub in a narrow rail, so a
-   * rail asks for `rule={false}` and gets a plain label and its action.
-   */
-  rule = true,
   id,
   className,
 }: {
   label: ReactNode;
   /** A live figure beside the label — "3", "12 / 27". Never a sentence. */
   count?: ReactNode;
-  /** One line under the rule, when the label alone is not enough. */
+  /** One line under the label, when the label alone is not enough. */
   hint?: ReactNode;
   /** The way out of the section: a link, a small button. */
   action?: ReactNode;
-  rule?: boolean;
   id?: string;
   className?: string;
 }) {
@@ -50,14 +49,10 @@ export function SectionHeader({
         {count !== undefined && count !== null && (
           <span className="meta shrink-0 tabular-nums">{count}</span>
         )}
-        {rule ? (
-          <span aria-hidden className="h-px min-w-4 flex-1 bg-rule" />
-        ) : (
-          <span aria-hidden className="flex-1" />
-        )}
+        <span aria-hidden className="flex-1" />
         {action && <div className="flex shrink-0 items-center gap-1">{action}</div>}
       </div>
-      {hint && <p className="mt-1.5 text-xs text-pretty text-muted-foreground">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-pretty text-muted-foreground">{hint}</p>}
     </div>
   );
 }

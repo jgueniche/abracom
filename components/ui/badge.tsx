@@ -17,7 +17,8 @@ const badgeVariants = cva(
         secondary: "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
         destructive:
           "bg-destructive/10 text-destructive focus-visible:ring-destructive/25 dark:bg-destructive/20 [a]:hover:bg-destructive/16",
-        outline: "border-border text-muted-foreground [a]:hover:bg-muted [a]:hover:text-foreground",
+        // A tint rather than a hairline: a framed tag inside a row was a box in a box (ADR-0078).
+        outline: "bg-muted text-muted-foreground [a]:hover:bg-accent [a]:hover:text-foreground",
         ghost: "text-muted-foreground hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",
       },

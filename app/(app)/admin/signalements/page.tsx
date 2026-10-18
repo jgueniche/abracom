@@ -84,10 +84,10 @@ export default async function ReportsPage() {
     <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {reports.length === 0 && <p className="text-sm text-muted-foreground">{t("none")}</p>}
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-10">
         {open.length > 0 && (
-          <section className="flex flex-col">
-            <SectionHeader label={t("open")} count={open.length} />
+          <section className="flex flex-col gap-6">
+            <SectionHeader label={t("open")} count={open.length} className="mb-0" />
             {open.map(card)}
           </section>
         )}
@@ -96,7 +96,7 @@ export default async function ReportsPage() {
             <summary className="cursor-pointer text-sm text-muted-foreground">
               {t("resolved")} ({resolved.length})
             </summary>
-            <div className="mt-3 flex flex-col gap-3">{resolved.map(card)}</div>
+            <div className="mt-4 flex flex-col gap-6">{resolved.map(card)}</div>
           </details>
         )}
       </div>

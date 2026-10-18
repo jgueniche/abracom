@@ -75,8 +75,8 @@ export function PreferencesForm({ initial }: { initial: PreferencesInitial }) {
         </table>
       </div>
 
-      <fieldset className="flex flex-col gap-3 rounded-xl border p-3">
-        <legend className="px-1 text-sm font-medium">{t("quiet.title")}</legend>
+      <fieldset className="flex flex-col gap-3">
+        <legend className="mb-1 text-sm font-semibold">{t("quiet.title")}</legend>
         <label className="flex min-h-11 items-center gap-2 text-sm">
           <input
             type="checkbox"
@@ -114,8 +114,8 @@ export function PreferencesForm({ initial }: { initial: PreferencesInitial }) {
         <p className="text-xs text-muted-foreground">{t("quiet.hint")}</p>
       </fieldset>
 
-      <fieldset className="flex flex-col gap-2 rounded-xl border p-3">
-        <legend className="px-1 text-sm font-medium">{t("shabbat.title")}</legend>
+      <fieldset className="flex flex-col gap-2">
+        <legend className="mb-1 text-sm font-semibold">{t("shabbat.title")}</legend>
         <label className="flex min-h-11 items-center gap-2 text-sm">
           <input
             type="checkbox"

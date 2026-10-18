@@ -54,11 +54,11 @@ export default async function FamilyPage() {
       {children.length === 0 ? (
         <EmptyState icon={BackpackIcon} title={t("noChildren")} description={t("noChildrenHint")} />
       ) : (
-        <div className="grid items-start gap-8 lg:grid-cols-2">
+        <div className="grid items-start gap-x-12 gap-y-12 lg:grid-cols-2">
           {children.map((child) => {
             const classId = child.student.enrollments[0]?.class?.id;
             return (
-              <div key={child.student.id} className="flex flex-col gap-3">
+              <div key={child.student.id} className="flex flex-col gap-6">
                 <StudentCard
                   child={child}
                   footer={
@@ -72,7 +72,7 @@ export default async function FamilyPage() {
                           <li key={segment}>
                             <Link
                               href={`/classes/${classId}/${segment}`}
-                              className="flex min-h-11 items-center rounded-md px-2.5 text-[0.8125rem] font-medium text-foreground/80 transition-colors hover:bg-muted/60 hover:text-foreground"
+                              className="flex min-h-11 items-center rounded-md px-2.5 text-[0.8125rem] font-medium text-primary transition-colors hover:bg-muted md:min-h-9"
                             >
                               {tSpace(key)}
                             </Link>

@@ -64,6 +64,18 @@ select cron.schedule(
   $$ select public.purge_expired_data(); $$
 );
 
+-- 6. L'école test au présent (ADR-0077) : chaque nuit à 4 h 15 UTC, ses devoirs, billets,
+--    conversations et menus sont complétés autour de la nouvelle date. Ne touche que les écoles
+--    `modules.test`, ne double rien, ne prévient personne. La migration
+--    20261018090200_test_school_schedule.sql pose la même tâche là où pg_cron existe déjà ; cette
+--    ligne la pose sur un projet neuf, où ce fichier passe après les migrations. Même nom : l'une
+--    remplace l'autre, jamais de doublon.
+select cron.schedule(
+  'kesher-test-school-content',
+  '15 4 * * *',
+  'select public.refresh_test_school_content();'
+);
+
 -- Vérification / suppression :
 --   select jobid, jobname, schedule, active from cron.job;
 --   select * from cron.job_run_details order by start_time desc limit 20;

@@ -2,7 +2,7 @@
 -- Elles sont `security definer` : la question est donc de savoir si elles répondent
 -- sur l'appelant et sur personne d'autre.
 begin;
-select plan(13);
+select plan(15);
 
 create or replace function pg_temp.login(uid uuid) returns void language plpgsql as $$
 begin
@@ -60,7 +60,7 @@ select is(
 select pg_temp.login(:parent);
 select is(
   (select count(*) from jsonb_object_keys(public.session_context())),
-  8::bigint, 'la fonction rend les huit morceaux attendus');
+  9::bigint, 'la fonction rend les neuf morceaux attendus');
 select is(
   public.session_context() -> 'profile' ->> 'id',
   :parent, 'le profil rendu est celui de l''appelant');
@@ -73,6 +73,17 @@ select is(
    where not exists (select 1 from public.legal_acceptances la
                      where la.legal_document_id = a::uuid and la.user_id = :parent)),
   0::bigint, 'aucune acceptation qui ne soit la sienne');
+-- Les classes qui permettent à l'onglet « Classe » de mener droit à la seule (ADR-0076).
+select is(
+  (select array_agg((c ->> 'id')::uuid order by c ->> 'id')
+   from jsonb_array_elements(public.session_context() -> 'classes') c),
+  (select array_agg(id order by id::text) from public.guardian_class_ids(:parent) id),
+  'les classes rendues sont celles de ses enfants');
+select is(
+  (select count(*) from jsonb_array_elements(public.session_context() -> 'classes') c
+   where (c ->> 'id')::uuid not in (select public.guardian_class_ids(:parent))
+     and (c ->> 'id')::uuid not in (select public.teacher_class_ids(:parent))),
+  0::bigint, 'aucune classe où il n''a ni enfant ni enseignement');
 select is(
   (select count(*) from information_schema.role_routine_grants
    where routine_name = 'session_context' and grantee = 'anon'),

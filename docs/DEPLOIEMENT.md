@@ -73,6 +73,9 @@
    `supabase/config.toml`, ou de la variable `SUPABASE_PROJECT_REF`. Aucun mot de passe de base n'est
    nécessaire : le workflow passe par l'API de gestion. Sans le secret, le job ne fait rien.
    La variable `SUPABASE_CONFIG_PUSH` à `true` ajoute la configuration Auth au même workflow.
+   Pour appliquer les migrations d'une branche **avant** sa fusion : Actions → Deploy database →
+   Run workflow, en choisissant la branche (elles doivent alors rester additives pour le code de
+   `main` déjà en ligne). Une version déjà appliquée n'est jamais rejouée.
 3. Déploiement Vercel automatique sur `main` ; surveiller Sentry pendant une heure.
 
 ## Sauvegardes et retour arrière

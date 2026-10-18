@@ -27,8 +27,14 @@ export async function EventCard({
   const [t, format] = await Promise.all([getTranslations("agenda"), getFormatter()]);
   const start = new Date(event.starts_at);
   const end = event.ends_at ? new Date(event.ends_at) : null;
+  const multiDay = event.all_day && end !== null && end.toDateString() !== start.toDateString();
   const time = event.all_day
-    ? t("allDay")
+    ? multiDay
+      ? t("allDayRange", {
+          from: format.dateTime(start, { day: "numeric", month: "short" }),
+          to: format.dateTime(end!, { day: "numeric", month: "short" }),
+        })
+      : t("allDay")
     : end
       ? `${format.dateTime(start, { timeStyle: "short" })} – ${format.dateTime(end, { timeStyle: "short" })}`
       : format.dateTime(start, { timeStyle: "short" });
@@ -37,25 +43,19 @@ export async function EventCard({
     0,
   );
 
-  return (
-    <Link
-      href={`/agenda/${event.id}`}
-      prefetch={false}
-      className="-mx-2 block rounded-md px-2 py-3 transition-colors hover:bg-muted/50"
-    >
+  const details = (
+    <>
       <p className="eyebrow flex flex-wrap items-center gap-x-2 gap-y-1">
         <span>{t(`kinds.${event.kind}`)}</span>
         <span aria-hidden className="size-[3px] rounded-full bg-muted-foreground/45" />
-        <span>
-          {showDate ? `${format.dateTime(start, { dateStyle: "medium" })} · ${time}` : time}
-        </span>
+        <span>{time}</span>
         {event.requires_rsvp && (
           <span className="ml-auto shrink-0">
             <RsvpBadge rsvp={event.myRsvp} />
           </span>
         )}
       </p>
-      <p className="mt-1 font-heading text-base leading-snug font-normal text-pretty">
+      <p className="mt-0.5 font-heading text-base leading-snug font-normal text-pretty">
         {event.title} {continued && <span className="text-muted-foreground">{t("continued")}</span>}
       </p>
       {(event.location || volunteersOpen > 0) && (
@@ -71,6 +71,28 @@ export async function EventCard({
           )}
         </p>
       )}
+    </>
+  );
+
+  return (
+    <Link
+      href={`/agenda/${event.id}`}
+      prefetch={false}
+      className="-mx-3 flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted focus-visible:bg-muted"
+    >
+      {/* Out of a day's list, the date is the left edge of the entry — what the avatar is to a
+          conversation in Messages (ADR-0078) — rather than a clause of the dateline. */}
+      {showDate && (
+        <span className="flex w-9 shrink-0 flex-col items-center pt-0.5 leading-none">
+          <span className="font-heading text-xl leading-none tabular-nums">
+            {format.dateTime(start, { day: "numeric" })}
+          </span>
+          <span className="eyebrow mt-1 leading-none">
+            {format.dateTime(start, { month: "short" }).replace(".", "")}
+          </span>
+        </span>
+      )}
+      <div className="min-w-0 flex-1">{details}</div>
     </Link>
   );
 }

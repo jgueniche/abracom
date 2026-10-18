@@ -412,14 +412,14 @@ export function HomeworkForm({
         </fieldset>
       )}
 
-      <details className="group/options rounded-md border border-rule">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between px-3 text-sm font-medium">
+      <details className="group/options">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm font-medium">
           {t("options")}
           <span className="text-xs font-normal text-muted-foreground group-open/options:hidden">
             {t("optionsHint")}
           </span>
         </summary>
-        <div className="flex flex-col gap-2 border-t border-rule px-3 py-3">
+        <div className="flex flex-col gap-2 pt-1 pb-2">
           <Label htmlFor={`${id}-visibility`}>{t("visibility")}</Label>
           <select
             id={`${id}-visibility`}

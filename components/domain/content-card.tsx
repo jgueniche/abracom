@@ -1,7 +1,6 @@
 import { Link } from "@/components/ui/link";
 import type { ReactNode } from "react";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 /**
@@ -32,7 +31,7 @@ export function ContentCard({
   media,
   footer,
   menu,
-  /** Something is waiting on the reader: a brick rule down the edge. */
+  /** Something is waiting on the reader: a brick bar in the margin. */
   accent = false,
   unread = false,
   muted = false,
@@ -52,71 +51,58 @@ export function ContentCard({
   className?: string;
 }) {
   const heading = (
-    <h3 className="font-heading text-base leading-snug font-normal tracking-[-0.006em] text-balance">
+    <h3
+      className={cn(
+        "font-heading text-base leading-snug font-normal tracking-[-0.006em] text-balance",
+        // a draft steps back by its colour, never by opacity: faded metadata fell under 4.5:1
+        muted && "text-muted-foreground",
+      )}
+    >
       {title}
     </h3>
   );
 
+  // An entry, not a card (ADR-0078): the cahier de vie was a column of bordered,
+  // rounded, shadowed panels, each cut by a footer rule — a wall of frames around
+  // what is, in the end, a diary. It now reads as one: a dateline, a title in
+  // the school's voice, the text, the photographs, who wrote it; and the white
+  // space the list puts between two entries.
   return (
-    <Card
-      className={cn(
-        "relative h-full",
-        href &&
-          "transition-colors focus-within:border-[color-mix(in_oklch,var(--border),var(--foreground)_16%)] focus-within:bg-muted/40 hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_16%)] hover:bg-muted/40",
-        // A marked passage rather than a banner across the top: it says "this
-        // one is for you" without repainting a sixth of the card.
-        accent && "border-l-2 border-l-brick",
-        muted && "border-rule bg-card/60",
-        className,
+    <article className={cn("relative flex flex-col gap-2", className)}>
+      {accent && (
+        <span aria-hidden className="absolute inset-y-1 -left-3 w-[2px] rounded-full bg-brick" />
       )}
-    >
-      <CardHeader>
-        <div className="flex items-start gap-2">
-          <div className="min-w-0 flex-1">
-            {eyebrow && (
-              <p className="eyebrow mb-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                {unread && <span className="size-1.5 shrink-0 rounded-full bg-brick" aria-hidden />}
-                {eyebrow}
-              </p>
-            )}
-            {href ? (
-              // The title line was the only target: 25 px tall on the list a
-              // parent opens most, well under the 44 px the project sets itself.
-              // The overlay makes the whole card the target, as a card should be.
-              <Link
-                href={href}
-                prefetch={false}
-                className="group/title block after:absolute after:inset-0 hover:underline hover:decoration-foreground/25 hover:underline-offset-[3px]"
-              >
-                {heading}
-              </Link>
-            ) : (
-              heading
-            )}
-          </div>
-          {menu && <div className="relative z-10 -mt-1 shrink-0">{menu}</div>}
-        </div>
-      </CardHeader>
-      {(excerpt || body || media) && (
-        // Whatever a caller puts in `body` or `media` may be interactive — a
-        // "seen" toggle, a photo to enlarge — so it stays above the overlay that
-        // makes the rest of the card a target. A plain excerpt does not.
-        <CardContent className={cn("flex flex-col gap-3", (body || media) && "relative z-10")}>
-          {excerpt && (
-            <p className="line-clamp-2 text-sm leading-[1.55] text-pretty text-muted-foreground">
-              {excerpt}
+      <div className="flex items-start gap-2">
+        <div className="min-w-0 flex-1">
+          {eyebrow && (
+            <p className="eyebrow mb-1 flex flex-wrap items-center gap-x-1.5 gap-y-1">
+              {unread && <span className="size-1.5 shrink-0 rounded-full bg-brick" aria-hidden />}
+              {eyebrow}
             </p>
           )}
-          {body}
-          {media}
-        </CardContent>
+          {href ? (
+            <Link
+              href={href}
+              prefetch={false}
+              className="block hover:underline hover:decoration-foreground/25 hover:underline-offset-[3px]"
+            >
+              {heading}
+            </Link>
+          ) : (
+            heading
+          )}
+        </div>
+        {menu && <div className="-mt-1 shrink-0">{menu}</div>}
+      </div>
+      {excerpt && (
+        <p className="line-clamp-2 text-sm leading-[1.55] text-pretty text-muted-foreground">
+          {excerpt}
+        </p>
       )}
-      {footer && (
-        <CardContent className="relative z-10 flex flex-wrap items-center gap-1.5 border-t border-rule pt-2.5">
-          {footer}
-        </CardContent>
-      )}
-    </Card>
+      {body}
+      {media}
+      {footer && <div className="flex flex-wrap items-center gap-1.5">{footer}</div>}
+    </article>
   );
 }
 

@@ -5,7 +5,7 @@ routes: [/admin/ecoles]
 topic: manage
 keywords: [école, établissement, plateforme, Levallois, ouvrir, créer une école, sélecteur, changer d'école, école test, mot de passe de test]
 since: 34
-reviewed: 2026-10-08
+reviewed: 2026-10-18
 ---
 
 Gestion → **Écoles** (famille _Plateforme_) n'existe que pour l'administrateur de la plateforme. Elle liste toutes les écoles enregistrées, dit lesquelles sont des écoles test et celles où vous n'avez aucun rôle.

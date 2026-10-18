@@ -57,14 +57,14 @@ export function HomeworkPages({ items, title }: { items: AttachmentView[]; title
         </ol>
       )}
       {documents.length > 0 && (
-        <ul className="no-print mt-4 divide-y divide-rule overflow-hidden rounded-lg border border-border">
+        <ul className="no-print -mx-3 mt-4 flex flex-col gap-0.5">
           {documents.map((item) => (
             <li key={item.id} className="flex items-center gap-1">
               <a
                 href={item.href}
                 target="_blank"
                 rel="noopener"
-                className="flex min-h-14 min-w-0 flex-1 items-center gap-3 px-3.5 py-2.5 transition-colors hover:bg-muted"
+                className="flex min-h-14 min-w-0 flex-1 items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted"
               >
                 <FileTextIcon aria-hidden className="size-5 shrink-0 text-muted-foreground" />
                 <span className="flex min-w-0 flex-col">

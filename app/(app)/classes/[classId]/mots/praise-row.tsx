@@ -32,12 +32,14 @@ export async function PraiseRow({
         <p className="text-sm text-muted-foreground">
           {t("praiseHint", { sentence: t("praiseBody") })}
         </p>
-        <div className="flex flex-wrap gap-2">
+        {/* One tint per name rather than one outlined box per name: a class of twelve made a
+            wall of twelve rectangles above the form (ADR-0078). */}
+        <div className="flex flex-wrap gap-1.5">
           {students.map((student) => (
             <form key={student.id} action={sendPraise}>
               <input type="hidden" name="studentId" value={student.id} />
               <input type="hidden" name="classId" value={classId} />
-              <Button type="submit" variant="outline" size="sm" className="min-h-11">
+              <Button type="submit" variant="secondary" size="sm" className="min-h-11">
                 {student.firstName}
                 <span className="text-sm text-muted-foreground">{student.lastName.charAt(0)}.</span>
               </Button>

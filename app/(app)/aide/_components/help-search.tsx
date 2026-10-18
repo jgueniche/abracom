@@ -13,10 +13,10 @@ import type { HelpSearchEntry } from "@/lib/help/select";
 function Result({ match }: { match: HelpMatch }) {
   const tTopics = useTranslations("help.topics");
   return (
-    <li className="border-b border-rule">
+    <li>
       <Link
         href={`/aide/${match.entry.slug}`}
-        className="-mx-3 flex min-h-11 flex-col justify-center rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50"
+        className="-mx-3 flex min-h-11 flex-col justify-center rounded-lg px-3 py-2.5 transition-colors hover:bg-muted"
       >
         <span className="flex flex-wrap items-baseline gap-2">
           <span className="text-sm font-medium">{match.entry.title}</span>
@@ -109,25 +109,25 @@ export function HelpSearch({
           <p className="mb-3 text-sm text-muted-foreground" aria-hidden>
             {t("results", { count: matches.length, query: deferred.trim() })}
           </p>
-          <ul className="border-t border-rule">
+          <ul className="flex flex-col gap-0.5">
             {matches.map((match) => (
               <Result key={match.entry.slug} match={match} />
             ))}
           </ul>
         </>
       ) : (
-        <div className="rounded-xl border border-border bg-card/60 px-5 py-6">
+        <div className="py-4">
           <p className="font-heading text-lg tracking-tight">
             {t("empty", { query: deferred.trim() })}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">{t("emptyHint")}</p>
           <p className="mt-4 mb-2 text-sm font-medium">{t("suggestions")}</p>
-          <ul className="flex flex-wrap gap-2">
+          <ul className="-ml-2.5 flex flex-wrap gap-x-1">
             {suggestions.map((article) => (
               <li key={article.slug}>
                 <Link
                   href={`/aide/${article.slug}`}
-                  className="inline-flex min-h-11 items-center rounded-lg border px-3 text-sm hover:bg-muted"
+                  className="inline-flex min-h-11 items-center rounded-md px-2.5 text-sm font-medium text-primary transition-colors hover:bg-muted"
                 >
                   {article.title}
                 </Link>

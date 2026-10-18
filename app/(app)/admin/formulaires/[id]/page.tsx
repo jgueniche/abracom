@@ -139,7 +139,7 @@ export default async function AdminFormPage({ params }: { params: Promise<{ id: 
             />
           </CardContent>
         </Card>
-        <form action={deleteForm} className="border-t pt-6">
+        <form action={deleteForm} className="pt-6">
           <input type="hidden" name="id" value={form.id} />
           <Button type="submit" variant="destructive" className="min-h-11">
             <Trash2Icon aria-hidden />

@@ -16,7 +16,8 @@ export async function ChildAttendance({ studentId }: { studentId: string }) {
     value ? format.dateTime(new Date(value), { timeStyle: "short" }) : null;
 
   return (
-    <section className="rounded-xl border border-border bg-card p-4 shadow-soft">
+    // A group of lines under its name, not a raised panel under the child's record (ADR-0078).
+    <section>
       <h3 className="mb-2 text-sm font-semibold">{t("familyTitle")}</h3>
       <ul className="flex flex-col gap-2">
         {rows.slice(0, 6).map((row, index) => (

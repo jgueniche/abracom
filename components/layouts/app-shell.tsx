@@ -46,6 +46,10 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
   );
   // A read-only guardian has no messaging at all: no tab, no "New message".
   const canMessage = user.school ? canUseMessaging(user.roles, user.school.id) : false;
+  // The "Classe" tab leads straight to the only class, not through two redirects (ADR-0076).
+  const onlyClass =
+    perspective !== "admin" && user.classIds?.length === 1 ? user.classIds[0] : null;
+  const classHref = onlyClass ? `/classes/${onlyClass}/cahier` : "/classes";
   const showStyleGuide =
     process.env.NODE_ENV !== "production" || process.env.VERCEL_ENV === "preview";
 
@@ -97,6 +101,7 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
             perspective={perspective}
             unreadMessages={unreadMessages}
             canMessage={canMessage}
+            classHref={classHref}
           />
           <div className="ml-auto flex shrink-0 items-center gap-0.5">
             <SearchBox />
@@ -126,6 +131,7 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
         perspective={perspective}
         unreadMessages={unreadMessages}
         canMessage={canMessage}
+        classHref={classHref}
       />
       <InstallPrompt />
     </div>

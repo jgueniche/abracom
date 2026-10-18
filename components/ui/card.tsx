@@ -2,13 +2,20 @@ import * as React from "react";
 import { cn } from "cn";
 
 /**
- * A plane on the page. It is drawn by its hairline: the fill is white on an
- * almost-white ground, so the edge and nothing else says where it starts.
+ * A group of things on a page: a title, what it says, what it holds.
  *
- * Two spacings, not one. `--card-spacing` is the inset (what separates the
- * content from the edge), `--card-gap` the rhythm between the blocks inside it.
- * They used to be the same value, which put 16 px between a title and its own
- * excerpt and made every card a third taller than it needed to be.
+ * It used to be a plane drawn by a hairline, rounded and shadowed — and it was
+ * used sixty-nine times, around forms that held bordered fields, around lists
+ * that drew their own rules, inside pages whose sections drew theirs. The
+ * porteur's verdict was « des rectangles dans des rectangles » (ADR-0078). A
+ * card is now an unframed group: no border, no fill, no shadow, no inset; its
+ * content starts on the page's own left edge, and what separates it from the
+ * next group is the white space the page puts between them.
+ *
+ * The only boxes left in the application are the things a hand manipulates —
+ * a field, a message bubble, a photograph.
+ *
+ * `--card-gap` is still the rhythm between the blocks inside it.
  */
 function Card({
   className,
@@ -20,7 +27,7 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card flex flex-col gap-(--card-gap) overflow-hidden rounded-xl border border-border bg-card py-(--card-spacing) text-sm text-card-foreground shadow-soft [--card-gap:--spacing(2)] [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-gap:--spacing(1.5)] data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        "group/card flex flex-col gap-(--card-gap) text-sm text-foreground [--card-gap:--spacing(3)] data-[size=sm]:[--card-gap:--spacing(2)]",
         className,
       )}
       {...props}
@@ -33,7 +40,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-header"
       className={cn(
-        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-(--card-spacing) has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-(--card-spacing)",
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto]",
         className,
       )}
       {...props}
@@ -81,22 +88,13 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div data-slot="card-content" className={cn("px-(--card-spacing)", className)} {...props} />
-  );
+  return <div data-slot="card-content" className={cn(className)} {...props} />;
 }
 
-/** A rule, not a tinted band: the footer belongs to the card, not beside it. */
+/** The group's last line — actions, a figure — set apart by space, not by a rule. */
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      data-slot="card-footer"
-      className={cn(
-        "flex items-center rounded-b-xl border-t border-rule px-(--card-spacing) py-(--card-spacing)",
-        className,
-      )}
-      {...props}
-    />
+    <div data-slot="card-footer" className={cn("flex items-center pt-1", className)} {...props} />
   );
 }
 

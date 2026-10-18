@@ -43,36 +43,44 @@ export default async function TimetablePage({ params }: { params: Promise<{ clas
             description={canEdit ? t("emptyHintTeacher") : t("emptyHint")}
           />
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+          // The days side by side, each a column under its name — five framed panels were five more
+          // rectangles around what is a plain week (ADR-0078).
+          <div className="grid gap-x-10 gap-y-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
             {days.map((day) => {
               const ofDay = slots.filter((slot) => slot.weekday === day);
               return (
-                <section key={day} className="rounded-xl border border-border bg-card p-4">
+                <section key={day}>
                   <SectionHeader label={t(`days.${day}`)} count={ofDay.length || undefined} />
                   {ofDay.length === 0 ? (
                     <p className="text-sm text-muted-foreground">{t("nothing")}</p>
                   ) : (
+                    // The hours are the left edge of every slot — what the avatar is to a
+                    // conversation in Messages — and the way to remove one stays on its line
+                    // instead of adding a third (ADR-0078).
                     <ul className="flex flex-col gap-3">
                       {ofDay.map((slot) => (
-                        <li key={slot.id} className="flex flex-col gap-0.5">
-                          <span className="text-xs text-muted-foreground tabular-nums">
-                            {slot.starts_at.slice(0, 5)} – {slot.ends_at.slice(0, 5)}
+                        <li key={slot.id} className="flex items-start gap-3">
+                          <span className="flex w-11 shrink-0 flex-col pt-0.5 text-xs leading-tight text-muted-foreground tabular-nums">
+                            <span>{slot.starts_at.slice(0, 5)}</span>
+                            <span>{slot.ends_at.slice(0, 5)}</span>
                           </span>
-                          <span className="font-medium">{slot.subject}</span>
-                          {(slot.teacher_name || slot.room) && (
-                            <span className="text-xs text-muted-foreground">
-                              {[slot.teacher_name, slot.room].filter(Boolean).join(" · ")}
-                            </span>
-                          )}
+                          <span className="flex min-w-0 flex-1 flex-col">
+                            <span className="font-medium">{slot.subject}</span>
+                            {(slot.teacher_name || slot.room) && (
+                              <span className="text-xs text-muted-foreground">
+                                {[slot.teacher_name, slot.room].filter(Boolean).join(" · ")}
+                              </span>
+                            )}
+                          </span>
                           {canEdit && (
-                            <form action={deleteTimetableSlot} className="mt-1">
+                            <form action={deleteTimetableSlot} className="-my-2 shrink-0">
                               <input type="hidden" name="slotId" value={slot.id} />
                               <input type="hidden" name="classId" value={classId} />
                               <Button
                                 type="submit"
                                 variant="ghost"
                                 size="sm"
-                                className="-ml-2 min-h-11"
+                                className="-mr-2 min-h-11 text-muted-foreground"
                               >
                                 {t("remove")}
                               </Button>

@@ -1,4 +1,3 @@
-import { ChevronRightIcon } from "lucide-react";
 import { Link } from "@/components/ui/link";
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
@@ -34,11 +33,13 @@ export type HubCardProps = {
  */
 export function HubCard({ href, title, hint, meta, urgent, className }: HubCardProps) {
   return (
-    <li className={cn("border-b border-rule", className)}>
+    <li className={className}>
       <Link
         href={href}
         prefetch={false}
-        className="group -mx-3 flex min-h-14 items-baseline gap-4 rounded-md px-3 py-3.5 transition-colors hover:bg-muted/50"
+        // On a phone the live figure goes under the description: set at the right, it squeezed
+        // « Annonces et circulaires » into a column a third of the screen wide.
+        className="group -mx-3 flex min-h-14 flex-col gap-0.5 rounded-lg px-3 py-3 transition-colors hover:bg-muted focus-visible:bg-muted sm:flex-row sm:items-baseline sm:gap-4"
       >
         <span className="min-w-0 flex-1">
           <span
@@ -61,16 +62,15 @@ export function HubCard({ href, title, hint, meta, urgent, className }: HubCardP
             {meta}
           </span>
         )}
-        <ChevronRightIcon
-          className="size-3.5 shrink-0 self-center text-muted-foreground/50 transition-transform group-hover:translate-x-0.5"
-          aria-hidden
-        />
       </Link>
     </li>
   );
 }
 
-/** The list a hub's entries live in. */
+/**
+ * The list a hub's entries live in. It drew a rule above the first entry and under every one;
+ * the entries are now set apart by space, as the conversations are in Messages (ADR-0078).
+ */
 export function HubGrid({ children, className }: { children: ReactNode; className?: string }) {
-  return <ul className={cn("border-t border-rule", className)}>{children}</ul>;
+  return <ul className={cn("flex flex-col gap-1", className)}>{children}</ul>;
 }

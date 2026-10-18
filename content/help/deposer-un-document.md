@@ -5,7 +5,7 @@ routes: [/admin/documents, /admin/documents/[id]]
 topic: publish
 keywords: [document, circulaire, règlement, signature, autorisation, dossier, version, manquantes]
 since: 6
-reviewed: 2026-09-15
+reviewed: 2026-10-18
 ---
 
 Gestion → **Documents** tient la bibliothèque : dossiers, versions, audience, publication.

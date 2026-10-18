@@ -48,7 +48,7 @@ export default async function YearsPage() {
             {years.length === 0 ? (
               <p className="text-sm text-muted-foreground">{t("none")}</p>
             ) : (
-              <ul className="divide-y">
+              <ul className="flex flex-col">
                 {years.map((year) => (
                   <li
                     key={year.id}

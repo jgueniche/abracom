@@ -13,7 +13,8 @@ import { cn } from "@/lib/utils";
  * from the title it dated. A list of circulars is a list: a dateline, a title,
  * a line of summary, a rule, the next one. It reads faster, it holds a month of
  * announcements in the space the grid gave to four, and it is what the content
- * has always been.
+ * has always been — set apart by space rather than by a rule under every entry, since the
+ * rules were the "long lines everywhere" the porteur asked to see gone (ADR-0078).
  *
  * What is waiting on the reader is marked in the margin — a dot outside the
  * text block, the way a passage is marked in a book — rather than by repainting
@@ -29,7 +30,7 @@ export function IndexList({
   "aria-labelledby"?: string;
 }) {
   return (
-    <ul aria-labelledby={labelledBy} className={cn("border-t border-rule", className)}>
+    <ul aria-labelledby={labelledBy} className={cn("flex flex-col gap-1", className)}>
       {children}
     </ul>
   );
@@ -60,7 +61,7 @@ export function IndexEntry({
   className?: string;
 }) {
   return (
-    <li className={cn("relative border-b border-rule", className)}>
+    <li className={cn("relative", className)}>
       {accent && (
         <span
           aria-hidden
@@ -70,7 +71,7 @@ export function IndexEntry({
       <Link
         href={href}
         prefetch={false}
-        className="-mx-3 block rounded-md px-3 py-3.5 transition-colors hover:bg-muted/50"
+        className="-mx-3 block rounded-lg px-3 py-3 transition-colors hover:bg-muted focus-visible:bg-muted"
       >
         {eyebrow && (
           <p className="eyebrow flex flex-wrap items-center gap-x-2 gap-y-1">

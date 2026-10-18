@@ -614,6 +614,37 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   la branche ; fournir les **textes légaux de la vraie école** (aucun n'existe : l'accueil d'un
   compte n'a rien à faire accepter) ; créer l'année scolaire puis les classes ; communiquer le mot
   de passe de test à la direction.
+- **Session 35 — latence, école test vivante, lisibilité** (ADR-0076 à ADR-0078), jouée sur une pile
+  Supabase réelle (Docker) et sur des builds de production. Page de suivi : « Audit Kesher — latence,
+  données de test, lisibilité » (Claude Docs). (1) **Le premier clic sur un onglet** : le symptôme
+  (« long, puis rapide, puis de nouveau lent après une pause ») était exactement le réglage en place —
+  une page vue gardée cinq minutes, rien de chargé d'avance, le préchargement d'un lien ne rapportant
+  que l'arbre des routes depuis l'ADR-0072. **`TabPrefetch`** précharge les onglets de la barre et la
+  famille « Classe » de l'espace de classe **données comprises** (`router.prefetch`), une fois la page
+  posée, après chaque navigation, au retour au premier plan et chaque minute d'usage actif ; l'onglet
+  **« Classe » mène droit à la classe** quand il n'y en a qu'une (`session_context()` rend les classes
+  du lecteur) au lieu de deux redirections. Banc `scripts/perf/tabs.mjs` : premier clic **42–86 ms**
+  au lieu de 119–188, **45–86 ms au retour d'une vraie pause de 330 s** ; base bridée façon offre
+  gratuite : médiane 56 ms au lieu de 234. Restent hors du code : démarrage à froid Vercel, palier de
+  calcul Supabase. (2) **L'école test vit au présent** : `refresh_test_school_content()` la remplit
+  autour de la date du jour — devoirs de six semaines en arrière à huit en avant (vacances et fériés
+  respectés), « faits », cahier de vie, conversations, annonces, événements, menus, mots —,
+  idempotente, limitée aux écoles `modules.test`, sans aucune notification ; la migration l'appelle,
+  une autre la planifie chaque nuit là où pg_cron existe (plus de bloc de `cron.sql` à rejouer à la
+  main) ; le cahier de texte s'ouvre sur le premier jour qui a des devoirs
+  pendant les vacances. (3) **L'espace plutôt que le trait et la boîte** : plus de filet dans les
+  en-têtes de section, plus de cadre autour des listes, des groupes, des formulaires ni des états
+  vides (`Card` devient un groupe sans cadre), plus de rond dans un rond, des lignes à deux niveaux
+  avec un bord gauche régulier — la grammaire de l'onglet Messages, appliquée partout ; la doctrine du
+  module de design est mise à jour. Vérifié : `pnpm check`, `pnpm build`, 563 assertions pgTAP sur
+  les deux chemins, 42 e2e (invitation comprise), axe à 0 violation sérieuse. **Fusionnée dans
+  `main` le 2026-10-18** : la fusion déclenche le workflow « Deploy database », qui applique les trois
+  migrations, tâche de nuit comprise — rien à lancer à la main (rejoué en local au niveau exact de la
+  production : 4,5 s, aucune livraison d'e-mail ni de push). Le connecteur Supabase de la session
+  pointe sur un autre compte, et lancer ce workflow avant la fusion a été refusé à son intégration
+  GitHub (403). **Reste au porteur** : dire si le premier clic est enfin rapide. Au passage : sept
+  articles d'aide échouaient déjà `ops:check-help` sur `main` (une fusion datée après leur
+  relecture) — redatés après relecture.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

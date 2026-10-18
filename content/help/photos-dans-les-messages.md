@@ -5,7 +5,7 @@ routes: [/messages/[threadId]]
 topic: daily
 keywords: [photo, image, pièce jointe, appareil photo, groupe, parents, devoir, partager, PDF, imprimer]
 since: 33
-reviewed: 2026-10-06
+reviewed: 2026-10-18
 ---
 
 Sous la zone d'écriture, **l'appareil photo** ouvre la caméra du téléphone, et **le trombone** prend une photo déjà prise ou un PDF. Sur un ordinateur, une capture d'écran peut aussi être collée directement dans le message.

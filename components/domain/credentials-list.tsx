@@ -41,7 +41,7 @@ export function CredentialsList({ credentials }: { credentials: Credential[] }) 
   return (
     <div className="flex flex-col gap-3" role="status">
       {fresh && <p className="text-sm font-medium text-pretty">{t("onceOnly")}</p>}
-      <ul className="flex flex-col divide-y divide-rule border-y border-rule">
+      <ul className="flex flex-col gap-2">
         {credentials.map((credential) => (
           <li key={credential.email} className="flex flex-col gap-1.5 py-3">
             <p className="text-sm font-medium">{credential.name}</p>

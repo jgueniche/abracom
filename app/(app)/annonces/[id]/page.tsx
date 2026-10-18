@@ -107,21 +107,21 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ i
           />
           <ul className="flex flex-col">
             {linkedDocument && (
-              <li className="border-b border-rule last:border-b-0">
+              <li>
                 <Link
                   href="/documents"
-                  className="-mx-2 block rounded-md px-2 py-2 text-sm underline decoration-primary/35 underline-offset-[3px] transition-colors hover:bg-muted/50 hover:decoration-primary"
+                  className="-mx-2 block rounded-md px-2 py-2 text-sm underline decoration-primary/35 underline-offset-[3px] transition-colors hover:bg-muted hover:decoration-primary"
                 >
                   {linkedDocument.title}
                 </Link>
               </li>
             )}
             {attachments.map((file) => (
-              <li key={file.id} className="border-b border-rule last:border-b-0">
+              <li key={file.id}>
                 {file.url ? (
                   <a
                     href={file.url}
-                    className="-mx-2 block rounded-md px-2 py-2 text-sm break-words underline decoration-primary/35 underline-offset-[3px] transition-colors hover:bg-muted/50 hover:decoration-primary"
+                    className="-mx-2 block rounded-md px-2 py-2 text-sm break-words underline decoration-primary/35 underline-offset-[3px] transition-colors hover:bg-muted hover:decoration-primary"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -150,7 +150,7 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ i
         </Link>
       </Button>
       <article>
-        <header className="mb-7 border-b border-rule pb-5">
+        <header className="mb-7">
           {dateline && <p className="eyebrow mb-2">{dateline}</p>}
           <div className="flex items-start gap-1.5">
             <h1>{title}</h1>

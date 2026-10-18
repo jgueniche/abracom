@@ -91,12 +91,12 @@ export default async function CommunityPage() {
         {classes.size === 0 ? (
           <p className="text-sm text-muted-foreground">{t("hub.noClass")}</p>
         ) : (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="-ml-2.5 flex flex-wrap gap-x-1">
             {[...classes.entries()].map(([id, name]) => (
               <Link
                 key={id}
                 href={`/classes/${id}/rdv`}
-                className="flex min-h-11 items-center rounded-md border border-border bg-card px-2.5 text-[0.8125rem] font-medium text-muted-foreground transition-colors hover:border-[color-mix(in_oklch,var(--border),var(--foreground)_18%)] hover:text-foreground md:min-h-8"
+                className="flex min-h-11 items-center rounded-md px-2.5 text-[0.8125rem] font-medium text-primary transition-colors hover:bg-muted md:min-h-8"
               >
                 {name}
               </Link>
@@ -112,10 +112,7 @@ export default async function CommunityPage() {
         ) : (
           <ul className="flex flex-col">
             {birthdays.map((row) => (
-              <li
-                key={`${row.student_id}-${row.className}`}
-                className="border-b border-rule py-2 text-sm last:border-b-0"
-              >
+              <li key={`${row.student_id}-${row.className}`} className="py-1.5 text-sm">
                 {t("hub.birthday", {
                   name: `${row.first_name} (${row.className})`,
                   date: format.dateTime(new Date(`${row.next_birthday}T12:00:00Z`), {

@@ -60,7 +60,7 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
           is a "today" item like the others: one block, not two. */}
       {/* "Qu'est-ce que je dois savoir aujourd'hui ?" — the only question this
           page has to answer. Everything that merely exists comes after it. */}
-      <section className="mb-10">
+      <section className="mb-12">
         <SectionHeader label={t("parent.today")} count={items.length || undefined} />
         {items.length === 0 ? (
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -69,16 +69,22 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
           </p>
         ) : (
           <RowList>
-            {items.map((item) => (
-              <Row
-                key={item.key}
-                href={item.href}
-                urgent={item.urgent}
-                kind={t(`parent.todayKinds.${item.kind}`)}
-                title={item.title}
-                detail={item.detail}
-              />
-            ))}
+            {items.map((item, index) => {
+              // The kind is named once, over its run of rows — « À signer » above two forms
+              // to sign, not before each — the way Messages names its groups (ADR-0078).
+              const opensRun = index === 0 || items[index - 1]!.kind !== item.kind;
+              return (
+                <Row
+                  key={item.key}
+                  href={item.href}
+                  urgent={item.urgent}
+                  kind={opensRun ? t(`parent.todayKinds.${item.kind}`) : undefined}
+                  title={item.title}
+                  detail={item.detail}
+                  className={opensRun && index > 0 ? "mt-3" : undefined}
+                />
+              );
+            })}
           </RowList>
         )}
       </section>
@@ -95,7 +101,7 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
             </Button>
           }
         />
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
           {children.map((child) => (
             <ChildClassCard key={child.student.id} child={child} />
           ))}

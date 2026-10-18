@@ -5,10 +5,12 @@ routes: [/agenda, /agenda/[id]]
 topic: daily
 keywords: [agenda, calendrier, événement, RSVP, inscription, chabbat, fêtes, vacances, ICS, bénévolat]
 since: 9
-reviewed: 2026-09-15
+reviewed: 2026-10-18
 ---
 
 L'agenda réunit au même endroit le calendrier scolaire, les **fêtes juives**, les horaires d'entrée et de sortie de Chabbat, la parachah de la semaine, les jours fériés, les vacances de la zone C et les événements de l'école.
+
+Le mois se lit jour par jour, la date à gauche ; le jour même est écrit en bleu. Ce qui dure plusieurs jours — des vacances, une fête de deux jours — n'apparaît qu'une fois, à son premier jour, avec ses dates : « Du 17 oct. au 1 nov. ».
 
 Sur la fiche d'un événement :
 
