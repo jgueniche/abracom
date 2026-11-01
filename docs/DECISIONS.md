@@ -2709,3 +2709,32 @@ connexion, la première que voit chaque famille, n'en avait aucun.
   blanche, comme un logo imprimé sur du papier, plutôt que d'être inversé.
 - Mesuré : axe à 0 violation sérieuse sur `/connexion`, `/essai` et l'en-tête de trois rôles, à
   390 et 1 440 px, en clair et en sombre, aucun défilement horizontal.
+
+## ADR-0086 — Les jours d'une semaine se changent sur place
+
+**Statut** : acceptée (2026-11-01) · complète l'ADR-0083 · **Contexte** : sur la preview de
+l'ADR-0084, « il y a encore une latence embêtante quand je navigue entre les jours des devoirs ».
+Toucher un jour du bandeau naviguait vers `?jour=…`, et le serveur relisait toute la semaine — la
+session, les enfants, les classes, les liens signés des pages jointes — alors que cette semaine,
+du lundi au dimanche, était déjà sur la page pour dessiner le bandeau. Même chose pour la bascule
+Jour / Semaine.
+
+### La décision
+
+- Le serveur rend **chaque jour de la semaine une fois** ; un composant client (`DiaryPanels`)
+  en montre un seul (« Jour ») ou les empile (« Semaine »). Le jour et la vue vivent dans
+  l'adresse, changée sur place par `history.replaceState`, que Next relit par `useSearchParams` :
+  un rechargement, un lien partagé et le filtre par enfant retrouvent le même jour, et le bouton
+  retour quitte le cahier au lieu de repasser par chaque jour touché. Les liens gardent leur
+  `href`, pour un nouvel onglet ou une page sans script.
+- Les **semaines précédente et suivante** restent des pages du serveur, mais elles sont chargées,
+  données comprises, 0,4 s après l'affichage du cahier : la flèche répond depuis le cache.
+- Le test e2e « a parent moves between the days of the week without asking the server » vérifie
+  qu'aucune requête ne part. Il a d'abord échoué une fois sur six — non pas à cause du changement
+  de jour, mais d'une vignette cassée par le test voisin, qui demande un rafraîchissement pour
+  renouveler son lien signé (`useRefreshOnExpiredImage`) : le test sert désormais les vignettes
+  lui-même.
+
+Mesuré (Chromium, téléphone, réseau à 40 ms) : un jour **8 à 12 ms**, la bascule Jour / Semaine
+15 à 17 ms, la semaine suivante ou précédente 12 à 18 ms — **aucune requête au serveur**, contre
+un aller-retour complet (une demi-seconde à une seconde sur la base gratuite) à chaque toucher.

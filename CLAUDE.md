@@ -696,6 +696,9 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   grand (deux moitiés sur ordinateur, bandeau sur téléphone, bouton dans le premier écran), « Le lien
   entre l'école et les familles », un œil pour afficher le mot de passe ; l'en-tête de l'application
   montre le livre du logo (36–44 px) au lieu du logo entier réduit à 32 px ; plaque blanche en sombre.
+  **Les jours des devoirs sur place** (ADR-0086) : la semaine est déjà sur la page, donc toucher un
+  jour ou basculer Jour / Semaine ne demande plus rien au serveur (8–17 ms au lieu d'un aller-retour),
+  l'adresse suit (`replaceState`) ; les semaines voisines sont chargées d'avance (12–18 ms).
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

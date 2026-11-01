@@ -1266,6 +1266,8 @@ d'interface Kesher »), mesuré à 390 et 1 440 px, puis les cinq lots validés 
       par classe, `TabPrefetch` dès l'affichage, après chaque mutation et au toucher.
 - [x] **Connexion et logo** (ADR-0085) : logo de l'école en grand sur `/connexion`, livre du logo
       dans l'en-tête, œil du mot de passe, plaque blanche en sombre.
+- [x] **Jours des devoirs sur place** (ADR-0086) : jour et vue changés dans le navigateur, semaines
+      voisines chargées d'avance, test e2e sans requête.
 - [ ] **Au porteur** : regarder la preview, puis fusionner (les migrations `20261101100000` et
       `20261101110000` partent avec « Deploy database »).
 
