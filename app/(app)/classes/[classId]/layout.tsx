@@ -104,6 +104,7 @@ export default async function ClassLayout({
             classId={classId}
             showAssessments={showAssessments}
             showLate={isTeacher || isStaff}
+            refreshKey={Date.now()}
           />
         </div>
       </Column>

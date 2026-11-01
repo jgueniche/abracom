@@ -52,6 +52,9 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
   const classHref = onlyClass ? `/classes/${onlyClass}/cahier` : "/classes";
   const showStyleGuide =
     process.env.NODE_ENV !== "production" || process.env.VERCEL_ENV === "preview";
+  // The layout is rendered again on a full load and after a mutation, never on a tab change:
+  // the tabs reload when this changes (ADR-0084).
+  const renderedAt = Date.now();
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -126,6 +129,7 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
         unreadMessages={unreadMessages}
         canMessage={canMessage}
         classHref={classHref}
+        refreshKey={renderedAt}
       />
       <InstallPrompt />
     </div>

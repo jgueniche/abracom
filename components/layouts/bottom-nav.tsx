@@ -18,7 +18,7 @@ import { useTranslations } from "next-intl";
 
 import type { Perspective } from "@/lib/permissions";
 import { LinkPending } from "@/components/layouts/link-pending";
-import { TabPrefetch } from "@/components/layouts/tab-prefetch";
+import { TabPrefetch, usePrefetchOnIntent } from "@/components/layouts/tab-prefetch";
 import { cn } from "@/lib/utils";
 
 type Label =
@@ -157,19 +157,23 @@ export function BottomNav({
   unreadMessages = 0,
   canMessage = true,
   classHref = "/classes",
+  refreshKey,
 }: {
   perspective: Perspective;
   unreadMessages?: number;
   canMessage?: boolean;
   classHref?: string;
+  /** When the layout was rendered: changes on a full load and after a mutation (ADR-0084). */
+  refreshKey?: number;
 }) {
   const t = useTranslations("nav");
   const isActive = useActive();
+  const intent = usePrefetchOnIntent();
   const items = itemsFor(perspective, canMessage, classHref);
 
   return (
     <>
-      <TabPrefetch hrefs={items.map((item) => item.href)} />
+      <TabPrefetch hrefs={items.map((item) => item.href)} refreshKey={refreshKey} />
       <nav
         aria-label={t("home")}
         className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background pb-[env(safe-area-inset-bottom)] lg:hidden"
@@ -187,6 +191,7 @@ export function BottomNav({
                   // (ADR-0076); the link's own prefetch would only fetch the
                   // route tree (ADR-0072), one more invocation per tab for nothing.
                   prefetch={false}
+                  {...intent(href)}
                   aria-current={active ? "page" : undefined}
                   aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
                   className={cn(
@@ -231,6 +236,7 @@ export function TopNav({
 }) {
   const t = useTranslations("nav");
   const isActive = useActive();
+  const intent = usePrefetchOnIntent();
   const items = itemsFor(perspective, canMessage, classHref);
   const extra = DESKTOP_EXTRA[perspective].filter(
     (candidate) => !items.some((item) => item.href === candidate.href),
@@ -249,6 +255,7 @@ export function TopNav({
             // The five tabs of the phone bar are loaded by <TabPrefetch> (ADR-0076); the desktop
             // extras keep the link's own prefetch, which costs an invocation and no query.
             prefetch={extra.includes(item) ? null : false}
+            {...(extra.includes(item) ? {} : intent(href))}
             aria-current={active ? "page" : undefined}
             aria-label={count > 0 ? t("unreadMessages", { count }) : undefined}
             className={cn(

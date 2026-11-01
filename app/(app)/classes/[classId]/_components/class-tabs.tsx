@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
 import { LinkPending } from "@/components/layouts/link-pending";
-import { TabPrefetch } from "@/components/layouts/tab-prefetch";
+import { TabPrefetch, usePrefetchOnIntent } from "@/components/layouts/tab-prefetch";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,13 +64,17 @@ export function ClassTabs({
   classId,
   showAssessments,
   showLate,
+  refreshKey,
 }: {
   classId: string;
   showAssessments: boolean;
   /** Lateness adds up two registers across the whole class: a staff reading. */
   showLate: boolean;
+  /** When the class layout was rendered: changes after a mutation (ADR-0084). */
+  refreshKey?: number;
 }) {
   const t = useTranslations("classSpace.tabs");
+  const intent = usePrefetchOnIntent();
   const pathname = usePathname();
   const activeRef = useRef<HTMLAnchorElement>(null);
   const base = `/classes/${classId}`;
@@ -101,7 +105,10 @@ export function ClassTabs({
   return (
     <nav aria-label={t("aria")} className="-mx-1 flex items-stretch">
       {/* The everyday family is loaded before it is clicked, like the main bar (ADR-0076). */}
-      <TabPrefetch hrefs={GROUPS[0].tabs.map((tab) => `${base}/${tab.segment}`)} />
+      <TabPrefetch
+        hrefs={GROUPS[0].tabs.map((tab) => `${base}/${tab.segment}`)}
+        refreshKey={refreshKey}
+      />
       {/* One scrolling row, « Suivi » included: kept apart at the right, it made a phone's row
           look complete while « Emploi du temps » was hidden in the scrolled part. */}
       <ul className="flex min-w-0 flex-1 gap-0.5 overflow-x-auto overflow-y-hidden">
@@ -113,6 +120,7 @@ export function ClassTabs({
               <Link
                 href={href}
                 prefetch={false}
+                {...intent(href)}
                 ref={active ? activeRef : undefined}
                 aria-current={active ? "page" : undefined}
                 className={tabClass(active)}
@@ -136,7 +144,11 @@ export function ClassTabs({
               <DropdownMenuContent align="end" className="min-w-44">
                 {follow.map((tab) => (
                   <DropdownMenuItem key={tab.key} asChild className="min-h-11 cursor-pointer">
-                    <Link href={`${base}/${tab.segment}`} prefetch={false}>
+                    <Link
+                      href={`${base}/${tab.segment}`}
+                      prefetch={false}
+                      {...intent(`${base}/${tab.segment}`)}
+                    >
                       {t(tab.key)}
                     </Link>
                   </DropdownMenuItem>
