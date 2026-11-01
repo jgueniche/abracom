@@ -89,7 +89,9 @@ jobs:
 
   database:
     name: Database (migrations · seed · pgTAP RLS)
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moved to 26.04, whose archive no longer carries postgresql-16 nor
+    # postgresql-16-pgtap. 24.04 does, and 16 is the version the shim and its tests target.
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
