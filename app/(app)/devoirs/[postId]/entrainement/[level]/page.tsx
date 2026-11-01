@@ -7,7 +7,7 @@ import QRCode from "qrcode";
 import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import { AnswerKey } from "@/components/domain/practice/answer-key";
 import { AnswerKeyList, ExerciseBlock } from "@/components/domain/practice/exercises";
-import { cursive, hebrew } from "@/components/domain/practice/fonts";
+import { notoHebrew, playwriteFr } from "@/components/domain/practice/fonts";
 import { NameLine } from "@/components/domain/practice/name-line";
 import { PictogramDefs } from "@/components/domain/practice/pictogram";
 import { ClassPracticeSwitch, TeamControls } from "@/components/domain/practice/team-controls";
@@ -223,7 +223,7 @@ async function SheetDocument({
     retry: t("retry"),
   };
   return (
-    <div className={cn(cursive.variable, hebrew.variable)}>
+    <div className={cn(playwriteFr.variable, notoHebrew.variable)}>
       <PictogramDefs keys={pictogramsOf(sheet)} />
       {beta && (
         <p
