@@ -1,6 +1,12 @@
 import "server-only";
 
-import { GoogleGenAI, ThinkingLevel, type Part } from "@google/genai";
+import {
+  type GenerateContentConfig,
+  type GenerateContentResponse,
+  GoogleGenAI,
+  type Part,
+  ThinkingLevel,
+} from "@google/genai";
 
 import type { Lang } from "@/lib/practice/schema";
 
@@ -62,20 +68,55 @@ export function vertexProvider(config: VertexConfig): PracticeProvider {
               inlineData: { mimeType: part.file.mimeType, data: part.file.data.toString("base64") },
             },
       );
-      const response = await call(() =>
-        ai.models.generateContent({
-          model: config.textModel,
-          contents: [{ role: "user", parts }],
+      // From the fullest request to the plainest. Vertex answers a parameter it does not take with
+      // a bare 400 « invalid argument » that names nothing: each refusal is logged with what was
+      // sent, and the next form is tried. The answer is checked by `parseSheet` in every case.
+      const base = { responseMimeType: "application/json", httpOptions: { timeout: 90_000 } };
+      const schemaInPrompt = `${request.system}\n\nRéponds uniquement par un objet JSON conforme à ce schéma JSON :\n${JSON.stringify(request.schema)}`;
+      const attempts: Array<{ name: string; config: GenerateContentConfig }> = [
+        {
+          name: "schema+thinking+labels",
           config: {
+            ...base,
             systemInstruction: request.system,
-            responseMimeType: "application/json",
             responseJsonSchema: request.schema,
             thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
             labels: LABELS,
-            httpOptions: { timeout: 90_000 },
           },
-        }),
-      );
+        },
+        {
+          name: "schema",
+          config: {
+            ...base,
+            systemInstruction: request.system,
+            responseJsonSchema: request.schema,
+          },
+        },
+        { name: "schema-in-prompt", config: { ...base, systemInstruction: schemaInPrompt } },
+      ];
+      let response: GenerateContentResponse | null = null;
+      for (const attempt of attempts) {
+        try {
+          response = await ai.models.generateContent({
+            model: config.textModel,
+            contents: [{ role: "user", parts }],
+            config: attempt.config,
+          });
+          console.info(`[practice] writeSheet: ${config.textModel} answered (${attempt.name})`);
+          break;
+        } catch (error) {
+          const message = (error as Error).message ?? String(error);
+          if ((error as { status?: unknown }).status === 400) {
+            console.warn(`[practice] writeSheet: ${attempt.name} refused: ${message}`);
+            continue;
+          }
+          throw new ProviderError(
+            /timeout|aborted/i.test(message) ? "timeout" : "provider_error",
+            message,
+          );
+        }
+      }
+      if (!response) throw new ProviderError("provider_error", "every request form was refused");
       if (response.promptFeedback?.blockReason) {
         throw new ProviderError("blocked", String(response.promptFeedback.blockReason));
       }
