@@ -42,7 +42,7 @@ const tables = [
   ["absences", "justification_path", "justifications"],
   ["profiles", "avatar_path", "avatars"],
 ];
-const buckets = [...new Set([...tables.map(([, , bucket]) => bucket), "messages"])];
+const buckets = [...new Set([...tables.map(([, , bucket]) => bucket), "messages", "practice"])];
 
 async function referenced() {
   const paths = new Set();
@@ -61,6 +61,20 @@ async function referenced() {
       add("messages", item?.path);
       add("messages", item?.thumb);
     }
+  // Practice sheets (ADR-0087): the illustration, and each recorded voice named in the content.
+  // A database without the table yet cannot say what is used: that bucket is then left alone.
+  try {
+    const sheets = await everyRow(() =>
+      supabase.from("practice_sheets").select("id, illustration_path, content").order("id"),
+    );
+    for (const row of sheets) {
+      add("practice", row.illustration_path);
+      for (const path of Object.values(row.content?.audio ?? {})) add("practice", path);
+    }
+  } catch (error) {
+    console.warn(`practice: references unreadable (${error.message}), bucket not swept`);
+    buckets.splice(buckets.indexOf("practice"), 1);
+  }
   return paths;
 }
 

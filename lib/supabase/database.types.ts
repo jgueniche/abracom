@@ -1181,6 +1181,7 @@ export type Database = {
           id: string
           level_id: string
           name: string
+          practice_enabled: boolean
           room: string | null
           school_id: string
           school_year_id: string
@@ -1193,6 +1194,7 @@ export type Database = {
           id?: string
           level_id: string
           name: string
+          practice_enabled?: boolean
           room?: string | null
           school_id: string
           school_year_id: string
@@ -1205,6 +1207,7 @@ export type Database = {
           id?: string
           level_id?: string
           name?: string
+          practice_enabled?: boolean
           room?: string | null
           school_id?: string
           school_year_id?: string
@@ -2597,6 +2600,88 @@ export type Database = {
           },
         ]
       }
+      practice_sheets: {
+        Row: {
+          beta: boolean
+          class_id: string
+          content: Json | null
+          created_at: string
+          error: string | null
+          hidden_at: string | null
+          hidden_by: string | null
+          id: string
+          illustration_path: string | null
+          level: Database["public"]["Enums"]["practice_level"]
+          model: string | null
+          post_id: string
+          requested_by: string | null
+          school_id: string
+          stage: string | null
+          status: Database["public"]["Enums"]["practice_status"]
+          updated_at: string
+        }
+        Insert: {
+          beta?: boolean
+          class_id: string
+          content?: Json | null
+          created_at?: string
+          error?: string | null
+          hidden_at?: string | null
+          hidden_by?: string | null
+          id?: string
+          illustration_path?: string | null
+          level: Database["public"]["Enums"]["practice_level"]
+          model?: string | null
+          post_id: string
+          requested_by?: string | null
+          school_id: string
+          stage?: string | null
+          status?: Database["public"]["Enums"]["practice_status"]
+          updated_at?: string
+        }
+        Update: {
+          beta?: boolean
+          class_id?: string
+          content?: Json | null
+          created_at?: string
+          error?: string | null
+          hidden_at?: string | null
+          hidden_by?: string | null
+          id?: string
+          illustration_path?: string | null
+          level?: Database["public"]["Enums"]["practice_level"]
+          model?: string | null
+          post_id?: string
+          requested_by?: string | null
+          school_id?: string
+          stage?: string | null
+          status?: Database["public"]["Enums"]["practice_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practice_sheets_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "practice_sheets_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "class_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "practice_sheets_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_contacts: {
         Row: {
           phone: string | null
@@ -3598,6 +3683,12 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      demo_id: { Args: { key: string }; Returns: string }
+      demo_is_school_day: {
+        Args: { d: string; elementary: boolean; school: string }
+        Returns: boolean
+      }
+      demo_pick: { Args: { key: string; n: number }; Returns: number }
       digest_candidates: {
         Args: { since: string }
         Returns: {
@@ -3618,6 +3709,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      discard_practice_sheet: { Args: { p_sheet: string }; Returns: undefined }
       dm_contacts: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -3954,6 +4046,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      refresh_test_school_content: {
+        Args: { weeks_ahead?: number; weeks_back?: number }
+        Returns: Json
+      }
+      refresh_test_school_due_dates: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       remind_announcement: { Args: { announcement: string }; Returns: number }
       rotate_calendar_feed: {
         Args: Record<PropertyKey, never>
@@ -3988,11 +4088,11 @@ export type Database = {
       school_staff_ids: { Args: { school: string }; Returns: string[] }
       school_timezone: { Args: { school_: string }; Returns: string }
       session_context: { Args: Record<PropertyKey, never>; Returns: Json }
-      set_current_school_year: { Args: { year_id: string }; Returns: undefined }
-      set_test_school_password: {
-        Args: { p_password: string }
-        Returns: number
+      set_class_practice: {
+        Args: { p_class: string; p_enabled: boolean }
+        Returns: undefined
       }
+      set_current_school_year: { Args: { year_id: string }; Returns: undefined }
       set_image_rights: {
         Args: { signed: boolean; student: string }
         Returns: number
@@ -4005,6 +4105,14 @@ export type Database = {
           urgency_?: string
         }
         Returns: Json
+      }
+      set_practice_sheet_hidden: {
+        Args: { p_hidden: boolean; p_sheet: string }
+        Returns: undefined
+      }
+      set_test_school_password: {
+        Args: { p_password: string }
+        Returns: number
       }
       set_thread_replies: {
         Args: { allow_?: boolean; override_?: boolean; thread_: string }
@@ -4086,6 +4194,8 @@ export type Database = {
       note_kind: "praise" | "concern" | "info"
       notification_channel: "push" | "email" | "inapp"
       post_visibility: "parents" | "staff"
+      practice_level: "easier" | "same" | "harder"
+      practice_status: "pending" | "ready" | "failed"
       report_status: "open" | "resolved"
       rsvp_status: "yes" | "no" | "maybe"
       student_status: "active" | "left" | "archived"
@@ -4267,6 +4377,8 @@ export const Constants = {
       note_kind: ["praise", "concern", "info"],
       notification_channel: ["push", "email", "inapp"],
       post_visibility: ["parents", "staff"],
+      practice_level: ["easier", "same", "harder"],
+      practice_status: ["pending", "ready", "failed"],
       report_status: ["open", "resolved"],
       rsvp_status: ["yes", "no", "maybe"],
       student_status: ["active", "left", "archived"],

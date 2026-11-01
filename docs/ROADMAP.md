@@ -1271,6 +1271,41 @@ d'interface Kesher »), mesuré à 390 et 1 440 px, puis les cinq lots validés 
 - [ ] **Au porteur** : regarder la preview, puis fusionner (les migrations `20261101100000` et
       `20261101110000` partent avec « Deploy database »).
 
+## Session 37 — S'entraîner : des feuilles d'exercices préparées par l'IA (2026-11-01, ADR-0087)
+
+Demande de plusieurs parents, portée par le porteur : à partir d'un devoir, une ou plusieurs
+feuilles d'exercices du même genre, adaptées à la classe, ludiques, avec images et son, et
+imprimables. Arbitrages du porteur : Google Cloud à son nom, Gemini 3.8 Flash, le parent déclenche,
+activé par défaut, hébreu et kodesh en bêta. Guide pas à pas : `docs/GCP.md`.
+
+- [x] Migration `20261101120000_practice_sheets.sql` : `practice_sheets` (une feuille par devoir et
+      par niveau, partagée par la classe), lecture sous les droits du devoir, **aucune écriture
+      hors serveur**, `set_practice_sheet_hidden` / `discard_practice_sheet` / `set_class_practice`
+      journalisés, `classes.practice_enabled`, bucket privé `practice`. 33 assertions pgTAP.
+- [x] Format typé de onze exercices (`lib/practice/schema.ts`), réponses calculées par
+      l'application, 138 pictogrammes Fluent Emoji (MIT) pour ce qui se compte et se relie,
+      attendus par niveau (`curriculum.ts`), consignes au modèle (`prompt.ts`).
+- [x] Fournisseur Vertex AI multi-région `eu` (`lib/ai/vertex.ts`) : exercices
+      `gemini-3.8-flash`, illustration `gemini-3.1-flash-image`, voix `gemini-3.8-flash-tts` ;
+      `global` refusé ; fournisseur factice pour le développement et l'e2e.
+- [x] Préparation hors requête (`after()`), étape par étape, visible de la famille qui attend ;
+      plafonds 20 par personne et 300 par école sur 24 h.
+- [x] Fiche du devoir : bloc S'entraîner (Plus facile / Pareil / Pour aller plus loin), lu de façon
+      tolérante avant la migration ; page `/devoirs/[postId]/entrainement/[level]` : cases qui se
+      vérifient à l'écran, voix, impression A4 (lignes Seyès, écriture attachée, QR codes vers la
+      voix, corrigé sur une page à part), hébreu de droite à gauche, bandeau bêta, contrôles de
+      l'équipe.
+- [x] Article d'aide « S'entraîner », `docs/RGPD.md` (Google Cloud sous-traitant, rien de
+      personnel envoyé), `storage-sweep` connaît le bucket `practice`.
+- [x] Vérifié sur une pile Supabase réelle (Docker) : `pnpm check` (244 tests), `pnpm build`,
+      638 assertions pgTAP sur les deux chemins, 16 e2e sur le build de production (dont 4
+      nouveaux), axe à 0 violation sérieuse à 390 et 1 440 px en clair et en sombre.
+- [ ] **Au porteur** : suivre `docs/GCP.md` (projet, API, compte de service, clé dans Vercel),
+      fusionner (la migration part avec « Deploy database »), puis essayer une vraie feuille — durée,
+      coût, qualité de l'hébreu.
+- [ ] **Session suivante** : l'assistant en bulle, limité au rôle de chacun.
+- [ ] Plus tard : relier au doigt à l'écran (aujourd'hui sur papier).
+
 ## Questions ouvertes (§15 du brief)
 
 Bloquantes pour la session 2 :

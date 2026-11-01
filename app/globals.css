@@ -488,6 +488,37 @@
 }
 
 /*
+ * Practice sheets (ADR-0087). The two faces are loaded by the practice pages only
+ * (`components/domain/practice/fonts.ts`); elsewhere these fall back to the system.
+ * Seyès ruling — the French school's lined paper — for the words a child copies: a
+ * strong line every 32 px, three faint ones between, as in a CP exercise book.
+ */
+@utility font-cursive {
+  font-family: var(--font-cursive), "Segoe Print", cursive;
+}
+@utility font-hebrew {
+  font-family: var(--font-hebrew), "Arial Hebrew", sans-serif;
+}
+@utility seyes {
+  background-image:
+    linear-gradient(
+      to bottom,
+      transparent 31px,
+      color-mix(in oklch, var(--primary), transparent 45%) 31px
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 7px,
+      color-mix(in oklch, var(--primary), transparent 80%) 7px
+    );
+  background-size:
+    100% 32px,
+    100% 8px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+/*
  * Print. A directrice prints the register, a family prints a circular, and a
  * teacher prints the week — so the sheet drops the chrome, flattens the planes
  * and lets the text take the page. Nothing here changes the screen.

@@ -699,6 +699,31 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   **Les jours des devoirs sur place** (ADR-0086) : la semaine est déjà sur la page, donc toucher un
   jour ou basculer Jour / Semaine ne demande plus rien au serveur (8–17 ms au lieu d'un aller-retour),
   l'adresse suit (`replaceState`) ; les semaines voisines sont chargées d'avance (12–18 ms).
+- **Session 37 — S'entraîner, code complet, joué sur une pile Supabase réelle avec le fournisseur
+  factice** (ADR-0087). Demandé par des parents : sous chaque devoir, **une feuille d'exercices de
+  plus préparée par l'IA** — Plus facile / Pareil / Pour aller plus loin —, à faire à l'écran ou à
+  imprimer. **L'IA remplit, l'application dessine** : onze sortes d'exercices typées
+  (`lib/practice/schema.ts`), validées une à une ; **le corrigé des calculs est calculé**, jamais
+  repris du modèle ; ce qu'un enfant compte ou relie est l'un des 138 pictogrammes Fluent Emoji
+  (MIT), parce qu'un modèle d'image ne dessine pas toujours sept pommes quand on lui en demande sept ;
+  l'image générée ne sert qu'à l'illustration d'en-tête. **Une feuille par devoir et par niveau,
+  pour toute la classe** (`practice_sheets`) : lue sous les droits du devoir, **écrite par le serveur
+  seul** (aucune politique d'écriture : une famille ne peut rien publier sous « proposé par l'IA ») ;
+  l'équipe retire, remet, jette ou ferme pour la classe, journalisé. Préparation hors requête
+  (`after()`), étape écrite dans la ligne et montrée à la famille qui attend. **Google Cloud, Vertex
+  AI, multi-région `eu`** — `gemini-3.8-flash` (exercices), `gemini-3.1-flash-image`
+  (illustration), `gemini-3.8-flash-tts` (voix, en WAV) ; `global` refusé ; Anthropic en direct
+  n'offre que « mondial » ou « États-Unis ». **Rien de personnel ne part** : le prénom est écrit par
+  l'application. À l'écran, les cases se vérifient (coche, « Essaie encore », jamais de croix) ; à
+  l'impression, lignes Seyès, écriture attachée Playwrite France, QR code vers la voix, corrigé sur
+  une page à part. Hébreu et kodesh en **bêta**, de droite à gauche, avec avertissement. Activé par
+  défaut (choix du porteur), plafonné à 20 feuilles par personne et 300 par école et par jour ;
+  `PRACTICE_AI_PROVIDER=fake` pour développer sans clé. Vérifié : `pnpm check` (244 tests),
+  `pnpm build` (la fiche du devoir reste à 5,7 Mo, sans SDK Google ni `sharp`), **638 assertions
+  pgTAP** sur les deux chemins, 16 e2e sur le build de production, axe à 0 violation sérieuse en
+  clair et en sombre. **Jamais appelé contre le vrai Google** (pas de clé dans la session).
+  **Restent au porteur** : `docs/GCP.md`, puis fusionner ; la migration part avec « Deploy
+  database ». **Session suivante** : l'assistant en bulle.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

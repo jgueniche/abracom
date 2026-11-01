@@ -2557,5 +2557,89 @@
     "changed": "Mot de passe changé.",
     "unavailable": "Ce compte n'a pas d'adresse de connexion : demandez à l'école de le vérifier.",
     "sharedTestAccount": "Ce compte de l'école test est partagé : son mot de passe ne se change pas ici."
+  },
+  "practice": {
+    "levels": {
+      "easier": "Plus facile",
+      "same": "Pareil",
+      "harder": "Pour aller plus loin"
+    },
+    "launcher": {
+      "label": "S'entraîner",
+      "hint": "Une feuille d'exercices préparée par l'IA à partir de ce devoir, à faire à l'écran ou à imprimer.",
+      "beta": "Bêta",
+      "betaHint": "Hébreu et kodesh : l'IA peut se tromper. Relisez la feuille avant de la donner.",
+      "ready": "prête",
+      "jump": "S'entraîner",
+      "closedTeam": "Les feuilles d'entraînement sont fermées pour cette classe.",
+      "reopen": "Rouvrir pour la classe",
+      "close": "Fermer pour la classe",
+      "openTeam": "Les familles de la classe peuvent demander une feuille."
+    },
+    "page": {
+      "title": "S'entraîner",
+      "eyebrow": "S'entraîner",
+      "back": "Le devoir",
+      "fromHomework": "Préparée par l'IA à partir du devoir « {title} ».",
+      "levelsLabel": "Difficulté",
+      "showKey": "Afficher le corrigé",
+      "hideKey": "Masquer le corrigé",
+      "key": "Corrigé",
+      "name": "Prénom",
+      "date": "Date",
+      "nameFor": "Feuille de",
+      "nobody": "Sans prénom",
+      "tip": "Conseil aux parents",
+      "listen": "Écouter",
+      "listenWord": "Écouter « {word} »",
+      "stop": "Arrêter",
+      "scan": "Scanne pour écouter",
+      "illustrationAlt": "Illustration générée par l'IA pour cette feuille",
+      "disclosure": "Exercices écrits par une IA ({model}) à partir du devoir ; illustration et voix générées par IA. Une erreur ? L'enseignante peut retirer la feuille.",
+      "betaNotice": "L'hébreu et l'enseignement juif sont encore à l'essai : l'IA peut se tromper. Relisez la feuille avant de la donner à votre enfant.",
+      "exercise": "Exercice {number}",
+      "questions": "Questions",
+      "word": "Mot {number}",
+      "answer": "Réponse : {answer}",
+      "right": "Bravo !",
+      "retry": "Essaie encore",
+      "betaShort": "Bêta"
+    },
+    "waiting": {
+      "title": "On prépare la feuille…",
+      "hint": "Cela prend une demi-minute environ. Vous pouvez quitter la page : la feuille sera prête à votre retour.",
+      "stages": {
+        "reading": "Je lis le devoir et ses pages",
+        "writing": "J'invente les exercices",
+        "drawing": "Je dessine l'illustration",
+        "voicing": "J'enregistre la voix"
+      },
+      "done": "fait",
+      "current": "en cours",
+      "failed": "La feuille n'a pas pu être préparée.",
+      "failedHint": "Cela arrive parfois. Réessayez : une nouvelle feuille sera préparée.",
+      "retry": "Réessayer",
+      "retrying": "Nouvel essai…"
+    },
+    "team": {
+      "label": "Pour l'équipe",
+      "hide": "Retirer cette feuille",
+      "show": "Remettre la feuille",
+      "hiddenNotice": "Retirée : les familles ne la voient plus.",
+      "discard": "En préparer une autre",
+      "discardHint": "Celle-ci est effacée ; la prochaine personne qui l'ouvre en reçoit une nouvelle.",
+      "closeClass": "Fermer pour la classe",
+      "error": "L'action n'a pas abouti. Réessayez."
+    },
+    "errors": {
+      "invalid": "Cette feuille n'existe pas.",
+      "unavailable": "Les feuilles d'entraînement ne sont pas disponibles pour le moment.",
+      "notFound": "Ce devoir n'est plus disponible.",
+      "closed": "Les feuilles d'entraînement ne sont pas proposées pour cette classe.",
+      "hidden": "L'enseignante a retiré cette feuille.",
+      "quotaUser": "Vous avez demandé beaucoup de feuilles aujourd'hui. Revenez demain !",
+      "quotaSchool": "L'école a atteint le nombre de feuilles prévu pour aujourd'hui. Revenez demain.",
+      "unexpected": "La demande n'a pas abouti. Vérifiez la connexion et réessayez."
+    }
   }
 }

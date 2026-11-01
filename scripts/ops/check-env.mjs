@@ -24,6 +24,20 @@ const checks = [
   ["VAPID_SUBJECT", (v) => v.startsWith("mailto:"), "mailto: subject", true],
   ["SENTRY_DSN", (v) => /^https:\/\//.test(v), "Sentry DSN (EU)", false],
   ["NEXT_PUBLIC_SENTRY_DSN", (v) => /^https:\/\//.test(v), "Sentry DSN (EU)", false],
+  // Practice sheets (ADR-0087, docs/GCP.md). `global` would let Google process anywhere.
+  [
+    "GOOGLE_CLOUD_PROJECT",
+    (v) => /^[a-z][a-z0-9-]{4,28}[a-z0-9]$/.test(v),
+    "GCP project id",
+    false,
+  ],
+  [
+    "GOOGLE_CLOUD_LOCATION",
+    (v) => v === "eu" || v.startsWith("europe-"),
+    "eu (never global)",
+    false,
+  ],
+  ["GOOGLE_SERVICE_ACCOUNT_KEY", (v) => v.length > 200, "service account JSON key", false],
 ];
 let failed = false;
 for (const [name, valid, hint, required] of checks) {
