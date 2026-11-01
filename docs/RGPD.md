@@ -16,19 +16,30 @@
 | Agenda et communauté     | Événements, RSVP, bénévolat, annuaire opt-in, annonces               | Consentement (opt-in) / intérêt légitime     | réponses, inscriptions, coordonnées partagées, petites annonces       | Membres de l'école selon l'opt-in                                                                 |
 | Notifications            | Push, e-mail, résumé quotidien                                       | Intérêt légitime, préférences                | abonnements push, préférences, historique de livraison                | Personne concernée                                                                                |
 | Présence (pointage)      | Constater la présence, l'arrivée, le départ et qui récupère l'enfant | Contrat de scolarité, sécurité des mineurs   | listes, occurrences datées, statut, heures, responsable qui récupère  | Équipe désignée liste par liste, direction ; la famille pour son enfant (périscolaire et sorties) |
+| Entraînement (IA)        | Feuilles d'exercices préparées à partir d'un devoir (ADR-0087)       | Intérêt légitime (soutien scolaire)          | devoir et pages jointes envoyés au modèle ; **aucune donnée d'élève** | Familles de la classe, équipe ; Google Cloud (sous-traitant, UE)                                  |
 | Journal d'audit          | Traçabilité des actions d'administration et de modération            | Obligation de sécurité (art. 32)             | acteur, action, entité, horodatage                                    | Direction                                                                                         |
 | Observabilité            | Détection des erreurs                                                | Intérêt légitime                             | traces techniques sans données personnelles (`sendDefaultPii: false`) | Prestataire technique                                                                             |
 
 ## 2. Sous-traitants et hébergement (Union européenne uniquement)
 
-| Prestataire | Rôle                                                    | Région                  |
-| ----------- | ------------------------------------------------------- | ----------------------- |
-| Supabase    | Base de données, authentification, stockage, temps réel | `eu-west-3` (Paris)     |
-| Vercel      | Hébergement de l'application                            | `cdg1` (Paris)          |
-| Resend      | E-mails transactionnels                                 | Région UE du workspace  |
-| Sentry      | Suivi des erreurs (optionnel)                           | Région UE (`ingest.de`) |
+| Prestataire              | Rôle                                                               | Région                              |
+| ------------------------ | ------------------------------------------------------------------ | ----------------------------------- |
+| Supabase                 | Base de données, authentification, stockage, temps réel            | `eu-west-3` (Paris)                 |
+| Vercel                   | Hébergement de l'application                                       | `cdg1` (Paris)                      |
+| Resend                   | E-mails transactionnels                                            | Région UE du workspace              |
+| Sentry                   | Suivi des erreurs (optionnel)                                      | Région UE (`ingest.de`)             |
+| Google Cloud (Vertex AI) | Feuilles d'entraînement : exercices, illustration, voix (ADR-0087) | Multi-région `eu` — jamais `global` |
 
 Aucun traceur tiers, aucune analyse d'audience externe. Les polices sont auto-hébergées.
+
+**Ce qui part chez Google pour une feuille d'entraînement** : le titre et la consigne du devoir, sa
+matière, le niveau de la classe et les pages jointes par l'enseignant·e (photos, PDF). Jamais le nom
+d'un enfant, d'une famille ou d'un compte : le prénom imprimé en haut de la feuille est ajouté par
+l'application, après la réponse du modèle. Une page photographiée peut toutefois montrer ce qu'un
+élève y a écrit : l'enseignant·e joint la page du manuel ou de la fiche, pas le cahier d'un élève.
+Google ne s'entraîne pas sur les données des clients de Vertex AI (conditions de service). Le
+traitement IA porte sur un contenu pédagogique, ne prend aucune décision sur un enfant et ne
+l'évalue pas. Les feuilles sont supprimées avec leur devoir.
 
 ## 3. Durées de conservation (appliquées par `purge_expired_data()`, chaque nuit)
 

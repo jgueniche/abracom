@@ -18,3 +18,4 @@ content/help
 
 # Compétence tierce vendorisée : gardée telle quelle (voir .claude/skills/ui-ux-pro-max/PROVENANCE.md)
 .claude/skills/ui-ux-pro-max/
+lib/practice/pictograms.generated.ts

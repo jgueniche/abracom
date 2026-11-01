@@ -2738,3 +2738,72 @@ Jour / Semaine.
 Mesuré (Chromium, téléphone, réseau à 40 ms) : un jour **8 à 12 ms**, la bascule Jour / Semaine
 15 à 17 ms, la semaine suivante ou précédente 12 à 18 ms — **aucune requête au serveur**, contre
 un aller-retour complet (une demi-seconde à une seconde sur la base gratuite) à chaque toucher.
+
+## ADR-0087 — S'entraîner : une feuille d'exercices préparée par l'IA, depuis un devoir
+
+**Statut** : acceptée (2026-11-01) · **Contexte** : plusieurs parents ont demandé au porteur de
+quoi prolonger un devoir : des exercices du même genre, adaptés à la classe, ludiques, avec des
+images et du son (une poésie, la prononciation en anglais ou en hébreu), et une page imprimable.
+Arbitrages du porteur : Google Cloud à son nom, **Gemini 3.8 Flash** ; **le parent déclenche** la
+feuille ; **activée par défaut** pour tester ; **hébreu et kodesh dès maintenant, en bêta**, avec
+un avertissement. Le second chantier demandé — un assistant dans une bulle, limité au rôle de
+chacun — fera l'objet d'une session à part.
+
+### La décision
+
+- **L'IA remplit, l'application dessine.** Le modèle répond dans un format typé (`lib/practice/
+schema.ts`) : onze sortes d'exercices (compter, calculer, suites, comparer, relier, QCM, texte à
+  trous, écriture attachée, lecture ou poésie, dictée, dessin). L'application les met en page
+  toujours de la même façon, comme un fichier d'éditeur garde ses conventions. Ce qui ne tient pas
+  est retiré exercice par exercice (`parseSheet`), et ce que le niveau ne permet pas aussi (pas de
+  dictée en PS, `kindsFor`).
+- **Le corrigé est calculé, pas cru.** Pour les calculs, les suites et les comparaisons, le modèle
+  donne les nombres ; l'application calcule les résultats, retourne une soustraction négative,
+  écarte une division qui ne tombe pas juste (`sanitizeExercise`).
+- **Ce qu'on compte est dessiné par l'application.** Un modèle d'image à qui l'on demande « 7
+  pommes » n'en dessine pas toujours sept ; sur une feuille de CP, c'est l'erreur qui coûterait la
+  confiance des parents. Les objets à compter et à relier sont 138 pictogrammes fixes (Fluent
+  Emoji de Microsoft, licence MIT, `scripts/practice/build-pictograms.mjs`), dont le modèle choisit
+  la clé. L'image générée ne sert qu'à l'illustration d'en-tête, sans texte ni personne.
+- **Une feuille par devoir et par niveau, pour toute la classe** (`practice_sheets`, unique sur
+  `post_id, level`). La seconde famille la trouve prête et ne coûte rien.
+- **Qui lit le devoir lit la feuille, personne ne l'écrit.** La politique de lecture demande à
+  `class_posts`, sous les droits du lecteur, si le devoir est là ; aucune politique d'écriture :
+  le serveur écrit avec la clé de service, après avoir lu le devoir avec le client du lecteur.
+  Une famille ne peut donc rien placer sous l'étiquette « proposé par l'IA ». L'équipe de la classe
+  retire, remet, jette (pour en faire préparer une autre) ou ferme pour la classe, par des
+  fonctions `security definer` qui vérifient le droit et écrivent le journal. 33 assertions pgTAP.
+- **Hors de la requête, étape par étape.** La demande réclame la ligne puis rend la main ; la
+  préparation tourne dans `after()` (`server/jobs/practice-sheet.ts`) et écrit son étape dans la
+  ligne — lecture, exercices, illustration, voix. La page relit la ligne toutes les deux secondes
+  et montre ce qui se passe vraiment. Les exercices sont obligatoires ; l'illustration et la voix
+  non : si l'une échoue, la feuille paraît sans elle.
+- **Rien de personnel ne part.** Le devoir (titre, consigne, matière, niveau) et ses pages
+  jointes ; aucun nom. Le prénom en haut de la feuille est écrit par l'application, après coup.
+- **L'Europe, et rien d'autre.** Vertex AI, multi-région `eu` (`aiplatform.eu.rep.googleapis.com`) ;
+  `GOOGLE_CLOUD_LOCATION=global` est refusé au démarrage, puisque Google n'y garantit pas le lieu de
+  traitement. Le service d'Anthropic, en direct, ne propose que « mondial » ou « États-Unis » ;
+  c'est ce qui a orienté vers Google, et le porteur a choisi Gemini.
+- **Le son** : `gemini-3.8-flash-tts` rend du PCM brut, enveloppé en WAV. Sur papier, un QR code
+  à côté de chaque exercice qui se lit ramène à la voix.
+- **À l'écran, la feuille se fait.** Les cases se remplissent et se vérifient d'elles-mêmes, une
+  coche quand c'est juste, « Essaie encore » sinon, jamais de croix. À l'impression, ce sont des
+  cases, des lignes Seyès, l'écriture attachée de Playwrite France (OFL) ; le corrigé, replié par
+  défaut, sort sur une page à part.
+- **Transparence.** « Préparée par l'IA », le modèle en pied de page, l'illustration et la voix
+  dites générées. Hébreu et kodesh portent « Bêta » en tête de la feuille et sur le bloc du devoir ;
+  pour le kodesh, le modèle a pour consigne de ne citer aucun verset ni aucune prière de mémoire.
+- **Garde-fous de coût** : 20 feuilles par personne et 300 par école sur 24 heures ; étiquettes
+  `app=kesher, feature=practice` sur chaque appel pour lire la facture.
+- **Ce qu'elle n'est pas** : ni un devoir, ni une évaluation. Rien n'est rendu, rien n'est noté,
+  l'enseignante ne voit pas qui l'a faite — l'IA n'évalue jamais un enfant (ce serait un système
+  « à haut risque » au sens du règlement européen sur l'IA).
+- **Sans clé, rien ne s'affiche** ; `PRACTICE_AI_PROVIDER=fake` sert une feuille fixe pour le
+  développement et l'e2e, `off` coupe tout. Le bloc est **lu de façon tolérante** : avant la
+  migration, la fiche du devoir s'ouvre sans lui (règle de l'ADR-0082).
+
+### Ce qui reste
+
+L'assistant en bulle (session suivante) ; une vraie session sur Google Cloud pour mesurer la durée
+et le coût d'une feuille, et la qualité de l'hébreu ; l'association « relier » à l'écran au doigt
+(aujourd'hui sur papier seulement).

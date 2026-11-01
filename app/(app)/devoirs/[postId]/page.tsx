@@ -1,4 +1,4 @@
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, SparklesIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -8,6 +8,7 @@ import { HomeworkPages } from "@/components/domain/homework/homework-pages";
 import { HomeworkProgress } from "@/components/domain/homework/progress";
 import { Markdown } from "@/components/domain/markdown";
 import { PostActions } from "@/components/domain/post-actions";
+import { PracticeLauncher } from "@/components/domain/practice/launcher";
 import { PrintButton } from "@/components/domain/print-button";
 import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
@@ -19,6 +20,7 @@ import { canWriteInSchool, isSchoolAdmin, isSchoolStaff } from "@/lib/permission
 import { attachmentViews } from "@/server/queries/attachments";
 import { getClassSizes, getHomework, isClassTeacher } from "@/server/queries/class-space";
 import { getMyChildren } from "@/server/queries/family";
+import { getPracticeState } from "@/server/queries/practice";
 
 export async function generateMetadata({
   params,
@@ -41,8 +43,9 @@ export async function generateMetadata({
 export default async function HomeworkPage({ params }: { params: Promise<{ postId: string }> }) {
   const [{ postId }, user] = await Promise.all([params, requireCurrentUser()]);
   if (!/^[0-9a-f-]{36}$/i.test(postId)) notFound();
-  const [t, format, homework, children] = await Promise.all([
+  const [t, tPractice, format, homework, children] = await Promise.all([
     getTranslations("diary"),
+    getTranslations("practice"),
     getFormatter(),
     getHomework(postId),
     getMyChildren(),
@@ -50,10 +53,11 @@ export default async function HomeworkPage({ params }: { params: Promise<{ postI
   if (!homework || !homework.due_on) notFound();
 
   const schoolId = homework.class?.school_id ?? homework.school_id;
-  const [attachments, teaches, sizes] = await Promise.all([
+  const [attachments, teaches, sizes, practice] = await Promise.all([
     attachmentViews(homework.media),
     isClassTeacher(homework.class_id, user.id),
     getClassSizes([homework.class_id]),
+    getPracticeState(user, { ...homework, school_id: schoolId }),
   ]);
   const team = teaches || isSchoolStaff(user.roles, schoolId);
   const canEdit = team && (homework.author_id === user.id || isSchoolAdmin(user.roles, schoolId));
@@ -131,7 +135,18 @@ export default async function HomeworkPage({ params }: { params: Promise<{ postI
         ) : (
           <span />
         )}
-        {(views.length > 0 || homework.body_md) && <PrintButton />}
+        <div className="flex flex-wrap items-center gap-2">
+          {practice.offered && homework.published_at && (mine.length > 0 || team) && (
+            <Link
+              href="#entrainement"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-md px-3 text-sm font-medium text-primary hover:bg-primary/10"
+            >
+              <SparklesIcon aria-hidden className="size-4" />
+              {tPractice("launcher.jump")}
+            </Link>
+          )}
+          {(views.length > 0 || homework.body_md) && <PrintButton />}
+        </div>
       </div>
 
       {homework.body_md && (
@@ -141,6 +156,13 @@ export default async function HomeworkPage({ params }: { params: Promise<{ postI
       )}
 
       <HomeworkPages items={views} title={homework.title} />
+
+      {/* « S'entraîner » — for the families of the class and its team (ADR-0087). */}
+      {homework.published_at && (mine.length > 0 || team) && (
+        <div className="mt-8">
+          <PracticeLauncher homework={homework} state={practice} team={team} />
+        </div>
+      )}
 
       <footer className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
         {homework.author && (

@@ -24,6 +24,7 @@ const eslintConfig = [
       "next-env.d.ts",
       "supabase/functions/**",
       "lib/supabase/database.types.ts",
+      "lib/practice/pictograms.generated.ts",
     ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),

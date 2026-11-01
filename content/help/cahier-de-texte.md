@@ -3,7 +3,7 @@ title: Les devoirs, jour par jour
 roles: all
 routes: [/devoirs, /devoirs/[postId], /classes/[classId]/devoirs]
 topic: daily
-keywords: [devoirs, cahier de texte, à préparer, fait, cocher, pages, photo, imprimer, semaine, demain]
+keywords: [devoirs, cahier de texte, à préparer, fait, cocher, pages, photo, imprimer, semaine, demain, s'entraîner]
 since: 33
 reviewed: 2026-11-01
 ---
@@ -19,6 +19,8 @@ Chaque devoir tient en deux lignes : son titre, puis sa **matière** — toujour
 **Toucher une page** l'ouvre en plein écran : on la lit sur le téléphone, on passe à la suivante d'un glissement ou avec les flèches, et deux boutons font le reste — **Imprimer** imprime la page seule, sur sa feuille, et **Télécharger** la garde sur l'appareil. Un PDF s'ouvre dans le lecteur du téléphone ou de l'ordinateur, d'où il s'imprime aussi. Si le cahier est resté à l'école, le devoir peut se faire quand même.
 
 **Toucher le titre** ouvre la fiche du devoir : toutes ses pages en grand, et un bouton **Imprimer** qui sort chaque page sur sa propre feuille, sous le titre et la date.
+
+Sous le devoir, le bloc **S'entraîner** propose une feuille d'exercices de plus, préparée par l'IA à partir du devoir, à faire à l'écran ou à imprimer (voir « S'entraîner »).
 
 :::roles parent
 Chaque devoir a son **rond à cocher** : touchez-le quand le travail est fait. Il se remplit tout de suite, aux couleurs de la matière, et le jour se met à jour en même temps — « 2 / 3 faits », puis **« Tout est fait »**. Quand tout est prêt pour le lendemain, l'application le dit. Le rond se décoche d'un autre toucher ; l'autre parent de l'enfant voit la même chose et peut le décocher aussi.
