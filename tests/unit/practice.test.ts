@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseServiceAccountKey } from "@/lib/ai/credentials";
+import { describeKeyValue, parseServiceAccountKey } from "@/lib/ai/credentials";
 import { pcmToWav, sampleRateOf } from "@/lib/ai/wav";
 import {
   audioClips,
@@ -240,5 +240,33 @@ describe("practice sheets — the plumbing", () => {
     expect(parseServiceAccountKey(Buffer.from(key).toString("base64"))?.private_key).toBe("k");
     expect(parseServiceAccountKey("{}")).toBeNull();
     expect(parseServiceAccountKey("nonsense")).toBeNull();
+  });
+
+  it("reads the key however it was pasted, and describes it without revealing it", () => {
+    const key = JSON.stringify({
+      type: "service_account",
+      client_email: "kesher@p.iam.gserviceaccount.com",
+      private_key: "-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n",
+    });
+    const base64 = Buffer.from(key).toString("base64");
+    expect(parseServiceAccountKey(`"${base64}"`)?.client_email).toBe(
+      "kesher@p.iam.gserviceaccount.com",
+    );
+    expect(parseServiceAccountKey(`  '${key}'  `)?.client_email).toBe(
+      "kesher@p.iam.gserviceaccount.com",
+    );
+    const urlSafe = base64.replace(/\+/g, "-").replace(/\//g, "_");
+    expect(parseServiceAccountKey(urlSafe)).not.toBeNull();
+    // Real line breaks inside the private key, as some pastes deliver them.
+    const pasted = key.replace(/\\n/g, "\n");
+    expect(parseServiceAccountKey(pasted)?.private_key).toContain("ABC");
+
+    expect(describeKeyValue(key)).toBe(
+      "JSON (type=service_account; fields=client_email,private_key,type)",
+    );
+    const apiKey = "AIzaSyD-not-a-real-key-000000000000000";
+    expect(describeKeyValue(apiKey)).toMatch(/^looks like an API key/);
+    expect(describeKeyValue(apiKey)).not.toContain("SyD");
+    expect(describeKeyValue('{"type": "service_acc')).toMatch(/does not parse/);
   });
 });

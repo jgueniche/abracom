@@ -100,13 +100,14 @@ La page montre les étapes ; la feuille arrive en une demi-minute environ.
 Si la page dit « La feuille n'a pas pu être préparée », les journaux Vercel (Logs, filtre
 `[practice]`) disent pourquoi :
 
-| Message                                       | Ce qu'il faut faire                                                                  |
-| --------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `PERMISSION_DENIED` / 403                     | Le rôle **Vertex AI User** manque au compte de service (étape 4)                     |
-| `SERVICE_DISABLED`                            | L'API n'est pas activée (étape 3)                                                    |
-| `NOT_FOUND` / 404 sur un modèle               | Ce modèle n'est pas (ou plus) servi à `eu` : choisir un autre via `PRACTICE_*_MODEL` |
-| `RESOURCE_EXHAUSTED` / 429                    | Quota du projet : **IAM et administration** → **Quotas**, demander une hausse        |
-| `vertex: GOOGLE_CLOUD_PROJECT or key missing` | Une variable manque ou n'est pas dans l'environnement du déploiement                 |
+| Message                                       | Ce qu'il faut faire                                                                                                                                                                                           |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PERMISSION_DENIED` / 403                     | Le rôle **Vertex AI User** manque au compte de service (étape 4)                                                                                                                                              |
+| `SERVICE_DISABLED`                            | L'API n'est pas activée (étape 3)                                                                                                                                                                             |
+| `NOT_FOUND` / 404 sur un modèle               | Ce modèle n'est pas (ou plus) servi à `eu` : choisir un autre via `PRACTICE_*_MODEL`                                                                                                                          |
+| `RESOURCE_EXHAUSTED` / 429                    | Quota du projet : **IAM et administration** → **Quotas**, demander une hausse                                                                                                                                 |
+| `vertex: GOOGLE_CLOUD_PROJECT or key missing` | Une variable manque ou n'est pas dans l'environnement du déploiement                                                                                                                                          |
+| `is not a service account key: …`             | La valeur n'est pas le fichier JSON de l'étape 4 ; le journal dit à quoi elle ressemble (clé d'API `AIza…`, identifiant de clé, collage tronqué). Recréer la clé **JSON** du compte de service et la recoller |
 
 Sans illustration ni voix mais avec les exercices : le modèle d'image ou de voix a échoué, la
 feuille est publiée quand même (l'avertissement est dans les journaux).
