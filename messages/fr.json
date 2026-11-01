@@ -46,7 +46,8 @@
     "manage": "Gestion",
     "unreadMessages": "Messages : {count, plural, one {# non lu} other {# non lus}}",
     "homework": "Devoirs",
-    "attendance": "Pointage"
+    "attendance": "Pointage",
+    "myChildren": "Mes enfants"
   },
   "errors": {
     "notFound": {
@@ -1231,7 +1232,18 @@
     "students": "{count, plural, one {# élève} other {# élèves}}",
     "emptyHint": "Vous verrez ici la classe de votre enfant dès que l'école l'y aura inscrit.",
     "emptyHintStaff": "Créez une classe pour l'année en cours, puis affectez-lui des élèves.",
-    "manageClasses": "Gérer les classes"
+    "manageClasses": "Gérer les classes",
+    "children": {
+      "title": "Mes enfants",
+      "forToday": "Pour aujourd'hui",
+      "forTomorrow": "Pour demain",
+      "forWeekday": "Pour {day}",
+      "homework": "{count, plural, one {# devoir} other {# devoirs}}, {done, plural, =0 {aucun fait} one {# fait} other {# faits}}",
+      "nothing": "rien à préparer",
+      "noClass": "Pas encore inscrit dans une classe",
+      "record": "Fiche",
+      "doors": "Espace de classe de {name}"
+    }
   },
   "messaging": {
     "title": "Messages",

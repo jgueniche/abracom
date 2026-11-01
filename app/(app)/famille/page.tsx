@@ -58,7 +58,11 @@ export default async function FamilyPage() {
           {children.map((child) => {
             const classId = child.student.enrollments[0]?.class?.id;
             return (
-              <div key={child.student.id} className="flex flex-col gap-6">
+              <div
+                key={child.student.id}
+                id={`enfant-${child.student.id}`}
+                className="flex scroll-mt-24 flex-col gap-6"
+              >
                 <StudentCard
                   child={child}
                   footer={

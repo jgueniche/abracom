@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  BackpackIcon,
   BuildingIcon,
   CalendarDaysIcon,
   ClipboardCheckIcon,
@@ -25,7 +24,7 @@ import { cn } from "@/lib/utils";
 type Label =
   | "home"
   | "homework"
-  | "myChild"
+  | "myChildren"
   | "myClass"
   | "messages"
   | "school"
@@ -74,7 +73,9 @@ const ITEMS: Record<Perspective, Item[]> = {
   parent: [
     { href: "/accueil", label: "home", icon: HouseIcon },
     { href: "/devoirs", label: "homework", icon: NotebookPenIcon },
-    { href: "/classes", label: "myClass", icon: SchoolIcon },
+    // A parent's children, then their class (ADR-0081): « Ma classe » and « Mon enfant » were
+    // two tabs — three, with the home's « Mes enfants » block — to the same places.
+    { href: "/classes", label: "myChildren", icon: SchoolIcon },
     { href: "/messages", label: "messages", icon: MessageCircleIcon, badge: true },
     { href: "/ecole", label: "school", icon: BuildingIcon },
   ],
@@ -109,7 +110,10 @@ const ATTENDANCE: Item = { href: "/pointage", label: "attendance", icon: Clipboa
  * bar, where there is room to name everything (the header must be complete).
  */
 const DESKTOP_EXTRA: Record<Perspective, Item[]> = {
-  parent: [AGENDA, { href: "/famille", label: "myChild", icon: BackpackIcon }],
+  // The same five tabs as on a phone (ADR-0081, `navigation-consistency`): the agenda is the
+  // second entry of École and the coming events sit on the home page; the child's record is
+  // one tap from each child in « Mes enfants », and in the avatar menu.
+  parent: [],
   teacher: [{ href: "/publier", label: "publish", icon: SquarePenIcon }, AGENDA, ATTENDANCE],
   admin: [AGENDA, ATTENDANCE],
 };

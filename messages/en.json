@@ -46,7 +46,8 @@
     "manage": "Manage",
     "unreadMessages": "Messages: {count, plural, one {# unread} other {# unread}}",
     "homework": "Homework",
-    "attendance": "Attendance"
+    "attendance": "Attendance",
+    "myChildren": "My children"
   },
   "errors": {
     "notFound": {
@@ -1231,7 +1232,18 @@
     "students": "{count, plural, one {# pupil} other {# pupils}}",
     "emptyHint": "Your child's class will appear here once the school has enrolled them.",
     "emptyHintStaff": "Create a class for the current year, then enrol pupils in it.",
-    "manageClasses": "Manage classes"
+    "manageClasses": "Manage classes",
+    "children": {
+      "title": "My children",
+      "forToday": "For today",
+      "forTomorrow": "For tomorrow",
+      "forWeekday": "For {day}",
+      "homework": "{count, plural, one {# homework} other {# homework}}, {done, plural, =0 {none done} other {# done}}",
+      "nothing": "nothing to prepare",
+      "noClass": "Not enrolled in a class yet",
+      "record": "Record",
+      "doors": "{name}'s class space"
+    }
   },
   "messaging": {
     "title": "Messages",
