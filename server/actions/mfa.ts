@@ -8,6 +8,7 @@ import { getMfaFactorId } from "@/lib/auth/mfa";
 import { APP_HOME_PATH, safeNextPath } from "@/lib/auth/routes";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { mfaRequiredFor } from "@/lib/auth/policy";
+import { isTestOnlyAccount } from "@/lib/auth/school-choice";
 import { createClient } from "@/lib/supabase/server";
 import { logAudit } from "@/server/audit";
 
@@ -21,11 +22,20 @@ export type EnrollmentState = ActionState & {
 
 const CODE = /^\d{6}$/;
 
-/** Starts a TOTP enrolment: returns the QR code (SVG data URL) and the secret for manual entry. */
+/**
+ * Starts a TOTP enrolment: returns the QR code (SVG data URL) and the secret for manual entry.
+ *
+ * Not on a shared account of the test school (ADR-0079): the code would live on one
+ * visitor's phone, and every other visitor would be asked for it. The database refuses
+ * the factor as well.
+ */
 export async function startTotpEnrollment(): Promise<EnrollmentState> {
   try {
     const t = await getTranslations("security");
-    await requireCurrentUser();
+    const user = await requireCurrentUser();
+    if (isTestOnlyAccount(user.memberships)) {
+      return { status: "error", message: t("sharedTestAccount") };
+    }
     const supabase = await createClient();
     const { data: factors } = await supabase.auth.mfa.listFactors();
     for (const factor of factors?.all ?? []) {
@@ -56,6 +66,9 @@ export async function confirmTotpEnrollment(
   try {
     const t = await getTranslations("security");
     const user = await requireCurrentUser();
+    if (isTestOnlyAccount(user.memberships)) {
+      return { status: "error", message: t("sharedTestAccount") };
+    }
     const factorId = field(formData, "factorId");
     const code = field(formData, "code").replace(/\s+/g, "");
     if (!factorId || !CODE.test(code)) return { status: "error", message: t("invalidCode") };

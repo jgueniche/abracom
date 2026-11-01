@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { requireSchoolStaff } from "@/lib/auth/guards";
+import { isTestSchool } from "@/lib/auth/school-choice";
 import { isSchoolAdmin, isSuperAdmin } from "@/lib/permissions";
 import {
   removeMembership,
@@ -36,6 +37,8 @@ export default async function MembersPage({
   ]);
   const admin = isSchoolAdmin(user.roles, schoolId);
   const platform = isSuperAdmin(user.roles);
+  // The test school's accounts share the one password of the « Espace de test » (ADR-0079).
+  const testSchool = isTestSchool(user.school);
 
   const row = (m: Member) => (
     <li key={m.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
@@ -74,7 +77,7 @@ export default async function MembersPage({
           {admin && m.user_id !== user.id && (
             <>
               {/* A director's password is the platform's to replace, not a fellow director's. */}
-              {(m.role !== "school_admin" || platform) && (
+              {(m.role !== "school_admin" || platform) && !testSchool && (
                 <TemporaryPasswordButton
                   userId={m.user_id}
                   name={m.profile ? `${m.profile.first_name} ${m.profile.last_name}` : ""}

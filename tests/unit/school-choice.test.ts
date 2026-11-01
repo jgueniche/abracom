@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isTestSchool, pickSchool, schoolsOf } from "@/lib/auth/school-choice";
+import { isTestOnlyAccount, isTestSchool, pickSchool, schoolsOf } from "@/lib/auth/school-choice";
 
 const neuilly = { id: "neuilly", name: "Abravanel Neuilly", modules: {} };
 const levallois = { id: "levallois", name: "Abravanel Levallois", modules: {} };
@@ -63,5 +63,41 @@ describe("isTestSchool", () => {
     expect(isTestSchool({ modules: [] })).toBe(false);
     expect(isTestSchool({ modules: null })).toBe(false);
     expect(isTestSchool(null)).toBe(false);
+  });
+});
+
+describe("isTestOnlyAccount", () => {
+  it("holds for an account of the test school alone, whatever its role there", () => {
+    expect(isTestOnlyAccount([{ role: "parent", school: test }])).toBe(true);
+    expect(
+      isTestOnlyAccount([
+        { role: "teacher", school: test },
+        { role: "parent", school: test },
+      ]),
+    ).toBe(true);
+  });
+
+  it("never holds for someone who also belongs to a real school", () => {
+    expect(
+      isTestOnlyAccount([
+        { role: "school_admin", school: test },
+        { role: "parent", school: neuilly },
+      ]),
+    ).toBe(false);
+    expect(isTestOnlyAccount([{ role: "parent", school: neuilly }])).toBe(false);
+  });
+
+  it("never holds for a platform administrator, even inside the test school", () => {
+    expect(isTestOnlyAccount([{ role: "super_admin", school: test }])).toBe(false);
+  });
+
+  it("gives the doubt to the person: an unreadable school counts as a real one", () => {
+    expect(
+      isTestOnlyAccount([
+        { role: "parent", school: test },
+        { role: "parent", school: null },
+      ]),
+    ).toBe(false);
+    expect(isTestOnlyAccount([])).toBe(false);
   });
 });

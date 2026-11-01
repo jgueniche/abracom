@@ -778,7 +778,8 @@
       "title": "Nouveau mot de passe provisoire — {name}",
       "warning": "Le mot de passe actuel de {name} cessera de fonctionner. Un nouveau sera choisi à la prochaine connexion.",
       "confirm": "Créer le mot de passe",
-      "refused": "Ce compte ne peut pas recevoir de mot de passe provisoire d'ici : il appartient à la direction, à la plateforme ou à une autre école."
+      "refused": "Ce compte ne peut pas recevoir de mot de passe provisoire d'ici : il appartient à la direction, à la plateforme ou à une autre école.",
+      "sharedTestAccount": "Les comptes de l'école test partagent un seul mot de passe, réglé par l'administrateur de la plateforme : on ne leur en donne pas de provisoire."
     },
     "families": {
       "title": "Nouvelle famille",
@@ -2045,7 +2046,8 @@
     "adminCannotDisable": "La direction ne peut pas désactiver la validation en deux étapes.",
     "error": "Opération impossible pour le moment.",
     "passwordSection": "Mot de passe",
-    "mfaSection": "Validation en deux étapes"
+    "mfaSection": "Validation en deux étapes",
+    "sharedTestAccount": "Ce compte appartient à l'école test, et toutes les personnes qui l'essaient l'ouvrent avec le même mot de passe. Ni ce mot de passe ni la validation en deux étapes ne se changent donc ici : un seul visiteur en fermerait l'accès à tous les autres. Le mot de passe de l'école test est réglé par l'administrateur de la plateforme."
   },
   "verification": {
     "title": "Vérification",
@@ -2067,7 +2069,8 @@
     "confirmLabel": "Tapez {word} pour confirmer",
     "confirmMismatch": "Le mot de confirmation ne correspond pas.",
     "delete": "Supprimer définitivement",
-    "error": "Suppression impossible pour le moment."
+    "error": "Suppression impossible pour le moment.",
+    "sharedTestAccount": "Ce compte appartient à l'école test et il est partagé par toutes les personnes qui l'essaient : il ne peut pas être supprimé."
   },
   "help": {
     "title": "Aide",
@@ -2519,6 +2522,7 @@
     "wrongCurrent": "Le mot de passe actuel est incorrect.",
     "rateLimited": "Trop de tentatives. Réessayez dans quelques minutes.",
     "changed": "Mot de passe changé.",
-    "unavailable": "Ce compte n'a pas d'adresse de connexion : demandez à l'école de le vérifier."
+    "unavailable": "Ce compte n'a pas d'adresse de connexion : demandez à l'école de le vérifier.",
+    "sharedTestAccount": "Ce compte de l'école test est partagé : son mot de passe ne se change pas ici."
   }
 }

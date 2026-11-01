@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 import { assertSchoolContext } from "@/lib/auth/guards";
 import type { CredentialsState } from "@/lib/auth/credentials";
+import { isTestOnlyAccount } from "@/lib/auth/school-choice";
 import { temporaryPassword } from "@/lib/auth/temporary-password";
 import { isSuperAdmin } from "@/lib/permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -22,6 +23,10 @@ import { field, toActionError, uuid } from "./_shared";
  * administrator asks, nobody who also belongs to another school (that school did
  * not ask) nor anyone of the direction (a director would otherwise take over a
  * fellow director's account). The previous password stops working at once.
+ *
+ * Never a shared account of the test school (ADR-0079), whoever asks: its
+ * password is the one of the « Espace de test », set by the platform for all of
+ * them at once — replacing it would lock every visitor out of that character.
  */
 export async function giveTemporaryPassword(
   _previous: CredentialsState,
@@ -40,10 +45,11 @@ export async function giveTemporaryPassword(
     const admin = createAdminClient();
     const { data: memberships, error } = await admin
       .from("memberships")
-      .select("school_id, role")
+      .select("school_id, role, school:schools(modules)")
       .eq("user_id", userId);
     if (error) throw new Error(error.message);
     const rows = memberships ?? [];
+    if (isTestOnlyAccount(rows)) return { status: "error", message: t("sharedTestAccount") };
     const platform = isSuperAdmin(user.roles);
     const refused =
       !rows.some((m) => m.school_id === schoolId) ||

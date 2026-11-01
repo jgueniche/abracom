@@ -778,7 +778,8 @@
       "title": "New temporary password — {name}",
       "warning": "{name}'s current password will stop working. A new one will be chosen at the next sign-in.",
       "confirm": "Create the password",
-      "refused": "This account cannot be given a temporary password from here: it belongs to the head teachers, to the platform or to another school."
+      "refused": "This account cannot be given a temporary password from here: it belongs to the head teachers, to the platform or to another school.",
+      "sharedTestAccount": "The test school's accounts share a single password, set by the platform administrator: they are not given temporary ones."
     },
     "families": {
       "title": "New family",
@@ -2045,7 +2046,8 @@
     "adminCannotDisable": "The head of school cannot disable two-step verification.",
     "error": "The operation is not possible right now.",
     "passwordSection": "Password",
-    "mfaSection": "Two-step verification"
+    "mfaSection": "Two-step verification",
+    "sharedTestAccount": "This account belongs to the test school, and everyone trying it signs in with the same password. Neither that password nor two-step verification can be changed here: a single visitor would lock everyone else out. The test school's password is set by the platform administrator."
   },
   "verification": {
     "title": "Verification",
@@ -2067,7 +2069,8 @@
     "confirmLabel": "Type {word} to confirm",
     "confirmMismatch": "The confirmation word does not match.",
     "delete": "Delete permanently",
-    "error": "Deletion is not possible right now."
+    "error": "Deletion is not possible right now.",
+    "sharedTestAccount": "This account belongs to the test school and is shared by everyone trying it: it cannot be deleted."
   },
   "help": {
     "title": "Help",
@@ -2519,6 +2522,7 @@
     "wrongCurrent": "The current password is wrong.",
     "rateLimited": "Too many attempts. Try again in a few minutes.",
     "changed": "Password changed.",
-    "unavailable": "This account has no sign-in address: ask the school to check it."
+    "unavailable": "This account has no sign-in address: ask the school to check it.",
+    "sharedTestAccount": "This test school account is shared: its password cannot be changed here."
   }
 }

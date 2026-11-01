@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
 import { APP_HOME_PATH, LOGIN_PATH } from "@/lib/auth/routes";
+import { isTestOnlyAccount } from "@/lib/auth/school-choice";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/auth/temporary-password";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -83,13 +84,22 @@ export async function chooseMyPassword(
   redirect(stored === "ok" ? APP_HOME_PATH : LOGIN_PATH);
 }
 
-/** « Changer mon mot de passe », from the profile: the current one is asked first. */
+/**
+ * « Changer mon mot de passe », from the profile: the current one is asked first.
+ *
+ * Not on a shared account of the test school (ADR-0079): its password is the one
+ * everybody trying the application was given, and one visitor changing it would
+ * lock out all the others. The database keeps it too, should this be bypassed.
+ */
 export async function changeMyPassword(
   _previous: PasswordChangeState,
   formData: FormData,
 ): Promise<PasswordChangeState> {
   const t = await getTranslations("password");
   const user = await requireCurrentUser();
+  if (isTestOnlyAccount(user.memberships)) {
+    return { status: "error", message: t("sharedTestAccount") };
+  }
   const current = String(formData.get("current") ?? "");
   if (!user.email || current.length === 0 || current.length > 200) {
     return { status: "error", message: t("wrongCurrent") };

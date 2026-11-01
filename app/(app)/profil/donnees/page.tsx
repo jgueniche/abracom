@@ -7,6 +7,7 @@ import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { isTestOnlyAccount } from "@/lib/auth/school-choice";
 import { requireCurrentUser } from "@/lib/auth/session";
 
 import { DeleteAccountForm } from "./delete-account-form";
@@ -17,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DataRightsPage() {
-  await requireCurrentUser();
+  const user = await requireCurrentUser();
   const [t, tp] = await Promise.all([getTranslations("dataRights"), getTranslations("profile")]);
   return (
     <Column width="text">
@@ -48,7 +49,12 @@ export default async function DataRightsPage() {
             <CardTitle>{t("deleteTitle")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <DeleteAccountForm />
+            {/* A shared account of the test school is everybody's way in (ADR-0079). */}
+            {isTestOnlyAccount(user.memberships) ? (
+              <p className="text-sm text-pretty text-muted-foreground">{t("sharedTestAccount")}</p>
+            ) : (
+              <DeleteAccountForm />
+            )}
           </CardContent>
         </Card>
       </div>

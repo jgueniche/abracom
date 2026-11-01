@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { LOGIN_PATH } from "@/lib/auth/routes";
+import { isTestOnlyAccount } from "@/lib/auth/school-choice";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { getServerEnv } from "@/lib/env.server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -14,6 +15,9 @@ import { type ActionState, field, toActionError } from "./admin/_shared";
 /**
  * Self-service account deletion (docs/RGPD.md): the SQL function anonymises and detaches the
  * data, then the auth account itself is removed when the service key is configured.
+ *
+ * A shared account of the test school is not deleted (ADR-0079): it is everybody's way in,
+ * and nothing would bring it back. `delete_my_account()` refuses it too.
  */
 export async function deleteMyAccount(
   _prev: ActionState,
@@ -22,6 +26,9 @@ export async function deleteMyAccount(
   try {
     const t = await getTranslations("dataRights");
     const user = await requireCurrentUser();
+    if (isTestOnlyAccount(user.memberships)) {
+      return { status: "error", message: t("sharedTestAccount") };
+    }
     if (field(formData, "confirm").toUpperCase() !== t("confirmWord").toUpperCase()) {
       return { status: "error", message: t("confirmMismatch") };
     }

@@ -5,6 +5,8 @@ import { expect, type Page, test } from "@playwright/test";
  *
  *  - the « Espace de test » door opens the test school as the character chosen, and only
  *    with its password;
+ *  - a shared account of the test school offers no way to close it to the others: no
+ *    password change, no second factor, no deletion, no provisional password (ADR-0079);
  *  - the direction registers a family; the parent signs in with the provisional password
  *    shown once, must choose their own before anything opens, and lands on their home;
  *  - the platform administrator opens a school and moves between schools.
@@ -81,6 +83,30 @@ test.describe("several schools and families registered by the school", () => {
     await expect(page.getByRole("complementary", { name: "École test" })).toContainText("fictifs");
     await openAccountMenu(page);
     await expect(page.getByRole("menu")).toContainText(TEST_SCHOOL);
+  });
+
+  test("a shared account of the test school cannot be closed to the others (ADR-0079)", async ({
+    page,
+  }) => {
+    await signIn(page, "parent-1@demo.local");
+    await page.goto("/profil/securite");
+    await expect(page.getByRole("main")).toContainText("ouvrent avec le même mot de passe");
+    await expect(page.locator('input[name="current"]')).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /deux étapes/i })).toHaveCount(0);
+
+    await page.goto("/profil/donnees");
+    await expect(page.getByRole("main")).toContainText("il ne peut pas être supprimé");
+    await expect(page.locator('input[name="confirm"]')).toHaveCount(0);
+    // the export stays: it closes nothing
+    await expect(page.getByRole("link", { name: /Télécharger/ })).toBeVisible();
+
+    // the test direction gives no provisional password: it would replace the shared one
+    await page.context().clearCookies();
+    await signIn(page, "admin@demo.local");
+    await page.goto("/admin/utilisateurs");
+    // the rows carry the direction's other actions, but not this one
+    await expect(page.getByRole("button", { name: "Suspendre" }).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: "Mot de passe provisoire" })).toHaveCount(0);
   });
 
   test("the direction registers a family, and the parent chooses a password at the first sign-in", async ({
