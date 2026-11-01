@@ -2595,3 +2595,117 @@ réapparaissait à chaque changement de page tant qu'on ne l'avait pas fermée.
 
 Deux colonnes « mieux rangées » (un jour par colonne, cinq colonnes) : sur un téléphone il n'y en
 a qu'une, et la vue Jour répond à la façon dont les devoirs se préparent.
+
+## ADR-0084 — Les fonctions des politiques en PL/pgSQL, et les onglets chargés dès l'affichage
+
+**Statut** : acceptée (2026-11-01) · complète l'ADR-0067 et l'ADR-0076 · **Contexte** : huitième
+signalement, après la preview de l'ADR-0083 : « c'est beaucoup mieux qu'avant, mais il y a
+toujours une latence quand je change d'onglet au début ». Le porteur compare avec ses autres
+sites, plus gros et sans aucune latence, sur la même offre Supabase, et conclut que le problème
+est dans le code. **Il avait raison.**
+
+### Ce qui a été mesuré
+
+Pile Supabase locale, build de production, profil par page (`pg_stat_statements` réinitialisé
+avant chaque rendu) :
+
+- La requête « prochain jour qui a des devoirs » d'un parent de deux enfants prenait **132 ms**
+  sur une machine au repos, pour 98 lignes. Le plan : 0,04 ms d'index, puis **1,4 ms par ligne**
+  dans la politique de `class_posts`.
+- La cause n'est pas l'offre gratuite, ni le nombre de requêtes : c'est le langage des
+  fonctions. `can_access_class` appelle `is_school_staff` → `has_school_role` →
+  `is_super_admin`, `mfa_required`, puis `is_class_teacher`, puis `guardian_class_ids` →
+  `may_inspect`. Toutes en `language sql`, SECURITY DEFINER, donc jamais incorporées au plan
+  appelant ; et jusqu'à PostgreSQL 17, une fonction SQL appelée **depuis une autre** reçoit un
+  état d'exécution neuf à chaque appel de sa mère, donc est **analysée et planifiée de nouveau à
+  chaque fois**. Huit planifications par ligne lue, pour chaque ligne de chaque table protégée.
+- Même filtre, mêmes 345 lignes, mêmes réponses, avec les mêmes corps en PL/pgSQL (qui prépare
+  chaque requête une fois par connexion) : **539 ms → 55 ms**.
+
+Par page, base bridée à un quart de cœur (`docker update --cpus 0.25`, l'ordre de grandeur de
+l'offre gratuite), même données, rendu serveur complet :
+
+| page (parent) | avant (SQL) | après (PL/pgSQL) |
+| ------------- | ----------- | ---------------- |
+| `/accueil`    | 941 ms      | 224–243 ms       |
+| `/devoirs`    | 1 048 ms    | 181–255 ms       |
+| `/classes`    | 260 ms      | 64–78 ms         |
+| `/ecole`      | 241 ms      | 54–96 ms         |
+
+Temps de base cumulé de l'accueil : 2 243 ms → 292–382 ms ; celui des devoirs : 1 378 → 134–196.
+
+Et le geste du porteur, joué dans Chromium (téléphone, réseau à 40 ms, base bridée) : ouvrir
+l'accueil, attendre, toucher un onglet, mesurer jusqu'au contenu, tap de 80 ms compris :
+
+| toucher un onglet…      | avant          | après         |
+| ----------------------- | -------------- | ------------- |
+| 0,3 s après l'ouverture | 1 158–1 376 ms | **97–106 ms** |
+| 0,8 s après l'ouverture | 756–1 079 ms   | 104–111 ms    |
+| 2 s après l'ouverture   | 95–113 ms      | 95–123 ms     |
+| enseignante, à 0,3 s    | 255–820 ms     | 98–148 ms     |
+
+C'est exactement le symptôme décrit : instantané après deux secondes, lent avant.
+
+### La décision
+
+- **Les 32 fonctions que les politiques atteignent passent en PL/pgSQL**
+  (`20261101110000_policy_helpers_plpgsql.sql`). Les corps sont ceux du catalogue, recopiés tels
+  quels et enveloppés (`return (…)`, `return query …`) ; STABLE, SECURITY DEFINER et
+  `search_path = public` sont gardés ; `create or replace` garde propriétaire, droits et OID, donc
+  les 149 politiques ne bougent pas. `#variable_conflict use_column` garde la règle SQL (la colonne
+  l'emporte sur un paramètre de même nom), et chaque corps scalaire rend au plus une ligne.
+  `is_service_role()` et `has_strong_auth()` restent en SQL : ni SECURITY DEFINER ni configurées,
+  le planificateur les incorpore, ce qui vaut mieux. Le test pgTAP `025_policy_helpers.sql` échoue
+  si une fonction atteinte par une politique revient en SQL non incorporable. **605 assertions
+  vertes**, les droits n'ont pas bougé.
+- **« Prochain jour qui a des devoirs » : une question par classe** (jusqu'à douze) au lieu d'une
+  pour toutes : l'index (classe, date) se lit dans l'ordre et s'arrête à la première ligne visible
+  — 0,5 ms au lieu de 89 sur la base bridée. C'était la requête la plus lente du cahier de texte.
+- **`TabPrefetch` part dès l'affichage** : un dixième de seconde après le montage, les onglets à
+  60 ms d'intervalle, au lieu d'attendre que le navigateur soit oisif (jusqu'à deux secondes sur
+  un téléphone occupé) puis de les espacer de 250 ms — le dernier onglet était prêt trois
+  secondes après l'ouverture.
+- **Après une mutation**, la mise en page est rendue de nouveau par le serveur et passe une
+  nouvelle `refreshKey` : les onglets, vidés du cache par `revalidatePath`, sont rechargés tout de
+  suite au lieu d'attendre la vérification de la minute suivante.
+- **Un onglet part quand le doigt se pose** (`pointerdown`, ou survol au pointeur) et non quand il
+  se lève : 60 à 150 ms gagnés sur un onglet pas encore chargé, rien sur un onglet déjà prêt.
+
+### Ce qui reste
+
+Le **démarrage à froid** d'une fonction Vercel (environ une seconde, ADR-0065) décide toujours de
+la toute première page après une longue absence ; il n'est pas dans le code. Et les politiques
+restent évaluées ligne par ligne : environ 160 microsecondes par ligne au lieu de 1 400, ce qui
+suffit pour les volumes d'une école ; les réécrire en ensembles est une
+session de base, à ouvrir si une table dépasse quelques milliers de lignes lues par écran.
+
+**À la fusion**, le workflow « Deploy database » applique la migration ; avant, la preview lit la
+base de production avec les anciennes fonctions et ne montre que la moitié client du gain.
+
+## ADR-0085 — La page de connexion porte le logo de l'école, et l'en-tête son livre
+
+**Statut** : acceptée (2026-11-01) · **Contexte** : « la page de connexion est un tout petit peu
+trop fade », et « le logo est beaucoup trop petit » — l'en-tête montrait le logo entier réduit à
+32 px, où « INSTITUTIONS ABRAVANEL » fait trois pixels de haut et le livre une tache. La page de
+connexion, la première que voit chaque famille, n'en avait aucun.
+
+### La décision
+
+- **Deux découpes du fichier officiel**, jamais redessiné ni recoloré (`ui-ux-pro-max`, règle
+  « Correct Brand Logos ») : `public/brand/abravanel-logo.png`, le logo entier détouré de ses
+  marges (720 px, 88 Ko au lieu de 820), et `public/brand/abravanel-mark.png`, le livre seul
+  (19 Ko). `SchoolLogo` et `SchoolMark` (`components/domain/school-logo.tsx`).
+- **Connexion** : deux moitiés sur grand écran — à gauche le logo en grand (22 rem) sur un lavis
+  calme, trois courts filets aux couleurs du logo (sarcelle de l'aleph, or et brique de l'étoile),
+  « Le lien entre l'école et les familles » en serif, et ce que veut dire Kesher ; à droite le
+  formulaire, sous « Bienvenue sur Kesher ». Sur téléphone, le logo forme un bandeau en tête et le
+  bouton reste dans le premier écran (844 px). Le mot de passe s'affiche à la demande
+  (`password-toggle` de la liste) : un mot de passe donné par l'école se tape, il ne se retient
+  pas, et une lettre fausse sur un clavier de téléphone était toute la connexion ratée.
+  « Pas de compte ? » n'est plus un encadré mais une ligne qui se déplie (ADR-0078).
+- **En-tête de l'application** : le livre, 36 px de haut sur téléphone et 44 px sur ordinateur, à
+  la place de l'icône de 32 px.
+- **Thème sombre** : le logo est dessiné à l'encre foncée sur rien ; il pose sur une plaque
+  blanche, comme un logo imprimé sur du papier, plutôt que d'être inversé.
+- Mesuré : axe à 0 violation sérieuse sur `/connexion`, `/essai` et l'en-tête de trois rôles, à
+  390 et 1 440 px, en clair et en sombre, aucun défilement horizontal.

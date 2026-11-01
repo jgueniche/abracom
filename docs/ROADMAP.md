@@ -1261,8 +1261,13 @@ d'interface Kesher »), mesuré à 390 et 1 440 px, puis les cinq lots validés 
 - [x] Lot 4 : bandeau de classe, une rangée d'onglets et « Suivi » en menu, cahier de vie par mois et
       en deux catégories, agenda à date en marge, École compacte.
 - [x] Lot 5 : « Mes enfants » pour le parent, cinq onglets identiques sur téléphone et ordinateur.
-- [ ] **Au porteur** : regarder la preview, puis fusionner (la migration `20261101100000` part avec
-      « Deploy database »).
+- [x] **Latence au premier clic** (ADR-0084) : fonctions des politiques en PL/pgSQL
+      (`20261101110000`, test `025_policy_helpers.sql`), « prochain jour de devoirs » une question
+      par classe, `TabPrefetch` dès l'affichage, après chaque mutation et au toucher.
+- [x] **Connexion et logo** (ADR-0085) : logo de l'école en grand sur `/connexion`, livre du logo
+      dans l'en-tête, œil du mot de passe, plaque blanche en sombre.
+- [ ] **Au porteur** : regarder la preview, puis fusionner (les migrations `20261101100000` et
+      `20261101110000` partent avec « Deploy database »).
 
 ## Questions ouvertes (§15 du brief)
 

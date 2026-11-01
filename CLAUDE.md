@@ -682,6 +682,20 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   préparé, ou celui touché dans le bandeau) et **Semaine** empilée sur une colonne — les deux colonnes
   étaient illisibles ; la bannière d'installation n'est plus proposée que sur l'accueil, une fois par
   session.
+  **La latence au premier clic, enfin trouvée** (ADR-0084) : le porteur soupçonnait le code, il avait
+  raison. Les 32 fonctions des politiques RLS (`can_access_class`, `is_school_staff`…) étaient en
+  `language sql` ; jusqu'à PostgreSQL 17, une fonction SQL appelée depuis une autre est
+  **replanifiée à chaque appel** — 1,4 ms par ligne lue, huit planifications par ligne. Passées en
+  PL/pgSQL, mêmes corps, mêmes droits (605 assertions pgTAP) : sur une base bridée façon offre
+  gratuite, l'accueil passe de 941 à ~230 ms de rendu serveur, les devoirs de 1 048 à ~200 ; un
+  onglet touché 0,3 s après l'ouverture s'affiche en 97–106 ms au lieu de 1,2–1,4 s.
+  `TabPrefetch` part dès l'affichage (et non au premier temps mort, jusqu'à 2 s), recharge les
+  onglets après une mutation, et un onglet part quand le doigt se pose. **La migration
+  `20261101110000` part avec « Deploy database » à la fusion** : avant, la preview n'a que la moitié
+  client du gain. **Connexion et logo** (ADR-0085) : la page de connexion porte le logo de l'école en
+  grand (deux moitiés sur ordinateur, bandeau sur téléphone, bouton dans le premier écran), « Le lien
+  entre l'école et les familles », un œil pour afficher le mot de passe ; l'en-tête de l'application
+  montre le livre du logo (36–44 px) au lieu du logo entier réduit à 32 px ; plaque blanche en sombre.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
