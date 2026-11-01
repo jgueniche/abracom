@@ -53,53 +53,59 @@ export default async function ClassLayout({
      * in the application.
      */
     <>
-      <Column>
-        {/* The team used to run on inside the page description — four names with
+      <Column width="full">
+        {/* The class is named on a band of the application's pale tint, its tabs along the band's
+            foot: the space of a class reads as a place with an entrance, where it used to be a
+            page of grey text on white (« très plate », ADR-0081). */}
+        <div className="mb-6 rounded-xl bg-muted px-4 pt-4 sm:px-5">
+          {/* The team used to run on inside the page description — four names with
           their roles, wrapping three lines between the class name and the tabs,
           which pushed the navigation down and read as a paragraph. Level and
           room name the class, so they take the dateline; the team is a caption:
           one clipped line, the whole of it on hover, and laid out properly in
           Ma famille where a parent goes to read it. */}
-        <PageHeader
-          eyebrow={`${levelLabel(cls.level, locale)}${cls.room ? ` · ${cls.room}` : ""}`}
-          title={cls.name}
-          caption={team || undefined}
-          actions={
-            <>
-              {/* a read-only guardian has no messaging: the button led to an empty list */}
-              {canMessage &&
-                (canOpenClassGroup ? (
-                  <form action={openClassGroup}>
-                    <input type="hidden" name="classId" value={classId} />
-                    <Button type="submit" variant="outline" className="min-h-11">
-                      <MessageCircleIcon aria-hidden />
-                      {tMessaging("classDiscussion")}
+          <PageHeader
+            className="mb-3"
+            eyebrow={`${levelLabel(cls.level, locale)}${cls.room ? ` · ${cls.room}` : ""}`}
+            title={cls.name}
+            caption={team || undefined}
+            actions={
+              <>
+                {/* a read-only guardian has no messaging: the button led to an empty list */}
+                {canMessage &&
+                  (canOpenClassGroup ? (
+                    <form action={openClassGroup}>
+                      <input type="hidden" name="classId" value={classId} />
+                      <Button type="submit" variant="outline" className="min-h-11">
+                        <MessageCircleIcon aria-hidden />
+                        {tMessaging("classDiscussion")}
+                      </Button>
+                    </form>
+                  ) : belongsToClassGroup ? (
+                    <Button asChild variant="outline" className="min-h-11">
+                      <Link href="/messages">
+                        <MessageCircleIcon aria-hidden />
+                        {tMessaging("classDiscussion")}
+                      </Link>
                     </Button>
-                  </form>
-                ) : belongsToClassGroup ? (
-                  <Button asChild variant="outline" className="min-h-11">
-                    <Link href="/messages">
-                      <MessageCircleIcon aria-hidden />
-                      {tMessaging("classDiscussion")}
+                  ) : null)}
+                {(isTeacher || isStaff) && (
+                  <Button asChild className="min-h-11">
+                    <Link href={`/classes/${classId}/publier`}>
+                      <PlusIcon aria-hidden />
+                      {t("post.new")}
                     </Link>
                   </Button>
-                ) : null)}
-              {(isTeacher || isStaff) && (
-                <Button asChild className="min-h-11">
-                  <Link href={`/classes/${classId}/publier`}>
-                    <PlusIcon aria-hidden />
-                    {t("post.new")}
-                  </Link>
-                </Button>
-              )}
-            </>
-          }
-        />
-        <ClassTabs
-          classId={classId}
-          showAssessments={showAssessments}
-          showLate={isTeacher || isStaff}
-        />
+                )}
+              </>
+            }
+          />
+          <ClassTabs
+            classId={classId}
+            showAssessments={showAssessments}
+            showLate={isTeacher || isStaff}
+          />
+        </div>
       </Column>
       {children}
     </>

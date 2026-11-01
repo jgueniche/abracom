@@ -1,38 +1,42 @@
-import { ImagesIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, ImagesIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
 import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import { PostCard } from "@/components/domain/post-card";
 import { Column } from "@/components/layouts/column";
-import { SectionHeader } from "@/components/layouts/section-header";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/components/ui/link";
 import { requireClassAccess } from "@/lib/auth/class-access";
+import { cn } from "@/lib/utils";
 import { getClassFeed, JOURNAL_TYPES } from "@/server/queries/class-space";
 
 /**
- * The cahier de vie: what happened in the class, month by month.
+ * Two categories a family can tell apart (ADR-0081): what the class lived, and what to know
+ * or to bring. The database keeps its three types; « info » and « reminder » read as one.
+ */
+const CATEGORY_TYPES = {
+  vie: ["journal"],
+  infos: ["info", "reminder"],
+} as const satisfies Record<string, ReadonlyArray<(typeof JOURNAL_TYPES)[number]>>;
+type CategoryKey = keyof typeof CATEGORY_TYPES;
+
+/**
+ * The class journal, a month at a time.
  *
- * It used to keep only the entries that carried a photo, and of those it
- * rendered the title and the grid — never the text. So a teacher who wrote
- * "belle sortie au parc, les enfants ont rapporté des feuilles" without taking
- * a picture published into the void, and one who wrote it *with* a picture had
- * their words dropped on the floor. There is no other screen where a journal
- * entry appears: the "Fil" tab that used to carry them was removed in session
- * 16 because it duplicated Homework and Journal. A cahier de vie is a diary,
- * not an album; the photographs illustrate it.
- *
- * Since ADR-0059 it also holds what the composer used to file under "Info" and
- * "Rappel" — two values written since session 5 and read by no screen at all.
- * They are categories of the diary, and the chips filter on them.
+ * Every month used to run into the next in one scroll, each headed by a count nobody could
+ * read (« Octobre 2026 · 11 »), with a third of a wide screen left empty beside a single
+ * column of text. A month is now chosen like a week in the homework diary — the latest by
+ * default, the arrows to go back — and a wide screen lays its pages two by two.
  */
 export default async function JournalPage({
   params,
   searchParams,
 }: {
   params: Promise<{ classId: string }>;
-  searchParams: Promise<{ c?: string }>;
+  searchParams: Promise<{ c?: string; mois?: string }>;
 }) {
-  const [{ classId }, { c }] = await Promise.all([params, searchParams]);
+  const [{ classId }, { c, mois }] = await Promise.all([params, searchParams]);
   const [{ isTeacher, isStaff }, t, tSpace, format, posts] = await Promise.all([
     requireClassAccess(classId),
     getTranslations("classSpace.journal"),
@@ -41,36 +45,51 @@ export default async function JournalPage({
     getClassFeed(classId, JOURNAL_TYPES),
   ]);
   const canManage = isTeacher || isStaff;
-  // Drafts are invisible to families (RLS), and were invisible to their own
-  // author too: the diary dropped everything without a publication date.
   const visible = posts.filter((post) => post.published_at || canManage);
-  const category = JOURNAL_TYPES.find((key) => key === c);
-  const entries = category ? visible.filter((post) => post.type === category) : visible;
+  const category: CategoryKey | null = c === "vie" || c === "infos" ? c : null;
+  const entries = category
+    ? visible.filter((post) =>
+        (CATEGORY_TYPES[category] as ReadonlyArray<string>).includes(post.type),
+      )
+    : visible;
 
-  const months = new Map<string, typeof entries>();
-  for (const post of entries) {
-    const key = (post.published_at ?? post.created_at).slice(0, 7);
-    months.set(key, [...(months.get(key) ?? []), post]);
-  }
+  const monthOf = (post: (typeof entries)[number]) =>
+    (post.published_at ?? post.created_at).slice(0, 7);
+  // newest first, as the feed is
+  const months = [...new Set(entries.map(monthOf))];
+  const month = months.includes(mois ?? "") ? mois! : (months[0] ?? null);
+  const index = month ? months.indexOf(month) : -1;
+  const older = index >= 0 ? (months[index + 1] ?? null) : null;
+  const newer = index > 0 ? months[index - 1]! : null;
+  const shown = month ? entries.filter((post) => monthOf(post) === month) : [];
+
+  const href = (next: { c?: CategoryKey | null; mois?: string | null }) => {
+    const query = new URLSearchParams();
+    const cat = next.c === undefined ? category : next.c;
+    const m = next.mois === undefined ? month : next.mois;
+    if (cat) query.set("c", cat);
+    if (m && m !== months[0]) query.set("mois", m);
+    const qs = query.toString();
+    return `/classes/${classId}/cahier${qs ? `?${qs}` : ""}`;
+  };
+  const monthName = (key: string) =>
+    format.dateTime(new Date(`${key}-01T12:00:00`), { month: "long", year: "numeric" });
 
   const filters = visible.length > 0 && (
-    <FilterChips label={tSpace("post.category")}>
-      <FilterChip href={`/classes/${classId}/cahier`} active={!category}>
+    <FilterChips label={tSpace("post.category")} className="mb-1">
+      <FilterChip href={href({ c: null, mois: null })} active={!category}>
         {t("filterAll")}
       </FilterChip>
-      {JOURNAL_TYPES.map((key) => (
-        <FilterChip
-          key={key}
-          href={`/classes/${classId}/cahier?c=${key}`}
-          active={category === key}
-        >
-          {tSpace(`type.${key}`)}
-        </FilterChip>
-      ))}
+      <FilterChip href={href({ c: "vie", mois: null })} active={category === "vie"}>
+        {t("filterLife")}
+      </FilterChip>
+      <FilterChip href={href({ c: "infos", mois: null })} active={category === "infos"}>
+        {t("filterPractical")}
+      </FilterChip>
     </FilterChips>
   );
 
-  if (entries.length === 0)
+  if (shown.length === 0)
     return (
       <Column>
         <div className="flex flex-col gap-6">
@@ -89,30 +108,34 @@ export default async function JournalPage({
       </Column>
     );
 
-  // A diary is read, entry after entry: one column at reading measure, the entries set apart
-  // by space — the two-column grid of framed cards is what ADR-0078 took apart.
+  const arrow = (target: string | null, label: string, Icon: typeof ChevronLeftIcon) =>
+    target ? (
+      <Button asChild variant="ghost" size="icon" className="size-11 shrink-0">
+        <Link href={href({ mois: target })} aria-label={`${label} : ${monthName(target)}`}>
+          <Icon aria-hidden className="size-5" />
+        </Link>
+      </Button>
+    ) : (
+      <span aria-hidden className="inline-flex size-11 shrink-0 items-center justify-center">
+        <Icon className="size-5 text-muted-foreground/40" />
+      </span>
+    );
+
   return (
-    <Column width="text">
-      <div className="flex flex-col gap-10">
-        {filters}
-        {[...months.entries()].map(([month, items]) => (
-          <section key={month} className="flex flex-col">
-            <SectionHeader
-              label={format.dateTime(new Date(`${month}-01T12:00:00`), {
-                month: "long",
-                year: "numeric",
-              })}
-            />
-            <div className="flex flex-col gap-9">
-              {items.map((post) => (
-                /* The journal used to render its own card — a title, a photo
-                 grid and no menu at all, so an entry could be neither edited
-                 nor removed from the only screen that shows it. One anatomy,
-                 everywhere. */
-                <PostCard key={post.id} post={post} canManage={canManage} />
-              ))}
-            </div>
-          </section>
+    <Column width="full">
+      {filters}
+      <nav aria-label={t("months")} className="mb-4 flex max-w-xl items-center gap-2">
+        <h2 className="section-label min-w-0 flex-1 first-letter:uppercase">{monthName(month!)}</h2>
+        {arrow(older, t("previousMonth"), ChevronLeftIcon)}
+        <span className="-ml-2">{arrow(newer, t("nextMonth"), ChevronRightIcon)}</span>
+      </nav>
+      <div
+        className={cn("grid items-start gap-x-12 gap-y-8", shown.length > 1 && "xl:grid-cols-2")}
+      >
+        {shown.map((post) => (
+          // One anatomy, everywhere: the journal used to render its own card, with no menu, so an
+          // entry could be neither edited nor removed from the only screen that shows it.
+          <PostCard key={post.id} post={post} canManage={canManage} />
         ))}
       </div>
     </Column>

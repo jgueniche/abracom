@@ -1084,8 +1084,8 @@
     "type": {
       "homework": "Homework",
       "journal": "Class life",
-      "info": "Information",
-      "reminder": "Reminder"
+      "info": "Practical info",
+      "reminder": "Practical info"
     },
     "visibility": {
       "parents": "Parents",
@@ -1144,7 +1144,12 @@
       "download": "Download disabled by the school",
       "photos": "{count, plural, one {# photo} other {# photos}}",
       "filterAll": "All",
-      "emptyHint": "The class diary's entries and photos will appear here, month by month."
+      "emptyHint": "The class diary's entries and photos will appear here, month by month.",
+      "filterLife": "Class life",
+      "filterPractical": "Practical info",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "months": "Months"
     },
     "notes": {
       "title": "Individual notes",
@@ -2156,8 +2161,8 @@
     "formsHint": "Requests from the school that need your answer.",
     "community": "Community",
     "communityHint": "Classifieds, directory and mutual help between families.",
-    "pendingAck": "{count, plural, one {# read receipt pending} other {# read receipts pending}}",
-    "formsToAnswer": "{count, plural, one {# form to fill in} other {# forms to fill in}}"
+    "pendingAck": "{count} to confirm",
+    "formsToAnswer": "{count} to fill in"
   },
   "publish": {
     "title": "Publish",

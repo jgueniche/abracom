@@ -1084,8 +1084,8 @@
     "type": {
       "homework": "Devoir",
       "journal": "Vie de classe",
-      "info": "Information",
-      "reminder": "Rappel"
+      "info": "Info pratique",
+      "reminder": "Info pratique"
     },
     "visibility": {
       "parents": "Parents",
@@ -1144,7 +1144,12 @@
       "download": "Téléchargement désactivé par l'école",
       "photos": "{count, plural, one {# photo} other {# photos}}",
       "filterAll": "Tout",
-      "emptyHint": "Les billets et les photos du cahier de vie s'afficheront ici, mois par mois."
+      "emptyHint": "Les billets et les photos du cahier de vie s'afficheront ici, mois par mois.",
+      "filterLife": "Vie de classe",
+      "filterPractical": "Infos pratiques",
+      "previousMonth": "Mois précédent",
+      "nextMonth": "Mois suivant",
+      "months": "Mois"
     },
     "notes": {
       "title": "Mots individuels",
@@ -2156,8 +2161,8 @@
     "formsHint": "Les demandes de l'école auxquelles vous devez répondre.",
     "community": "Communauté",
     "communityHint": "Petites annonces, annuaire et entraide entre familles.",
-    "pendingAck": "{count, plural, one {# accusé de lecture en attente} other {# accusés de lecture en attente}}",
-    "formsToAnswer": "{count, plural, one {# formulaire à remplir} other {# formulaires à remplir}}"
+    "pendingAck": "{count} à confirmer",
+    "formsToAnswer": "{count} à remplir"
   },
   "publish": {
     "title": "Publier",
