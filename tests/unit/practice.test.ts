@@ -268,5 +268,9 @@ describe("practice sheets — the plumbing", () => {
     expect(describeKeyValue(apiKey)).toMatch(/^looks like an API key/);
     expect(describeKeyValue(apiKey)).not.toContain("SyD");
     expect(describeKeyValue('{"type": "service_acc')).toMatch(/does not parse/);
+    const pem = "-----BEGIN PRIVATE KEY-----\\nMIIEv\\n-----END PRIVATE KEY-----\\n";
+    expect(describeKeyValue(pem)).toMatch(/^looks like the private key alone/);
+    expect(describeKeyValue(pem)).not.toContain("MIIEv");
+    expect(describeKeyValue(base64.slice(0, 200))).toMatch(/^base64 of a JSON that does not parse/);
   });
 });
