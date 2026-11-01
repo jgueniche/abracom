@@ -48,7 +48,7 @@ export default async function DocumentsPage() {
       <div className="flex flex-col gap-10">
         {groups.map((group) => (
           <section key={group.name || "none"} className="flex flex-col">
-            <SectionHeader label={group.name || t("noFolder")} count={group.items.length} />
+            <SectionHeader label={group.name || t("noFolder")} />
             {/* one document after another, apart by space rather than each in a frame (ADR-0078) */}
             <div className="flex flex-col gap-7">
               {group.items.map((doc) => {

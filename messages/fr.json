@@ -27,7 +27,7 @@
   },
   "nav": {
     "home": "Accueil",
-    "classes": "Classe(s)",
+    "classes": "Classes",
     "messages": "Messages",
     "agenda": "Agenda",
     "dashboard": "Tableau de bord",
@@ -1057,7 +1057,7 @@
     "signedCount": "{count} signature(s)"
   },
   "classSpace": {
-    "title": "Classe(s)",
+    "title": "Mes classes",
     "subtitle": "Le fil de chaque classe : devoirs, cahier de vie, informations.",
     "empty": "Aucune classe accessible.",
     "tabs": {

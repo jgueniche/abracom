@@ -86,7 +86,6 @@ export default async function HelpPage() {
                 <SectionHeader
                   id={`topic-${group.topic}`}
                   label={tTopics(group.topic)}
-                  count={group.articles.length}
                   hint={tTopics(`${group.topic}Hint`)}
                 />
                 {/* A table of contents, not twenty-six boxes: the help index

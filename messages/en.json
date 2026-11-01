@@ -27,7 +27,7 @@
   },
   "nav": {
     "home": "Home",
-    "classes": "Class(es)",
+    "classes": "Classes",
     "messages": "Messages",
     "agenda": "Calendar",
     "dashboard": "Dashboard",
@@ -1057,7 +1057,7 @@
     "signedCount": "{count} signature(s)"
   },
   "classSpace": {
-    "title": "Class(es)",
+    "title": "My classes",
     "subtitle": "Each class feed: homework, class diary, information.",
     "empty": "No class available.",
     "tabs": {

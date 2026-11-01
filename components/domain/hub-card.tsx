@@ -42,14 +42,9 @@ export function HubCard({ href, title, hint, meta, urgent, className }: HubCardP
         className="group -mx-3 flex min-h-14 flex-col gap-0.5 rounded-lg px-3 py-3 transition-colors hover:bg-muted focus-visible:bg-muted sm:flex-row sm:items-baseline sm:gap-4"
       >
         <span className="min-w-0 flex-1">
-          <span
-            className={cn(
-              "block text-base font-semibold tracking-[-0.006em]",
-              urgent && "text-brick",
-            )}
-          >
-            {title}
-          </span>
+          {/* The title stays in ink: in red, « Annonces et circulaires » read as an error.
+              What is waiting is the figure's to say, at the right (ADR-0080). */}
+          <span className="block text-base font-semibold tracking-[-0.006em]">{title}</span>
           {hint && <span className="mt-0.5 block text-sm text-muted-foreground">{hint}</span>}
         </span>
         {meta && (

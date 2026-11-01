@@ -106,7 +106,7 @@ export default async function CommunityPage() {
       </section>
 
       <section>
-        <SectionHeader label={t("hub.birthdays")} count={birthdays.length || undefined} />
+        <SectionHeader label={t("hub.birthdays")} />
         {birthdays.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("hub.birthdaysEmpty")}</p>
         ) : (

@@ -61,7 +61,7 @@ export async function ParentHome({ user }: { user: CurrentUser }) {
       {/* "Qu'est-ce que je dois savoir aujourd'hui ?" — the only question this
           page has to answer. Everything that merely exists comes after it. */}
       <section className="mb-12">
-        <SectionHeader label={t("parent.today")} count={items.length || undefined} />
+        <SectionHeader label={t("parent.today")} />
         {items.length === 0 ? (
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
             <CheckCircle2Icon className="size-4 text-success" aria-hidden />

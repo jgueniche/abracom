@@ -101,7 +101,7 @@ export function ClassTabs({
           <span className="eyebrow flex shrink-0 items-center">
             {t(`group${group.key === "class" ? "Class" : "Follow"}`)}
           </span>
-          <ul className="flex flex-1 gap-1 overflow-x-auto">
+          <ul className="flex flex-1 gap-1 overflow-x-auto overflow-y-hidden">
             {group.tabs.map((tab) => {
               const href = `${base}/${tab.segment}`;
               const active = pathname.startsWith(href);
@@ -115,7 +115,7 @@ export function ClassTabs({
                     className={cn(
                       "relative flex min-h-12 items-center px-3 text-[0.9375rem] whitespace-nowrap transition-colors",
                       active
-                        ? "font-semibold text-foreground after:absolute after:inset-x-2 after:-bottom-px after:h-[2px] after:rounded-full after:bg-primary"
+                        ? "font-semibold text-foreground after:absolute after:inset-x-2 after:bottom-0 after:h-[2px] after:rounded-full after:bg-primary"
                         : "font-medium text-foreground/70 hover:text-foreground",
                     )}
                   >

@@ -51,7 +51,7 @@ export async function AttendanceToday() {
     // A medallion in front of each line said "attendance" a third time, after
     // the section label and the name of the list. The line is the object.
     <section className="mb-12">
-      <SectionHeader label={t("todayTitle")} count={today.length} />
+      <SectionHeader label={t("todayTitle")} />
       {today.map((list) => (
         <div key={list.list_id}>
           <div className="flex flex-col gap-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">

@@ -61,7 +61,7 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
       <AttendanceToday />
 
       <section className="mb-12">
-        <SectionHeader label={t("teacher.queue")} count={queue.length || undefined} />
+        <SectionHeader label={t("teacher.queue")} />
         {queue.length === 0 ? (
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
             <CheckCircle2Icon className="size-4 text-success" aria-hidden />
@@ -97,7 +97,7 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
       </section>
 
       <section className="mb-12">
-        <SectionHeader label={t("teacher.activity")} count={activity.length || undefined} />
+        <SectionHeader label={t("teacher.activity")} />
         {activity.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("teacher.activityNothing")}</p>
         ) : (
@@ -128,7 +128,7 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
       </section>
 
       <section>
-        <SectionHeader label={t("teacher.title")} count={classes.length || undefined} />
+        <SectionHeader label={t("teacher.title")} />
         {classes.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("teacher.noClasses")}</p>
         ) : (

@@ -50,7 +50,7 @@ export default async function TimetablePage({ params }: { params: Promise<{ clas
               const ofDay = slots.filter((slot) => slot.weekday === day);
               return (
                 <section key={day}>
-                  <SectionHeader label={t(`days.${day}`)} count={ofDay.length || undefined} />
+                  <SectionHeader label={t(`days.${day}`)} />
                   {ofDay.length === 0 ? (
                     <p className="text-sm text-muted-foreground">{t("nothing")}</p>
                   ) : (

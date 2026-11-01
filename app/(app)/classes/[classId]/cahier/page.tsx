@@ -102,7 +102,6 @@ export default async function JournalPage({
                 month: "long",
                 year: "numeric",
               })}
-              count={items.length}
             />
             <div className="flex flex-col gap-9">
               {items.map((post) => (

@@ -66,7 +66,7 @@ export default async function AbsencesPage({ params }: { params: Promise<{ class
             </CardContent>
           </Card>
         )}
-        <SectionHeader label={t("title")} count={absences.length || undefined} />
+        <SectionHeader label={t("title")} />
         {absences.length === 0 ? (
           <EmptyState icon={CalendarXIcon} title={t("empty")} description={t("emptyHint")} />
         ) : (
