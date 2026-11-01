@@ -52,6 +52,9 @@ export async function HomeworkWeek({
   attachments,
   reader,
   emptyAction,
+  view = "week",
+  selected = null,
+  dayHref,
 }: {
   monday: DateKey;
   /** The day being prepared, when it falls in this week. */
@@ -61,6 +64,16 @@ export async function HomeworkWeek({
   attachments: ReadonlyMap<string, AttachmentView>;
   reader: WeekReader;
   emptyAction?: React.ReactNode;
+  /**
+   * « Jour » shows one day, the one being prepared unless another is chosen; « Semaine » stacks
+   * the week in one column (ADR-0083). Homework is prepared day by day: the week laid out two
+   * by two made it hard to tell which day was where.
+   */
+  view?: "day" | "week";
+  /** The day shown in the « Jour » view. */
+  selected?: DateKey | null;
+  /** Where touching a day of the strip leads: that day, on its own. */
+  dayHref: (day: DateKey) => string;
 }) {
   const [t, format] = await Promise.all([getTranslations("diary"), getFormatter()]);
 
@@ -103,6 +116,8 @@ export async function HomeworkWeek({
     pivot: day === pivot,
     today: day === today,
     past: pivot ? day < pivot : day < today,
+    selected: view === "day" && day === selected,
+    href: dayHref(day),
   }));
 
   // The current week opens on the day being prepared; past days fold underneath.
@@ -191,20 +206,18 @@ export async function HomeworkWeek({
 
   return (
     <HomeworkProgress doneKeys={doneKeys}>
-      <div className="mb-5 max-w-xl">
+      <div className="mb-5">
         <WeekStrip days={strip} ticks={ticks} />
       </div>
 
       {entries.length === 0 ? (
         <EmptyState title={t("empty")} description={t("emptyHint")} action={emptyAction} />
+      ) : view === "day" && selected ? (
+        // One day, on its own: the day being prepared, or the one touched in the strip.
+        renderDay(selected, pivot !== null && selected < pivot)
       ) : (
         <div className="flex flex-col gap-7">
-          {/* On a wide screen the days sit two by two, read left to right like a planner: a
-              single 58 rem column left a third of the screen empty under three screens of
-              scrolling (ADR-0080). */}
-          <div className="grid gap-7 xl:grid-cols-2 xl:gap-x-12">
-            {upcomingDays.map((day) => renderDay(day))}
-          </div>
+          {upcomingDays.map((day) => renderDay(day))}
           {earlierDays.length > 0 && (
             <div className="flex flex-col gap-5">
               <p className="eyebrow pt-3">{t("earlierThisWeek")}</p>

@@ -2507,8 +2507,8 @@ dans le premier écran d'un téléphone ; sur le cahier de vie, 1 billet. Messag
   faire » sur l'accueil, et le bandeau d'une classe ; jamais autour d'une liste qu'on lit.
 - **Un chiffre a une légende** : `SectionHeader` ne porte plus de nombre nu sur les écrans de
   lecture ; registres, résultats et créneaux gardent le leur.
-- **Un grand écran sert** : les jours de Devoirs et les billets du cahier de vie se lisent
-  deux par deux à partir de `xl`.
+- **Un grand écran sert** : les billets du cahier de vie se lisent deux par deux à partir de
+  `xl`. (Les jours de Devoirs l'ont été un jour, puis non : voir l'ADR-0083.)
 
 ### Ce qui a été écarté
 
@@ -2565,3 +2565,33 @@ dire _pour quand_ : ni les annonces à confirmer ni les documents à signer n'av
 
 Une échéance déduite (date de l'événement lié, date de publication + N jours) : l'école sait
 quand elle veut la réponse, l'application ne le devine pas.
+
+## ADR-0083 — Les devoirs un jour à la fois, et une bannière qui ne suit pas le lecteur
+
+**Statut** : acceptée (2026-11-01) · **Contexte** : sur la preview de l'ADR-0080, le porteur a
+trouvé les devoirs « empilés un peu de partout » : posés deux par deux sur un grand écran, les
+jours ne se lisaient plus dans l'ordre et l'on ne savait plus « quel jour est où ». « Les devoirs,
+on les prépare plutôt au jour le jour. » Et la bannière « Installer Kesher sur cet appareil »
+réapparaissait à chaque changement de page tant qu'on ne l'avait pas fermée.
+
+### La décision
+
+- **Deux vues, une seule colonne** : **Jour** par défaut — le jour que l'on prépare
+  (`pivotDay`), ou, dans une autre semaine, son premier jour qui a des devoirs — et **Semaine**,
+  qui empile les jours dans l'ordre. Plus de grille à deux colonnes. Toucher un jour du bandeau
+  ouvre ce jour seul (`?jour=AAAA-MM-JJ`, qui porte sa semaine avec lui) ; `?vue=semaine` garde la
+  vue d'ensemble. Le sélecteur Jour / Semaine vit sur la ligne des flèches de semaine. La page
+  prend la largeur de lecture (`text`, 42 rem) : filtres, bandeau et liste ont le même bord.
+- **La bannière d'installation** n'est proposée que **sur l'accueil, une fois par session de
+  navigateur** ; quitter l'accueil la retire jusqu'à la session suivante, la fermer la retire
+  pour de bon (comme avant).
+- **Une coche « fait » touchée avant que React l'ait prise en main est perdue** — un bouton HTML
+  sans gestionnaire. Le jour seul s'affichant plus vite qu'une semaine, l'e2e l'a montré (une fois
+  sur trois sur ordinateur, en parallèle) ; le bouton porte désormais `data-ready` une fois monté,
+  et le test l'attend. Côté famille, la fenêtre est de l'ordre de l'instant qui suit l'affichage ;
+  la rendre nulle demanderait un formulaire qui marche sans JavaScript, à décider s'il se voit.
+
+### Ce qui a été écarté
+
+Deux colonnes « mieux rangées » (un jour par colonne, cinq colonnes) : sur un téléphone il n'y en
+a qu'une, et la vue Jour répond à la façon dont les devoirs se préparent.

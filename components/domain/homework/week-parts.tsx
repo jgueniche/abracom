@@ -4,6 +4,7 @@ import { CheckIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
+import { Link } from "@/components/ui/link";
 import { cn } from "@/lib/utils";
 
 import { useProgressOf } from "./progress";
@@ -22,6 +23,10 @@ export type StripDay = {
   pivot: boolean;
   today: boolean;
   past: boolean;
+  /** The day shown on its own (the « Jour » view, ADR-0083); none in the week view. */
+  selected: boolean;
+  /** Where touching the day leads: that day, on its own. */
+  href: string;
 };
 
 /**
@@ -97,26 +102,22 @@ function StripCell({ day, ticks }: { day: StripDay; ticks: boolean }) {
         ? t("stripProgress", { done: progress.done, total: progress.total })
         : t("stripCount", { count: day.count })
   }`;
-  const classes = cn(
-    "flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-lg py-1",
-    day.pivot && "bg-primary/10",
-  );
-  if (day.count === 0)
-    return (
-      <span className={classes}>
-        {inner}
-        <span className="sr-only">{spoken}</span>
-      </span>
-    );
+  // Every day is a door to that day on its own — a day with nothing too, to say so — and the
+  // one being shown wears the tint (ADR-0083).
   return (
-    <a
-      href={`#jour-${day.day}`}
-      aria-current={day.pivot ? "date" : undefined}
-      className={cn(classes, "rounded-md transition-colors hover:bg-muted")}
+    <Link
+      href={day.href}
+      prefetch={false}
+      scroll={false}
+      aria-current={day.selected ? "date" : undefined}
+      className={cn(
+        "flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-lg py-1 transition-colors",
+        day.selected ? "bg-primary/10" : "hover:bg-muted",
+      )}
     >
       {inner}
       <span className="sr-only">{spoken}</span>
-    </a>
+    </Link>
   );
 }
 

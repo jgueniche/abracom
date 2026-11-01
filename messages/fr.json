@@ -2241,7 +2241,10 @@
     "backToWeek": "Tous les devoirs de la semaine",
     "dueOn": "Pour {date}",
     "givenBy": "Donné le {date} par {name}",
-    "markDone": "Marquer comme fait"
+    "markDone": "Marquer comme fait",
+    "viewLabel": "Affichage",
+    "viewDay": "Jour",
+    "viewWeek": "Semaine"
   },
   "attendance": {
     "title": "Pointage",

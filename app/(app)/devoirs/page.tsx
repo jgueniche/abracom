@@ -33,9 +33,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DiaryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ semaine?: string; enfant?: string }>;
+  searchParams: Promise<{ semaine?: string; enfant?: string; jour?: string; vue?: string }>;
 }) {
-  const [{ semaine, enfant }, user] = await Promise.all([searchParams, requireCurrentUser()]);
+  const [{ semaine, enfant, jour, vue }, user] = await Promise.all([
+    searchParams,
+    requireCurrentUser(),
+  ]);
   const [t, format, children, teaching] = await Promise.all([
     getTranslations("diary"),
     getFormatter(),
@@ -47,7 +50,9 @@ export default async function DiaryPage({
   const today = localDateKey(now, SCHOOL_TIME_ZONE);
   let pivot = pivotDay(now);
   let opening = defaultWeek(now);
-  let monday = isDateKey(semaine) ? mondayOf(semaine) : opening;
+  // A day asked for brings its week with it (ADR-0083).
+  const asked = isDateKey(jour) ? jour : null;
+  let monday = asked ? mondayOf(asked) : isDateKey(semaine) ? mondayOf(semaine) : opening;
   let sunday = addDays(monday, 6);
 
   // A guardian is linked to their children through student_guardians, and each
@@ -76,7 +81,7 @@ export default async function DiaryPage({
   const teamClassIds = new Set(myClasses.map((cls) => cls.id));
 
   const ids = [...classIds];
-  const opensHere = !isDateKey(semaine);
+  const opensHere = !isDateKey(semaine) && !asked;
   const first = await Promise.all([
     getHomeworkDiary(ids, monday, sunday),
     getClassSizes(ids.filter((id) => teamClassIds.has(id))),
@@ -107,16 +112,32 @@ export default async function DiaryPage({
   const attachments = await attachmentViews(entries.flatMap((entry) => entry.media));
 
   const schoolId = user.school?.id ?? null;
-  const href = (week: string | null, child: string | null) => {
+  // « Jour » by default, on the day being prepared — or, in another week, its first day with
+  // homework; « Semaine » stacks the whole week (ADR-0083).
+  const view = vue === "semaine" ? "week" : "day";
+  const inWeek = (day: string) => day >= monday && day <= sunday;
+  const selectedDay =
+    asked && inWeek(asked)
+      ? asked
+      : inWeek(pivot)
+        ? pivot
+        : (entries.find((entry) => entry.due_on && inWeek(entry.due_on))?.due_on ?? monday);
+  const href = (
+    week: string | null,
+    child: string | null,
+    options: { day?: string | null; view?: "day" | "week" } = {},
+  ) => {
     const params = new URLSearchParams();
-    if (week && week !== opening) params.set("semaine", week);
+    if (options.day) params.set("jour", options.day);
+    else if (week && week !== opening) params.set("semaine", week);
     if (child) params.set("enfant", child);
+    if ((options.view ?? view) === "week") params.set("vue", "semaine");
     const query = params.toString();
     return query ? `/devoirs?${query}` : "/devoirs";
   };
 
   return (
-    <Column width="full">
+    <Column width="text">
       <PageHeader title={t("title")} actions={<NewHomeworkButton classes={myClasses} />} />
 
       {allChildren.length > 1 && (
@@ -124,7 +145,11 @@ export default async function DiaryPage({
           {[null, ...allChildren.map((child) => child.id)].map((id) => {
             const child = allChildren.find((item) => item.id === id);
             return (
-              <FilterChip key={id ?? "all"} href={href(monday, id)} active={selected === id}>
+              <FilterChip
+                key={id ?? "all"}
+                href={href(monday, id, { day: view === "day" ? selectedDay : null })}
+                active={selected === id}
+              >
                 {child ? child.first_name : t("allChildren")}
               </FilterChip>
             );
@@ -152,11 +177,19 @@ export default async function DiaryPage({
             previous={href(addDays(monday, -7), selected)}
             next={href(addDays(monday, 7), selected)}
             current={monday === opening ? null : href(opening, selected)}
+            views={{
+              day: href(monday, selected, { day: selectedDay, view: "day" }),
+              week: href(monday, selected, { view: "week" }),
+              current: view,
+            }}
           />
           <HomeworkWeek
             monday={monday}
             pivot={pivot >= monday && pivot <= sunday ? pivot : null}
             today={today}
+            view={view}
+            selected={selectedDay}
+            dayHref={(day) => href(monday, selected, { day, view: "day" })}
             entries={entries}
             attachments={attachments}
             emptyAction={

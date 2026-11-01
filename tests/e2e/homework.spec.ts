@@ -140,6 +140,9 @@ test.describe("the homework space", () => {
 
       const tick = entry.getByRole("checkbox");
       await expect(tick).toHaveAttribute("aria-checked", "false");
+      // A day on its own renders sooner than a week did: wait until React has the button, or the
+      // click lands on plain HTML and is lost.
+      await expect(tick).toHaveAttribute("data-ready", "true");
       await tick.click();
       // drawn at once, before the server has answered…
       await expect(tick).toHaveAttribute("aria-checked", "true");

@@ -5,12 +5,12 @@ routes: [/hors-ligne]
 topic: signin
 keywords: [installer, écran d'accueil, application, notifications, push, hors ligne, iphone, android]
 since: 13
-reviewed: 2026-09-12
+reviewed: 2026-11-01
 ---
 
 Il n'y a rien à télécharger sur un magasin d'applications : la page s'installe elle-même sur l'écran d'accueil.
 
-- **Android** — une bannière « Installer » apparaît en bas de l'écran. Si vous l'avez fermée, passez par le menu du navigateur, « Ajouter à l'écran d'accueil ».
+- **Android** — une bannière « Installer » apparaît en bas de l'accueil, une fois par visite : elle ne vous suit pas de page en page. Si vous l'avez fermée, passez par le menu du navigateur, « Ajouter à l'écran d'accueil ».
 - **iPhone** — bouton Partager, puis « Sur l'écran d'accueil ».
 
 Une fois installée, l'icône se lance comme une application normale, en plein écran.

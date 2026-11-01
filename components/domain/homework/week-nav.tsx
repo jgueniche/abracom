@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@/components/ui/link";
+import { cn } from "@/lib/utils";
 
 /**
  * Previous week · the week's dates · next week, on one line.
@@ -17,19 +18,22 @@ export async function WeekNav({
   previous,
   next,
   current,
+  views,
 }: {
   label: string;
   previous: string;
   next: string;
   /** Where the week being prepared is, when it is not this one. */
   current: string | null;
+  /** « Jour » / « Semaine » (ADR-0083): where each view is, and which one is shown. */
+  views?: { day: string; week: string; current: "day" | "week" };
 }) {
   const t = await getTranslations("diary");
   // One row (ADR-0080): the week named on the left, the two arrows together on the right. It was
   // a row of its own with the label centred between two far-apart arrows, above a strip and a bar.
   return (
-    <div className="mb-1 flex max-w-xl items-center gap-2">
-      <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3">
+    <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+      <div className="flex min-w-0 basis-full flex-wrap items-baseline gap-x-3 sm:flex-1 sm:basis-auto">
         <p className="text-sm font-semibold tabular-nums first-letter:uppercase">{label}</p>
         {current && (
           <Link
@@ -40,6 +44,30 @@ export async function WeekNav({
           </Link>
         )}
       </div>
+      {views && (
+        <nav
+          aria-label={t("viewLabel")}
+          className="mr-auto flex shrink-0 rounded-lg bg-muted p-0.5 text-[0.8125rem] font-medium sm:mr-1"
+        >
+          {(["day", "week"] as const).map((view) => (
+            <Link
+              key={view}
+              href={views[view]}
+              prefetch={false}
+              scroll={false}
+              aria-current={views.current === view ? "page" : undefined}
+              className={cn(
+                "relative inline-flex min-h-8 items-center rounded-md px-3 transition-colors before:absolute before:inset-x-0 before:-inset-y-1.5 before:content-['']",
+                views.current === view
+                  ? "bg-background font-semibold text-foreground shadow-xs"
+                  : "text-foreground/70 hover:text-foreground",
+              )}
+            >
+              {t(view === "day" ? "viewDay" : "viewWeek")}
+            </Link>
+          ))}
+        </nav>
+      )}
       <Button asChild variant="ghost" size="icon" className="size-11 shrink-0">
         <Link href={previous} aria-label={t("previousWeek")}>
           <ChevronLeftIcon aria-hidden className="size-5" />

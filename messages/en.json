@@ -2241,7 +2241,10 @@
     "backToWeek": "All the homework of the week",
     "dueOn": "Due {date}",
     "givenBy": "Set on {date} by {name}",
-    "markDone": "Mark as done"
+    "markDone": "Mark as done",
+    "viewLabel": "View",
+    "viewDay": "Day",
+    "viewWeek": "Week"
   },
   "attendance": {
     "title": "Attendance",

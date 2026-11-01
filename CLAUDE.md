@@ -678,6 +678,10 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   **Échéances** (ADR-0082) : `announcements.due_on`, `documents.due_on`, saisies par l'école, lues
   et écrites de façon tolérante pour qu'une preview sans la migration fonctionne. **La migration
   part avec « Deploy database » à la fusion** ; avant, la preview montre l'accueil sans échéances.
+  **Retour sur la preview** (ADR-0083) : les devoirs passent en vue **Jour** par défaut (le jour
+  préparé, ou celui touché dans le bandeau) et **Semaine** empilée sur une colonne — les deux colonnes
+  étaient illisibles ; la bannière d'installation n'est plus proposée que sur l'accueil, une fois par
+  session.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier
