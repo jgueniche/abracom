@@ -67,7 +67,7 @@ export type HomeNews = {
  * preview built from this branch may run against a database that has not got it
  * yet. Without the column the home simply shows no date.
  */
-async function dueDates(table: "announcements" | "documents", ids: string[]) {
+export async function getDueDates(table: "announcements" | "documents", ids: string[]) {
   if (ids.length === 0) return new Map<string, string>();
   const supabase = await createClient();
   const { data, error } = await supabase.from(table).select("id, due_on").in("id", ids);
@@ -104,11 +104,11 @@ export async function getParentActions(userId: string, canSign: boolean): Promis
   );
 
   const [ackDue, signDue] = await Promise.all([
-    dueDates(
+    getDueDates(
       "announcements",
       pending.map((row) => row.id),
     ),
-    dueDates(
+    getDueDates(
       "documents",
       toSign.map((row) => row.id),
     ),

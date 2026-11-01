@@ -1,3 +1,4 @@
+import { getDueDates } from "@/server/queries/parent-home";
 import { ArrowLeftIcon, DownloadIcon, Trash2Icon } from "lucide-react";
 import { Link } from "@/components/ui/link";
 import { notFound } from "next/navigation";
@@ -38,6 +39,8 @@ export default async function AdminAnnouncementPage({
     getAudienceOptions(schoolId),
   ]);
   if (!announcement || announcement.deleted_at) notFound();
+  const dueOn =
+    (await getDueDates("announcements", [announcement.id])).get(announcement.id) ?? null;
   const status = announcementStatus(announcement);
   const recipients = status === "draft" ? null : await getAnnouncementRecipients(id);
   const nonReaders =
@@ -85,6 +88,7 @@ export default async function AdminAnnouncementPage({
                 pinned: announcement.pinned,
                 publishedAt: announcement.published_at,
                 expiresAt: announcement.expires_at,
+                dueOn,
                 documentId: announcement.document_id,
                 template: announcement.template,
               }}

@@ -93,10 +93,17 @@ export function DocumentForm({
           {t("fields.requiresSignature")}
         </label>
         {requiresSignature && (
-          <label className="flex min-h-11 items-center gap-2 pl-7 text-sm">
-            <input type="checkbox" name="signaturePerStudent" className="size-5 accent-primary" />
-            {t("fields.signaturePerStudent")}
-          </label>
+          <>
+            <label className="flex min-h-11 items-center gap-2 pl-7 text-sm">
+              <input type="checkbox" name="signaturePerStudent" className="size-5 accent-primary" />
+              {t("fields.signaturePerStudent")}
+            </label>
+            <div className="flex flex-col gap-2 pl-7">
+              <Label htmlFor="dueOn">{t("fields.dueOn")}</Label>
+              <Input id="dueOn" name="dueOn" type="date" className="min-h-11 sm:max-w-56" />
+              <p className="text-xs text-muted-foreground">{t("fields.dueOnHint")}</p>
+            </div>
+          </>
         )}
         <label className="flex min-h-11 items-center gap-2 text-sm">
           <input

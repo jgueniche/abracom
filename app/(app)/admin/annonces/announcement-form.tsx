@@ -38,6 +38,7 @@ export type AnnouncementInitial = {
   pinned: boolean;
   publishedAt: string | null;
   expiresAt: string | null;
+  dueOn?: string | null;
   documentId: string | null;
   template: string | null;
 };
@@ -168,6 +169,18 @@ export function AnnouncementForm({
           />
           {t("fields.pinned")}
         </label>
+        <div className="flex flex-col gap-2 sm:col-span-2">
+          <Label htmlFor="dueOn">{t("fields.dueOn")}</Label>
+          <Input
+            id="dueOn"
+            name="dueOn"
+            type="date"
+            defaultValue={initial?.dueOn ?? ""}
+            className="min-h-11 sm:max-w-56"
+          />
+          {initial?.dueOn && <input type="hidden" name="hadDueOn" value="1" />}
+          <p className="text-xs text-muted-foreground">{t("fields.dueOnHint")}</p>
+        </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="publishedAt">{t("fields.publishedAt")}</Label>
           <Input

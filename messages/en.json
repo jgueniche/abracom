@@ -987,7 +987,9 @@
       "publishedAtHint": "Leave empty for a draft; use “Publish now” for an immediate publication.",
       "expiresAt": "Expiry",
       "document": "Linked document to sign",
-      "noDocument": "None"
+      "noDocument": "None",
+      "dueOn": "Confirm by",
+      "dueOnHint": "Optional. Shown to families on their home page when a read receipt is requested."
     },
     "save": "Save",
     "publish": "Publish now",
@@ -1036,7 +1038,9 @@
       "requiresSignature": "Signature required",
       "signaturePerStudent": "One signature per child (image rights, outing)",
       "purpose": "Purpose",
-      "publishNow": "Publish immediately"
+      "publishNow": "Publish immediately",
+      "dueOn": "Sign by",
+      "dueOnHint": "Optional. Shown to families on their home page."
     },
     "created": "Document added.",
     "invalid": "Check the fields.",

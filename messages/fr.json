@@ -987,7 +987,9 @@
       "publishedAtHint": "Laisser vide pour un brouillon ; utiliser « Publier maintenant » pour une publication immédiate.",
       "expiresAt": "Expiration",
       "document": "Document à signer lié",
-      "noDocument": "Aucun"
+      "noDocument": "Aucun",
+      "dueOn": "À confirmer avant le",
+      "dueOnHint": "Facultatif. Affiché aux familles sur leur accueil quand l'accusé de lecture est demandé."
     },
     "save": "Enregistrer",
     "publish": "Publier maintenant",
@@ -1036,7 +1038,9 @@
       "requiresSignature": "Signature requise",
       "signaturePerStudent": "Une signature par enfant (droit à l'image, sortie)",
       "purpose": "Nature",
-      "publishNow": "Publier immédiatement"
+      "publishNow": "Publier immédiatement",
+      "dueOn": "À signer avant le",
+      "dueOnHint": "Facultatif. Affiché aux familles sur leur accueil."
     },
     "created": "Document ajouté.",
     "invalid": "Vérifiez les champs.",
