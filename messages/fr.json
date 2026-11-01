@@ -224,7 +224,14 @@
       "noAccountCta": "Pas de compte ? Demandez directement à l'école de vous créer votre compte",
       "registrationSubject": "Ouverture de nos comptes {appName}",
       "registrationBody": "Bonjour,\n\nNous souhaitons ouvrir nos comptes {appName}.\n\nÉcole :\n\nParent 1 — nom et prénom :\nAdresse e-mail :\nTéléphone :\n\nParent 2 (facultatif) — nom et prénom :\nAdresse e-mail :\nTéléphone :\n\nEnfants — nom, prénom et classe :\n1.\n2.\n\nMerci.",
-      "testSpace": "Espace de test"
+      "testSpace": "Espace de test",
+      "welcome": "Bienvenue sur {appName}",
+      "brandLabel": "L'école",
+      "tagline": "Le lien entre l'école et les familles",
+      "brandCaption": "Kesher — קשר, « le lien » en hébreu",
+      "logoAlt": "Institutions Abravanel — Bienveillance, Exigence, Persévérance",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe"
     },
     "onboarding": {
       "title": "Bienvenue, faisons connaissance",

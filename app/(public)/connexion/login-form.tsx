@@ -1,6 +1,13 @@
 "use client";
 
-import { KeyRoundIcon, LogInIcon, MailCheckIcon, SendIcon } from "lucide-react";
+import {
+  EyeIcon,
+  EyeOffIcon,
+  KeyRoundIcon,
+  LogInIcon,
+  MailCheckIcon,
+  SendIcon,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
 
@@ -28,6 +35,7 @@ const initialPasswordState: PasswordState = { status: "idle" };
 export function LoginForm({ next, initialError }: { next: string; initialError?: string }) {
   const t = useTranslations("auth.login");
   const [mode, setMode] = useState<"link" | "password">("password");
+  const [showPassword, setShowPassword] = useState(false);
   const [linkState, linkAction, linkPending] = useActionState(requestMagicLink, initialLinkState);
   const [passwordState, passwordAction, passwordPending] = useActionState(
     signInWithPassword,
@@ -77,16 +85,33 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="password">{t("password")}</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className="min-h-11"
-            aria-invalid={error ? true : undefined}
-            aria-describedby={error ? "login-error" : undefined}
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              required
+              className="min-h-11 pr-11"
+              aria-invalid={error ? true : undefined}
+              aria-describedby={error ? "login-error" : undefined}
+            />
+            {/* Seeing what one typed on a phone keyboard: a password given by the school is
+                typed, not remembered, and one wrong letter was the whole failed sign-in. */}
+            <button
+              type="button"
+              onClick={() => setShowPassword((shown) => !shown)}
+              aria-pressed={showPassword}
+              aria-label={showPassword ? t("hidePassword") : t("showPassword")}
+              className="absolute inset-y-0 right-0 flex w-11 cursor-pointer items-center justify-center rounded-r-md text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            >
+              {showPassword ? (
+                <EyeOffIcon aria-hidden className="size-4" />
+              ) : (
+                <EyeIcon aria-hidden className="size-4" />
+              )}
+            </button>
+          </div>
         </div>
         {error && (
           <p id="login-error" role="alert" className="text-sm text-destructive">
