@@ -81,10 +81,18 @@ aucune boîte autour d'une liste, aucun filet entre les lignes, des groupes nomm
 un petit libellé, un avatar qui donne un bord gauche régulier.
 
 - **Une seule boîte par élément, et seulement s'il se manipule** : un champ, une bulle
-  de message, une photo, une case à cocher en carte. Jamais autour d'une liste, d'une
-  section, d'un formulaire ou d'un état vide. `Card` est un groupe sans cadre.
-- **L'espace sépare** : 40 à 48 px entre deux sections (`mb-12`, `gap-10`), quelques
-  pixels entre deux lignes, et le survol (`hover:bg-muted`) révèle la ligne.
+  de message, une photo, une case à cocher en carte — et, depuis l'ADR-0080, **le bloc sur
+  lequel on agit** (« À faire » de l'accueil, bandeau d'une classe), teinté `bg-muted`.
+  Jamais autour d'une liste qu'on lit, d'un formulaire ou d'un état vide. `Card` est un
+  groupe sans cadre.
+- **L'espace groupe** (ADR-0080, qui remplace les 40–48 px de l'ADR-0078) : **28 px entre
+  deux sections** (`mb-7`, `gap-7`), quelques pixels entre deux lignes, et le survol
+  (`hover:bg-muted`) révèle la ligne. Mesurer, ne pas estimer : combien d'éléments tiennent
+  dans les 787 px utiles d'un téléphone (Messages : 6 ; viser au moins 5 pour une liste).
+- **Deux étages au plus par ligne**, un repère en tête, la seconde ligne coupée ; ce qui est
+  long se déplie sur place ou s'ouvre sur sa page.
+- **Les commandes rapetissent, pas les lettres ni les cibles** : onglets 44 px, filtres 32 px
+  à l'œil et 44 px au doigt. Aucun nombre nu à côté d'un titre de section.
 - **Aucun filet long** hors de la barre du haut et de celle du bas. `SectionHeader` n'a
   plus de filet ; un onglet actif garde son trait court de 2 px.
 - **Un bord gauche régulier** : avatar, date, heure en tête de ligne (`Row` a `leading`).

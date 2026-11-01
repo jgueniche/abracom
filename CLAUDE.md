@@ -659,6 +659,25 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   provisoire. Vérifié sur une pile Supabase réelle en appelant Supabase Auth et PostgREST
   directement, 587 assertions pgTAP sur les deux chemins, e2e et axe. La migration part avec le
   workflow « Deploy database » à la fusion.
+- **Session 36 — audit d'interface et refonte de la densité** (ADR-0080 à ADR-0082), jouée sur
+  une pile Supabase réelle. Audit mesuré d'abord (page « Audit d'interface Kesher », skills
+  `ui-ux-pro-max`, `design-critique`, `design-review`) : le texte n'était pas trop gros (14 px),
+  c'étaient les barres, des lignes à quatre étages et 40–48 px entre groupes — 2 devoirs visibles
+  sur un téléphone, 1 billet du cahier de vie, quand Messages en montre 6. Le porteur a validé les
+  cinq lots. (1) **Corrections** : la barre de défilement parasite des onglets de classe (le trait
+  de l'onglet actif dépassait d'un pixel d'une rangée `overflow-x-auto`), les chiffres sans légende,
+  « Classe(s) », le compteur de devoirs écrit trois fois. (2) **Densité** (ADR-0080, remplace trois
+  règles de l'ADR-0078) : 28 px entre sections, deux étages par ligne, filtres 32 px à l'œil et
+  44 px au doigt, onglets 44 px, tailles de texte inchangées. (3) **Accueil du parent** (ADR-0081) :
+  « À faire » (Signer, Lire, avec l'échéance), « Pour demain » par enfant, « Nouveau », « À venir » ;
+  **Devoirs** : semaine sur une ligne, consigne repliée, deux colonnes sur grand écran.
+  (4) **Espace de classe** : bandeau teinté, une rangée d'onglets et « Suivi » en menu ; cahier de
+  vie **par mois**, deux catégories (« Vie de classe », « Infos pratiques ») ; agenda à date en
+  marge (7 jours par écran au lieu de 4) ; École compacte. (5) **Navigation** : « Mes enfants »
+  remplace « Ma classe » pour le parent, cinq onglets identiques sur téléphone et ordinateur.
+  **Échéances** (ADR-0082) : `announcements.due_on`, `documents.due_on`, saisies par l'école, lues
+  et écrites de façon tolérante pour qu'une preview sans la migration fonctionne. **La migration
+  part avec « Deploy database » à la fusion** ; avant, la preview montre l'accueil sans échéances.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

@@ -5,7 +5,7 @@ routes: [/admin/signalements, /admin/communaute]
 topic: manage
 keywords: [modération, signalement, retirer, verrouiller, petites annonces, relecture, publier]
 since: 8
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
 Deux files, deux logiques.

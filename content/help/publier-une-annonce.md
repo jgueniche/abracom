@@ -5,14 +5,14 @@ routes: [/admin/annonces, /admin/annonces/nouvelle, /admin/annonces/[id]]
 topic: publish
 keywords: [annonce, circulaire, ciblage, audience, planifier, accusé de lecture, relance, épingler, export]
 since: 6
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
 Une annonce est le canal officiel de la direction vers les familles. Elle se rédige depuis Publier → Annonce, ou depuis Gestion → Annonces.
 
 - **Modèles** : circulaire, rappel, fête ou jour férié, sortie scolaire — ils pré-remplissent la structure, jamais le contenu.
 - **Ciblage** : toute l'école, un ou plusieurs niveaux, des classes, ou des personnes nommément. Les destinataires sont calculés à partir de ce ciblage, pas d'une liste figée.
-- **Accusé de lecture** : cochez-le si vous devez pouvoir prouver que l'information est passée. Les familles voient alors un bouton « J'ai lu ».
+- **Accusé de lecture** : cochez-le si vous devez pouvoir prouver que l'information est passée. Les familles voient alors un bouton « J'ai lu », et l'annonce en tête de leur accueil, sous « À faire ». **« À confirmer avant le »**, facultatif, y ajoute la date que vous attendez.
 - **Planification** : une date d'envoi future ; l'annonce reste invisible jusque-là.
 - **Épinglage** et **expiration** : l'annonce reste en tête de liste, ou disparaît d'elle-même après une date.
 - **Version anglaise** : facultative, saisie à la main. Elle s'affiche aux familles dont le profil est en anglais.

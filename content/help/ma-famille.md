@@ -5,10 +5,10 @@ routes: [/famille]
 topic: daily
 keywords: [famille, enfant, fiche, allergies, PAI, responsables, classe, droit à l'image]
 since: 4
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
-**Ma famille**, sous votre photo en haut à droite, rassemble les enfants dont vous êtes responsable : la classe de chacun, les informations que l'école détient (allergies, PAI, statut d'inscription), les autres responsables déclarés, et l'état du droit à l'image.
+**Ma famille** — sous votre photo en haut à droite, ou « Fiche » à côté de chaque enfant dans **Mes enfants** — rassemble les enfants dont vous êtes responsable : la classe de chacun, les informations que l'école détient (allergies, PAI, statut d'inscription), les autres responsables déclarés, et l'état du droit à l'image.
 
 Depuis chaque enfant, des raccourcis mènent au fil de sa classe, à ses devoirs, au cahier de vie, aux mots et aux absences.
 

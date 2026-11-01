@@ -1,19 +1,23 @@
 ---
-title: L'accueil et le bloc « Aujourd'hui »
+title: L'accueil : à faire, pour demain, nouveau
 roles: all
 routes: [/accueil]
 topic: daily
-keywords: [accueil, aujourd'hui, tableau de bord, à faire, enfants, classes]
+keywords: [accueil, aujourd'hui, tableau de bord, à faire, signer, confirmer, échéance, pour demain, nouveau, enfants, classes]
 since: 19
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
 :::roles parent, guardian
-En haut de l'accueil, le bloc **Aujourd'hui** rassemble ce qui attend quelque chose de vous ce jour-là, et rien d'autre : un devoir à préparer, un mot de l'enseignant·e, une pièce à signer, un événement du jour, un pointage, une annonce à confirmer. Les lignes de même nature se suivent sous un seul libellé — « À signer » au-dessus des deux pièces à signer. Quand il n'y a rien, il le dit — « Rien n'attend de vous aujourd'hui » — au lieu de laisser une liste vide.
+L'accueil répond à trois questions, dans cet ordre.
 
-Sous ce bloc, **Mes enfants** : une ligne par enfant, son nom et sa classe, avec quatre liens qui ouvrent directement l'espace de sa classe (cahier de vie, devoirs, mots, absences). La fiche de l'enfant elle-même — allergies, responsables, droit à l'image — est dans Ma famille, sous votre photo.
+**À faire** rassemble ce que l'école attend de vous : une annonce à lire et à confirmer, un document à signer. Chaque ligne dit son geste — **Lire**, **Signer** — et, quand l'école en a donné une, la date avant laquelle elle l'attend ; une date dépassée s'écrit en rouge. C'est le seul bloc encadré de la page, parce que c'est celui sur lequel on agit. Quand il n'y a rien, il le dit.
 
-Une annonce dont l'école attend votre confirmation est un point du bloc Aujourd'hui comme un autre, en tête de liste, son libellé en rouge et marquée d'un trait rouge dans la marge : il n'y a pas de second endroit où la chercher.
+**Pour demain** — « Pour aujourd'hui » le matin, « Pour lundi » le week-end — donne une ligne par enfant : combien de devoirs, combien sont faits. La ligne ouvre le cahier de texte filtré sur cet enfant. Un enfant qui n'a rien ce jour-là indique son prochain devoir.
+
+**Nouveau** montre les mots de l'enseignant·e que vous n'avez pas encore ouverts et la page du cahier de vie publiée cette semaine dans chaque classe ; **À venir**, les prochains événements. Sur un grand écran, ces deux blocs sont à droite.
+
+Les classes de vos enfants sont dans l'onglet **Mes enfants**.
 :::
 
 :::roles teacher

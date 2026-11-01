@@ -2480,3 +2480,88 @@ Un compte par visiteur : il faudrait les créer et les transmettre un par un, po
 fictif (déjà écarté par l'ADR-0073). Refuser l'écriture dans `auth.users` plutôt que garder
 l'ancienne valeur : voir plus haut. Remettre l'école test en état chaque nuit : un compte supprimé
 ne se recrée pas sans rejouer le seed, et il serait resté fermé jusqu'au lendemain.
+
+## ADR-0080 — La densité : l'espace groupe, il ne sépare plus tout
+
+**Statut** : acceptée (2026-11-01), remplace trois règles de l'ADR-0078 · **Contexte** : le
+porteur trouve l'application « écrite trop gros », « très espacée », « on a du mal à s'y
+repérer » ; seuls Messages et l'Emploi du temps lui paraissent clairs. Audit mesuré (page
+« Audit d'interface Kesher », skills `ui-ux-pro-max`, `design-critique` et `design-review`) :
+le texte n'est **pas** trop gros (14 px courant, 15 px titres de ligne — `ui-ux-pro-max`
+demande même 16 px sur téléphone) ; ce qui pèse, ce sont les barres (onglets 48 px, pastilles
+de filtre 44 px, bandeau de semaine de 90 px), des lignes à quatre étages (un devoir 115 px,
+un billet 130 px) et 40 à 48 px de blanc entre chaque groupe. Sur Devoirs, 2 devoirs visibles
+dans le premier écran d'un téléphone ; sur le cahier de vie, 1 billet. Messages : 6, à 59 px.
+
+### La décision
+
+- **28 px entre deux sections** (`mb-7`, `gap-7`) au lieu de 40 à 48 : l'espace ne groupe
+  que s'il est plus petit dans un groupe qu'entre deux groupes.
+- **Une ligne de liste a deux étages au plus**, un repère en tête (avatar, date, heure, rond
+  « fait ») et une seconde ligne coupée ; ce qui est long se déplie sur place (`<details>`)
+  ou s'ouvre sur sa page.
+- **Les commandes rapetissent, pas les lettres ni les cibles** : onglets 44 px, pastilles de
+  filtre 32 px à l'œil et 44 px au doigt (un pseudo-élément invisible prolonge la cible ; la
+  rangée qui défile le contient, sans quoi elle redevient défilable en hauteur).
+- **Une boîte pour ce qui demande un geste** : un bloc teinté (`bg-muted`) autour de « À
+  faire » sur l'accueil, et le bandeau d'une classe ; jamais autour d'une liste qu'on lit.
+- **Un chiffre a une légende** : `SectionHeader` ne porte plus de nombre nu sur les écrans de
+  lecture ; registres, résultats et créneaux gardent le leur.
+- **Un grand écran sert** : les jours de Devoirs et les billets du cahier de vie se lisent
+  deux par deux à partir de `xl`.
+
+### Ce qui a été écarté
+
+Réduire les tailles de texte : la lisibilité et le SC 1.4.4 l'interdisent, et ce n'était pas
+la cause. Revenir aux cartes encadrées partout : c'est le défaut corrigé par l'ADR-0052.
+
+## ADR-0081 — Ce que le parent cherche, là où il le cherche
+
+**Statut** : acceptée (2026-11-01) · **Contexte** : l'audit a compté, pour un parent, cinq
+chemins vers les devoirs d'un enfant, trois écrans pour « ses enfants » (onglet Ma classe,
+onglet Mon enfant sur ordinateur, bloc de l'accueil) et une navigation différente sur
+téléphone (5 onglets) et sur ordinateur (7). L'accueil mettait sous « Aujourd'hui » une
+signature due et un devoir pour lundi avec le même poids, sans verbe ni échéance.
+
+### La décision
+
+- **Accueil du parent** : « À faire » (signer, lire et confirmer, avec le verbe en bouton et
+  l'échéance — ADR-0082), « Pour demain » (une ligne par enfant, qui ouvre Devoirs filtré),
+  « Nouveau » (mots non lus, page du cahier de vie de la semaine) et « À venir ». Plus de
+  liste de devoirs ni de bloc « Mes enfants » sur l'accueil.
+- **« Mes enfants »** remplace l'onglet « Ma classe » du parent : une carte par enfant, sa
+  classe et son enseignante, le jour préparé, les entrées de l'espace de classe ; avec un seul
+  enfant, l'onglet ouvre sa classe. La fiche (Ma famille) reste à un geste.
+- **Cinq onglets identiques** sur téléphone et sur ordinateur pour le parent ; l'agenda est
+  dans École et sur l'accueil.
+- **Espace de classe** : un bandeau teinté, une seule rangée d'onglets, « Suivi » en menu.
+- **Cahier de vie** : un mois à la fois, deux catégories — « Vie de classe », « Infos
+  pratiques » (Information et Rappel réunis ; le type `reminder` reste en base et se lit
+  comme une info pratique).
+
+### Ce qui a été écarté
+
+Supprimer Ma famille : la fiche (allergies, droit à l'image, responsables) n'a pas sa place
+dans l'espace de classe, et l'aide la décrit comme l'endroit où la corriger.
+
+## ADR-0082 — Une échéance pour ce que l'école attend des familles
+
+**Statut** : acceptée (2026-11-01) · **Contexte** : « À faire » ne pouvait dire _quoi_ sans
+dire _pour quand_ : ni les annonces à confirmer ni les documents à signer n'avaient de date.
+
+### La décision
+
+- `announcements.due_on` et `documents.due_on`, dates facultatives saisies par l'école à la
+  publication (« À confirmer avant le », « À signer avant le »). Les politiques existantes
+  décident déjà qui écrit une ligne : aucune politique nouvelle.
+- **Lecture tolérante** : l'accueil lit les dates à part et ignore l'erreur si la colonne
+  manque — une preview dont la base n'a pas reçu la migration montre l'accueil sans dates.
+  **Écriture prudente** : le champ n'est écrit que s'il est rempli (ou vidé sur une ligne qui
+  en avait un), si bien qu'une telle base enregistre tout le reste.
+- L'école test reçoit des échéances qui avancent avec le calendrier
+  (`refresh_test_school_due_dates()`, chaque nuit là où pg_cron existe).
+
+### Ce qui a été écarté
+
+Une échéance déduite (date de l'événement lié, date de publication + N jours) : l'école sait
+quand elle veut la réponse, l'application ne le devine pas.
