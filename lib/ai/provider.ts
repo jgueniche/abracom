@@ -2,7 +2,7 @@ import "server-only";
 
 import { getServerEnv } from "@/lib/env.server";
 
-import { parseServiceAccountKey } from "./credentials";
+import { describeKeyValue, parseServiceAccountKey } from "./credentials";
 import { fakeProvider } from "./fake";
 import type { PracticeProvider } from "./types";
 import { vertexProvider } from "./vertex";
@@ -46,7 +46,10 @@ function resolve(env: ReturnType<typeof getServerEnv>): PracticeProvider | null 
   }
   const credentials = parseServiceAccountKey(env.GOOGLE_SERVICE_ACCOUNT_KEY);
   if (!credentials) {
-    console.warn("[practice] vertex: GOOGLE_SERVICE_ACCOUNT_KEY is not a service account key");
+    // The shape of the value only — never a character of it.
+    console.warn(
+      `[practice] vertex: GOOGLE_SERVICE_ACCOUNT_KEY is not a service account key: ${describeKeyValue(env.GOOGLE_SERVICE_ACCOUNT_KEY)}`,
+    );
     return null;
   }
   try {
