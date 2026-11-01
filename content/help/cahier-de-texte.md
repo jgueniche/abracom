@@ -5,7 +5,7 @@ routes: [/devoirs, /devoirs/[postId], /classes/[classId]/devoirs]
 topic: daily
 keywords: [devoirs, cahier de texte, à préparer, fait, cocher, pages, photo, imprimer, semaine, demain, s'entraîner]
 since: 33
-reviewed: 2026-11-01
+reviewed: 2026-11-02
 ---
 
 L'onglet **Devoirs** est le cahier de texte. Il s'ouvre sur **le jour que l'on prépare** : « Pour demain » le soir, « Pour aujourd'hui » le matin jusqu'à midi, « Pour lundi » à partir du vendredi midi et pendant le week-end — la semaine affichée est alors la suivante. Pendant les vacances, quand rien n'est donné pour les jours qui viennent, il s'ouvre sur le premier jour qui a des devoirs — en général celui de la rentrée.
