@@ -90,7 +90,7 @@ export default async function AttendancePage() {
   return (
     <Column>
       <PageHeader eyebrow={format.dateTime(new Date(), { dateStyle: "full" })} title={t("title")} />
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-7">
         <div className="flex flex-col gap-6">
           {today.length === 0 ? (
             <EmptyState

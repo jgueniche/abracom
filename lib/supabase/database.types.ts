@@ -216,6 +216,7 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           document_id: string | null
+          due_on: string | null
           expires_at: string | null
           id: string
           locale: string
@@ -239,6 +240,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           document_id?: string | null
+          due_on?: string | null
           expires_at?: string | null
           id?: string
           locale?: string
@@ -262,6 +264,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           document_id?: string | null
+          due_on?: string | null
           expires_at?: string | null
           id?: string
           locale?: string
@@ -1445,6 +1448,7 @@ export type Database = {
           created_by: string | null
           deleted_at: string | null
           description_md: string | null
+          due_on: string | null
           folder_id: string | null
           id: string
           mime: string
@@ -1467,6 +1471,7 @@ export type Database = {
           created_by?: string | null
           deleted_at?: string | null
           description_md?: string | null
+          due_on?: string | null
           folder_id?: string | null
           id?: string
           mime?: string
@@ -1489,6 +1494,7 @@ export type Database = {
           created_by?: string | null
           deleted_at?: string | null
           description_md?: string | null
+          due_on?: string | null
           folder_id?: string | null
           id?: string
           mime?: string

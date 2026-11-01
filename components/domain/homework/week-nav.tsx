@@ -25,17 +25,12 @@ export async function WeekNav({
   current: string | null;
 }) {
   const t = await getTranslations("diary");
+  // One row (ADR-0080): the week named on the left, the two arrows together on the right. It was
+  // a row of its own with the label centred between two far-apart arrows, above a strip and a bar.
   return (
-    <div className="mb-1 flex items-center gap-2">
-      <Button asChild variant="ghost" size="icon" className="size-11 shrink-0">
-        <Link href={previous} aria-label={t("previousWeek")}>
-          <ChevronLeftIcon aria-hidden className="size-5" />
-        </Link>
-      </Button>
-      <div className="flex min-w-0 flex-1 flex-col items-center">
-        <p className="text-[0.9375rem] font-semibold tabular-nums first-letter:uppercase">
-          {label}
-        </p>
+    <div className="mb-1 flex max-w-xl items-center gap-2">
+      <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3">
+        <p className="text-sm font-semibold tabular-nums first-letter:uppercase">{label}</p>
         {current && (
           <Link
             href={current}
@@ -46,6 +41,11 @@ export async function WeekNav({
         )}
       </div>
       <Button asChild variant="ghost" size="icon" className="size-11 shrink-0">
+        <Link href={previous} aria-label={t("previousWeek")}>
+          <ChevronLeftIcon aria-hidden className="size-5" />
+        </Link>
+      </Button>
+      <Button asChild variant="ghost" size="icon" className="-ml-2 size-11 shrink-0">
         <Link href={next} aria-label={t("nextWeek")}>
           <ChevronRightIcon aria-hidden className="size-5" />
         </Link>

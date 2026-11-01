@@ -81,7 +81,7 @@ export default async function AnnouncementsPage() {
       ) : (
         <>
           {pinned.length > 0 && (
-            <section className="mb-10">
+            <section className="mb-7">
               <SectionHeader label={t("pinnedSection")} />
               <IndexList>{pinned.map(entry)}</IndexList>
             </section>

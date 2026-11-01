@@ -111,7 +111,7 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
       />
       <AttendanceToday />
 
-      <section className="mb-12">
+      <section className="mb-7">
         <SectionHeader label={tDash("queue")} />
         {/* The three homes now open on the same object — "what is waiting on
             you" — so they are drawn by the same component. This one had its own
@@ -133,7 +133,7 @@ export async function AdminHome({ user }: { user: CurrentUser }) {
 
       {/* Four figures are four figures, not four boxes — and not a strip between two rules
           either (ADR-0078): the numbers themselves are the shape. */}
-      <dl className="mb-12 grid grid-cols-2 gap-x-10 gap-y-6 sm:grid-cols-4">
+      <dl className="mb-7 grid grid-cols-2 gap-x-10 gap-y-6 sm:grid-cols-4">
         {tiles.map((tile) => (
           <div key={tile.label}>
             <dt className="eyebrow">{tile.label}</dt>

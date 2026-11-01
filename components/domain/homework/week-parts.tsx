@@ -43,7 +43,7 @@ export function WeekStrip({ days, ticks }: { days: StripDay[]; ticks: boolean })
   return (
     <nav aria-label={t("weekDays")}>
       <ol
-        className="grid"
+        className="grid gap-1"
         style={{ gridTemplateColumns: `repeat(${days.length}, minmax(0, 1fr))` }}
       >
         {days.map((day) => (
@@ -59,11 +59,14 @@ export function WeekStrip({ days, ticks }: { days: StripDay[]; ticks: boolean })
 function StripCell({ day, ticks }: { day: StripDay; ticks: boolean }) {
   const t = useTranslations("diary");
   const progress = useProgressOf(day.keys);
+  // One compact cell (ADR-0080): the weekday, the date, and a dot that says whether the day holds
+  // homework and whether it is all done. The figure itself is written once, on the day's title in
+  // the list: the strip, the day and a bar under the strip used to say « 0/5 » three times.
   const inner = (
     <>
       <span
         className={cn(
-          "text-[0.6875rem] font-semibold tracking-[0.06em] uppercase",
+          "text-[0.6875rem] leading-none font-medium",
           day.pivot ? "text-primary" : day.past ? "text-muted-foreground" : "text-foreground/70",
         )}
       >
@@ -71,35 +74,20 @@ function StripCell({ day, ticks }: { day: StripDay; ticks: boolean }) {
       </span>
       <span
         className={cn(
-          "flex h-8 items-center justify-center text-lg leading-none tabular-nums",
+          "text-[0.9375rem] leading-tight tabular-nums",
           (day.today || day.pivot) && "font-semibold text-primary",
           !day.today && !day.pivot && day.past && "text-muted-foreground",
         )}
       >
         {day.date}
       </span>
-      <span
-        className="flex h-4 items-center text-[0.6875rem] font-semibold tabular-nums"
-        aria-hidden
-      >
-        {day.count === 0 ? null : ticks && progress.total > 0 ? (
-          progress.done >= progress.total ? (
-            <CheckIcon className="tick-pop size-3.5 text-success" strokeWidth={3} />
-          ) : (
-            <span className="text-muted-foreground">
-              {progress.done}/{progress.total}
-            </span>
-          )
+      <span className="flex h-2 items-center" aria-hidden>
+        {day.count === 0 ? null : ticks && progress.total > 0 && progress.done >= progress.total ? (
+          <span className="tick-pop size-1.5 rounded-full bg-success" />
         ) : (
-          <span className="text-muted-foreground">{day.count}</span>
+          <span className="size-1.5 rounded-full bg-foreground/35" />
         )}
       </span>
-      {day.pivot && (
-        <span
-          aria-hidden
-          className="absolute inset-x-3 -bottom-px h-[2px] rounded-full bg-primary"
-        />
-      )}
     </>
   );
   const spoken = `${day.label} — ${
@@ -109,7 +97,10 @@ function StripCell({ day, ticks }: { day: StripDay; ticks: boolean }) {
         ? t("stripProgress", { done: progress.done, total: progress.total })
         : t("stripCount", { count: day.count })
   }`;
-  const classes = "flex min-h-11 flex-col items-center gap-0.5 pt-2 pb-2.5";
+  const classes = cn(
+    "flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-lg py-1",
+    day.pivot && "bg-primary/10",
+  );
   if (day.count === 0)
     return (
       <span className={classes}>

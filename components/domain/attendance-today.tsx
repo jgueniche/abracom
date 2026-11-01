@@ -30,7 +30,7 @@ export async function AttendanceToday() {
       // The way in used to be a grey sentence under the label: a link that
       // looks exactly like static text is a link nobody clicks. It takes the
       // section's action slot, like every other "see everything" on this page.
-      <section className="mb-12">
+      <section className="mb-7">
         <SectionHeader
           label={t("todayTitle")}
           hint={t("nothingTodaySeeLists", { count: lists.length })}
@@ -50,7 +50,7 @@ export async function AttendanceToday() {
   return (
     // A medallion in front of each line said "attendance" a third time, after
     // the section label and the name of the list. The line is the object.
-    <section className="mb-12">
+    <section className="mb-7">
       <SectionHeader label={t("todayTitle")} />
       {today.map((list) => (
         <div key={list.list_id}>

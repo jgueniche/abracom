@@ -113,7 +113,7 @@ export function ClassTabs({
                     ref={active ? activeRef : undefined}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative flex min-h-12 items-center px-3 text-[0.9375rem] whitespace-nowrap transition-colors",
+                      "relative flex min-h-11 items-center px-3 text-[0.9375rem] whitespace-nowrap transition-colors",
                       active
                         ? "font-semibold text-foreground after:absolute after:inset-x-2 after:bottom-0 after:h-[2px] after:rounded-full after:bg-primary"
                         : "font-medium text-foreground/70 hover:text-foreground",

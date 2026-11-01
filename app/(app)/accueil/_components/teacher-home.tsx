@@ -60,7 +60,7 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
       />
       <AttendanceToday />
 
-      <section className="mb-12">
+      <section className="mb-7">
         <SectionHeader label={t("teacher.queue")} />
         {queue.length === 0 ? (
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -96,7 +96,7 @@ export async function TeacherHome({ user }: { user: CurrentUser }) {
         )}
       </section>
 
-      <section className="mb-12">
+      <section className="mb-7">
         <SectionHeader label={t("teacher.activity")} />
         {activity.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("teacher.activityNothing")}</p>

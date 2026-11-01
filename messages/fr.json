@@ -262,22 +262,24 @@
   "appHome": {
     "greeting": "Bonjour {name}",
     "parent": {
-      "title": "Ce que l'école attend de vous, puis ce qui vient.",
-      "children": "Mes enfants",
-      "pendingAcks": "{count, plural, =0 {Aucune annonce à confirmer} one {# annonce à confirmer} other {# annonces à confirmer}}",
-      "pendingHint": "Ouvrir les annonces à confirmer.",
-      "seeFamily": "Voir ma famille",
-      "childrenHint": "Ouvrir l'espace de la classe : devoirs, cahier de vie, mots et absences.",
-      "today": "Aujourd'hui",
-      "todayKinds": {
-        "homework": "À préparer",
-        "note": "Mot",
-        "signature": "À signer",
-        "event": "Aujourd'hui",
-        "attendance": "Pointage",
-        "ack": "À confirmer"
-      },
-      "todayNothing": "Rien n'attend de vous aujourd'hui."
+      "todo": "À faire",
+      "todoNothing": "Rien à signer ni à confirmer.",
+      "kindSignature": "Document à signer",
+      "kindAck": "À lire et confirmer",
+      "dueOn": "avant le {day}",
+      "overdue": "attendu le {day}",
+      "verbSign": "Signer",
+      "verbRead": "Lire",
+      "forToday": "Pour aujourd'hui",
+      "forTomorrow": "Pour demain",
+      "forWeekday": "Pour {day}",
+      "childHomework": "{name} · {count, plural, one {# devoir} other {# devoirs}}",
+      "childNothing": "{name} · rien à préparer",
+      "next": "Prochain : {title}, {day}",
+      "done": "{done} / {total} faits",
+      "news": "Nouveau",
+      "newsNote": "Mot pour {name}",
+      "newsJournal": "Cahier de vie · {name}"
     },
     "teacher": {
       "title": "Mes classes",
@@ -1627,7 +1629,7 @@
       "rotatedOn": "Lien créé le {date}"
     },
     "upcoming": {
-      "title": "Prochains événements",
+      "title": "À venir",
       "empty": "Aucun événement à venir.",
       "seeAll": "Voir l'agenda"
     },

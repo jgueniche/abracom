@@ -73,7 +73,7 @@ export default async function CommunityPage() {
       <PageHeader title={t("title")} description={t("subtitle")} />
       {/* The section hubs share one anatomy since session 16; this page kept a
           hand-rolled copy of it, so the same object had two shapes. */}
-      <HubGrid className="mb-10">
+      <HubGrid className="mb-7">
         {cards.map((card) => (
           <HubCard
             key={card.href}
@@ -86,7 +86,7 @@ export default async function CommunityPage() {
         ))}
       </HubGrid>
 
-      <section className="mb-10">
+      <section className="mb-7">
         <SectionHeader label={t("hub.appointments")} hint={t("hub.appointmentsHint")} />
         {classes.size === 0 ? (
           <p className="text-sm text-muted-foreground">{t("hub.noClass")}</p>

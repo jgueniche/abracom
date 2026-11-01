@@ -56,7 +56,7 @@ export default async function HomeworkPage({
       : `/classes/${classId}/devoirs?semaine=${week}`;
 
   return (
-    <Column>
+    <Column width="full">
       {team && (
         <div className="mb-3 flex justify-end">
           <NewHomeworkButton classes={composer} returnTo="classe" />

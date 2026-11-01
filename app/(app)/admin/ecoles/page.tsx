@@ -36,7 +36,7 @@ export default async function SchoolsPage() {
   return (
     <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
-      <section className="mb-10">
+      <section className="mb-7">
         <SectionHeader label={t("listLabel")} count={schools?.length ?? 0} />
         <RowList>
           {(schools ?? []).map((school) => (
@@ -57,7 +57,7 @@ export default async function SchoolsPage() {
           ))}
         </RowList>
       </section>
-      <section className="mb-10">
+      <section className="mb-7">
         <SectionHeader label={t("openLabel")} hint={t("openHint")} />
         <OpenSchoolForm />
       </section>

@@ -116,7 +116,7 @@ export default async function DiaryPage({
   };
 
   return (
-    <Column>
+    <Column width="full">
       <PageHeader title={t("title")} actions={<NewHomeworkButton classes={myClasses} />} />
 
       {allChildren.length > 1 && (

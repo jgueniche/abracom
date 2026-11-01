@@ -67,7 +67,7 @@ export function Row({
     </>
   );
 
-  const inner = "-mx-3 flex min-h-12 items-start gap-3 rounded-lg px-3 py-2.5";
+  const inner = "-mx-3 flex min-h-12 items-start gap-3 rounded-lg px-3 py-2";
 
   return (
     <li className={cn("relative", className)}>

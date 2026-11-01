@@ -31,7 +31,7 @@ export default async function NotesPage({ params }: { params: Promise<{ classId:
 
   return (
     <Column>
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-7">
         {canWrite && (
           <PraiseRow
             classId={classId}

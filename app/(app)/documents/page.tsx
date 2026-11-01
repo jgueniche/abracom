@@ -45,7 +45,7 @@ export default async function DocumentsPage() {
           action={canPublish ? { href: "/admin/documents", label: t("deposit") } : undefined}
         />
       )}
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-7">
         {groups.map((group) => (
           <section key={group.name || "none"} className="flex flex-col">
             <SectionHeader label={group.name || t("noFolder")} />
