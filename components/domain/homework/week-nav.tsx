@@ -1,8 +1,8 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-import { Button } from "@/components/ui/button";
 import { Link } from "@/components/ui/link";
+
+import { DiaryViewToggle, WeekArrows } from "./selection";
 
 /**
  * Previous week · the week's dates · next week, on one line.
@@ -17,25 +17,26 @@ export async function WeekNav({
   previous,
   next,
   current,
+  views,
 }: {
   label: string;
   previous: string;
   next: string;
   /** Where the week being prepared is, when it is not this one. */
   current: string | null;
+  /**
+   * « Jour » / « Semaine » (ADR-0083): where each view is, for a new tab. Which one is shown is
+   * read from the address, and switching asks the server nothing (ADR-0086).
+   */
+  views?: { day: string; week: string };
 }) {
   const t = await getTranslations("diary");
+  // One row (ADR-0080): the week named on the left, the two arrows together on the right. It was
+  // a row of its own with the label centred between two far-apart arrows, above a strip and a bar.
   return (
-    <div className="mb-1 flex items-center gap-2">
-      <Button asChild variant="ghost" size="icon" className="size-11 shrink-0">
-        <Link href={previous} aria-label={t("previousWeek")}>
-          <ChevronLeftIcon aria-hidden className="size-5" />
-        </Link>
-      </Button>
-      <div className="flex min-w-0 flex-1 flex-col items-center">
-        <p className="text-[0.9375rem] font-semibold tabular-nums first-letter:uppercase">
-          {label}
-        </p>
+    <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+      <div className="flex min-w-0 basis-full flex-wrap items-baseline gap-x-3 sm:flex-1 sm:basis-auto">
+        <p className="text-sm font-semibold tabular-nums first-letter:uppercase">{label}</p>
         {current && (
           <Link
             href={current}
@@ -45,11 +46,18 @@ export async function WeekNav({
           </Link>
         )}
       </div>
-      <Button asChild variant="ghost" size="icon" className="size-11 shrink-0">
-        <Link href={next} aria-label={t("nextWeek")}>
-          <ChevronRightIcon aria-hidden className="size-5" />
-        </Link>
-      </Button>
+      {views && (
+        <DiaryViewToggle
+          label={t("viewLabel")}
+          labels={{ day: t("viewDay"), week: t("viewWeek") }}
+          hrefs={views}
+        />
+      )}
+      <WeekArrows
+        previous={previous}
+        next={next}
+        labels={{ previous: t("previousWeek"), next: t("nextWeek") }}
+      />
     </div>
   );
 }

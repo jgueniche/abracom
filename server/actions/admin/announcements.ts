@@ -24,6 +24,10 @@ const announcementSchema = z.object({
   pinned: z.boolean(),
   publishedAt: z.string().nullable(),
   expiresAt: z.string().nullable(),
+  dueOn: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable(),
   documentId: z.string().regex(uuid).nullable(),
   template: z.string().max(40).nullable(),
 });
@@ -57,6 +61,7 @@ export async function saveAnnouncement(
       pinned: formData.get("pinned") === "on",
       publishedAt: optional(formData, "publishedAt"),
       expiresAt: optional(formData, "expiresAt"),
+      dueOn: optional(formData, "dueOn"),
       documentId: optional(formData, "documentId"),
       template: optional(formData, "template"),
     });
@@ -85,6 +90,11 @@ export async function saveAnnouncement(
       expires_at: toIso(parsed.data.expiresAt),
       document_id: parsed.data.documentId,
       template: parsed.data.template,
+      // Written only when there is something to write (ADR-0082): a database that has not got
+      // the column yet — a preview — still saves every announcement that sets no date.
+      ...(parsed.data.dueOn || formData.get("hadDueOn") === "1"
+        ? { due_on: parsed.data.requiresAck ? parsed.data.dueOn : null }
+        : {}),
     };
 
     const supabase = await createClient();

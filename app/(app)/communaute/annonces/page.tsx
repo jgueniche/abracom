@@ -114,7 +114,7 @@ export default async function ClassifiedsPage({
         </ul>
       )}
       {mine.length > 0 && (
-        <section className="mt-10">
+        <section className="mt-7">
           <SectionHeader label={t("mine")} count={mine.length} />
           <ul className="flex flex-col gap-0.5">
             {mine.map((post) => (

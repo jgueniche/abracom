@@ -24,8 +24,12 @@ import { type PostFormState, saveClassPost } from "@/server/actions/class-post-p
  * moment they are chosen (ADR-0071): the old field promised « jusqu'à 20 photos » and failed
  * past three, the request being capped at 1 MB.
  */
-const CATEGORIES = ["journal", "info", "reminder"] as const;
-type Category = (typeof CATEGORIES)[number];
+// Two categories a family can tell apart (ADR-0081): what the class lived, and what to know or
+// bring. « Information » and « Rappel » were two words for the second, and a post titled
+// « Rappel : doudou et gourde » was filed under Information. Old reminders read as practical
+// information; re-opened, they are saved as such.
+const CATEGORIES = ["journal", "info"] as const;
+type Category = (typeof CATEGORIES)[number] | "reminder";
 
 const initial: PostFormState = { status: "idle" };
 
@@ -55,7 +59,9 @@ export function PostForm({
   const tAttachments = useTranslations("attachments");
   const router = useRouter();
   const [state, action] = useActionState(saveClassPost, initial);
-  const [category, setCategory] = useState<Category>(defaultType);
+  const [category, setCategory] = useState<Category>(
+    defaultType === "reminder" ? "info" : defaultType,
+  );
   const uploads = useUploads({
     bucket: "class-media",
     folder: classMediaFolder(schoolId, classId, postId),

@@ -5,12 +5,12 @@ routes: [/classes/[classId]/cahier]
 topic: daily
 keywords: [cahier de vie, photos, galerie, droit à l'image, tag, mois]
 since: 7
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
-Le cahier de vie est le journal de la classe, rangé par mois : ce que l'équipe a écrit, et les photos qui l'accompagnent quand il y en a. Un billet sans photo s'y affiche comme les autres.
+Le cahier de vie est le journal de la classe : ce que l'équipe a écrit, et les photos qui l'accompagnent quand il y en a. Il se lit **un mois à la fois** — le plus récent d'abord, les flèches pour remonter. Un billet sans photo s'y affiche comme les autres ; sur un grand écran, les billets se lisent deux par deux.
 
-Trois catégories y cohabitent — **Vie de classe**, **Information**, **Rappel** — et les filtres en haut de la page trient dessus. C'est une commodité de lecture, pas trois endroits : tout est dans le même cahier.
+Deux catégories y cohabitent — **Vie de classe**, ce que la classe a vécu, et **Infos pratiques**, ce qu'il faut savoir ou apporter (les anciennes « Information » et « Rappel » en font partie) — et les filtres en haut de la page trient dessus. C'est une commodité de lecture, pas deux endroits : tout est dans le même cahier.
 
 :::roles parent, guardian
 Les photos s'affichent dans l'application ; les toucher les ouvre en plein écran, où l'on passe de l'une à l'autre — y compris celles qu'une liste replie sous « +3 ». Elles sont stockées dans un espace privé et ne sont accessibles qu'aux familles de la classe et à l'équipe.

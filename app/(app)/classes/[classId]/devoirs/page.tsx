@@ -22,9 +22,9 @@ export default async function HomeworkPage({
   searchParams,
 }: {
   params: Promise<{ classId: string }>;
-  searchParams: Promise<{ semaine?: string }>;
+  searchParams: Promise<{ semaine?: string; jour?: string; vue?: string }>;
 }) {
-  const [{ classId }, { semaine }] = await Promise.all([params, searchParams]);
+  const [{ classId }, { semaine, jour, vue }] = await Promise.all([params, searchParams]);
   const [{ user, cls, isTeacher, isStaff }, t, format, children] = await Promise.all([
     requireClassAccess(classId),
     getTranslations("diary"),
@@ -36,7 +36,9 @@ export default async function HomeworkPage({
   const today = localDateKey(now, SCHOOL_TIME_ZONE);
   const pivot = pivotDay(now);
   const opening = defaultWeek(now);
-  const monday = isDateKey(semaine) ? mondayOf(semaine) : opening;
+  // A day asked for brings its week with it (ADR-0083).
+  const asked = isDateKey(jour) ? jour : null;
+  const monday = asked ? mondayOf(asked) : isDateKey(semaine) ? mondayOf(semaine) : opening;
   const sunday = addDays(monday, 6);
 
   const entries = await getHomeworkDiary([classId], monday, sunday);
@@ -50,13 +52,25 @@ export default async function HomeworkPage({
     .map((student) => ({ id: student.id, firstName: student.first_name }));
   const team = isTeacher || isStaff;
   const composer = team ? [{ id: classId, name: cls.name }] : [];
-  const href = (week: string) =>
-    week === opening
-      ? `/classes/${classId}/devoirs`
-      : `/classes/${classId}/devoirs?semaine=${week}`;
+  // « Jour » by default, on the day being prepared; « Semaine » stacks the week (ADR-0083).
+  // The view and the day are changed in the browser without asking the server (ADR-0086).
+  const view = vue === "semaine" ? "week" : "day";
+  const inWeek = (day: string) => day >= monday && day <= sunday;
+  const defaultDay = inWeek(pivot)
+    ? pivot
+    : (entries.find((entry) => entry.due_on && inWeek(entry.due_on))?.due_on ?? monday);
+  const selectedDay = asked && inWeek(asked) ? asked : defaultDay;
+  const href = (week: string, options: { day?: string; view?: "day" | "week" } = {}) => {
+    const params = new URLSearchParams();
+    if (options.day) params.set("jour", options.day);
+    else if (week !== opening) params.set("semaine", week);
+    if ((options.view ?? view) === "week") params.set("vue", "semaine");
+    const query = params.toString();
+    return `/classes/${classId}/devoirs${query ? `?${query}` : ""}`;
+  };
 
   return (
-    <Column>
+    <Column width="text">
       {team && (
         <div className="mb-3 flex justify-end">
           <NewHomeworkButton classes={composer} returnTo="classe" />
@@ -78,11 +92,17 @@ export default async function HomeworkPage({
         previous={href(addDays(monday, -7))}
         next={href(addDays(monday, 7))}
         current={monday === opening ? null : href(opening)}
+        views={{
+          day: href(monday, { day: selectedDay, view: "day" }),
+          week: href(monday, { view: "week" }),
+        }}
       />
       <HomeworkWeek
         monday={monday}
         pivot={pivot >= monday && pivot <= sunday ? pivot : null}
         today={today}
+        defaultDay={defaultDay}
+        dayHref={(day) => href(monday, { day, view: "day" })}
         entries={entries}
         attachments={attachments}
         emptyAction={

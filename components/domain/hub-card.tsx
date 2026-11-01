@@ -39,24 +39,23 @@ export function HubCard({ href, title, hint, meta, urgent, className }: HubCardP
         prefetch={false}
         // On a phone the live figure goes under the description: set at the right, it squeezed
         // « Annonces et circulaires » into a column a third of the screen wide.
-        className="group -mx-3 flex min-h-14 flex-col gap-0.5 rounded-lg px-3 py-3 transition-colors hover:bg-muted focus-visible:bg-muted sm:flex-row sm:items-baseline sm:gap-4"
+        className="group -mx-3 flex min-h-12 items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-muted focus-visible:bg-muted"
       >
         <span className="min-w-0 flex-1">
-          <span
-            className={cn(
-              "block text-base font-semibold tracking-[-0.006em]",
-              urgent && "text-brick",
-            )}
-          >
-            {title}
-          </span>
-          {hint && <span className="mt-0.5 block text-sm text-muted-foreground">{hint}</span>}
+          {/* The title stays in ink: in red, « Annonces et circulaires » read as an error.
+              What is waiting is the figure's to say, at the right (ADR-0080). */}
+          <span className="block text-base font-semibold tracking-[-0.006em]">{title}</span>
+          {hint && (
+            <span className="mt-0.5 block text-[0.8125rem] text-muted-foreground">{hint}</span>
+          )}
         </span>
         {meta && (
+          // What waits is a small tag at the right of the line, the way Messages marks an unread
+          // conversation — no longer a red title (ADR-0080).
           <span
             className={cn(
-              "shrink-0 text-xs font-semibold tabular-nums",
-              urgent ? "text-brick" : "text-muted-foreground",
+              "mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
+              urgent ? "bg-brick/10 text-brick" : "bg-muted text-muted-foreground",
             )}
           >
             {meta}
@@ -72,5 +71,9 @@ export function HubCard({ href, title, hint, meta, urgent, className }: HubCardP
  * the entries are now set apart by space, as the conversations are in Messages (ADR-0078).
  */
 export function HubGrid({ children, className }: { children: ReactNode; className?: string }) {
-  return <ul className={cn("flex flex-col gap-1", className)}>{children}</ul>;
+  return (
+    <ul className={cn("flex flex-col gap-0.5 lg:grid lg:grid-cols-2 lg:gap-x-10", className)}>
+      {children}
+    </ul>
+  );
 }

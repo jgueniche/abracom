@@ -5,14 +5,14 @@ routes: [/publier, /classes/[classId]/publier]
 topic: publish
 keywords: [publier, devoir, cahier de vie, info, rappel, brouillon, photos, composeur, appareil photo]
 since: 16
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
 **Publier** répond à une seule question : que voulez-vous publier ? La page liste ce que vous pouvez écrire — un billet de cahier de vie, un devoir, un mot individuel — et vous demande la classe seulement si vous en avez plusieurs.
 
 Le **devoir** a son propre formulaire, pensé pour être rempli en quelques secondes depuis un téléphone, page photographiée comprise : voir « Donner un devoir, avec la page en photo ».
 
-Le composeur de la classe sert au **cahier de vie**. Il pose d'abord la **catégorie** — **Vie de classe**, **Information** ou **Rappel**. Le billet va dans le cahier de vie dans tous les cas ; la catégorie sert aux familles à filtrer.
+Le composeur de la classe sert au **cahier de vie**. Il pose d'abord la **catégorie** — **Vie de classe** ou **Info pratique**. Le billet va dans le cahier de vie dans tous les cas ; la catégorie sert aux familles à filtrer.
 
 Deux réglages :
 

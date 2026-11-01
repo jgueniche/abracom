@@ -78,7 +78,7 @@ export async function EventCard({
     <Link
       href={`/agenda/${event.id}`}
       prefetch={false}
-      className="-mx-3 flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted focus-visible:bg-muted"
+      className="-mx-3 flex items-start gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-muted focus-visible:bg-muted"
     >
       {/* Out of a day's list, the date is the left edge of the entry — what the avatar is to a
           conversation in Messages (ADR-0078) — rather than a clause of the dateline. */}

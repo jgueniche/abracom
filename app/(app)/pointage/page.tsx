@@ -90,7 +90,7 @@ export default async function AttendancePage() {
   return (
     <Column>
       <PageHeader eyebrow={format.dateTime(new Date(), { dateStyle: "full" })} title={t("title")} />
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-7">
         <div className="flex flex-col gap-6">
           {today.length === 0 ? (
             <EmptyState
@@ -104,7 +104,7 @@ export default async function AttendancePage() {
         </div>
         {others.length > 0 && (
           <section className="flex flex-col gap-6">
-            <SectionHeader label={t("otherLists")} count={others.length} className="mb-0" />
+            <SectionHeader label={t("otherLists")} className="mb-0" />
             {others.map(card)}
           </section>
         )}

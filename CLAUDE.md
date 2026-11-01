@@ -659,6 +659,46 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   provisoire. Vérifié sur une pile Supabase réelle en appelant Supabase Auth et PostgREST
   directement, 587 assertions pgTAP sur les deux chemins, e2e et axe. La migration part avec le
   workflow « Deploy database » à la fusion.
+- **Session 36 — audit d'interface et refonte de la densité** (ADR-0080 à ADR-0082), jouée sur
+  une pile Supabase réelle. Audit mesuré d'abord (page « Audit d'interface Kesher », skills
+  `ui-ux-pro-max`, `design-critique`, `design-review`) : le texte n'était pas trop gros (14 px),
+  c'étaient les barres, des lignes à quatre étages et 40–48 px entre groupes — 2 devoirs visibles
+  sur un téléphone, 1 billet du cahier de vie, quand Messages en montre 6. Le porteur a validé les
+  cinq lots. (1) **Corrections** : la barre de défilement parasite des onglets de classe (le trait
+  de l'onglet actif dépassait d'un pixel d'une rangée `overflow-x-auto`), les chiffres sans légende,
+  « Classe(s) », le compteur de devoirs écrit trois fois. (2) **Densité** (ADR-0080, remplace trois
+  règles de l'ADR-0078) : 28 px entre sections, deux étages par ligne, filtres 32 px à l'œil et
+  44 px au doigt, onglets 44 px, tailles de texte inchangées. (3) **Accueil du parent** (ADR-0081) :
+  « À faire » (Signer, Lire, avec l'échéance), « Pour demain » par enfant, « Nouveau », « À venir » ;
+  **Devoirs** : semaine sur une ligne, consigne repliée, deux colonnes sur grand écran.
+  (4) **Espace de classe** : bandeau teinté, une rangée d'onglets et « Suivi » en menu ; cahier de
+  vie **par mois**, deux catégories (« Vie de classe », « Infos pratiques ») ; agenda à date en
+  marge (7 jours par écran au lieu de 4) ; École compacte. (5) **Navigation** : « Mes enfants »
+  remplace « Ma classe » pour le parent, cinq onglets identiques sur téléphone et ordinateur.
+  **Échéances** (ADR-0082) : `announcements.due_on`, `documents.due_on`, saisies par l'école, lues
+  et écrites de façon tolérante pour qu'une preview sans la migration fonctionne. **La migration
+  part avec « Deploy database » à la fusion** ; avant, la preview montre l'accueil sans échéances.
+  **Retour sur la preview** (ADR-0083) : les devoirs passent en vue **Jour** par défaut (le jour
+  préparé, ou celui touché dans le bandeau) et **Semaine** empilée sur une colonne — les deux colonnes
+  étaient illisibles ; la bannière d'installation n'est plus proposée que sur l'accueil, une fois par
+  session.
+  **La latence au premier clic, enfin trouvée** (ADR-0084) : le porteur soupçonnait le code, il avait
+  raison. Les 32 fonctions des politiques RLS (`can_access_class`, `is_school_staff`…) étaient en
+  `language sql` ; jusqu'à PostgreSQL 17, une fonction SQL appelée depuis une autre est
+  **replanifiée à chaque appel** — 1,4 ms par ligne lue, huit planifications par ligne. Passées en
+  PL/pgSQL, mêmes corps, mêmes droits (605 assertions pgTAP) : sur une base bridée façon offre
+  gratuite, l'accueil passe de 941 à ~230 ms de rendu serveur, les devoirs de 1 048 à ~200 ; un
+  onglet touché 0,3 s après l'ouverture s'affiche en 97–106 ms au lieu de 1,2–1,4 s.
+  `TabPrefetch` part dès l'affichage (et non au premier temps mort, jusqu'à 2 s), recharge les
+  onglets après une mutation, et un onglet part quand le doigt se pose. **La migration
+  `20261101110000` part avec « Deploy database » à la fusion** : avant, la preview n'a que la moitié
+  client du gain. **Connexion et logo** (ADR-0085) : la page de connexion porte le logo de l'école en
+  grand (deux moitiés sur ordinateur, bandeau sur téléphone, bouton dans le premier écran), « Le lien
+  entre l'école et les familles », un œil pour afficher le mot de passe ; l'en-tête de l'application
+  montre le livre du logo (36–44 px) au lieu du logo entier réduit à 32 px ; plaque blanche en sombre.
+  **Les jours des devoirs sur place** (ADR-0086) : la semaine est déjà sur la page, donc toucher un
+  jour ou basculer Jour / Semaine ne demande plus rien au serveur (8–17 ms au lieu d'un aller-retour),
+  l'adresse suit (`replaceState`) ; les semaines voisines sont chargées d'avance (12–18 ms).
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

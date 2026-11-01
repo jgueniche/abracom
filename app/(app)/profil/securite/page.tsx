@@ -57,7 +57,7 @@ export default async function SecurityPage({
         </p>
       ) : (
         <>
-          <section className="mb-10">
+          <section className="mb-7">
             <SectionHeader label={t("passwordSection")} />
             <PasswordForm mode="change" email={user.email} />
           </section>

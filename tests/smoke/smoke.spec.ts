@@ -29,7 +29,7 @@ for (const account of ACCOUNTS) {
     await page.goto(`${baseURL}/connexion`);
     await page.getByRole("button", { name: "Se connecter avec un mot de passe" }).click();
     await page.getByLabel("Adresse e-mail").fill(account.email);
-    await page.getByLabel("Mot de passe").fill(password!);
+    await page.getByLabel("Mot de passe", { exact: true }).fill(password!);
     await page.getByRole("button", { name: "Se connecter", exact: true }).click();
     await expect(page).not.toHaveURL(/\/connexion/, { timeout: 30_000 });
 

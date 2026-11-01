@@ -91,7 +91,7 @@ if (process.env.PREVIEW_ACCESS_URL) {
 const t0 = Date.now();
 await page.goto(`${base}/connexion`, { waitUntil: "networkidle" });
 await page.getByLabel("Adresse e-mail").fill(email);
-await page.getByLabel("Mot de passe").fill(password);
+await page.getByLabel("Mot de passe", { exact: true }).fill(password);
 await page.getByRole("button", { name: "Se connecter", exact: true }).click();
 await page.waitForFunction(
   () => !location.pathname.startsWith("/connexion") && document.querySelector("h1"),

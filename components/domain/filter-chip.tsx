@@ -32,10 +32,13 @@ export function FilterChip({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "inline-flex min-h-11 shrink-0 items-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors md:min-h-9",
+        // 32 px to the eye, 44 to the finger: the extra 6 px above and below are an invisible
+        // extension of the target, so a filter no longer reads as a button bar (ADR-0080).
+        "relative inline-flex min-h-8 shrink-0 items-center rounded-full border px-3 text-[0.8125rem] font-medium whitespace-nowrap transition-colors",
+        "before:absolute before:inset-x-0 before:-inset-y-1.5 before:content-[''] md:before:hidden",
         active
-          ? "bg-primary/10 font-semibold text-primary"
-          : "text-foreground/70 hover:bg-muted hover:text-foreground",
+          ? "border-primary/25 bg-primary/10 font-semibold text-primary"
+          : "border-border text-foreground/75 hover:bg-muted hover:text-foreground",
         className,
       )}
     >
@@ -57,7 +60,10 @@ export function FilterChips({
   return (
     <nav
       aria-label={label}
-      className={cn("-mx-4 mb-5 flex gap-1.5 overflow-x-auto px-4 pb-0.5", className)}
+      className={cn(
+        "-mx-4 mb-3 flex gap-1.5 overflow-x-auto overflow-y-hidden px-4 py-1.5",
+        className,
+      )}
     >
       {children}
     </nav>

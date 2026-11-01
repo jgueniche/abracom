@@ -201,7 +201,7 @@ export default async function AssessmentsPage({
   const children = cls.students.filter((s) => myStudentIds.includes(s.id));
   return (
     <Column>
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-8">
         {selector}
         {children.map((child) => {
           const mine = rows.filter((r) => r.student_id === child.id);

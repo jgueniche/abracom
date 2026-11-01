@@ -141,7 +141,7 @@ export default async function AgendaPage({
 
       {/* Today's date is a dateline, not a banner: three lines in a box across
           the top of the page announced the day the reader is already living. */}
-      <p className="mb-8 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+      <p className="mb-5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
         <span className="eyebrow">{t("today")}</span>
         <span className="font-heading text-base capitalize">
           {format.dateTime(noon(today), { dateStyle: "full" })}
@@ -154,13 +154,13 @@ export default async function AgendaPage({
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-1">
-          <Button asChild variant="outline" size="icon" className="size-11">
+          <Button asChild variant="ghost" size="icon" className="size-11">
             <Link href={link({ m: shiftMonth(month, -1) })} aria-label={t("previousMonth")}>
               <ChevronLeftIcon aria-hidden />
             </Link>
           </Button>
-          <h2 className="min-w-44 text-center text-lg font-semibold capitalize">{monthLabel}</h2>
-          <Button asChild variant="outline" size="icon" className="size-11">
+          <h2 className="min-w-36 text-center text-base font-semibold capitalize">{monthLabel}</h2>
+          <Button asChild variant="ghost" size="icon" className="size-11">
             <Link href={link({ m: shiftMonth(month, 1) })} aria-label={t("nextMonth")}>
               <ChevronRightIcon aria-hidden />
             </Link>
@@ -183,7 +183,7 @@ export default async function AgendaPage({
           action={canEdit ? { href: "/agenda/nouveau", label: t("new") } : undefined}
         />
       ) : (
-        <ol className="flex flex-col gap-1">
+        <ol className="flex flex-col">
           {keys.map((key) => {
             const day = days.get(key)!;
             const shabbat = isoWeekday(key) === 6;
@@ -193,75 +193,68 @@ export default async function AgendaPage({
             return (
               <li
                 key={key}
-                // The day is the unit of this list, and its date the left edge every
-                // line of it hangs from — the avatar of Messages. A rule under every
-                // day and a tinted band for today made a month a ruled ledger with a
-                // blue stripe in it (ADR-0078); today is now said in its own colour,
-                // and marked in the margin.
-                className="relative grid gap-2 py-3 sm:grid-cols-[8rem_1fr]"
+                // The day is the unit of this list, and its date the left edge every line of it
+                // hangs from — the hours of the timetable, the avatar of Messages. On a phone the
+                // date used to run across the top of the day, with the Hebrew date, « Chabbat »
+                // and the times each on a line of their own: four days to a screen (ADR-0080).
+                className="relative grid grid-cols-[3rem_minmax(0,1fr)] gap-x-3 py-2 sm:grid-cols-[4rem_minmax(0,1fr)]"
               >
                 {key === today && (
                   <span
                     aria-hidden
-                    className="absolute inset-y-3 -left-3 w-[2px] rounded-full bg-primary"
+                    className="absolute inset-y-2 -left-3 w-[2px] rounded-full bg-primary"
                   />
                 )}
-                <div className="flex flex-wrap items-baseline gap-x-2 sm:flex-col sm:gap-0">
-                  <p className={cn("font-semibold capitalize", key === today && "text-primary")}>
-                    {format.dateTime(noon(key), { weekday: "short", day: "numeric" })}
-                  </p>
-                  <p className="meta">{hebrewDate(key, hebcalLocale)}</p>
-                  {shabbat && <p className="eyebrow sm:mt-0.5">{t("shabbat")}</p>}
+                <div className="flex flex-col items-center pt-0.5 leading-none">
+                  <span
+                    className={cn(
+                      "font-heading text-xl leading-none tabular-nums",
+                      key === today && "text-primary",
+                    )}
+                  >
+                    {format.dateTime(noon(key), { day: "numeric" })}
+                  </span>
+                  <span className={cn("eyebrow mt-1", key === today && "text-primary")}>
+                    {format.dateTime(noon(key), { weekday: "short" }).replace(".", "")}
+                  </span>
                 </div>
-                <div className="flex flex-col gap-2">
-                  {(holidays.length > 0 ||
-                    parashaItem ||
-                    times.length > 0 ||
-                    day.publicHolidays.length > 0) && (
-                    /* The Jewish calendar is the cultural spine of this agenda
-                       and it was set in capsules — a solid one for a yom tov, a
-                       filled one for the rest — so a month of Tishri came out as
-                       thirty coloured pills. The distinction that matters (a day
-                       the school closes versus a name for the week) survives in
-                       the weight and the colour of the words themselves. */
-                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      {day.publicHolidays.map((name) => (
-                        <span key={name} className="eyebrow">
-                          {name} · {t("publicHoliday")}
-                        </span>
-                      ))}
-                      {holidays.map((item) => (
-                        <span
-                          key={`${item.category}-${item.title}`}
-                          title={item.category ? t(`categories.${item.category}`) : undefined}
-                          className={cn(
-                            "text-[0.6875rem] tracking-[0.085em] uppercase",
-                            item.yomTov
-                              ? "font-semibold text-primary"
-                              : "font-medium text-muted-foreground",
-                          )}
-                        >
-                          {item.category === "isruChag"
-                            ? t("isruChagTitle", { name: item.title })
-                            : item.title}
-                        </span>
-                      ))}
-                      {parashaItem && (
-                        <span className="meta italic">
-                          {t("parasha", { name: parashaItem.title })}
-                        </span>
-                      )}
-                      {times.map((item) => (
-                        <span key={item.kind} className="meta">
-                          {item.kind === "candles"
-                            ? t("candles", { time: item.time ?? "" })
-                            : t("havdalah", { time: item.time ?? "" })}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                <div className="flex min-w-0 flex-col gap-1">
+                  {/* The calendar of the day in one quiet run: Hebrew date, Shabbat, the week's
+                      parasha, the times; a yom tov keeps its colour and weight. */}
+                  <p className="meta flex flex-wrap items-baseline gap-x-2 gap-y-0.5 pt-0.5">
+                    <span>{hebrewDate(key, hebcalLocale)}</span>
+                    {shabbat && (
+                      <span className="font-semibold text-foreground/80">{t("shabbat")}</span>
+                    )}
+                    {day.publicHolidays.map((name) => (
+                      <span key={name} className="font-semibold text-foreground/80">
+                        {name} · {t("publicHoliday")}
+                      </span>
+                    ))}
+                    {holidays.map((item) => (
+                      <span
+                        key={`${item.category}-${item.title}`}
+                        title={item.category ? t(`categories.${item.category}`) : undefined}
+                        className={cn(item.yomTov ? "font-semibold text-primary" : "font-medium")}
+                      >
+                        {item.category === "isruChag"
+                          ? t("isruChagTitle", { name: item.title })
+                          : item.title}
+                      </span>
+                    ))}
+                    {parashaItem && (
+                      <span className="italic">{t("parasha", { name: parashaItem.title })}</span>
+                    )}
+                    {times.map((item) => (
+                      <span key={item.kind}>
+                        {item.kind === "candles"
+                          ? t("candles", { time: item.time ?? "" })
+                          : t("havdalah", { time: item.time ?? "" })}
+                      </span>
+                    ))}
+                  </p>
                   {day.events.length > 0 && (
-                    <ul className="flex flex-col gap-0.5">
+                    <ul className="flex flex-col">
                       {day.events.map(({ event, continued }) => (
                         <li key={event.id}>
                           <EventCard event={event} continued={continued} />

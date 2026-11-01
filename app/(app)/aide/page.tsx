@@ -80,13 +80,12 @@ export default async function HelpPage() {
         {groups.length === 0 ? (
           <EmptyState icon={BookOpenIcon} title={t("empty")} description={t("emptyHint")} />
         ) : (
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-7">
             {groups.map((group) => (
               <section key={group.topic} aria-labelledby={`topic-${group.topic}`}>
                 <SectionHeader
                   id={`topic-${group.topic}`}
                   label={tTopics(group.topic)}
-                  count={group.articles.length}
                   hint={tTopics(`${group.topic}Hint`)}
                 />
                 {/* A table of contents, not twenty-six boxes: the help index

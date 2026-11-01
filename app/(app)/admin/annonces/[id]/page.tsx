@@ -21,6 +21,7 @@ import {
 import { AnnouncementForm } from "../announcement-form";
 import { Attachments } from "./attachments";
 import { RemindButton } from "./remind-button";
+import { getDueDates } from "@/server/queries/parent-home";
 
 export default async function AdminAnnouncementPage({
   params,
@@ -38,6 +39,8 @@ export default async function AdminAnnouncementPage({
     getAudienceOptions(schoolId),
   ]);
   if (!announcement || announcement.deleted_at) notFound();
+  const dueOn =
+    (await getDueDates("announcements", [announcement.id])).get(announcement.id) ?? null;
   const status = announcementStatus(announcement);
   const recipients = status === "draft" ? null : await getAnnouncementRecipients(id);
   const nonReaders =
@@ -85,6 +88,7 @@ export default async function AdminAnnouncementPage({
                 pinned: announcement.pinned,
                 publishedAt: announcement.published_at,
                 expiresAt: announcement.expires_at,
+                dueOn,
                 documentId: announcement.document_id,
                 template: announcement.template,
               }}

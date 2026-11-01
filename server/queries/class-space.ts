@@ -120,18 +120,30 @@ export async function getHomeworkDiary(classIds: string[], from: string, to: str
 export async function getNextHomeworkDay(classIds: string[], from: string): Promise<string | null> {
   if (classIds.length === 0) return null;
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("class_posts")
-    .select("due_on")
-    .in("class_id", classIds)
-    .eq("type", "homework")
-    .is("deleted_at", null)
-    .gte("due_on", from)
-    .order("due_on")
-    .limit(1)
-    .maybeSingle();
-  if (error) throw error;
-  return data?.due_on ?? null;
+  // One question per class, not one for all of them (ADR-0084). Across several classes the
+  // database cannot read the index in date order: it gathered every future homework of every
+  // class, ran the row policy on each — a hundred rows for a parent of two — and kept the first.
+  // For one class it reads the index in order and stops at the first row the reader may see:
+  // 0.5 ms instead of 89 on a throttled database, the slowest query of the diary until then.
+  // A whole school's worth of classes (the office) keeps the single question.
+  const groups = classIds.length <= 12 ? classIds.map((id) => [id]) : [classIds];
+  const firsts = await Promise.all(
+    groups.map(async (ids) => {
+      const query = supabase.from("class_posts").select("due_on");
+      const { data, error } = await (
+        ids.length === 1 ? query.eq("class_id", ids[0]!) : query.in("class_id", ids)
+      )
+        .eq("type", "homework")
+        .is("deleted_at", null)
+        .gte("due_on", from)
+        .order("due_on")
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data?.due_on ?? null;
+    }),
+  );
+  return firsts.filter((day): day is string => day !== null).sort()[0] ?? null;
 }
 
 /** One homework, wherever it is read from — a notification, the home page, a shared link. */

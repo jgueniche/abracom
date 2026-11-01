@@ -5,12 +5,12 @@ routes: [/connexion, /mot-de-passe, /bienvenue]
 topic: signin
 keywords: [connexion, invitation, mot de passe, mot de passe provisoire, identifiant, première fois, oublié, inscription, pas de compte]
 since: 17
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
 L'école crée votre compte : on ne s'inscrit pas soi-même. Elle vous remet votre **identifiant** — l'adresse de courriel que vous lui avez donnée — et un **mot de passe provisoire**, par message ou de vive voix.
 
-Sur la page de connexion, tapez-les tels quels. L'application vous demande alors de **choisir votre propre mot de passe**, au moins huit caractères : le provisoire ne sert qu'une fois, et rien ne s'ouvre avant ce choix.
+Sur la page de connexion — celle qui porte le logo de l'école —, tapez-les tels quels. L'**œil** au bout du champ du mot de passe affiche ce que vous avez tapé, pour vérifier une lettre sur un clavier de téléphone ; touchez-le de nouveau pour le masquer. L'application vous demande alors de **choisir votre propre mot de passe**, au moins huit caractères : le provisoire ne sert qu'une fois, et rien ne s'ouvre avant ce choix.
 
 Viennent ensuite votre prénom, votre nom, votre langue, puis l'acceptation des conditions d'utilisation, de la charte et de la politique de confidentialité. Cette étape est obligatoire : tant qu'elle n'est pas faite, les autres écrans restent fermés. L'acceptation est horodatée et conservée.
 
@@ -18,4 +18,4 @@ Viennent ensuite votre prénom, votre nom, votre langue, puis l'acceptation des 
 
 La page de connexion propose aussi de **recevoir un lien par courriel**, sans mot de passe : ouvrez-le sur le même appareil et dans le même navigateur que celui où vous l'avez demandé. Il ne sert qu'une fois et expire.
 
-**Pas de compte ?** Le bloc du même nom, sur la page de connexion, donne l'adresse à laquelle écrire, et prépare le message : le nom et le prénom de chaque parent, son adresse de courriel, et le nom, le prénom et la classe de chaque enfant. L'école crée les comptes et vous communique vos identifiants.
+**Pas de compte ?** La ligne du même nom, sous le formulaire de connexion, se déplie et donne l'adresse à laquelle écrire, et prépare le message : le nom et le prénom de chaque parent, son adresse de courriel, et le nom, le prénom et la classe de chaque enfant. L'école crée les comptes et vous communique vos identifiants.

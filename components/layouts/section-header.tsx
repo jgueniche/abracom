@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
  * section boundary looked exactly like a box boundary, and a page of sections
  * read as a stack of frames. A section now starts where the white space before
  * it ends — the way the Messages tab names its groups — and the space between
- * sections is the caller's (`mt-10`, `gap-10`), never a line.
+ * sections is the caller's (`mb-7`, `gap-7`: 28 px, ADR-0080), never a line.
  */
 export function SectionHeader({
   label,
@@ -41,7 +41,7 @@ export function SectionHeader({
   className?: string;
 }) {
   return (
-    <div className={cn("mb-3", className)}>
+    <div className={cn("mb-2", className)}>
       <div className="flex min-h-7 items-center gap-3">
         <h2 id={id} className="section-label min-w-0">
           {label}

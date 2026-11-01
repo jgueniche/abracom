@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { AttachmentStrip } from "@/components/domain/attachment-strip";
@@ -15,18 +16,9 @@ import type { DiaryEntry } from "@/server/queries/class-space";
 
 import { DoneToggle } from "./done-toggle";
 import { HomeworkProgress } from "./progress";
+import { DiaryPanels } from "./selection";
 import { TONE_CLASSES } from "./tones";
-import {
-  DayCelebration,
-  DayProgress,
-  EntryFrame,
-  type StripDay,
-  WeekProgress,
-  WeekStrip,
-} from "./week-parts";
-
-/** Past this many characters the details fold behind « Lire la suite ». */
-const FOLD_AT = 280;
+import { DayCelebration, DayProgress, EntryFrame, type StripDay, WeekStrip } from "./week-parts";
 
 export type WeekReader = {
   /** The reader's own children, by class — never the class's pupils (ADR-0059). */
@@ -61,6 +53,8 @@ export async function HomeworkWeek({
   attachments,
   reader,
   emptyAction,
+  defaultDay = null,
+  dayHref,
 }: {
   monday: DateKey;
   /** The day being prepared, when it falls in this week. */
@@ -70,6 +64,15 @@ export async function HomeworkWeek({
   attachments: ReadonlyMap<string, AttachmentView>;
   reader: WeekReader;
   emptyAction?: React.ReactNode;
+  /**
+   * « Jour » shows one day, the one being prepared unless another is chosen; « Semaine » stacks
+   * the week in one column (ADR-0083). Which of the two, and which day, is read from the address
+   * in the browser: every day of the week is rendered here once, and moving between them asks
+   * the server nothing (ADR-0086). This is the day shown when the address names none.
+   */
+  defaultDay?: DateKey | null;
+  /** Where touching a day of the strip leads, for a new tab: that day, on its own. */
+  dayHref: (day: DateKey) => string;
 }) {
   const [t, format] = await Promise.all([getTranslations("diary"), getFormatter()]);
 
@@ -112,6 +115,7 @@ export async function HomeworkWeek({
     pivot: day === pivot,
     today: day === today,
     past: pivot ? day < pivot : day < today,
+    href: dayHref(day),
   }));
 
   // The current week opens on the day being prepared; past days fold underneath.
@@ -198,25 +202,29 @@ export async function HomeworkWeek({
   const upcomingDays = visible(upcoming);
   const earlierDays = visible(earlier);
 
+  // Every day of the strip, rendered once: shown alone in « Jour », stacked in « Semaine ». A day
+  // before the one being prepared reads quieter in both.
+  const panels = Object.fromEntries(
+    days.map((day) => [day, renderDay(day, pivot !== null && day < pivot)]),
+  );
+
   return (
     <HomeworkProgress doneKeys={doneKeys}>
-      <div className="mb-6">
-        <WeekStrip days={strip} ticks={ticks} />
-        {ticks && <WeekProgress keys={strip.flatMap((day) => day.keys)} />}
+      <div className="mb-5">
+        <WeekStrip days={strip} ticks={ticks} defaultDay={defaultDay} />
       </div>
 
       {entries.length === 0 ? (
         <EmptyState title={t("empty")} description={t("emptyHint")} action={emptyAction} />
       ) : (
-        <div className="flex flex-col gap-7">
-          {upcomingDays.map((day) => renderDay(day))}
-          {earlierDays.length > 0 && (
-            <div className="flex flex-col gap-5">
-              <p className="eyebrow pt-3">{t("earlierThisWeek")}</p>
-              {earlierDays.map((day) => renderDay(day, true))}
-            </div>
-          )}
-        </div>
+        <DiaryPanels
+          defaultDay={defaultDay}
+          days={days}
+          panels={panels}
+          upcoming={upcomingDays}
+          earlier={earlierDays}
+          earlierLabel={t("earlierThisWeek")}
+        />
       )}
     </HomeworkProgress>
   );
@@ -252,7 +260,7 @@ async function HomeworkEntry({
   const several = concerned.length > 1;
 
   return (
-    <EntryFrame keys={keys} id={`devoir-${entry.id}`} className="flex gap-3 py-3.5">
+    <EntryFrame keys={keys} id={`devoir-${entry.id}`} className="flex gap-3 py-2.5">
       <div className="flex w-7 shrink-0 items-start justify-center pt-0.5">
         {single ? (
           <DoneToggle
@@ -272,38 +280,13 @@ async function HomeworkEntry({
         )}
       </div>
       <div className={cn("min-w-0 flex-1", muted && "opacity-90")}>
+        {/* Two lines, like a conversation in Messages (ADR-0080): the title, then what it is and
+            the start of what to do. The whole instruction opens in place, and in full on the
+            homework's own page — a week used to take four screens of a phone because every
+            instruction was printed in full. */}
         <div className="flex items-start gap-2">
           <div className="min-w-0 flex-1">
-            <p className="eyebrow flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
-              {entry.subject && <span className="text-foreground/80">{entry.subject}</span>}
-              {reader.showClass && entry.class && (
-                <>
-                  {entry.subject && <span aria-hidden>·</span>}
-                  <span>{entry.class.name}</span>
-                </>
-              )}
-              {several && (
-                <>
-                  <span aria-hidden>·</span>
-                  <span>
-                    {t("forChild", { name: concerned.map((c) => c.firstName).join(", ") })}
-                  </span>
-                </>
-              )}
-              {isDraft && (
-                <>
-                  <span aria-hidden>·</span>
-                  <span className="text-brick">{t("draft")}</span>
-                </>
-              )}
-              {entry.visibility === "staff" && (
-                <>
-                  <span aria-hidden>·</span>
-                  <span>{t("teamOnly")}</span>
-                </>
-              )}
-            </p>
-            <h3 className="mt-0.5 font-heading text-base leading-snug font-normal tracking-[-0.006em] text-pretty transition-colors group-data-[done]/entry:text-muted-foreground">
+            <h3 className="font-heading text-base leading-snug font-normal tracking-[-0.006em] text-pretty transition-colors group-data-[done]/entry:text-muted-foreground">
               <Link
                 href={href}
                 dir="auto"
@@ -312,34 +295,44 @@ async function HomeworkEntry({
                 {entry.title}
               </Link>
             </h3>
+            {body ? (
+              <details className="group/body">
+                <summary className="flex cursor-pointer list-none items-baseline gap-1 [&::-webkit-details-marker]:hidden">
+                  <span className="meta line-clamp-1 min-w-0 flex-1 group-open/body:line-clamp-none">
+                    <EntryContext
+                      entry={entry}
+                      reader={reader}
+                      concerned={concerned}
+                      isDraft={isDraft}
+                    />
+                    <span className="group-open/body:hidden">
+                      {" · "}
+                      <span dir="auto">{plainExcerpt(body, 160)}</span>
+                    </span>
+                  </span>
+                  <ChevronDownIcon
+                    aria-hidden
+                    className="size-3.5 shrink-0 translate-y-0.5 text-muted-foreground transition-transform group-open/body:rotate-180"
+                  />
+                  <span className="sr-only">{t("readMore")}</span>
+                </summary>
+                <div dir="auto" className="mt-1">
+                  <Markdown size="compact">{body}</Markdown>
+                </div>
+              </details>
+            ) : (
+              <p className="meta line-clamp-1">
+                <EntryContext
+                  entry={entry}
+                  reader={reader}
+                  concerned={concerned}
+                  isDraft={isDraft}
+                />
+              </p>
+            )}
           </div>
           {canEdit && <PostActions postId={entry.id} editHref={`/devoirs/${entry.id}/modifier`} />}
         </div>
-
-        {body &&
-          (body.length > FOLD_AT ? (
-            <details className="group/body mt-1">
-              <summary className="cursor-pointer list-none">
-                <span
-                  dir="auto"
-                  className="block text-sm text-pretty text-foreground/80 group-open/body:hidden"
-                >
-                  {plainExcerpt(body, 220)}
-                </span>
-                <span className="mt-0.5 inline-flex min-h-8 items-center text-sm font-semibold text-primary group-open/body:hidden">
-                  {t("readMore")}
-                </span>
-              </summary>
-              <div dir="auto">
-                <Markdown size="compact">{body}</Markdown>
-              </div>
-            </details>
-          ) : (
-            <div dir="auto" className="mt-1">
-              <Markdown size="compact">{body}</Markdown>
-            </div>
-          ))}
-
         {attachments.length > 0 && (
           <AttachmentStrip items={attachments} title={entry.title} className="mt-2.5" />
         )}
@@ -381,5 +374,51 @@ async function TeamCount({ done, total }: { done: number; total: number }) {
       </span>
       {t("doneByTotal", { count: done, total })}
     </span>
+  );
+}
+
+/** What a homework is, in one run of words: subject, class, the children it concerns, its state. */
+async function EntryContext({
+  entry,
+  reader,
+  concerned,
+  isDraft,
+}: {
+  entry: DiaryEntry;
+  reader: WeekReader;
+  concerned: ReadonlyArray<{ id: string; firstName: string }>;
+  isDraft: boolean;
+}) {
+  const t = await getTranslations("diary");
+  const parts: React.ReactNode[] = [];
+  if (entry.subject)
+    parts.push(
+      <span key="subject" className="font-medium text-foreground/80">
+        {entry.subject}
+      </span>,
+    );
+  if (reader.showClass && entry.class) parts.push(<span key="class">{entry.class.name}</span>);
+  if (concerned.length > 1)
+    parts.push(
+      <span key="child">
+        {t("forChild", { name: concerned.map((c) => c.firstName).join(", ") })}
+      </span>,
+    );
+  if (isDraft)
+    parts.push(
+      <span key="draft" className="text-brick">
+        {t("draft")}
+      </span>,
+    );
+  if (entry.visibility === "staff") parts.push(<span key="team">{t("teamOnly")}</span>);
+  return (
+    <>
+      {parts.map((part, index) => (
+        <span key={index}>
+          {index > 0 && " · "}
+          {part}
+        </span>
+      ))}
+    </>
   );
 }

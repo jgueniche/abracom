@@ -5,13 +5,13 @@ routes: [/annonces, /annonces/[id]]
 topic: daily
 keywords: [annonce, circulaire, accusé de lecture, j'ai lu, confirmer, épinglé, direction]
 since: 6
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
 Les annonces sont le canal officiel de la direction. On les trouve dans l'onglet **École → Annonces et circulaires**, et les non lues remontent aussi sur l'accueil.
 
 - Les annonces **épinglées** restent en tête de liste.
-- Une annonce marquée **« À confirmer »** attend un geste de votre part : ouvrez-la, puis « J'ai lu ». L'ouverture est déjà enregistrée comme une lecture ; le bouton, lui, est la confirmation explicite que l'école peut opposer.
+- Une annonce marquée **« À confirmer »** attend un geste de votre part : ouvrez-la, puis « J'ai lu ». L'ouverture est déjà enregistrée comme une lecture ; le bouton, lui, est la confirmation explicite que l'école peut opposer. Ces annonces sont aussi en tête de votre accueil, sous « À faire », avec la date avant laquelle l'école attend la confirmation quand elle en a donné une.
 - Les pièces jointes s'ouvrent par un lien valable dix minutes ; si l'onglet est resté ouvert longtemps, rechargez la page.
 - Une annonce peut renvoyer vers un document à signer : la signature se fait sur la page du document, pas sur l'annonce.
 - Si votre profil est en anglais et que l'école a fourni une version anglaise, c'est celle-là qui s'affiche.

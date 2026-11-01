@@ -75,13 +75,13 @@ export default async function NewMessagePage() {
       <div className="flex flex-col gap-6">
         {team.length > 0 && (
           <section>
-            <SectionHeader label={t("contacts.team")} count={team.length} />
+            <SectionHeader label={t("contacts.team")} />
             {list(team)}
           </section>
         )}
         {parents.length > 0 && (
           <section>
-            <SectionHeader label={t("contacts.parents")} count={parents.length} />
+            <SectionHeader label={t("contacts.parents")} />
             {list(parents)}
           </section>
         )}

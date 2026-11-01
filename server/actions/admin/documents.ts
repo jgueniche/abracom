@@ -22,6 +22,10 @@ const documentSchema = z.object({
   requiresSignature: z.boolean(),
   signaturePerStudent: z.boolean(),
   purpose: z.enum(["generic", "image_rights", "outing_authorization", "charter"]),
+  dueOn: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable(),
   publishNow: z.boolean(),
 });
 
@@ -37,6 +41,7 @@ export async function createDocument(_prev: ActionState, formData: FormData): Pr
       newFolder: optional(formData, "newFolder"),
       audience: field(formData, "audience"),
       targetIds: formData.getAll("targetIds").map(String).filter(Boolean),
+      dueOn: optional(formData, "dueOn"),
       requiresSignature: formData.get("requiresSignature") === "on",
       signaturePerStudent: formData.get("signaturePerStudent") === "on",
       purpose: field(formData, "purpose") || "generic",
@@ -85,6 +90,8 @@ export async function createDocument(_prev: ActionState, formData: FormData): Pr
       requires_signature: parsed.data.requiresSignature,
       signature_per_student: parsed.data.requiresSignature && parsed.data.signaturePerStudent,
       purpose: parsed.data.purpose,
+      // only when set (ADR-0082): see the announcements' action
+      ...(parsed.data.requiresSignature && parsed.data.dueOn ? { due_on: parsed.data.dueOn } : {}),
       published_at: parsed.data.publishNow ? new Date().toISOString() : null,
       created_by: user.id,
     });

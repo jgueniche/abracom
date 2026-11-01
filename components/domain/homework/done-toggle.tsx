@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { doneKey, type SubjectTone } from "@/lib/homework";
 import { cn } from "@/lib/utils";
@@ -46,6 +46,10 @@ export function DoneToggle({
   const done = ticks.has(doneKey(postId, studentId));
   // Each new tick replays the celebration; unticking plays nothing.
   const [celebrations, setCelebrations] = useState(0);
+  // Set once React has taken the button over: a tap before that is a plain HTML click with no
+  // handler. The tests wait for it rather than for a fixed delay (ADR-0083).
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const classes = TONE_CLASSES[tone];
   const label = showName ? t("doneFor", { title, name: childName }) : t("doneLabel", { title });
 
@@ -97,6 +101,7 @@ export function DoneToggle({
       role="checkbox"
       aria-checked={done}
       aria-label={label}
+      data-ready={ready || undefined}
       onClick={() => {
         if (!done) setCelebrations((count) => count + 1);
         toggle(postId, studentId);

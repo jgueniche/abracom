@@ -27,7 +27,7 @@
   },
   "nav": {
     "home": "Accueil",
-    "classes": "Classe(s)",
+    "classes": "Classes",
     "messages": "Messages",
     "agenda": "Agenda",
     "dashboard": "Tableau de bord",
@@ -46,7 +46,8 @@
     "manage": "Gestion",
     "unreadMessages": "Messages : {count, plural, one {# non lu} other {# non lus}}",
     "homework": "Devoirs",
-    "attendance": "Pointage"
+    "attendance": "Pointage",
+    "myChildren": "Mes enfants"
   },
   "errors": {
     "notFound": {
@@ -223,7 +224,14 @@
       "noAccountCta": "Pas de compte ? Demandez directement à l'école de vous créer votre compte",
       "registrationSubject": "Ouverture de nos comptes {appName}",
       "registrationBody": "Bonjour,\n\nNous souhaitons ouvrir nos comptes {appName}.\n\nÉcole :\n\nParent 1 — nom et prénom :\nAdresse e-mail :\nTéléphone :\n\nParent 2 (facultatif) — nom et prénom :\nAdresse e-mail :\nTéléphone :\n\nEnfants — nom, prénom et classe :\n1.\n2.\n\nMerci.",
-      "testSpace": "Espace de test"
+      "testSpace": "Espace de test",
+      "welcome": "Bienvenue sur {appName}",
+      "brandLabel": "L'école",
+      "tagline": "Le lien entre l'école et les familles",
+      "brandCaption": "Kesher — קשר, « le lien » en hébreu",
+      "logoAlt": "Institutions Abravanel — Bienveillance, Exigence, Persévérance",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe"
     },
     "onboarding": {
       "title": "Bienvenue, faisons connaissance",
@@ -262,22 +270,24 @@
   "appHome": {
     "greeting": "Bonjour {name}",
     "parent": {
-      "title": "Ce que l'école attend de vous, puis ce qui vient.",
-      "children": "Mes enfants",
-      "pendingAcks": "{count, plural, =0 {Aucune annonce à confirmer} one {# annonce à confirmer} other {# annonces à confirmer}}",
-      "pendingHint": "Ouvrir les annonces à confirmer.",
-      "seeFamily": "Voir ma famille",
-      "childrenHint": "Ouvrir l'espace de la classe : devoirs, cahier de vie, mots et absences.",
-      "today": "Aujourd'hui",
-      "todayKinds": {
-        "homework": "À préparer",
-        "note": "Mot",
-        "signature": "À signer",
-        "event": "Aujourd'hui",
-        "attendance": "Pointage",
-        "ack": "À confirmer"
-      },
-      "todayNothing": "Rien n'attend de vous aujourd'hui."
+      "todo": "À faire",
+      "todoNothing": "Rien à signer ni à confirmer.",
+      "kindSignature": "Document à signer",
+      "kindAck": "À lire et confirmer",
+      "dueOn": "avant le {day}",
+      "overdue": "attendu le {day}",
+      "verbSign": "Signer",
+      "verbRead": "Lire",
+      "forToday": "Pour aujourd'hui",
+      "forTomorrow": "Pour demain",
+      "forWeekday": "Pour {day}",
+      "childHomework": "{name} · {count, plural, one {# devoir} other {# devoirs}}",
+      "childNothing": "{name} · rien à préparer",
+      "next": "Prochain : {title}, {day}",
+      "done": "{done} / {total} faits",
+      "news": "Nouveau",
+      "newsNote": "Mot pour {name}",
+      "newsJournal": "Cahier de vie · {name}"
     },
     "teacher": {
       "title": "Mes classes",
@@ -985,7 +995,9 @@
       "publishedAtHint": "Laisser vide pour un brouillon ; utiliser « Publier maintenant » pour une publication immédiate.",
       "expiresAt": "Expiration",
       "document": "Document à signer lié",
-      "noDocument": "Aucun"
+      "noDocument": "Aucun",
+      "dueOn": "À confirmer avant le",
+      "dueOnHint": "Facultatif. Affiché aux familles sur leur accueil quand l'accusé de lecture est demandé."
     },
     "save": "Enregistrer",
     "publish": "Publier maintenant",
@@ -1034,7 +1046,9 @@
       "requiresSignature": "Signature requise",
       "signaturePerStudent": "Une signature par enfant (droit à l'image, sortie)",
       "purpose": "Nature",
-      "publishNow": "Publier immédiatement"
+      "publishNow": "Publier immédiatement",
+      "dueOn": "À signer avant le",
+      "dueOnHint": "Facultatif. Affiché aux familles sur leur accueil."
     },
     "created": "Document ajouté.",
     "invalid": "Vérifiez les champs.",
@@ -1057,7 +1071,7 @@
     "signedCount": "{count} signature(s)"
   },
   "classSpace": {
-    "title": "Classe(s)",
+    "title": "Mes classes",
     "subtitle": "Le fil de chaque classe : devoirs, cahier de vie, informations.",
     "empty": "Aucune classe accessible.",
     "tabs": {
@@ -1078,8 +1092,8 @@
     "type": {
       "homework": "Devoir",
       "journal": "Vie de classe",
-      "info": "Information",
-      "reminder": "Rappel"
+      "info": "Info pratique",
+      "reminder": "Info pratique"
     },
     "visibility": {
       "parents": "Parents",
@@ -1138,7 +1152,12 @@
       "download": "Téléchargement désactivé par l'école",
       "photos": "{count, plural, one {# photo} other {# photos}}",
       "filterAll": "Tout",
-      "emptyHint": "Les billets et les photos du cahier de vie s'afficheront ici, mois par mois."
+      "emptyHint": "Les billets et les photos du cahier de vie s'afficheront ici, mois par mois.",
+      "filterLife": "Vie de classe",
+      "filterPractical": "Infos pratiques",
+      "previousMonth": "Mois précédent",
+      "nextMonth": "Mois suivant",
+      "months": "Mois"
     },
     "notes": {
       "title": "Mots individuels",
@@ -1220,7 +1239,18 @@
     "students": "{count, plural, one {# élève} other {# élèves}}",
     "emptyHint": "Vous verrez ici la classe de votre enfant dès que l'école l'y aura inscrit.",
     "emptyHintStaff": "Créez une classe pour l'année en cours, puis affectez-lui des élèves.",
-    "manageClasses": "Gérer les classes"
+    "manageClasses": "Gérer les classes",
+    "children": {
+      "title": "Mes enfants",
+      "forToday": "Pour aujourd'hui",
+      "forTomorrow": "Pour demain",
+      "forWeekday": "Pour {day}",
+      "homework": "{count, plural, one {# devoir} other {# devoirs}}, {done, plural, =0 {aucun fait} one {# fait} other {# faits}}",
+      "nothing": "rien à préparer",
+      "noClass": "Pas encore inscrit dans une classe",
+      "record": "Fiche",
+      "doors": "Espace de classe de {name}"
+    }
   },
   "messaging": {
     "title": "Messages",
@@ -1627,7 +1657,7 @@
       "rotatedOn": "Lien créé le {date}"
     },
     "upcoming": {
-      "title": "Prochains événements",
+      "title": "À venir",
       "empty": "Aucun événement à venir.",
       "seeAll": "Voir l'agenda"
     },
@@ -2150,8 +2180,8 @@
     "formsHint": "Les demandes de l'école auxquelles vous devez répondre.",
     "community": "Communauté",
     "communityHint": "Petites annonces, annuaire et entraide entre familles.",
-    "pendingAck": "{count, plural, one {# accusé de lecture en attente} other {# accusés de lecture en attente}}",
-    "formsToAnswer": "{count, plural, one {# formulaire à remplir} other {# formulaires à remplir}}"
+    "pendingAck": "{count} à confirmer",
+    "formsToAnswer": "{count} à remplir"
   },
   "publish": {
     "title": "Publier",
@@ -2218,7 +2248,10 @@
     "backToWeek": "Tous les devoirs de la semaine",
     "dueOn": "Pour {date}",
     "givenBy": "Donné le {date} par {name}",
-    "markDone": "Marquer comme fait"
+    "markDone": "Marquer comme fait",
+    "viewLabel": "Affichage",
+    "viewDay": "Jour",
+    "viewWeek": "Semaine"
   },
   "attendance": {
     "title": "Pointage",

@@ -53,7 +53,7 @@ export default async function StudentsPage({
           ) : undefined
         }
       />
-      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="flex flex-col gap-4">
           {/* The button says one word: its sentence-long label pushed the form nine
               pixels past a 390 px screen and left the field four letters wide. */}

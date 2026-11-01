@@ -84,7 +84,7 @@ export default async function ReportsPage() {
     <Column>
       <PageHeader title={t("title")} description={t("subtitle")} />
       {reports.length === 0 && <p className="text-sm text-muted-foreground">{t("none")}</p>}
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-7">
         {open.length > 0 && (
           <section className="flex flex-col gap-6">
             <SectionHeader label={t("open")} count={open.length} className="mb-0" />

@@ -2480,3 +2480,261 @@ Un compte par visiteur : il faudrait les créer et les transmettre un par un, po
 fictif (déjà écarté par l'ADR-0073). Refuser l'écriture dans `auth.users` plutôt que garder
 l'ancienne valeur : voir plus haut. Remettre l'école test en état chaque nuit : un compte supprimé
 ne se recrée pas sans rejouer le seed, et il serait resté fermé jusqu'au lendemain.
+
+## ADR-0080 — La densité : l'espace groupe, il ne sépare plus tout
+
+**Statut** : acceptée (2026-11-01), remplace trois règles de l'ADR-0078 · **Contexte** : le
+porteur trouve l'application « écrite trop gros », « très espacée », « on a du mal à s'y
+repérer » ; seuls Messages et l'Emploi du temps lui paraissent clairs. Audit mesuré (page
+« Audit d'interface Kesher », skills `ui-ux-pro-max`, `design-critique` et `design-review`) :
+le texte n'est **pas** trop gros (14 px courant, 15 px titres de ligne — `ui-ux-pro-max`
+demande même 16 px sur téléphone) ; ce qui pèse, ce sont les barres (onglets 48 px, pastilles
+de filtre 44 px, bandeau de semaine de 90 px), des lignes à quatre étages (un devoir 115 px,
+un billet 130 px) et 40 à 48 px de blanc entre chaque groupe. Sur Devoirs, 2 devoirs visibles
+dans le premier écran d'un téléphone ; sur le cahier de vie, 1 billet. Messages : 6, à 59 px.
+
+### La décision
+
+- **28 px entre deux sections** (`mb-7`, `gap-7`) au lieu de 40 à 48 : l'espace ne groupe
+  que s'il est plus petit dans un groupe qu'entre deux groupes.
+- **Une ligne de liste a deux étages au plus**, un repère en tête (avatar, date, heure, rond
+  « fait ») et une seconde ligne coupée ; ce qui est long se déplie sur place (`<details>`)
+  ou s'ouvre sur sa page.
+- **Les commandes rapetissent, pas les lettres ni les cibles** : onglets 44 px, pastilles de
+  filtre 32 px à l'œil et 44 px au doigt (un pseudo-élément invisible prolonge la cible ; la
+  rangée qui défile le contient, sans quoi elle redevient défilable en hauteur).
+- **Une boîte pour ce qui demande un geste** : un bloc teinté (`bg-muted`) autour de « À
+  faire » sur l'accueil, et le bandeau d'une classe ; jamais autour d'une liste qu'on lit.
+- **Un chiffre a une légende** : `SectionHeader` ne porte plus de nombre nu sur les écrans de
+  lecture ; registres, résultats et créneaux gardent le leur.
+- **Un grand écran sert** : les billets du cahier de vie se lisent deux par deux à partir de
+  `xl`. (Les jours de Devoirs l'ont été un jour, puis non : voir l'ADR-0083.)
+
+### Ce qui a été écarté
+
+Réduire les tailles de texte : la lisibilité et le SC 1.4.4 l'interdisent, et ce n'était pas
+la cause. Revenir aux cartes encadrées partout : c'est le défaut corrigé par l'ADR-0052.
+
+## ADR-0081 — Ce que le parent cherche, là où il le cherche
+
+**Statut** : acceptée (2026-11-01) · **Contexte** : l'audit a compté, pour un parent, cinq
+chemins vers les devoirs d'un enfant, trois écrans pour « ses enfants » (onglet Ma classe,
+onglet Mon enfant sur ordinateur, bloc de l'accueil) et une navigation différente sur
+téléphone (5 onglets) et sur ordinateur (7). L'accueil mettait sous « Aujourd'hui » une
+signature due et un devoir pour lundi avec le même poids, sans verbe ni échéance.
+
+### La décision
+
+- **Accueil du parent** : « À faire » (signer, lire et confirmer, avec le verbe en bouton et
+  l'échéance — ADR-0082), « Pour demain » (une ligne par enfant, qui ouvre Devoirs filtré),
+  « Nouveau » (mots non lus, page du cahier de vie de la semaine) et « À venir ». Plus de
+  liste de devoirs ni de bloc « Mes enfants » sur l'accueil.
+- **« Mes enfants »** remplace l'onglet « Ma classe » du parent : une carte par enfant, sa
+  classe et son enseignante, le jour préparé, les entrées de l'espace de classe ; avec un seul
+  enfant, l'onglet ouvre sa classe. La fiche (Ma famille) reste à un geste.
+- **Cinq onglets identiques** sur téléphone et sur ordinateur pour le parent ; l'agenda est
+  dans École et sur l'accueil.
+- **Espace de classe** : un bandeau teinté, une seule rangée d'onglets, « Suivi » en menu.
+- **Cahier de vie** : un mois à la fois, deux catégories — « Vie de classe », « Infos
+  pratiques » (Information et Rappel réunis ; le type `reminder` reste en base et se lit
+  comme une info pratique).
+
+### Ce qui a été écarté
+
+Supprimer Ma famille : la fiche (allergies, droit à l'image, responsables) n'a pas sa place
+dans l'espace de classe, et l'aide la décrit comme l'endroit où la corriger.
+
+## ADR-0082 — Une échéance pour ce que l'école attend des familles
+
+**Statut** : acceptée (2026-11-01) · **Contexte** : « À faire » ne pouvait dire _quoi_ sans
+dire _pour quand_ : ni les annonces à confirmer ni les documents à signer n'avaient de date.
+
+### La décision
+
+- `announcements.due_on` et `documents.due_on`, dates facultatives saisies par l'école à la
+  publication (« À confirmer avant le », « À signer avant le »). Les politiques existantes
+  décident déjà qui écrit une ligne : aucune politique nouvelle.
+- **Lecture tolérante** : l'accueil lit les dates à part et ignore l'erreur si la colonne
+  manque — une preview dont la base n'a pas reçu la migration montre l'accueil sans dates.
+  **Écriture prudente** : le champ n'est écrit que s'il est rempli (ou vidé sur une ligne qui
+  en avait un), si bien qu'une telle base enregistre tout le reste.
+- L'école test reçoit des échéances qui avancent avec le calendrier
+  (`refresh_test_school_due_dates()`, chaque nuit là où pg_cron existe).
+
+### Ce qui a été écarté
+
+Une échéance déduite (date de l'événement lié, date de publication + N jours) : l'école sait
+quand elle veut la réponse, l'application ne le devine pas.
+
+## ADR-0083 — Les devoirs un jour à la fois, et une bannière qui ne suit pas le lecteur
+
+**Statut** : acceptée (2026-11-01) · **Contexte** : sur la preview de l'ADR-0080, le porteur a
+trouvé les devoirs « empilés un peu de partout » : posés deux par deux sur un grand écran, les
+jours ne se lisaient plus dans l'ordre et l'on ne savait plus « quel jour est où ». « Les devoirs,
+on les prépare plutôt au jour le jour. » Et la bannière « Installer Kesher sur cet appareil »
+réapparaissait à chaque changement de page tant qu'on ne l'avait pas fermée.
+
+### La décision
+
+- **Deux vues, une seule colonne** : **Jour** par défaut — le jour que l'on prépare
+  (`pivotDay`), ou, dans une autre semaine, son premier jour qui a des devoirs — et **Semaine**,
+  qui empile les jours dans l'ordre. Plus de grille à deux colonnes. Toucher un jour du bandeau
+  ouvre ce jour seul (`?jour=AAAA-MM-JJ`, qui porte sa semaine avec lui) ; `?vue=semaine` garde la
+  vue d'ensemble. Le sélecteur Jour / Semaine vit sur la ligne des flèches de semaine. La page
+  prend la largeur de lecture (`text`, 42 rem) : filtres, bandeau et liste ont le même bord.
+- **La bannière d'installation** n'est proposée que **sur l'accueil, une fois par session de
+  navigateur** ; quitter l'accueil la retire jusqu'à la session suivante, la fermer la retire
+  pour de bon (comme avant).
+- **Une coche « fait » touchée avant que React l'ait prise en main est perdue** — un bouton HTML
+  sans gestionnaire. Le jour seul s'affichant plus vite qu'une semaine, l'e2e l'a montré (une fois
+  sur trois sur ordinateur, en parallèle) ; le bouton porte désormais `data-ready` une fois monté,
+  et le test l'attend. Côté famille, la fenêtre est de l'ordre de l'instant qui suit l'affichage ;
+  la rendre nulle demanderait un formulaire qui marche sans JavaScript, à décider s'il se voit.
+
+### Ce qui a été écarté
+
+Deux colonnes « mieux rangées » (un jour par colonne, cinq colonnes) : sur un téléphone il n'y en
+a qu'une, et la vue Jour répond à la façon dont les devoirs se préparent.
+
+## ADR-0084 — Les fonctions des politiques en PL/pgSQL, et les onglets chargés dès l'affichage
+
+**Statut** : acceptée (2026-11-01) · complète l'ADR-0067 et l'ADR-0076 · **Contexte** : huitième
+signalement, après la preview de l'ADR-0083 : « c'est beaucoup mieux qu'avant, mais il y a
+toujours une latence quand je change d'onglet au début ». Le porteur compare avec ses autres
+sites, plus gros et sans aucune latence, sur la même offre Supabase, et conclut que le problème
+est dans le code. **Il avait raison.**
+
+### Ce qui a été mesuré
+
+Pile Supabase locale, build de production, profil par page (`pg_stat_statements` réinitialisé
+avant chaque rendu) :
+
+- La requête « prochain jour qui a des devoirs » d'un parent de deux enfants prenait **132 ms**
+  sur une machine au repos, pour 98 lignes. Le plan : 0,04 ms d'index, puis **1,4 ms par ligne**
+  dans la politique de `class_posts`.
+- La cause n'est pas l'offre gratuite, ni le nombre de requêtes : c'est le langage des
+  fonctions. `can_access_class` appelle `is_school_staff` → `has_school_role` →
+  `is_super_admin`, `mfa_required`, puis `is_class_teacher`, puis `guardian_class_ids` →
+  `may_inspect`. Toutes en `language sql`, SECURITY DEFINER, donc jamais incorporées au plan
+  appelant ; et jusqu'à PostgreSQL 17, une fonction SQL appelée **depuis une autre** reçoit un
+  état d'exécution neuf à chaque appel de sa mère, donc est **analysée et planifiée de nouveau à
+  chaque fois**. Huit planifications par ligne lue, pour chaque ligne de chaque table protégée.
+- Même filtre, mêmes 345 lignes, mêmes réponses, avec les mêmes corps en PL/pgSQL (qui prépare
+  chaque requête une fois par connexion) : **539 ms → 55 ms**.
+
+Par page, base bridée à un quart de cœur (`docker update --cpus 0.25`, l'ordre de grandeur de
+l'offre gratuite), même données, rendu serveur complet :
+
+| page (parent) | avant (SQL) | après (PL/pgSQL) |
+| ------------- | ----------- | ---------------- |
+| `/accueil`    | 941 ms      | 224–243 ms       |
+| `/devoirs`    | 1 048 ms    | 181–255 ms       |
+| `/classes`    | 260 ms      | 64–78 ms         |
+| `/ecole`      | 241 ms      | 54–96 ms         |
+
+Temps de base cumulé de l'accueil : 2 243 ms → 292–382 ms ; celui des devoirs : 1 378 → 134–196.
+
+Et le geste du porteur, joué dans Chromium (téléphone, réseau à 40 ms, base bridée) : ouvrir
+l'accueil, attendre, toucher un onglet, mesurer jusqu'au contenu, tap de 80 ms compris :
+
+| toucher un onglet…      | avant          | après         |
+| ----------------------- | -------------- | ------------- |
+| 0,3 s après l'ouverture | 1 158–1 376 ms | **97–106 ms** |
+| 0,8 s après l'ouverture | 756–1 079 ms   | 104–111 ms    |
+| 2 s après l'ouverture   | 95–113 ms      | 95–123 ms     |
+| enseignante, à 0,3 s    | 255–820 ms     | 98–148 ms     |
+
+C'est exactement le symptôme décrit : instantané après deux secondes, lent avant.
+
+### La décision
+
+- **Les 32 fonctions que les politiques atteignent passent en PL/pgSQL**
+  (`20261101110000_policy_helpers_plpgsql.sql`). Les corps sont ceux du catalogue, recopiés tels
+  quels et enveloppés (`return (…)`, `return query …`) ; STABLE, SECURITY DEFINER et
+  `search_path = public` sont gardés ; `create or replace` garde propriétaire, droits et OID, donc
+  les 149 politiques ne bougent pas. `#variable_conflict use_column` garde la règle SQL (la colonne
+  l'emporte sur un paramètre de même nom), et chaque corps scalaire rend au plus une ligne.
+  `is_service_role()` et `has_strong_auth()` restent en SQL : ni SECURITY DEFINER ni configurées,
+  le planificateur les incorpore, ce qui vaut mieux. Le test pgTAP `025_policy_helpers.sql` échoue
+  si une fonction atteinte par une politique revient en SQL non incorporable. **605 assertions
+  vertes**, les droits n'ont pas bougé.
+- **« Prochain jour qui a des devoirs » : une question par classe** (jusqu'à douze) au lieu d'une
+  pour toutes : l'index (classe, date) se lit dans l'ordre et s'arrête à la première ligne visible
+  — 0,5 ms au lieu de 89 sur la base bridée. C'était la requête la plus lente du cahier de texte.
+- **`TabPrefetch` part dès l'affichage** : un dixième de seconde après le montage, les onglets à
+  60 ms d'intervalle, au lieu d'attendre que le navigateur soit oisif (jusqu'à deux secondes sur
+  un téléphone occupé) puis de les espacer de 250 ms — le dernier onglet était prêt trois
+  secondes après l'ouverture.
+- **Après une mutation**, la mise en page est rendue de nouveau par le serveur et passe une
+  nouvelle `refreshKey` : les onglets, vidés du cache par `revalidatePath`, sont rechargés tout de
+  suite au lieu d'attendre la vérification de la minute suivante.
+- **Un onglet part quand le doigt se pose** (`pointerdown`, ou survol au pointeur) et non quand il
+  se lève : 60 à 150 ms gagnés sur un onglet pas encore chargé, rien sur un onglet déjà prêt.
+
+### Ce qui reste
+
+Le **démarrage à froid** d'une fonction Vercel (environ une seconde, ADR-0065) décide toujours de
+la toute première page après une longue absence ; il n'est pas dans le code. Et les politiques
+restent évaluées ligne par ligne : environ 160 microsecondes par ligne au lieu de 1 400, ce qui
+suffit pour les volumes d'une école ; les réécrire en ensembles est une
+session de base, à ouvrir si une table dépasse quelques milliers de lignes lues par écran.
+
+**À la fusion**, le workflow « Deploy database » applique la migration ; avant, la preview lit la
+base de production avec les anciennes fonctions et ne montre que la moitié client du gain.
+
+## ADR-0085 — La page de connexion porte le logo de l'école, et l'en-tête son livre
+
+**Statut** : acceptée (2026-11-01) · **Contexte** : « la page de connexion est un tout petit peu
+trop fade », et « le logo est beaucoup trop petit » — l'en-tête montrait le logo entier réduit à
+32 px, où « INSTITUTIONS ABRAVANEL » fait trois pixels de haut et le livre une tache. La page de
+connexion, la première que voit chaque famille, n'en avait aucun.
+
+### La décision
+
+- **Deux découpes du fichier officiel**, jamais redessiné ni recoloré (`ui-ux-pro-max`, règle
+  « Correct Brand Logos ») : `public/brand/abravanel-logo.png`, le logo entier détouré de ses
+  marges (720 px, 88 Ko au lieu de 820), et `public/brand/abravanel-mark.png`, le livre seul
+  (19 Ko). `SchoolLogo` et `SchoolMark` (`components/domain/school-logo.tsx`).
+- **Connexion** : deux moitiés sur grand écran — à gauche le logo en grand (22 rem) sur un lavis
+  calme, trois courts filets aux couleurs du logo (sarcelle de l'aleph, or et brique de l'étoile),
+  « Le lien entre l'école et les familles » en serif, et ce que veut dire Kesher ; à droite le
+  formulaire, sous « Bienvenue sur Kesher ». Sur téléphone, le logo forme un bandeau en tête et le
+  bouton reste dans le premier écran (844 px). Le mot de passe s'affiche à la demande
+  (`password-toggle` de la liste) : un mot de passe donné par l'école se tape, il ne se retient
+  pas, et une lettre fausse sur un clavier de téléphone était toute la connexion ratée.
+  « Pas de compte ? » n'est plus un encadré mais une ligne qui se déplie (ADR-0078).
+- **En-tête de l'application** : le livre, 36 px de haut sur téléphone et 44 px sur ordinateur, à
+  la place de l'icône de 32 px.
+- **Thème sombre** : le logo est dessiné à l'encre foncée sur rien ; il pose sur une plaque
+  blanche, comme un logo imprimé sur du papier, plutôt que d'être inversé.
+- Mesuré : axe à 0 violation sérieuse sur `/connexion`, `/essai` et l'en-tête de trois rôles, à
+  390 et 1 440 px, en clair et en sombre, aucun défilement horizontal.
+
+## ADR-0086 — Les jours d'une semaine se changent sur place
+
+**Statut** : acceptée (2026-11-01) · complète l'ADR-0083 · **Contexte** : sur la preview de
+l'ADR-0084, « il y a encore une latence embêtante quand je navigue entre les jours des devoirs ».
+Toucher un jour du bandeau naviguait vers `?jour=…`, et le serveur relisait toute la semaine — la
+session, les enfants, les classes, les liens signés des pages jointes — alors que cette semaine,
+du lundi au dimanche, était déjà sur la page pour dessiner le bandeau. Même chose pour la bascule
+Jour / Semaine.
+
+### La décision
+
+- Le serveur rend **chaque jour de la semaine une fois** ; un composant client (`DiaryPanels`)
+  en montre un seul (« Jour ») ou les empile (« Semaine »). Le jour et la vue vivent dans
+  l'adresse, changée sur place par `history.replaceState`, que Next relit par `useSearchParams` :
+  un rechargement, un lien partagé et le filtre par enfant retrouvent le même jour, et le bouton
+  retour quitte le cahier au lieu de repasser par chaque jour touché. Les liens gardent leur
+  `href`, pour un nouvel onglet ou une page sans script.
+- Les **semaines précédente et suivante** restent des pages du serveur, mais elles sont chargées,
+  données comprises, 0,4 s après l'affichage du cahier : la flèche répond depuis le cache.
+- Le test e2e « a parent moves between the days of the week without asking the server » vérifie
+  qu'aucune requête ne part. Il a d'abord échoué une fois sur six — non pas à cause du changement
+  de jour, mais d'une vignette cassée par le test voisin, qui demande un rafraîchissement pour
+  renouveler son lien signé (`useRefreshOnExpiredImage`) : le test sert désormais les vignettes
+  lui-même.
+
+Mesuré (Chromium, téléphone, réseau à 40 ms) : un jour **8 à 12 ms**, la bascule Jour / Semaine
+15 à 17 ms, la semaine suivante ou précédente 12 à 18 ms — **aucune requête au serveur**, contre
+un aller-retour complet (une demi-seconde à une seconde sur la base gratuite) à chaque toucher.

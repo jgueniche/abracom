@@ -5,13 +5,13 @@ routes: [/classes/[classId]/mots]
 topic: daily
 keywords: [mot, individuel, encouragement, bravo, point d'attention, accusé de lecture]
 since: 19
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
 Un mot individuel s'adresse à la famille d'un enfant. Il est de trois natures : encouragement, point d'attention, information.
 
 :::roles parent, guardian
-Les mots qui concernent votre enfant apparaissent dans l'onglet Mots de sa classe, et le jour même dans le bloc « Aujourd'hui » de l'accueil. Le bouton « J'ai lu » prévient l'enseignant·e que le mot est arrivé.
+Les mots qui concernent votre enfant apparaissent dans l'onglet Mots de sa classe, et, tant que vous ne l'avez pas ouvert, dans « Nouveau » sur l'accueil. Le bouton « J'ai lu » prévient l'enseignant·e que le mot est arrivé.
 :::
 
 :::roles teacher, staff, school_admin, super_admin

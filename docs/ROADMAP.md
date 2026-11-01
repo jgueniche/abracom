@@ -1244,6 +1244,33 @@ Kesher — latence, données de test, lisibilité » (Claude Docs).
       1 440 px, en clair et en sombre — après correction d'un contraste introduit en route
       (brouillon atténué par opacité).
 
+## Session 36 — Audit d'interface et refonte de la densité (2026-11-01, ADR-0080 à ADR-0082)
+
+Demande du porteur : « tout est écrit trop gros, trop d'espace, on a du mal à s'y repérer… fais un
+audit sérieux avec un outil de design, pas du vibe coding ». Audit publié d'abord (« Audit
+d'interface Kesher »), mesuré à 390 et 1 440 px, puis les cinq lots validés par le porteur.
+
+- [x] Audit : skills `ui-ux-pro-max` (règles citées par identifiant), `design-critique`,
+      `design-review` ; captures et mesures automatisées (premier contenu, éléments visibles, hauteur
+      d'élément, largeur occupée).
+- [x] Lot 1 : barre de défilement parasite des onglets de classe, chiffres sans légende,
+      « Classe(s) », compteur de devoirs triple, titre rouge d'École.
+- [x] Lot 2 (ADR-0080) : 28 px entre sections, deux étages par ligne, filtres 32/44 px, onglets 44 px.
+- [x] Lot 3 (ADR-0081, ADR-0082) : accueil « À faire / Pour demain / Nouveau / À venir », échéances
+      des accusés et des signatures, Devoirs compacts et en deux colonnes sur grand écran.
+- [x] Lot 4 : bandeau de classe, une rangée d'onglets et « Suivi » en menu, cahier de vie par mois et
+      en deux catégories, agenda à date en marge, École compacte.
+- [x] Lot 5 : « Mes enfants » pour le parent, cinq onglets identiques sur téléphone et ordinateur.
+- [x] **Latence au premier clic** (ADR-0084) : fonctions des politiques en PL/pgSQL
+      (`20261101110000`, test `025_policy_helpers.sql`), « prochain jour de devoirs » une question
+      par classe, `TabPrefetch` dès l'affichage, après chaque mutation et au toucher.
+- [x] **Connexion et logo** (ADR-0085) : logo de l'école en grand sur `/connexion`, livre du logo
+      dans l'en-tête, œil du mot de passe, plaque blanche en sombre.
+- [x] **Jours des devoirs sur place** (ADR-0086) : jour et vue changés dans le navigateur, semaines
+      voisines chargées d'avance, test e2e sans requête.
+- [ ] **Au porteur** : regarder la preview, puis fusionner (les migrations `20261101100000` et
+      `20261101110000` partent avec « Deploy database »).
+
 ## Questions ouvertes (§15 du brief)
 
 Bloquantes pour la session 2 :

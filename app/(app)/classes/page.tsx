@@ -12,9 +12,11 @@ import { isSchoolStaff } from "@/lib/permissions";
 import { getMyTeachingClasses, getSchoolClasses } from "@/server/queries/classes";
 import { getMyChildren } from "@/server/queries/family";
 
+import { ChildrenOverview } from "./_components/children-overview";
+
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("classSpace");
-  return { title: t("title") };
+  const [t, user] = await Promise.all([getTranslations("classSpace"), requireCurrentUser()]);
+  return { title: user.perspective === "parent" ? t("children.title") : t("title") };
 }
 
 export default async function ClassesPage() {
@@ -22,6 +24,22 @@ export default async function ClassesPage() {
   const t = await getTranslations("classSpace");
   const schoolId = user.school?.id;
   const staff = schoolId ? isSchoolStaff(user.roles, schoolId) : false;
+
+  // A parent's tab is « Mes enfants » (ADR-0081): their children, then each one's class.
+  if (user.perspective === "parent") {
+    const children = await getMyChildren();
+    const withClass = children.filter((child) => child.student.enrollments[0]?.class);
+    if (children.length === 1 && withClass.length === 1) {
+      redirect(`/classes/${withClass[0]!.student.enrollments[0]!.class!.id}`);
+    }
+    if (children.length > 0)
+      return (
+        <Column>
+          <PageHeader title={t("children.title")} />
+          <ChildrenOverview items={children} />
+        </Column>
+      );
+  }
 
   const entries = new Map<string, { name: string; level: string | null; subtitle: string }>();
   if (user.perspective === "admin" && schoolId && staff) {

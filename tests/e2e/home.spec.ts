@@ -7,7 +7,9 @@ test.describe("entry points", () => {
     await expect(page).toHaveURL(/\/connexion$/);
     await expect(page).toHaveTitle(/Connexion · Kesher/);
     await expect(page.locator("html")).toHaveAttribute("lang", "fr");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Connexion");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Bienvenue sur Kesher");
+    // The school's logo opens the page (ADR-0085).
+    await expect(page.getByRole("img", { name: /Institutions Abravanel/ })).toBeVisible();
     await expect(page.getByLabel("Adresse e-mail")).toBeVisible();
   });
 
@@ -19,7 +21,7 @@ test.describe("entry points", () => {
     await page.getByRole("button", { name: "Langue" }).click();
     await page.getByRole("menuitemradio", { name: "English" }).click();
 
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Sign in");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Welcome to Kesher");
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
 
     await page.reload();
@@ -52,7 +54,7 @@ test.describe("entry points", () => {
 
     // password is the default mode: no switch to make
     await page.getByLabel("Adresse e-mail").fill("admin@demo.local");
-    await page.getByLabel("Mot de passe").fill("not-the-password");
+    await page.getByLabel("Mot de passe", { exact: true }).fill("not-the-password");
     await page.getByRole("button", { name: "Se connecter", exact: true }).click();
 
     // Either answer is correct and both are French: no backend behind the test
@@ -63,6 +65,18 @@ test.describe("entry points", () => {
 
     await page.getByRole("button", { name: "Recevoir un lien par e-mail" }).click();
     await expect(page.getByRole("button", { name: "Recevoir mon lien" })).toBeVisible();
+  });
+
+  test("shows the password typed, on request", async ({ page }) => {
+    await page.goto("/connexion");
+    const password = page.getByLabel("Mot de passe", { exact: true });
+    await password.fill("demo-password");
+    await expect(password).toHaveAttribute("type", "password");
+
+    await page.getByRole("button", { name: "Afficher le mot de passe" }).click();
+    await expect(password).toHaveAttribute("type", "text");
+    await page.getByRole("button", { name: "Masquer le mot de passe" }).click();
+    await expect(password).toHaveAttribute("type", "password");
   });
 
   test("tells a visitor without an account to ask the school", async ({ page }) => {

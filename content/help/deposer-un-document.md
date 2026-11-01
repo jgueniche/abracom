@@ -5,7 +5,7 @@ routes: [/admin/documents, /admin/documents/[id]]
 topic: publish
 keywords: [document, circulaire, règlement, signature, autorisation, dossier, version, manquantes]
 since: 6
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
 Gestion → **Documents** tient la bibliothèque : dossiers, versions, audience, publication.
@@ -13,6 +13,7 @@ Gestion → **Documents** tient la bibliothèque : dossiers, versions, audience,
 Au dépôt, indiquez la **nature** du document. C'est elle qui décide de ce qui se passe ensuite : une pièce à signer déclenche la demande de signature auprès des familles visées, et le **droit à l'image** met à jour l'autorisation de l'élève dès qu'il est signé — ce qui débloque, ou non, le tag de cet enfant sur les photos du cahier de vie.
 
 - La signature se demande **par famille** ou **par enfant**, selon la pièce.
+- **« À signer avant le »**, facultatif, donne aux familles une échéance : elle s'affiche sur leur accueil, en rouge une fois passée.
 - Chaque signature enregistre la date, l'heure, l'adresse IP et le navigateur du signataire.
 - Le **tableau des signatures manquantes** dit qui n'a pas encore signé quoi : c'est lui qu'on regarde avant une sortie.
 - Un document non publié n'est visible que de l'équipe.

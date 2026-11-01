@@ -24,7 +24,7 @@ export default async function TestSpacePage() {
   const t = await getTranslations("testSchool");
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[23rem] flex-1 flex-col justify-center gap-6 py-7">
       <div className="flex flex-col">
         <p className="eyebrow mb-2 text-primary/85">{appName}</p>
         <h1>{t("title")}</h1>

@@ -1,8 +1,8 @@
-import Image from "next/image";
 import { Link } from "@/components/ui/link";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { SchoolMark } from "@/components/domain/school-logo";
 import { AccountMenu } from "@/components/layouts/account-menu";
 import { BottomNav, TopNav } from "@/components/layouts/bottom-nav";
 import { HelpIndexProvider } from "@/components/layouts/help-hint";
@@ -52,6 +52,9 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
   const classHref = onlyClass ? `/classes/${onlyClass}/cahier` : "/classes";
   const showStyleGuide =
     process.env.NODE_ENV !== "production" || process.env.VERCEL_ENV === "preview";
+  // The layout is rendered again on a full load and after a mutation, never on a tab change:
+  // the tabs reload when this changes (ADR-0084).
+  const renderedAt = Date.now();
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -76,16 +79,10 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
         <div className="mx-auto flex h-14 w-full max-w-[110rem] items-stretch gap-3 px-4 md:px-6 lg:h-16 lg:px-8 2xl:px-12">
           <Link
             href="/accueil"
-            className="flex min-w-0 shrink-0 items-center gap-2.5 rounded-md py-2"
+            className="flex min-w-0 shrink-0 items-center gap-2.5 rounded-md py-1.5"
           >
-            <Image
-              src="/icons/icon-192.png"
-              alt=""
-              width={36}
-              height={36}
-              className="size-8 rounded-md border border-rule object-cover"
-              priority
-            />
+            {/* The school's book, not the whole logo shrunk to an icon (ADR-0085). */}
+            <SchoolMark className="h-9 lg:h-11" />
             <span className="flex min-w-0 flex-col leading-tight">
               <span className="font-heading text-lg leading-tight font-normal tracking-[-0.012em]">
                 {appName}
@@ -132,6 +129,7 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
         unreadMessages={unreadMessages}
         canMessage={canMessage}
         classHref={classHref}
+        refreshKey={renderedAt}
       />
       <InstallPrompt />
     </div>

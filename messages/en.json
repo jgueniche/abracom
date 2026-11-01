@@ -27,7 +27,7 @@
   },
   "nav": {
     "home": "Home",
-    "classes": "Class(es)",
+    "classes": "Classes",
     "messages": "Messages",
     "agenda": "Calendar",
     "dashboard": "Dashboard",
@@ -46,7 +46,8 @@
     "manage": "Manage",
     "unreadMessages": "Messages: {count, plural, one {# unread} other {# unread}}",
     "homework": "Homework",
-    "attendance": "Attendance"
+    "attendance": "Attendance",
+    "myChildren": "My children"
   },
   "errors": {
     "notFound": {
@@ -223,7 +224,14 @@
       "noAccountCta": "No account? Ask the school directly to create one for you",
       "registrationSubject": "Opening our {appName} accounts",
       "registrationBody": "Hello,\n\nWe would like to open our {appName} accounts.\n\nSchool:\n\nParent 1 — first and last name:\nE-mail address:\nPhone:\n\nParent 2 (optional) — first and last name:\nE-mail address:\nPhone:\n\nChildren — first name, last name and class:\n1.\n2.\n\nThank you.",
-      "testSpace": "Test space"
+      "testSpace": "Test space",
+      "welcome": "Welcome to {appName}",
+      "brandLabel": "The school",
+      "tagline": "The link between school and families",
+      "brandCaption": "Kesher — קשר, Hebrew for “link”",
+      "logoAlt": "Institutions Abravanel — Bienveillance, Exigence, Persévérance",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
     },
     "onboarding": {
       "title": "Welcome, let's get acquainted",
@@ -262,22 +270,24 @@
   "appHome": {
     "greeting": "Hello {name}",
     "parent": {
-      "title": "What the school needs from you, then what is coming.",
-      "children": "My children",
-      "pendingAcks": "{count, plural, =0 {No announcement to confirm} one {# announcement to confirm} other {# announcements to confirm}}",
-      "pendingHint": "Open the announcements to confirm.",
-      "seeFamily": "See my family",
-      "childrenHint": "Open the class space: homework, journal, notes and absences.",
-      "today": "Today",
-      "todayKinds": {
-        "homework": "To prepare",
-        "note": "Note",
-        "signature": "To sign",
-        "event": "Today",
-        "attendance": "Attendance",
-        "ack": "To acknowledge"
-      },
-      "todayNothing": "Nothing needs you today."
+      "todo": "To do",
+      "todoNothing": "Nothing to sign or confirm.",
+      "kindSignature": "Document to sign",
+      "kindAck": "To read and confirm",
+      "dueOn": "by {day}",
+      "overdue": "was due {day}",
+      "verbSign": "Sign",
+      "verbRead": "Read",
+      "forToday": "For today",
+      "forTomorrow": "For tomorrow",
+      "forWeekday": "For {day}",
+      "childHomework": "{name} · {count, plural, one {# homework} other {# homework}}",
+      "childNothing": "{name} · nothing to prepare",
+      "next": "Next: {title}, {day}",
+      "done": "{done} / {total} done",
+      "news": "New",
+      "newsNote": "Note about {name}",
+      "newsJournal": "Class journal · {name}"
     },
     "teacher": {
       "title": "My classes",
@@ -985,7 +995,9 @@
       "publishedAtHint": "Leave empty for a draft; use “Publish now” for an immediate publication.",
       "expiresAt": "Expiry",
       "document": "Linked document to sign",
-      "noDocument": "None"
+      "noDocument": "None",
+      "dueOn": "Confirm by",
+      "dueOnHint": "Optional. Shown to families on their home page when a read receipt is requested."
     },
     "save": "Save",
     "publish": "Publish now",
@@ -1034,7 +1046,9 @@
       "requiresSignature": "Signature required",
       "signaturePerStudent": "One signature per child (image rights, outing)",
       "purpose": "Purpose",
-      "publishNow": "Publish immediately"
+      "publishNow": "Publish immediately",
+      "dueOn": "Sign by",
+      "dueOnHint": "Optional. Shown to families on their home page."
     },
     "created": "Document added.",
     "invalid": "Check the fields.",
@@ -1057,7 +1071,7 @@
     "signedCount": "{count} signature(s)"
   },
   "classSpace": {
-    "title": "Class(es)",
+    "title": "My classes",
     "subtitle": "Each class feed: homework, class diary, information.",
     "empty": "No class available.",
     "tabs": {
@@ -1078,8 +1092,8 @@
     "type": {
       "homework": "Homework",
       "journal": "Class life",
-      "info": "Information",
-      "reminder": "Reminder"
+      "info": "Practical info",
+      "reminder": "Practical info"
     },
     "visibility": {
       "parents": "Parents",
@@ -1138,7 +1152,12 @@
       "download": "Download disabled by the school",
       "photos": "{count, plural, one {# photo} other {# photos}}",
       "filterAll": "All",
-      "emptyHint": "The class diary's entries and photos will appear here, month by month."
+      "emptyHint": "The class diary's entries and photos will appear here, month by month.",
+      "filterLife": "Class life",
+      "filterPractical": "Practical info",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "months": "Months"
     },
     "notes": {
       "title": "Individual notes",
@@ -1220,7 +1239,18 @@
     "students": "{count, plural, one {# pupil} other {# pupils}}",
     "emptyHint": "Your child's class will appear here once the school has enrolled them.",
     "emptyHintStaff": "Create a class for the current year, then enrol pupils in it.",
-    "manageClasses": "Manage classes"
+    "manageClasses": "Manage classes",
+    "children": {
+      "title": "My children",
+      "forToday": "For today",
+      "forTomorrow": "For tomorrow",
+      "forWeekday": "For {day}",
+      "homework": "{count, plural, one {# homework} other {# homework}}, {done, plural, =0 {none done} other {# done}}",
+      "nothing": "nothing to prepare",
+      "noClass": "Not enrolled in a class yet",
+      "record": "Record",
+      "doors": "{name}'s class space"
+    }
   },
   "messaging": {
     "title": "Messages",
@@ -1627,7 +1657,7 @@
       "rotatedOn": "Link created on {date}"
     },
     "upcoming": {
-      "title": "Upcoming events",
+      "title": "Coming up",
       "empty": "No upcoming event.",
       "seeAll": "Open the calendar"
     },
@@ -2150,8 +2180,8 @@
     "formsHint": "Requests from the school that need your answer.",
     "community": "Community",
     "communityHint": "Classifieds, directory and mutual help between families.",
-    "pendingAck": "{count, plural, one {# read receipt pending} other {# read receipts pending}}",
-    "formsToAnswer": "{count, plural, one {# form to fill in} other {# forms to fill in}}"
+    "pendingAck": "{count} to confirm",
+    "formsToAnswer": "{count} to fill in"
   },
   "publish": {
     "title": "Publish",
@@ -2218,7 +2248,10 @@
     "backToWeek": "All the homework of the week",
     "dueOn": "Due {date}",
     "givenBy": "Set on {date} by {name}",
-    "markDone": "Mark as done"
+    "markDone": "Mark as done",
+    "viewLabel": "View",
+    "viewDay": "Day",
+    "viewWeek": "Week"
   },
   "attendance": {
     "title": "Attendance",
