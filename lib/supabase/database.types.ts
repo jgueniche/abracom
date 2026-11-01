@@ -3747,6 +3747,7 @@ export type Database = {
       }
       is_service_role: { Args: Record<PropertyKey, never>; Returns: boolean }
       is_super_admin: { Args: { uid?: string }; Returns: boolean }
+      is_test_only_account: { Args: { p_user: string }; Returns: boolean }
       is_thread_member: {
         Args: { thread: string; uid?: string }
         Returns: boolean

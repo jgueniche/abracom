@@ -19,6 +19,14 @@ end $$;
 \set parent3_a '''c0000000-0000-4000-8000-000000030001'''
 \set talia '''d0000000-0000-4000-8000-000000030001'''
 \set group_ps '''00000000-0000-4000-8000-000000003090'''
+\set real_school '''f0000000-0000-4000-8000-000000000001'''
+
+-- A shared account of the test school cannot delete itself (ADR-0079, 023_shared_test_accounts):
+-- the two people whose deletion is tried here also belong to a real school, as a real person would.
+insert into public.schools (id, slug, name, city) values (:real_school, 'ecole-reelle', 'École réelle', 'Neuilly-sur-Seine');
+insert into public.memberships (user_id, school_id, role, status, accepted_at) values
+  (:admin, :real_school, 'parent', 'active', now()),
+  (:parent3_a, :real_school, 'parent', 'active', now());
 
 -- export ---------------------------------------------------------------------------------
 select pg_temp.login(:parent1);
@@ -28,7 +36,9 @@ select ok((public.export_my_data() -> 'profile' ->> 'first_name') is not null, '
 
 -- deletion --------------------------------------------------------------------------------
 select pg_temp.login(:admin);
-select throws_ok('select public.delete_my_account()', '23514', null, 'the last administrator cannot delete their account');
+select throws_ok('select public.delete_my_account()', '23514',
+  'Vous êtes le dernier administrateur de l''école : transférez ce rôle avant de supprimer votre compte',
+  'the last administrator cannot delete their account');
 
 select pg_temp.login(:parent3_a);
 select lives_ok('select public.delete_my_account()', 'a parent deletes their account');

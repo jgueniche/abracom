@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireSchoolStaff } from "@/lib/auth/guards";
+import { isTestSchool } from "@/lib/auth/school-choice";
 import { isSchoolAdmin } from "@/lib/permissions";
 import { enrollStudent, setImageRights, unlinkGuardian } from "@/server/actions/admin/students";
 import { getAdminClasses, getStudentDetail } from "@/server/queries/admin";
@@ -35,6 +36,8 @@ export default async function StudentDetailPage({
   ]);
   if (!student) notFound();
   const admin = isSchoolAdmin(user.roles, schoolId);
+  // The test school's accounts share the one password of the « Espace de test » (ADR-0079).
+  const testSchool = isTestSchool(user.school);
 
   return (
     <Column>
@@ -180,10 +183,12 @@ export default async function StudentDetailPage({
                   {admin && (
                     <div className="flex flex-wrap gap-1">
                       {/* When a parent calls because they cannot sign in, it is here that one looks. */}
-                      <TemporaryPasswordButton
-                        userId={g.user_id}
-                        name={g.profile ? `${g.profile.first_name} ${g.profile.last_name}` : ""}
-                      />
+                      {!testSchool && (
+                        <TemporaryPasswordButton
+                          userId={g.user_id}
+                          name={g.profile ? `${g.profile.first_name} ${g.profile.last_name}` : ""}
+                        />
+                      )}
                       <form action={unlinkGuardian}>
                         <input type="hidden" name="studentId" value={student.id} />
                         <input type="hidden" name="userId" value={g.user_id} />

@@ -645,6 +645,20 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   GitHub (403). **Reste au porteur** : dire si le premier clic est enfin rapide. Au passage : sept
   articles d'aide échouaient déjà `ops:check-help` sur `main` (une fusion datée après leur
   relecture) — redatés après relecture.
+- **Correctif du 2026-11-01 — les comptes partagés de l'école test** (ADR-0079). Le porteur confie
+  des comptes de l'école test (`parent-1@demo.local`, `parent-019-01@demo.local`,
+  `teacher-05@demo.local`) à de vrais parents ; chacun pouvait fermer un compte aux autres depuis Mon
+  profil — changer son mot de passe, activer la 2FA, le supprimer (sans retour : le seed ne se rejoue
+  pas en production) — ou, entré en direction, lui donner un mot de passe provisoire. Une règle
+  (`is_test_only_account()` / `isTestOnlyAccount()`, celle de `set_test_school_password`) ; les
+  écrans disent pourquoi au lieu d'offrir ces gestes ; et la base tient la même ligne quand on
+  contourne l'interface : `delete_my_account()` refuse, un déclencheur sur `auth.mfa_factors`
+  refuse, un déclencheur sur `auth.users` **garde** mot de passe et adresse (garder plutôt que
+  refuser : Supabase Auth écrit cette ligne à chaque connexion). Passent : `set_test_school_password`,
+  un opérateur qui le dit (`kesher.allow_test_account_change`), et un compte au mot de passe
+  provisoire. Vérifié sur une pile Supabase réelle en appelant Supabase Auth et PostgREST
+  directement, 587 assertions pgTAP sur les deux chemins, e2e et axe. La migration part avec le
+  workflow « Deploy database » à la fusion.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

@@ -54,3 +54,22 @@ export function isTestSchool(school: { modules?: Json } | null | undefined): boo
     (modules as Record<string, Json>).test === true
   );
 }
+
+/**
+ * An account of the test school **and of nothing else** — the one password of the
+ * « Espace de test » opens it, so whoever tries the application shares it with
+ * everyone else who does (ADR-0079). Its password, its second factor and its
+ * existence are not any one visitor's to change. The same rule as
+ * `set_test_school_password` and `is_test_only_account()` in SQL: someone who
+ * also belongs to a real school, or a platform administrator, is a real person.
+ * A membership whose school cannot be read counts as a real school: the doubt
+ * goes to the person, never to the lock.
+ */
+export function isTestOnlyAccount(
+  memberships: readonly { role: string; school: { modules?: Json } | null }[],
+): boolean {
+  return (
+    memberships.some((m) => isTestSchool(m.school)) &&
+    !memberships.some((m) => m.role === "super_admin" || !isTestSchool(m.school))
+  );
+}

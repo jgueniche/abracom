@@ -2417,3 +2417,66 @@ pleine au profit d'un premier mot de ligne.
 
 Changer la palette ou la typographie : le grief portait sur la composition, pas sur la couleur.
 Retirer aussi les boîtes des contrôles (cases d'option, boutons) : elles sont ce qu'on touche.
+
+## ADR-0079 — Les comptes de l'école test sont partagés, et personne ne les ferme aux autres
+
+**Statut** : acceptée (2026-11-01) · **Contexte** : le porteur veut confier quelques comptes de
+l'école test à de vrais parents, pour qu'ils voient l'application : deux parents et une
+enseignante, tous ouverts par le mot de passe unique de l'« Espace de test » (ADR-0073). Un compte
+ainsi confié est ouvert par plusieurs personnes à la fois, et chacune pouvait le fermer aux autres
+depuis Mon profil : **changer son mot de passe** (les autres ne le connaissent pas, et Supabase Auth
+ferme leurs sessions), **activer la validation en deux étapes** (le code ne vit que sur un
+téléphone : les autres seraient renvoyés vers `/verification` sans pouvoir y répondre) ou
+**supprimer le compte** — sans retour possible, puisque le seed ne doit jamais être rejoué en
+production. Le même mot de passe ouvre aussi la direction de l'école test, et la direction donne
+des **mots de passe provisoires** : un quatrième moyen de fermer un compte partagé.
+
+### La décision
+
+- **Une règle, écrite une fois** : un compte « de l'école test seule » appartient à une école
+  `modules.test` et à rien d'autre — ni vraie école, ni rôle de plateforme. C'est la règle que
+  `set_test_school_password` appliquait déjà, désormais nommée `is_test_only_account()` en SQL et
+  `isTestOnlyAccount()` côté serveur. Une adhésion dont l'école ne se lit pas compte comme une vraie
+  école : le doute profite à la personne, jamais au verrou.
+- **L'interface ne propose plus ce qui fermerait le compte** : la page Sécurité dit pourquoi au
+  lieu d'offrir le mot de passe et la validation en deux étapes, Mes données garde l'export mais
+  remplace la suppression par une phrase, et le bouton « Mot de passe provisoire » n'apparaît pas
+  dans l'école test. Les actions serveur refusent la même chose en français si on les appelle quand
+  même.
+- **La base tient la même ligne**, parce que la session du navigateur parle directement à Supabase
+  Auth et à PostgREST : `delete_my_account()` refuse un compte partagé ; un déclencheur sur
+  `auth.mfa_factors` refuse un second facteur ; un déclencheur sur `auth.users` **garde** le mot de
+  passe et l'adresse d'un compte partagé. Garder plutôt que refuser, parce que Supabase Auth écrit
+  cette ligne à chaque connexion : un refus qui se tromperait de cas fermerait l'école test à tout
+  le monde, un mot de passe gardé ne la ferme à personne. Le déclencheur retire aussi la marque
+  « provisoire » posée avec le mot de passe qu'il garde : sans cela, le visiteur suivant aurait été
+  prié d'en choisir un. Vérifié sur une pile Supabase réelle, en contournant l'interface :
+  `PUT /auth/v1/user` répond 200 et l'ancien mot de passe ouvre toujours le compte, l'inscription
+  d'un facteur échoue, `rpc/delete_my_account` répond 23514, la connexion marche après tout cela, et
+  l'administrateur de plateforme change toujours le sien.
+- **Ce qui passe** : `set_test_school_password`, qui le dit pour la durée de sa mise à jour
+  (`kesher.allow_test_account_change`) puis le reprend ; un opérateur qui le dit dans sa transaction
+  (`set local kesher.allow_test_account_change = 'on'`, ce que fait
+  `scripts/ops/create-account.sql`) ; et **un compte au mot de passe provisoire** — une famille que
+  la direction vient d'inscrire dans l'école test, que personne ne partage encore et qui doit
+  pouvoir choisir le sien : c'est précisément ce qu'on vient y essayer.
+- **Tout le reste s'essaie librement** : publier, écrire, répondre, signer, inscrire une famille.
+  L'export des données reste ouvert.
+
+### Ce qui reste, et pourquoi
+
+La direction de l'école test peut toujours **suspendre** ou **retirer** un compte, et défaire ce
+qu'elle a fait : c'est l'école test, un banc d'essai, et ces gestes se reprennent. Si l'on venait à
+exiger la validation en deux étapes de la direction de l'école test
+(`modules.security.mfaRequired`), son compte partagé ne pourrait pas s'y conformer : il ne faut pas
+l'activer là. Les déclencheurs sur `auth.users` et `auth.mfa_factors` reposent sur le droit
+`TRIGGER` que Supabase accorde à `postgres`, le même que celui du déclencheur
+`on_auth_user_created` posé depuis la session 3 ; vérifié sur la pile locale, qui reprend les rôles
+de l'hébergé.
+
+### Ce qui a été écarté
+
+Un compte par visiteur : il faudrait les créer et les transmettre un par un, pour un banc d'essai
+fictif (déjà écarté par l'ADR-0073). Refuser l'écriture dans `auth.users` plutôt que garder
+l'ancienne valeur : voir plus haut. Remettre l'école test en état chaque nuit : un compte supprimé
+ne se recrée pas sans rejouer le seed, et il serait resté fermé jusqu'au lendemain.

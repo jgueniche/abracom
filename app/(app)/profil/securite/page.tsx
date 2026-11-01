@@ -10,6 +10,7 @@ import { SectionHeader } from "@/components/layouts/section-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getMfaStatus } from "@/lib/auth/mfa";
+import { isTestOnlyAccount } from "@/lib/auth/school-choice";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { isSchoolAdmin } from "@/lib/permissions";
 
@@ -33,6 +34,9 @@ export default async function SecurityPage({
     getMfaStatus(user),
   ]);
   const isAdmin = user.school !== null && isSchoolAdmin(user.roles, user.school.id);
+  // A shared account of the test school (ADR-0079): neither its password nor a second
+  // factor is one visitor's to set, so the page says why instead of offering either.
+  const shared = isTestOnlyAccount(user.memberships);
   return (
     <Column width="text">
       <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
@@ -47,18 +51,26 @@ export default async function SecurityPage({
           {t("requiredNotice")}
         </p>
       )}
-      <section className="mb-10">
-        <SectionHeader label={t("passwordSection")} />
-        <PasswordForm mode="change" email={user.email} />
-      </section>
-      <section>
-        <SectionHeader label={t("mfaSection")} />
-        <Card className="max-w-xl">
-          <CardContent>
-            <TotpSetup enrolled={status.enrolled} isAdmin={isAdmin} />
-          </CardContent>
-        </Card>
-      </section>
+      {shared ? (
+        <p className="max-w-xl border-l-2 border-primary pl-3 text-sm text-pretty">
+          {t("sharedTestAccount")}
+        </p>
+      ) : (
+        <>
+          <section className="mb-10">
+            <SectionHeader label={t("passwordSection")} />
+            <PasswordForm mode="change" email={user.email} />
+          </section>
+          <section>
+            <SectionHeader label={t("mfaSection")} />
+            <Card className="max-w-xl">
+              <CardContent>
+                <TotpSetup enrolled={status.enrolled} isAdmin={isAdmin} />
+              </CardContent>
+            </Card>
+          </section>
+        </>
+      )}
     </Column>
   );
 }

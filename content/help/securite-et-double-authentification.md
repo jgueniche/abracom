@@ -5,7 +5,7 @@ routes: [/profil/securite, /verification]
 topic: data
 keywords: [sécurité, 2FA, double authentification, TOTP, code, application d'authentification, mot de passe]
 since: 14
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
 Mon profil → **Sécurité** porte le mot de passe et la validation en deux étapes.
@@ -23,3 +23,5 @@ Elle est facultative pour votre rôle, et vivement recommandée : votre compte d
 :::
 
 Gardez les codes de secours en lieu sûr : un téléphone perdu sans eux oblige l'école à réinitialiser votre accès.
+
+**Dans l'école test**, les comptes sont partagés : toutes les personnes qui essaient l'application ouvrent le même compte avec le même mot de passe. La page Sécurité n'y propose donc ni de changer le mot de passe ni d'activer la validation en deux étapes — un seul visiteur fermerait l'accès à tous les autres. Le mot de passe de l'école test est réglé par l'administrateur de la plateforme.

@@ -5,7 +5,7 @@ routes: [/profil/donnees]
 topic: data
 keywords: [données, RGPD, export, suppression, compte, effacement, anonymisation, conservation]
 since: 14
-reviewed: 2026-09-15
+reviewed: 2026-11-01
 ---
 
 Mon profil → **Mes données** met en œuvre vos droits sans avoir à écrire à personne.
@@ -20,5 +20,7 @@ Deux choses qu'elle ne fait pas, et qu'il vaut mieux savoir avant :
 - elle ne vous retire pas des registres que l'école doit conserver, comme le journal d'audit.
 
 Les données ont des durées de conservation définies, et une purge automatique s'exécute chaque nuit : les pointages au-delà de douze mois, les périodes de messagerie closes depuis plus d'un an, et les autres durées consignées dans le registre de l'école.
+
+Un compte de l'**école test** ne se supprime pas : il est partagé par toutes les personnes qui essaient l'application, et sa suppression la leur fermerait. L'export reste possible.
 
 Tout est hébergé dans l'Union européenne et aucun traceur tiers n'est utilisé.

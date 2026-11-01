@@ -5,7 +5,7 @@ routes: [/admin/familles, /admin/familles/[studentId]]
 topic: manage
 keywords: [élève, famille, responsable, inscription, classe, allergies, PAI, restriction judiciaire, droits, mot de passe provisoire]
 since: 5
-reviewed: 2026-10-18
+reviewed: 2026-11-01
 ---
 
 Gestion → **Familles** cherche un élève ou un parent par nom, prénom ou classe, et ouvre sa fiche.
@@ -27,5 +27,5 @@ Chaque responsable a ses **droits propres**, indépendants de ceux de l'autre pa
 Rattacher un responsable accepte un compte existant ou en crée un. Un compte créé reçoit un **mot de passe provisoire**, affiché une seule fois : transmettez-le au responsable, qui en choisira un autre à sa première connexion.
 
 :::roles school_admin, super_admin
-À côté de chaque responsable, **Mot de passe provisoire** remplace un mot de passe oublié par un nouveau, affiché une fois ; l'ancien cesse aussitôt de fonctionner. Il ne s'applique pas à un membre de la direction, ni à quelqu'un qui appartient aussi à une autre école : c'est alors l'administrateur de la plateforme qui s'en charge.
+À côté de chaque responsable, **Mot de passe provisoire** remplace un mot de passe oublié par un nouveau, affiché une fois ; l'ancien cesse aussitôt de fonctionner. Il ne s'applique pas à un membre de la direction, ni à quelqu'un qui appartient aussi à une autre école : c'est alors l'administrateur de la plateforme qui s'en charge. Dans l'école test, dont les comptes partagent un seul mot de passe, il n'apparaît pas.
 :::

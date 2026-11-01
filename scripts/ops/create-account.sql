@@ -59,6 +59,9 @@ begin
       'email', v_user::text, now(), now(), now()
     );
   else
+    -- An account of the test school alone keeps its shared password unless the change is said
+    -- to be deliberate (ADR-0079): this script is the operator saying so.
+    perform set_config('kesher.allow_test_account_change', 'on', true);
     update auth.users
     set encrypted_password = extensions.crypt(v_password, extensions.gen_salt('bf')),
         email_confirmed_at = coalesce(email_confirmed_at, now()),
