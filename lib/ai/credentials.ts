@@ -35,12 +35,16 @@ export function describeKeyValue(value: string): string {
   }
   const shape = trimmed.startsWith("AIza")
     ? "looks like an API key (AIza…), not a service account JSON key"
-    : /^[0-9a-f]{40}$/i.test(trimmed)
-      ? "looks like a key ID, not the key file"
-      : trimmed.startsWith("{")
-        ? "starts like JSON but does not parse (truncated paste?)"
-        : "neither JSON nor base64 of JSON";
-  return `${shape}; length=${trimmed.length}`;
+    : trimmed.includes("PRIVATE KEY-----")
+      ? "looks like the private key alone (PEM), not the whole JSON key file"
+      : /^[0-9a-f]{40}$/i.test(trimmed)
+        ? "looks like a key ID, not the key file"
+        : trimmed.startsWith("{")
+          ? "starts like JSON but does not parse (truncated paste?)"
+          : json !== null
+            ? "base64 of a JSON that does not parse (truncated copy?)"
+            : "neither JSON nor base64 of JSON";
+  return `${shape}; length=${trimmed.length} (a whole key file is ~2,300 characters, ~3,100 in base64)`;
 }
 
 function keyText(value: string): string | null {
