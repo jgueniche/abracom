@@ -176,6 +176,43 @@ test.describe("the homework space", () => {
     }
   });
 
+  test("a parent moves between the days of the week without asking the server", async ({
+    page,
+  }) => {
+    // A page thumbnail that fails to load asks for one refresh, to renew its signed link — and the
+    // test beside this one deletes the homework it photographed. Thumbnails always load here, so
+    // that the only request this test can see is one the day switch caused.
+    const pixel = Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+      "base64",
+    );
+    await page.route(/\/storage\/v1\/object\//, (route) =>
+      route.fulfill({ status: 200, contentType: "image/png", body: pixel }),
+    );
+    await signIn(page, "parent-1@demo.local");
+    await page.goto("/devoirs", { waitUntil: "networkidle" });
+    const days = page.getByRole("navigation", { name: /jours de la semaine/i }).getByRole("link");
+    await expect(days.first()).toBeVisible();
+    // The week is on the page already (ADR-0086): a day is shown in place, the address follows.
+    const navigations: string[] = [];
+    page.on("request", (request) => {
+      const rsc = request.headers()["rsc"] === "1" && !request.headers()["next-router-prefetch"];
+      // A page load counts too: a click the page did not handle reloads the whole diary.
+      if (rsc || request.isNavigationRequest()) navigations.push(request.url());
+    });
+    const target = days.nth(2);
+    const href = (await target.getAttribute("href"))!;
+    const day = new URL(href, "http://x").searchParams.get("jour")!;
+    await target.click();
+    await expect(target).toHaveAttribute("aria-current", "date");
+    await expect(page).toHaveURL(new RegExp(`jour=${day}`));
+    await page.getByRole("link", { name: "Semaine", exact: true }).click();
+    await expect(page).toHaveURL(/vue=semaine/);
+    await page.getByRole("link", { name: "Jour", exact: true }).click();
+    await expect(page).not.toHaveURL(/vue=semaine/);
+    expect(navigations).toEqual([]);
+  });
+
   test("a parent shares a photo in the class group, and it shows in the thread", async ({
     page,
   }, testInfo) => {

@@ -1,9 +1,8 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-import { Button } from "@/components/ui/button";
 import { Link } from "@/components/ui/link";
-import { cn } from "@/lib/utils";
+
+import { DiaryViewToggle, WeekArrows } from "./selection";
 
 /**
  * Previous week · the week's dates · next week, on one line.
@@ -25,8 +24,11 @@ export async function WeekNav({
   next: string;
   /** Where the week being prepared is, when it is not this one. */
   current: string | null;
-  /** « Jour » / « Semaine » (ADR-0083): where each view is, and which one is shown. */
-  views?: { day: string; week: string; current: "day" | "week" };
+  /**
+   * « Jour » / « Semaine » (ADR-0083): where each view is, for a new tab. Which one is shown is
+   * read from the address, and switching asks the server nothing (ADR-0086).
+   */
+  views?: { day: string; week: string };
 }) {
   const t = await getTranslations("diary");
   // One row (ADR-0080): the week named on the left, the two arrows together on the right. It was
@@ -45,39 +47,17 @@ export async function WeekNav({
         )}
       </div>
       {views && (
-        <nav
-          aria-label={t("viewLabel")}
-          className="mr-auto flex shrink-0 rounded-lg bg-muted p-0.5 text-[0.8125rem] font-medium sm:mr-1"
-        >
-          {(["day", "week"] as const).map((view) => (
-            <Link
-              key={view}
-              href={views[view]}
-              prefetch={false}
-              scroll={false}
-              aria-current={views.current === view ? "page" : undefined}
-              className={cn(
-                "relative inline-flex min-h-8 items-center rounded-md px-3 transition-colors before:absolute before:inset-x-0 before:-inset-y-1.5 before:content-['']",
-                views.current === view
-                  ? "bg-background font-semibold text-foreground shadow-xs"
-                  : "text-foreground/70 hover:text-foreground",
-              )}
-            >
-              {t(view === "day" ? "viewDay" : "viewWeek")}
-            </Link>
-          ))}
-        </nav>
+        <DiaryViewToggle
+          label={t("viewLabel")}
+          labels={{ day: t("viewDay"), week: t("viewWeek") }}
+          hrefs={views}
+        />
       )}
-      <Button asChild variant="ghost" size="icon" className="size-11 shrink-0">
-        <Link href={previous} aria-label={t("previousWeek")}>
-          <ChevronLeftIcon aria-hidden className="size-5" />
-        </Link>
-      </Button>
-      <Button asChild variant="ghost" size="icon" className="-ml-2 size-11 shrink-0">
-        <Link href={next} aria-label={t("nextWeek")}>
-          <ChevronRightIcon aria-hidden className="size-5" />
-        </Link>
-      </Button>
+      <WeekArrows
+        previous={previous}
+        next={next}
+        labels={{ previous: t("previousWeek"), next: t("nextWeek") }}
+      />
     </div>
   );
 }

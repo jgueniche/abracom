@@ -3,15 +3,15 @@ import type { Metadata } from "next";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { EmptyState } from "@/components/domain/empty-state";
-import { FilterChip, FilterChips } from "@/components/domain/filter-chip";
 import { HomeworkWeek } from "@/components/domain/homework/homework-week";
+import { DiaryChildFilter } from "@/components/domain/homework/selection";
 import { WeekNav } from "@/components/domain/homework/week-nav";
 import { NewHomeworkButton } from "@/components/domain/new-homework-button";
 import { Column } from "@/components/layouts/column";
 import { PageHeader } from "@/components/layouts/page-header";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { addDays, isDateKey, localDateKey, mondayOf } from "@/lib/calendar/dates";
-import { defaultWeek, pivotDay, SCHOOL_TIME_ZONE } from "@/lib/homework";
+import { defaultWeek, pivotDay, SCHOOL_TIME_ZONE, weekDays } from "@/lib/homework";
 import { canWriteInSchool, isSchoolAdmin } from "@/lib/permissions";
 import { attachmentViews } from "@/server/queries/attachments";
 import { getClassSizes, getHomeworkDiary, getNextHomeworkDay } from "@/server/queries/class-space";
@@ -114,14 +114,18 @@ export default async function DiaryPage({
   const schoolId = user.school?.id ?? null;
   // « Jour » by default, on the day being prepared — or, in another week, its first day with
   // homework; « Semaine » stacks the whole week (ADR-0083).
+  // Which view and which day are read from the address in the browser, and changed there without
+  // asking the server (ADR-0086); the server only says which day opens when none is named.
   const view = vue === "semaine" ? "week" : "day";
   const inWeek = (day: string) => day >= monday && day <= sunday;
-  const selectedDay =
-    asked && inWeek(asked)
-      ? asked
-      : inWeek(pivot)
-        ? pivot
-        : (entries.find((entry) => entry.due_on && inWeek(entry.due_on))?.due_on ?? monday);
+  const defaultDay = inWeek(pivot)
+    ? pivot
+    : (entries.find((entry) => entry.due_on && inWeek(entry.due_on))?.due_on ?? monday);
+  const selectedDay = asked && inWeek(asked) ? asked : defaultDay;
+  const stripDays = weekDays(
+    monday,
+    new Set(entries.flatMap((entry) => (entry.due_on ? [entry.due_on] : []))),
+  );
   const href = (
     week: string | null,
     child: string | null,
@@ -141,20 +145,17 @@ export default async function DiaryPage({
       <PageHeader title={t("title")} actions={<NewHomeworkButton classes={myClasses} />} />
 
       {allChildren.length > 1 && (
-        <FilterChips label={t("filterChildren")} className="-mt-1">
-          {[null, ...allChildren.map((child) => child.id)].map((id) => {
-            const child = allChildren.find((item) => item.id === id);
-            return (
-              <FilterChip
-                key={id ?? "all"}
-                href={href(monday, id, { day: view === "day" ? selectedDay : null })}
-                active={selected === id}
-              >
-                {child ? child.first_name : t("allChildren")}
-              </FilterChip>
-            );
-          })}
-        </FilterChips>
+        <DiaryChildFilter
+          label={t("filterChildren")}
+          className="-mt-1"
+          options={[
+            { id: null, name: t("allChildren") },
+            ...allChildren.map((child) => ({ id: child.id, name: child.first_name })),
+          ]}
+          selected={selected}
+          defaultDay={defaultDay}
+          days={stripDays}
+        />
       )}
 
       {ids.length === 0 ? (
@@ -180,15 +181,13 @@ export default async function DiaryPage({
             views={{
               day: href(monday, selected, { day: selectedDay, view: "day" }),
               week: href(monday, selected, { view: "week" }),
-              current: view,
             }}
           />
           <HomeworkWeek
             monday={monday}
             pivot={pivot >= monday && pivot <= sunday ? pivot : null}
             today={today}
-            view={view}
-            selected={selectedDay}
+            defaultDay={defaultDay}
             dayHref={(day) => href(monday, selected, { day, view: "day" })}
             entries={entries}
             attachments={attachments}

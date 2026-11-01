@@ -53,14 +53,13 @@ export default async function HomeworkPage({
   const team = isTeacher || isStaff;
   const composer = team ? [{ id: classId, name: cls.name }] : [];
   // « Jour » by default, on the day being prepared; « Semaine » stacks the week (ADR-0083).
+  // The view and the day are changed in the browser without asking the server (ADR-0086).
   const view = vue === "semaine" ? "week" : "day";
   const inWeek = (day: string) => day >= monday && day <= sunday;
-  const selectedDay =
-    asked && inWeek(asked)
-      ? asked
-      : inWeek(pivot)
-        ? pivot
-        : (entries.find((entry) => entry.due_on && inWeek(entry.due_on))?.due_on ?? monday);
+  const defaultDay = inWeek(pivot)
+    ? pivot
+    : (entries.find((entry) => entry.due_on && inWeek(entry.due_on))?.due_on ?? monday);
+  const selectedDay = asked && inWeek(asked) ? asked : defaultDay;
   const href = (week: string, options: { day?: string; view?: "day" | "week" } = {}) => {
     const params = new URLSearchParams();
     if (options.day) params.set("jour", options.day);
@@ -96,15 +95,13 @@ export default async function HomeworkPage({
         views={{
           day: href(monday, { day: selectedDay, view: "day" }),
           week: href(monday, { view: "week" }),
-          current: view,
         }}
       />
       <HomeworkWeek
         monday={monday}
         pivot={pivot >= monday && pivot <= sunday ? pivot : null}
         today={today}
-        view={view}
-        selected={selectedDay}
+        defaultDay={defaultDay}
         dayHref={(day) => href(monday, { day, view: "day" })}
         entries={entries}
         attachments={attachments}

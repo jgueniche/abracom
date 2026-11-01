@@ -8,6 +8,7 @@ import { Link } from "@/components/ui/link";
 import { cn } from "@/lib/utils";
 
 import { useProgressOf } from "./progress";
+import { useDiarySelection, useSelectDay } from "./selection";
 
 export type StripDay = {
   day: string;
@@ -23,9 +24,8 @@ export type StripDay = {
   pivot: boolean;
   today: boolean;
   past: boolean;
-  /** The day shown on its own (the « Jour » view, ADR-0083); none in the week view. */
-  selected: boolean;
-  /** Where touching the day leads: that day, on its own. */
+  /** Where touching the day leads: that day, on its own — for a new tab; a plain touch changes
+   * the day in place (ADR-0086). */
   href: string;
 };
 
@@ -43,8 +43,23 @@ export type StripDay = {
  * ronds" the porteur asked to see gone (ADR-0078). A day is now a weekday, a date and a figure;
  * the day being prepared carries the short mark a current tab carries.
  */
-export function WeekStrip({ days, ticks }: { days: StripDay[]; ticks: boolean }) {
+export function WeekStrip({
+  days,
+  ticks,
+  defaultDay,
+}: {
+  days: StripDay[];
+  ticks: boolean;
+  /** The day shown when the address names none. */
+  defaultDay: string | null;
+}) {
   const t = useTranslations("diary");
+  const selection = useDiarySelection(
+    defaultDay,
+    days.map((day) => day.day),
+  );
+  const selectDay = useSelectDay();
+  const shown = selection.view === "day" ? selection.day : null;
   return (
     <nav aria-label={t("weekDays")}>
       <ol
@@ -53,7 +68,12 @@ export function WeekStrip({ days, ticks }: { days: StripDay[]; ticks: boolean })
       >
         {days.map((day) => (
           <li key={day.day} className="relative">
-            <StripCell day={day} ticks={ticks} />
+            <StripCell
+              day={day}
+              ticks={ticks}
+              selected={day.day === shown}
+              onSelect={selectDay(day.day)}
+            />
           </li>
         ))}
       </ol>
@@ -61,7 +81,17 @@ export function WeekStrip({ days, ticks }: { days: StripDay[]; ticks: boolean })
   );
 }
 
-function StripCell({ day, ticks }: { day: StripDay; ticks: boolean }) {
+function StripCell({
+  day,
+  ticks,
+  selected,
+  onSelect,
+}: {
+  day: StripDay;
+  ticks: boolean;
+  selected: boolean;
+  onSelect: (event: React.MouseEvent) => void;
+}) {
   const t = useTranslations("diary");
   const progress = useProgressOf(day.keys);
   // One compact cell (ADR-0080): the weekday, the date, and a dot that says whether the day holds
@@ -109,10 +139,11 @@ function StripCell({ day, ticks }: { day: StripDay; ticks: boolean }) {
       href={day.href}
       prefetch={false}
       scroll={false}
-      aria-current={day.selected ? "date" : undefined}
+      onClick={onSelect}
+      aria-current={selected ? "date" : undefined}
       className={cn(
         "flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-lg py-1 transition-colors",
-        day.selected ? "bg-primary/10" : "hover:bg-muted",
+        selected ? "bg-primary/10" : "hover:bg-muted",
       )}
     >
       {inner}

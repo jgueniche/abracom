@@ -16,6 +16,7 @@ import type { DiaryEntry } from "@/server/queries/class-space";
 
 import { DoneToggle } from "./done-toggle";
 import { HomeworkProgress } from "./progress";
+import { DiaryPanels } from "./selection";
 import { TONE_CLASSES } from "./tones";
 import { DayCelebration, DayProgress, EntryFrame, type StripDay, WeekStrip } from "./week-parts";
 
@@ -52,8 +53,7 @@ export async function HomeworkWeek({
   attachments,
   reader,
   emptyAction,
-  view = "week",
-  selected = null,
+  defaultDay = null,
   dayHref,
 }: {
   monday: DateKey;
@@ -66,13 +66,12 @@ export async function HomeworkWeek({
   emptyAction?: React.ReactNode;
   /**
    * « Jour » shows one day, the one being prepared unless another is chosen; « Semaine » stacks
-   * the week in one column (ADR-0083). Homework is prepared day by day: the week laid out two
-   * by two made it hard to tell which day was where.
+   * the week in one column (ADR-0083). Which of the two, and which day, is read from the address
+   * in the browser: every day of the week is rendered here once, and moving between them asks
+   * the server nothing (ADR-0086). This is the day shown when the address names none.
    */
-  view?: "day" | "week";
-  /** The day shown in the « Jour » view. */
-  selected?: DateKey | null;
-  /** Where touching a day of the strip leads: that day, on its own. */
+  defaultDay?: DateKey | null;
+  /** Where touching a day of the strip leads, for a new tab: that day, on its own. */
   dayHref: (day: DateKey) => string;
 }) {
   const [t, format] = await Promise.all([getTranslations("diary"), getFormatter()]);
@@ -116,7 +115,6 @@ export async function HomeworkWeek({
     pivot: day === pivot,
     today: day === today,
     past: pivot ? day < pivot : day < today,
-    selected: view === "day" && day === selected,
     href: dayHref(day),
   }));
 
@@ -204,27 +202,29 @@ export async function HomeworkWeek({
   const upcomingDays = visible(upcoming);
   const earlierDays = visible(earlier);
 
+  // Every day of the strip, rendered once: shown alone in « Jour », stacked in « Semaine ». A day
+  // before the one being prepared reads quieter in both.
+  const panels = Object.fromEntries(
+    days.map((day) => [day, renderDay(day, pivot !== null && day < pivot)]),
+  );
+
   return (
     <HomeworkProgress doneKeys={doneKeys}>
       <div className="mb-5">
-        <WeekStrip days={strip} ticks={ticks} />
+        <WeekStrip days={strip} ticks={ticks} defaultDay={defaultDay} />
       </div>
 
       {entries.length === 0 ? (
         <EmptyState title={t("empty")} description={t("emptyHint")} action={emptyAction} />
-      ) : view === "day" && selected ? (
-        // One day, on its own: the day being prepared, or the one touched in the strip.
-        renderDay(selected, pivot !== null && selected < pivot)
       ) : (
-        <div className="flex flex-col gap-7">
-          {upcomingDays.map((day) => renderDay(day))}
-          {earlierDays.length > 0 && (
-            <div className="flex flex-col gap-5">
-              <p className="eyebrow pt-3">{t("earlierThisWeek")}</p>
-              {earlierDays.map((day) => renderDay(day, true))}
-            </div>
-          )}
-        </div>
+        <DiaryPanels
+          defaultDay={defaultDay}
+          days={days}
+          panels={panels}
+          upcoming={upcomingDays}
+          earlier={earlierDays}
+          earlierLabel={t("earlierThisWeek")}
+        />
       )}
     </HomeworkProgress>
   );
