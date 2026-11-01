@@ -101,6 +101,9 @@ const nextConfig: NextConfig = {
     "/recherche": ["./content/help/**/*"],
     // The "?" in every page header resolves the article for the current path.
     "/(app)/layout": ["./content/help/**/*"],
+    // A route with its own `maxDuration` gets a function of its own on Vercel, outside the group
+    // that carries the articles above: without this line its header threw ENOENT (ADR-0087).
+    "/devoirs/[postId]/entrainement/[level]": ["./content/help/**/*"],
   },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];

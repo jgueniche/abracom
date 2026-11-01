@@ -2802,6 +2802,14 @@ schema.ts`) : onze sortes d'exercices (compter, calculer, suites, comparer, reli
   développement et l'e2e, `off` coupe tout. Le bloc est **lu de façon tolérante** : avant la
   migration, la fiche du devoir s'ouvre sans lui (règle de l'ADR-0082).
 
+**Correctif du même jour, trouvé en production** : la page de la feuille fixe `maxDuration = 120`
+pour que `after()` ait le temps de finir ; sur Vercel, une route à la configuration différente reçoit
+**sa propre fonction**, hors du groupe qui embarque `content/help` — le « ? » de l'en-tête y levait
+`ENOENT` et la page affichait « Une erreur est survenue ». Invisible en local, où tout le dépôt est
+sur le disque. La route est ajoutée à `outputFileTracingIncludes` (`next.config.ts`) ; vérifié sur
+la trace du build (50 articles sur 50). Toute route future qui change `maxDuration`, `memory` ou sa
+région doit y figurer aussi.
+
 ### Ce qui reste
 
 L'assistant en bulle (session suivante) ; une vraie session sur Google Cloud pour mesurer la durée
