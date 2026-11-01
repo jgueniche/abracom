@@ -1300,9 +1300,12 @@ activé par défaut, hébreu et kodesh en bêta. Guide pas à pas : `docs/GCP.md
 - [x] Vérifié sur une pile Supabase réelle (Docker) : `pnpm check` (244 tests), `pnpm build`,
       638 assertions pgTAP sur les deux chemins, 16 e2e sur le build de production (dont 4
       nouveaux), axe à 0 violation sérieuse à 390 et 1 440 px en clair et en sombre.
-- [ ] **Au porteur** : suivre `docs/GCP.md` (projet, API, compte de service, clé dans Vercel),
-      fusionner (la migration part avec « Deploy database »), puis essayer une vraie feuille — durée,
-      coût, qualité de l'hébreu.
+- [x] Google Cloud configuré par le porteur (`docs/GCP.md`), fusionnée (#27), migration passée,
+      première vraie feuille en production (≈ 16 s, illustration, voix) ; correctifs #28 à #32
+      (fonction Vercel sans aide, clé collée incomplète, `responseJsonSchema` refusé par Vertex,
+      polices Google, texte à apprendre inventé).
+- [ ] **Au porteur** : essayer l'hébreu et le kodesh, et regarder le coût dans la facturation
+      Google (étiquettes `app=kesher`, `feature=practice`).
 - [ ] **Session suivante** : l'assistant en bulle, limité au rôle de chacun.
 - [ ] Plus tard : relier au doigt à l'écran (aujourd'hui sur papier).
 

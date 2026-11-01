@@ -189,6 +189,13 @@ describe("practice sheets — what the model is given", () => {
     expect(prompt).toContain("POUR ALLER PLUS LOIN");
   });
 
+  it("never writes a text to learn that the homework does not give", () => {
+    // Found in production: a CP poem « à réciter sans le cahier » came back as a poem the
+    // model had written itself, presented as the one to learn.
+    expect(SYSTEM_PROMPT).toContain("n'en écris jamais une version de ton cru");
+    expect(SYSTEM_PROMPT).toContain("le texte est dans le cahier");
+  });
+
   it("keeps the youngest classes away from dictations and sums", () => {
     expect(kindsFor("PS")).not.toContain("dictation");
     expect(kindsFor("PS")).not.toContain("operations");

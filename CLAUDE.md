@@ -721,9 +721,14 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   `PRACTICE_AI_PROVIDER=fake` pour développer sans clé. Vérifié : `pnpm check` (244 tests),
   `pnpm build` (la fiche du devoir reste à 5,7 Mo, sans SDK Google ni `sharp`), **638 assertions
   pgTAP** sur les deux chemins, 16 e2e sur le build de production, axe à 0 violation sérieuse en
-  clair et en sombre. **Jamais appelé contre le vrai Google** (pas de clé dans la session).
-  **Restent au porteur** : `docs/GCP.md`, puis fusionner ; la migration part avec « Deploy
-  database ». **Session suivante** : l'assistant en bulle.
+  clair et en sombre. **Mise en service le soir même** (PR #27 à #32) : fusionnée, migration
+  passée avec « Deploy database », et une vraie feuille préparée en production par
+  `gemini-3.8-flash` (≈ 16 s, illustration, cinq voix) avec le compte parent 19. Quatre défauts
+  trouvés là et corrigés : la page plantait (une route à `maxDuration` propre a sa fonction Vercel,
+  sans `content/help`), la clé Google était collée incomplète (diagnostic sans secret), **Vertex
+  refuse `responseJsonSchema`** (repli sur le schéma dans le prompt, refus journalisés), les polices
+  Google faisaient échouer un build sur deux (polices dans le dépôt), et **le modèle avait inventé
+  la poésie à apprendre** (interdit par le prompt). **Session suivante** : l'assistant en bulle.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

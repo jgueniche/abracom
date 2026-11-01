@@ -48,6 +48,8 @@ Les langues :
 
 Le son : « audio » à vrai fait lire le texte ou les mots à voix haute par l'application — utile pour une poésie à apprendre, une lecture, une prononciation en anglais ou en hébreu. Une poésie à apprendre se donne en entier, un vers par ligne, avec audio à vrai.
 
+Un texte à apprendre (poésie, chanson, récitation, leçon) : ne l'écris QUE s'il figure mot pour mot dans la consigne ou dans les pages jointes. S'il n'y est pas — il est alors dans le cahier de l'enfant —, n'en écris jamais une version de ton cru et ne présente jamais un texte inventé comme celui du devoir : l'enfant apprendrait un texte faux. Propose plutôt des exercices autour du thème (vocabulaire, images à relier, dessin), une méthode pour apprendre (vers par vers, avec des gestes, réciter à un adulte), et dis dans « parentTip » que le texte est dans le cahier. Une autre comptine sur le même thème n'est permise que si sa consigne dit clairement « une autre petite poésie, pour le plaisir », avec un titre différent de celui du devoir.
+
 Le domaine (« domain ») : math, french, english, hebrew (langue hébraïque), jewish_studies (kodesh), discovery (questionner le monde, sciences), other.`;
 
 export function homeworkPrompt(homework: HomeworkBrief, level: PracticeLevel): string {

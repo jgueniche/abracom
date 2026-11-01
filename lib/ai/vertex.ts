@@ -73,23 +73,28 @@ export function vertexProvider(config: VertexConfig): PracticeProvider {
       // sent, and the next form is tried. The answer is checked by `parseSheet` in every case.
       const base = { responseMimeType: "application/json", httpOptions: { timeout: 90_000 } };
       const schemaInPrompt = `${request.system}\n\nRéponds uniquement par un objet JSON conforme à ce schéma JSON :\n${JSON.stringify(request.schema)}`;
+      // In production (2026-11-01) Vertex refused `responseJsonSchema` as `sheetJsonSchema()`
+      // writes it, with or without the rest, and took the schema written in the prompt. The
+      // first form tries the schema in its plainest dialect (`anyOf`, no `additionalProperties`):
+      // accepted, it brings back structured output; refused, it costs a second.
       const attempts: Array<{ name: string; config: GenerateContentConfig }> = [
         {
-          name: "schema+thinking+labels",
+          name: "plain-schema+thinking+labels",
           config: {
             ...base,
             systemInstruction: request.system,
-            responseJsonSchema: request.schema,
+            responseJsonSchema: plainSchema(request.schema),
             thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
             labels: LABELS,
           },
         },
         {
-          name: "schema",
+          name: "schema-in-prompt+thinking+labels",
           config: {
             ...base,
-            systemInstruction: request.system,
-            responseJsonSchema: request.schema,
+            systemInstruction: schemaInPrompt,
+            thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+            labels: LABELS,
           },
         },
         { name: "schema-in-prompt", config: { ...base, systemInstruction: schemaInPrompt } },
@@ -205,4 +210,16 @@ async function call<T>(run: () => Promise<T>): Promise<T> {
       message,
     );
   }
+}
+
+/** The schema in the dialect Vertex documents most plainly: `anyOf`, no `additionalProperties`. */
+function plainSchema(node: unknown): unknown {
+  if (Array.isArray(node)) return node.map(plainSchema);
+  if (!node || typeof node !== "object") return node;
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(node)) {
+    if (key === "additionalProperties") continue;
+    out[key === "oneOf" ? "anyOf" : key] = plainSchema(value);
+  }
+  return out;
 }
