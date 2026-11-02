@@ -114,6 +114,27 @@ export function rulePlan(question: string, reader: ReaderSummary): Plan {
   return { calls: calls.slice(0, 4) };
 }
 
+/**
+ * Dates the rules do not place precisely: a weekday, « la semaine prochaine », « hier », the
+ * holidays, a written date. « Les prochains événements » is not one: it means « upcoming ».
+ */
+const PRECISE_DATE =
+  /lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|(semaine|mois|annee) (prochaine?|derniere?)|hier|vacances|\d{1,2}\s*(janv|fevr|mars|avri|mai|juin|juil|aout|sept|octo|nove|dece)|\d{1,2}\/\d{1,2}/;
+
+/**
+ * The plan from the words of the question, when they are enough (ADR-0088): a question that
+ * names what it is about (« devoirs », « cantine », « absence »…) and no date the rules cannot
+ * place. Asking the model which tools to use cost 1.6 to 3.4 s in production, for questions
+ * like these where the rules already know. Anything else — a follow-up (« et pour jeudi ? »),
+ * a date, a question the rules do not recognise — still goes to the model.
+ */
+export function quickPlan(question: string, reader: ReaderSummary): Plan | null {
+  if (PRECISE_DATE.test(fold(question))) return null;
+  const plan = rulePlan(question, reader);
+  // `search` first is the rules saying they recognised nothing.
+  return plan.calls[0]?.tool === "search" ? null : plan;
+}
+
 export type AssistantLink = { label: string; href: string };
 
 /** Whether a link of an answer may be shown: one the server handed over, and inside Kesher. */
