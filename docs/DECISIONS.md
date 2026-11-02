@@ -2910,9 +2910,18 @@ Premières questions réelles (compte parent 19, `gemini-3.8-flash`) : réponses
 deux enfants du compte, liens valides — mais les premiers mots arrivaient en **3,6 à 15 s**. La
 fonction tourne bien à Paris (`x-vercel-id` : `…::cdg1::…` ; le champ `region` des journaux Vercel
 est le point d'entrée du réseau, pas la fonction). Le temps passe dans les deux appels au modèle,
-réglés sur une réflexion « low ». Ils passent à **« minimal »**, avec un repli automatique sur « low »
-si Vertex le refuse pour ce modèle (retenu pour la vie de l'instance), et le journal découpe chaque
-réponse : `context_ms`, `plan_ms`, `tools_ms`, `first_ms`, `ms` — jamais la question.
+réglés sur une réflexion « low ». Un premier correctif (#34) a demandé « minimal » : **Vertex le
+refuse pour `gemini-3.8-flash`** (`400 — Thinking level is unsupported`), le repli sur « low » a
+tenu. Le journal, découpé depuis (`context_ms`, `plan_ms`, `tools_ms`, `first_ms`, `ms` — jamais
+la question), a montré le vrai poste : contexte 0,2 s, **choix des outils par le modèle 1,6 à
+3,4 s**, outils 0,08 s, puis environ 1 s avant les premiers mots. D'où le second correctif :
+« low » directement, et **plus d'appel au modèle pour choisir les outils quand les mots de la
+question suffisent** (`quickPlan`) — elle nomme ce qu'elle cherche (devoirs, cantine, absence,
+annonces, « comment… ») et aucune date que les règles ne savent placer (un jour de la semaine,
+« la semaine prochaine », une date écrite, les vacances). Le modèle qui rédige reçoit toujours la
+question entière et choisit dans les résultats ; une question de suivi (« et pour jeudi ? »), une
+date ou une question non reconnue passe encore par le modèle. Les neuf questions proposées par la
+bulle se passent toutes du premier appel (test à l'appui).
 
 ### Ce qui reste
 

@@ -758,8 +758,10 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   langue ; les feuilles déjà préparées gardent l'ancienne voix jusqu'à ce que l'équipe les jette.
   **En production (#33)** : migration passée, l'assistant répond juste avec le vrai Gemini, limité
   aux deux enfants du compte parent 19, liens valides, fonction à Paris — mais premiers mots en 3,6 à
-  15 s ; la réflexion passe à « minimal » (repli sur « low » si refusé) et le journal découpe chaque
-  réponse (`context_ms`, `plan_ms`, `tools_ms`, `first_ms`). Choix du porteur : une feuille
+  15 s. Le journal découpe désormais chaque réponse (`context_ms`, `plan_ms`, `tools_ms`,
+  `first_ms`) : « minimal » est refusé par Vertex pour ce modèle, et le vrai poste était le choix
+  des outils par le modèle (1,6 à 3,4 s), désormais sauté quand les mots de la question suffisent
+  (`quickPlan`, les neuf questions proposées comprises). Choix du porteur : une feuille
   d'**anglais** parle anglais à l'enfant (titre, consignes, contenu), le conseil au parent reste en
   français.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
