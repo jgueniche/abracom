@@ -756,6 +756,12 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   phrase en anglais — la direction de lecture placée devant le texte (« Read this aloud for a young
   child… »), que Gemini-TTS a lue. La voix ne reçoit plus que le texte de l'exercice, dans sa
   langue ; les feuilles déjà préparées gardent l'ancienne voix jusqu'à ce que l'équipe les jette.
+  **En production (#33)** : migration passée, l'assistant répond juste avec le vrai Gemini, limité
+  aux deux enfants du compte parent 19, liens valides, fonction à Paris — mais premiers mots en 3,6 à
+  15 s ; la réflexion passe à « minimal » (repli sur « low » si refusé) et le journal découpe chaque
+  réponse (`context_ms`, `plan_ms`, `tools_ms`, `first_ms`). Choix du porteur : une feuille
+  d'**anglais** parle anglais à l'enfant (titre, consignes, contenu), le conseil au parent reste en
+  français.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

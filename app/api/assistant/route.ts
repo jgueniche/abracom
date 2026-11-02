@@ -83,6 +83,7 @@ export async function POST(request: Request) {
 
   const started = Date.now();
   const ctx = await readerContext(user);
+  const contextMs = Date.now() - started;
   const brief: ReaderBrief = {
     today: ctx.today,
     weekday: new Intl.DateTimeFormat("fr-FR", {
@@ -101,7 +102,9 @@ export async function POST(request: Request) {
         const question = turns.at(-1)!.text;
         const planned = await model.plan(PLANNER_SYSTEM, plannerPrompt(brief, turns));
         const plan = planned ?? rulePlan(question, { today: ctx.today, children: brief.children });
+        const planMs = Date.now() - started - contextMs;
         const results = await runPlan(plan, ctx);
+        const toolsMs = Date.now() - started - contextMs - planMs;
 
         const seen = new Set<string>();
         const links: AssistantLink[] = [...results.flatMap((r) => r.links), ...destinations(ctx)]
@@ -110,6 +113,7 @@ export async function POST(request: Request) {
         controller.enqueue(line({ t: "links", links }));
 
         const hrefs = new Set(links.map((link) => link.href));
+        let firstMs = 0;
         for await (const text of model.answer(
           ANSWER_SYSTEM,
           answerPrompt(
@@ -119,11 +123,13 @@ export async function POST(request: Request) {
             links,
           ),
         )) {
+          if (!firstMs) firstMs = Date.now() - started;
           controller.enqueue(line({ t: "text", v: text }));
         }
         controller.enqueue(line({ t: "done" }));
+        // Durations only, never the question (ADR-0088): where an answer spends its time.
         console.info(
-          `[assistant] plan=${planned ? "model" : "rules"} tools=${plan.calls.map((c) => c.tool).join(",") || "-"} links=${hrefs.size} ms=${Date.now() - started}`,
+          `[assistant] plan=${planned ? "model" : "rules"} tools=${plan.calls.map((c) => c.tool).join(",") || "-"} links=${hrefs.size} context_ms=${contextMs} plan_ms=${planMs} tools_ms=${toolsMs} first_ms=${firstMs} ms=${Date.now() - started}`,
         );
       } catch (error) {
         console.error("[assistant] answer:", (error as Error).message);
