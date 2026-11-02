@@ -2831,6 +2831,13 @@ aucun visible en local :
 Première feuille réelle : écrite par `gemini-3.8-flash` en 16 s environ, illustration WebP de
 61 Ko, cinq voix (la poésie et quatre mots), prénom posé par l'application.
 
+**Correctif du 2026-11-02, signalé par le porteur** : la voix d'une poésie française commençait
+par une phrase en anglais. Pour régler le ton, le texte était précédé d'une direction de lecture
+(« Read this aloud for a young child: slowly, warmly… ») ; Gemini-TTS l'a lue à voix haute. Une
+direction est une demande, pas une garantie : la voix ne reçoit plus que le texte de l'exercice
+(`lib/ai/speech.ts`), sa langue vient du seul `languageCode`, et un test l'impose. Les feuilles
+déjà préparées gardent leur ancienne voix jusqu'à ce que l'équipe les jette.
+
 ### Ce qui reste
 
 L'assistant en bulle (session suivante) ; une vraie session sur Google Cloud pour mesurer la durée

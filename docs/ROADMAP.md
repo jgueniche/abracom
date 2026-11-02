@@ -1330,6 +1330,8 @@ trouvable depuis le cahier de texte, avec une ouverture du devoir plus belle et 
 - [x] Article d'aide « L'assistant », `docs/RGPD.md` (ce qui part chez Google, rien de conservé).
 - [x] Tests : 17 unitaires (plan, liens, prompts), 4 e2e (réponse et lien suivi, autre famille,
       responsable en lecture seule sans messagerie, requêtes refusées).
+- [x] Signalé par le porteur : la voix d'une poésie française commençait par la direction de
+      lecture, en anglais. La voix ne reçoit plus que le texte de l'exercice (ADR-0087, correctif).
 - [ ] **Au porteur** : poser de vraies questions en production et regarder la facture Google
       (étiquette `feature=assistant`).
 

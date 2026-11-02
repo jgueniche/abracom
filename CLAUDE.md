@@ -752,6 +752,10 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   chemins, 60 e2e sur le build de production (dont 4 nouveaux, répétés trois fois), axe à
   0 violation sérieuse, panneau ouvert, à 390 et 1 440 px en clair et en sombre. **La migration
   part avec « Deploy database » à la fusion** ; avant, `/api/assistant` répond « indisponible ».
+  **Signalé par le porteur sur S'entraîner** : la voix d'une poésie française commençait par une
+  phrase en anglais — la direction de lecture placée devant le texte (« Read this aloud for a young
+  child… »), que Gemini-TTS a lue. La voix ne reçoit plus que le texte de l'exercice, dans sa
+  langue ; les feuilles déjà préparées gardent l'ancienne voix jusqu'à ce que l'équipe les jette.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

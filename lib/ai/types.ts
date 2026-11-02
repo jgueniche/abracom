@@ -23,8 +23,8 @@ export interface PracticeProvider {
   writeSheet(request: SheetRequest): Promise<unknown>;
   /** One illustration for the top of the sheet; PNG/JPEG/WebP bytes, or null. */
   illustrate(prompt: string): Promise<Buffer | null>;
-  /** A WAV recording of `text` read aloud in `lang`, or null. */
-  speak(text: string, lang: Lang, style: "text" | "word"): Promise<Buffer | null>;
+  /** A WAV recording of `text` read aloud in `lang` — the text alone, no direction — or null. */
+  speak(text: string, lang: Lang): Promise<Buffer | null>;
 }
 
 export class ProviderError extends Error {

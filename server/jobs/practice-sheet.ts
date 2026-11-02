@@ -128,11 +128,7 @@ async function prepare(admin: Admin, provider: PracticeProvider, sheetId: string
   if (clips.length > 0) {
     await stage(admin, sheetId, "voicing");
     await inBatches(clips, VOICE_CONCURRENCY, async (clip) => {
-      const wav = await provider.speak(
-        clip.text,
-        clip.lang,
-        clip.id.includes("-w") ? "word" : "text",
-      );
+      const wav = await provider.speak(clip.text, clip.lang);
       if (!wav) return;
       const path = `${folder}/${clip.id}.wav`;
       const { error: uploadError } = await admin.storage

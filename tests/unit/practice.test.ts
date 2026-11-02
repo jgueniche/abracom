@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { describeKeyValue, parseServiceAccountKey } from "@/lib/ai/credentials";
+import { spokenText } from "@/lib/ai/speech";
 import { pcmToWav, sampleRateOf } from "@/lib/ai/wav";
 import {
   audioClips,
@@ -279,5 +280,20 @@ describe("practice sheets — the plumbing", () => {
     expect(describeKeyValue(pem)).toMatch(/^looks like the private key alone/);
     expect(describeKeyValue(pem)).not.toContain("MIIEv");
     expect(describeKeyValue(base64.slice(0, 200))).toMatch(/^base64 of a JSON that does not parse/);
+  });
+});
+
+describe("spokenText — what the voice reads", () => {
+  it("is the text of the exercise and nothing else, whatever its language", () => {
+    const poem = "L'automne.\n\nL'automne au coin du bois\nJoue de l'harmonica.";
+    expect(spokenText(`  ${poem}\n`)).toBe(poem);
+    expect(spokenText("red")).toBe("red");
+    expect(spokenText("שָׁלוֹם")).toBe("שָׁלוֹם");
+  });
+
+  it("never carries a reading direction, which the model may read aloud", () => {
+    for (const text of ["chat", "Une poésie.\n\nPremier vers."]) {
+      expect(spokenText(text)).not.toMatch(/read|say|aloud|slowly|lis |dis /i);
+    }
   });
 });
