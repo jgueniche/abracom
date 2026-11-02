@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { allowedLink, planSchema, rulePlan } from "@/lib/assistant/plan";
+import fr from "@/messages/fr.json";
+
+import { allowedLink, planSchema, quickPlan, rulePlan } from "@/lib/assistant/plan";
 import { ANSWER_SYSTEM, answerPrompt, plannerPrompt, readerBrief } from "@/lib/assistant/prompt";
 
 const reader = {
@@ -61,6 +63,41 @@ describe("rulePlan — the plan made from the words of the question", () => {
     const plan = rulePlan("Devoirs, menu, sortie, absence, annonce : comment tout voir ?", reader);
     expect(plan.calls.length).toBeLessThanOrEqual(4);
     expect(planSchema.safeParse(plan).success).toBe(true);
+  });
+});
+
+describe("quickPlan — when the words of the question are enough", () => {
+  it("answers the usual questions without asking the model", () => {
+    for (const question of [
+      "Quels devoirs pour demain ?",
+      "Qu'y a-t-il à la cantine cette semaine ?",
+      "Comment signaler une absence ?",
+      "Quels sont les prochains événements ?",
+    ]) {
+      expect(quickPlan(question, reader), question).not.toBeNull();
+    }
+  });
+
+  it("answers every suggested question without asking the model", () => {
+    for (const question of Object.values(fr.assistant.suggestions)) {
+      expect(quickPlan(question, reader), question).not.toBeNull();
+    }
+  });
+
+  it("leaves to the model a date the rules cannot place", () => {
+    for (const question of [
+      "Quels devoirs pour jeudi ?",
+      "Le menu de la semaine prochaine",
+      "Quelles sorties le 12 décembre ?",
+      "Les devoirs pendant les vacances",
+    ]) {
+      expect(quickPlan(question, reader), question).toBeNull();
+    }
+  });
+
+  it("leaves to the model a question it does not recognise, or a follow-up", () => {
+    expect(quickPlan("Kermesse de fin d'année", reader)).toBeNull();
+    expect(quickPlan("Et pour Liam ?", reader)).toBeNull();
   });
 });
 

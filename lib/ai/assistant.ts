@@ -48,37 +48,27 @@ export function getAssistantModel(): AssistantModel | null {
   });
   const model = env.ASSISTANT_MODEL ?? env.PRACTICE_TEXT_MODEL ?? "gemini-3.8-flash";
 
-  // The least thinking the model accepts (ADR-0088): « minimal » answers a short, grounded
-  // question seconds sooner than « low ». If Vertex refuses it for this model, the call is made
-  // again with « low », and that answer is remembered for the life of the instance.
-  const base = (timeout: number) => ({ labels: LABELS, httpOptions: { timeout } });
-  async function withThinking<T>(call: (level: ThinkingLevel) => Promise<T>): Promise<T> {
-    try {
-      return await call(thinking.level);
-    } catch (error) {
-      if (thinking.level === ThinkingLevel.LOW || !isInvalidArgument(error)) throw error;
-      console.warn("[assistant] minimal thinking refused, using low:", (error as Error).message);
-      thinking.level = ThinkingLevel.LOW;
-      return call(thinking.level);
-    }
-  }
+  // « low » is the least thinking gemini-3.8-flash accepts: « minimal » was refused in
+  // production (400, « Thinking level is unsupported »), ADR-0088.
+  const base = (timeout: number) => ({
+    labels: LABELS,
+    httpOptions: { timeout },
+    thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+  });
 
   return {
     name: "vertex",
     async plan(system, prompt) {
       try {
-        const response = await withThinking((level) =>
-          ai.models.generateContent({
-            model,
-            contents: [{ role: "user", parts: [{ text: prompt }] }],
-            config: {
-              ...base(20_000),
-              systemInstruction: system,
-              responseMimeType: "application/json",
-              thinkingConfig: { thinkingLevel: level },
-            },
-          }),
-        );
+        const response = await ai.models.generateContent({
+          model,
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          config: {
+            ...base(20_000),
+            systemInstruction: system,
+            responseMimeType: "application/json",
+          },
+        });
         const parsed = planSchema.safeParse(JSON.parse(response.text ?? "null"));
         return parsed.success ? parsed.data : null;
       } catch (error) {
@@ -87,32 +77,17 @@ export function getAssistantModel(): AssistantModel | null {
       }
     },
     async *answer(system, prompt) {
-      const stream = await withThinking((level) =>
-        ai.models.generateContentStream({
-          model,
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          config: {
-            ...base(40_000),
-            systemInstruction: system,
-            thinkingConfig: { thinkingLevel: level },
-          },
-        }),
-      );
+      const stream = await ai.models.generateContentStream({
+        model,
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        config: { ...base(40_000), systemInstruction: system },
+      });
       for await (const chunk of stream) {
         const text = chunk.text;
         if (text) yield text;
       }
     },
   };
-}
-
-/** Shared by every request of an instance: once « minimal » is refused, it is not asked again. */
-const thinking = { level: ThinkingLevel.MINIMAL };
-
-/** A 400 from Vertex: the request itself was refused, not the service. */
-function isInvalidArgument(error: unknown): boolean {
-  const message = (error as Error)?.message ?? "";
-  return /\b400\b|INVALID_ARGUMENT/i.test(message);
 }
 
 /**

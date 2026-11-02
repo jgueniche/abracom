@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { getAssistantModel } from "@/lib/ai/assistant";
 import { assistantMode } from "@/lib/ai/config";
-import { type AssistantLink, rulePlan } from "@/lib/assistant/plan";
+import { type AssistantLink, quickPlan, rulePlan } from "@/lib/assistant/plan";
 import {
   ANSWER_SYSTEM,
   answerPrompt,
@@ -100,8 +100,14 @@ export async function POST(request: Request) {
     async start(controller) {
       try {
         const question = turns.at(-1)!.text;
-        const planned = await model.plan(PLANNER_SYSTEM, plannerPrompt(brief, turns));
-        const plan = planned ?? rulePlan(question, { today: ctx.today, children: brief.children });
+        const reader = { today: ctx.today, children: brief.children };
+        // The words of the question when they are enough; the model only when they are not.
+        const quick = quickPlan(question, reader);
+        const planned = quick
+          ? null
+          : await model.plan(PLANNER_SYSTEM, plannerPrompt(brief, turns));
+        const plan = quick ?? planned ?? rulePlan(question, reader);
+        const source = quick ? "rules" : planned ? "model" : "fallback";
         const planMs = Date.now() - started - contextMs;
         const results = await runPlan(plan, ctx);
         const toolsMs = Date.now() - started - contextMs - planMs;
@@ -129,7 +135,7 @@ export async function POST(request: Request) {
         controller.enqueue(line({ t: "done" }));
         // Durations only, never the question (ADR-0088): where an answer spends its time.
         console.info(
-          `[assistant] plan=${planned ? "model" : "rules"} tools=${plan.calls.map((c) => c.tool).join(",") || "-"} links=${hrefs.size} context_ms=${contextMs} plan_ms=${planMs} tools_ms=${toolsMs} first_ms=${firstMs} ms=${Date.now() - started}`,
+          `[assistant] plan=${source} tools=${plan.calls.map((c) => c.tool).join(",") || "-"} links=${hrefs.size} context_ms=${contextMs} plan_ms=${planMs} tools_ms=${toolsMs} first_ms=${firstMs} ms=${Date.now() - started}`,
         );
       } catch (error) {
         console.error("[assistant] answer:", (error as Error).message);
