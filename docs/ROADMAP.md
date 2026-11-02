@@ -1306,8 +1306,32 @@ activé par défaut, hébreu et kodesh en bêta. Guide pas à pas : `docs/GCP.md
       polices Google, texte à apprendre inventé).
 - [ ] **Au porteur** : essayer l'hébreu et le kodesh, et regarder le coût dans la facturation
       Google (étiquettes `app=kesher`, `feature=practice`).
-- [ ] **Session suivante** : l'assistant en bulle, limité au rôle de chacun.
+- [x] **Session suivante** : l'assistant en bulle, limité au rôle de chacun (session 38).
 - [ ] Plus tard : relier au doigt à l'écran (aujourd'hui sur papier).
+
+## Session 38 — L'assistant en bulle, et un devoir qui se déplie (2026-11-02, ADR-0088, ADR-0089)
+
+Deux demandes du porteur : lancer l'assistant IA, limité au rôle de chacun ; et rendre « S'entraîner »
+trouvable depuis le cahier de texte, avec une ouverture du devoir plus belle et plus utile.
+
+- [x] Ligne de devoir : toute la ligne déplie la consigne entière (accordéon WAI-ARIA, hauteur
+      animée en 220 / 150 ms, rien sous `prefers-reduced-motion`), puis **Imprimer** (impression
+      lancée par la fiche), **Exercices en plus** (IA, bêta pour l'hébreu et le kodesh) et « Voir la
+      fiche ». Le rond « Fait » ne change pas. Après publication, l'enseignante atterrit sur le jour
+      du devoir, déplié.
+- [x] Migration `20261102090000_assistant.sql` : `assistant_usage` (compte par jour, lecture de sa
+      seule ligne), `assistant_take_question()` (60 questions par jour), `purge_assistant_usage()`
+      (31 jours, appelée par le worker). 11 assertions pgTAP.
+- [x] Sept outils en lecture seule sous la session du lecteur (`lib/assistant/tools.ts`), plan par
+      le modèle ou par les mots de la question, réponse en flux (`/api/assistant`), liens limités à
+      ceux que le serveur remet, Vertex AI `eu` ou fournisseur factice.
+- [x] Bulle et panneau (`components/layouts/assistant-bubble.tsx`), questions proposées par
+      perspective, conversation dans l'onglet seulement, mention « IA, peut se tromper ».
+- [x] Article d'aide « L'assistant », `docs/RGPD.md` (ce qui part chez Google, rien de conservé).
+- [x] Tests : 17 unitaires (plan, liens, prompts), 4 e2e (réponse et lien suivi, autre famille,
+      responsable en lecture seule sans messagerie, requêtes refusées).
+- [ ] **Au porteur** : poser de vraies questions en production et regarder la facture Google
+      (étiquette `feature=assistant`).
 
 ## Questions ouvertes (§15 du brief)
 

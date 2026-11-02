@@ -5,7 +5,7 @@ routes: [/classes, /classes/[classId]]
 topic: daily
 keywords: [classe, mes enfants, ma classe, cahier de vie, publications, onglets, suivi, équipe, infos pratiques]
 since: 17
-reviewed: 2026-11-01
+reviewed: 2026-11-02
 ---
 
 L'espace de la classe s'ouvre sur le **cahier de vie** : ce que la classe a vécu, un mois à la fois, billets et photos. On y arrive par l'onglet **Mes enfants** (parents) ou **Ma classe** (équipe) ; quand vous n'avez qu'une classe — un enfant, ou une seule classe où vous enseignez —, l'onglet y mène directement.
