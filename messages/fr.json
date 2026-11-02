@@ -2251,7 +2251,12 @@
     "markDone": "Marquer comme fait",
     "viewLabel": "Affichage",
     "viewDay": "Jour",
-    "viewWeek": "Semaine"
+    "viewWeek": "Semaine",
+    "print": "Imprimer",
+    "openPage": "Voir la fiche",
+    "practice": "Exercices en plus",
+    "practiceHint": "Préparés par l'IA à partir de ce devoir, à faire à l'écran ou à imprimer.",
+    "beta": "Bêta"
   },
   "attendance": {
     "title": "Pointage",
@@ -2570,7 +2575,7 @@
       "beta": "Bêta",
       "betaHint": "Hébreu et kodesh : l'IA peut se tromper. Relisez la feuille avant de la donner.",
       "ready": "prête",
-      "jump": "S'entraîner",
+      "jump": "Exercices en plus",
       "closedTeam": "Les feuilles d'entraînement sont fermées pour cette classe.",
       "reopen": "Rouvrir pour la classe",
       "close": "Fermer pour la classe",

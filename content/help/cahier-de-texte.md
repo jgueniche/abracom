@@ -14,13 +14,11 @@ En haut, la **semaine en un coup d'œil** : les cinq jours sur une ligne, un poi
 
 **Jour** ou **Semaine** : la page montre d'abord **un seul jour**, celui que l'on prépare ; toucher un autre jour du bandeau n'affiche que celui-là. **Semaine** les empile tous, dans l'ordre, pour une vue d'ensemble. Les flèches passent d'une semaine à l'autre ; « Revenir à la semaine en cours » ramène au jour préparé. Les jours déjà passés de la semaine sont rangés en bas, sous « Plus tôt cette semaine ».
 
-Chaque devoir tient en deux lignes : son titre, puis sa **matière** — toujours de la même couleur d'un jour à l'autre, le français en bleu, les mathématiques en vert, l'hébreu en violet — et le début de ce qu'il y a à faire ; toucher cette ligne déplie la consigne entière. Les **pages et documents** joints par l'enseignant·e s'affichent directement sous le devoir : une photo de la page du cahier de révision, une fiche en PDF.
+Chaque devoir tient en deux lignes : son titre, puis sa **matière** — toujours de la même couleur d'un jour à l'autre, le français en bleu, les mathématiques en vert, l'hébreu en violet — et le début de ce qu'il y a à faire. **Toucher ces deux lignes déplie le devoir** sur place : la consigne entière, puis deux boutons — **Imprimer**, qui sort le devoir et ses pages, et **Exercices en plus**, qui prépare avec l'IA une feuille d'entraînement à partir du devoir (voir « S'entraîner ») — et **Voir la fiche**, sa page à lui. Un second toucher le replie. Les **pages et documents** joints par l'enseignant·e s'affichent directement sous le devoir : une photo de la page du cahier de révision, une fiche en PDF.
 
 **Toucher une page** l'ouvre en plein écran : on la lit sur le téléphone, on passe à la suivante d'un glissement ou avec les flèches, et deux boutons font le reste — **Imprimer** imprime la page seule, sur sa feuille, et **Télécharger** la garde sur l'appareil. Un PDF s'ouvre dans le lecteur du téléphone ou de l'ordinateur, d'où il s'imprime aussi. Si le cahier est resté à l'école, le devoir peut se faire quand même.
 
-**Toucher le titre** ouvre la fiche du devoir : toutes ses pages en grand, et un bouton **Imprimer** qui sort chaque page sur sa propre feuille, sous le titre et la date.
-
-Sous le devoir, le bloc **S'entraîner** propose une feuille d'exercices de plus, préparée par l'IA à partir du devoir, à faire à l'écran ou à imprimer (voir « S'entraîner »).
+**La fiche du devoir** montre toutes ses pages en grand, avec un bouton **Imprimer** qui sort chaque page sur sa propre feuille, sous le titre et la date. Sous le devoir, le bloc **S'entraîner** propose les trois niveaux de la feuille d'exercices : plus facile, pareil, pour aller plus loin.
 
 :::roles parent
 Chaque devoir a son **rond à cocher** : touchez-le quand le travail est fait. Il se remplit tout de suite, aux couleurs de la matière, et le jour se met à jour en même temps — « 2 / 3 faits », puis **« Tout est fait »**. Quand tout est prêt pour le lendemain, l'application le dit. Le rond se décoche d'un autre toucher ; l'autre parent de l'enfant voit la même chose et peut le décocher aussi.

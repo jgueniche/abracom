@@ -2251,7 +2251,12 @@
     "markDone": "Mark as done",
     "viewLabel": "View",
     "viewDay": "Day",
-    "viewWeek": "Week"
+    "viewWeek": "Week",
+    "print": "Print",
+    "openPage": "Open the page",
+    "practice": "More exercises",
+    "practiceHint": "Prepared by AI from this homework, to do on screen or to print.",
+    "beta": "Beta"
   },
   "attendance": {
     "title": "Attendance",
@@ -2570,7 +2575,7 @@
       "beta": "Beta",
       "betaHint": "Hebrew and Jewish studies: the AI can make mistakes. Read the sheet before handing it over.",
       "ready": "ready",
-      "jump": "Practise",
+      "jump": "More exercises",
       "closedTeam": "Practice sheets are closed for this class.",
       "reopen": "Reopen for the class",
       "close": "Close for the class",

@@ -1,4 +1,3 @@
-import { ChevronDownIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { AttachmentStrip } from "@/components/domain/attachment-strip";
@@ -6,7 +5,6 @@ import { EmptyState } from "@/components/domain/empty-state";
 import { Markdown } from "@/components/domain/markdown";
 import { PostActions } from "@/components/domain/post-actions";
 import { SectionHeader } from "@/components/layouts/section-header";
-import { Link } from "@/components/ui/link";
 import type { AttachmentView } from "@/lib/attachments";
 import { addDays, type DateKey } from "@/lib/calendar/dates";
 import { doneKey, subjectTone, weekDays } from "@/lib/homework";
@@ -15,6 +13,8 @@ import { cn } from "@/lib/utils";
 import type { DiaryEntry } from "@/server/queries/class-space";
 
 import { DoneToggle } from "./done-toggle";
+import { EntryDisclosure } from "./entry-disclosure";
+import { HomeworkActions } from "./homework-actions";
 import { HomeworkProgress } from "./progress";
 import { DiaryPanels } from "./selection";
 import { TONE_CLASSES } from "./tones";
@@ -34,6 +34,8 @@ export type WeekReader = {
   isAdmin: boolean;
   /** In the merged diary every entry names its class; in a class's own tab it would repeat. */
   showClass: boolean;
+  /** Classes whose homework offers « S'entraîner » (ADR-0087): the three levels, unfolded. */
+  practiceClassIds?: ReadonlySet<string>;
 };
 
 /**
@@ -243,7 +245,6 @@ async function HomeworkEntry({
   reader: WeekReader;
   muted: boolean;
 }) {
-  const t = await getTranslations("diary");
   const tone = subjectTone(entry.subject);
   const classes = TONE_CLASSES[tone];
   const concerned = reader.childrenByClass.get(entry.class_id) ?? [];
@@ -252,7 +253,6 @@ async function HomeworkEntry({
   const isDraft = entry.published_at === null;
   const body = entry.body_md ?? "";
   const size = reader.classSizes.get(entry.class_id);
-  const href = `/devoirs/${entry.id}`;
 
   // One child: the ring stands beside the title. Several in the same class: one per child,
   // each named, under the homework.
@@ -285,52 +285,54 @@ async function HomeworkEntry({
             homework's own page — a week used to take four screens of a phone because every
             instruction was printed in full. */}
         <div className="flex items-start gap-2">
-          <div className="min-w-0 flex-1">
-            <h3 className="font-heading text-base leading-snug font-normal tracking-[-0.006em] text-pretty transition-colors group-data-[done]/entry:text-muted-foreground">
-              <Link
-                href={href}
-                dir="auto"
-                className="decoration-foreground/25 underline-offset-[3px] group-data-[done]/entry:line-through group-data-[done]/entry:decoration-muted-foreground/50 hover:underline"
-              >
-                {entry.title}
-              </Link>
-            </h3>
-            {body ? (
-              <details className="group/body">
-                <summary className="flex cursor-pointer list-none items-baseline gap-1 [&::-webkit-details-marker]:hidden">
-                  <span className="meta line-clamp-1 min-w-0 flex-1 group-open/body:line-clamp-none">
-                    <EntryContext
-                      entry={entry}
-                      reader={reader}
-                      concerned={concerned}
-                      isDraft={isDraft}
-                    />
-                    <span className="group-open/body:hidden">
+          {/* Two lines, like a conversation in Messages (ADR-0080): the title, then what it is and
+              the start of what to do. Touching them unfolds the homework in place — the whole
+              instruction, then what can be done with it: print it, open its page, practise with
+              the AI (session 38). */}
+          <EntryDisclosure
+            entryId={entry.id}
+            summary={
+              <>
+                <span
+                  dir="auto"
+                  className="block font-heading text-base leading-snug tracking-[-0.006em] text-pretty transition-colors group-data-[done]/entry:text-muted-foreground group-data-[done]/entry:line-through group-data-[done]/entry:decoration-muted-foreground/50"
+                >
+                  {entry.title}
+                </span>
+                <span className="meta mt-0.5 line-clamp-1">
+                  <EntryContext
+                    entry={entry}
+                    reader={reader}
+                    concerned={concerned}
+                    isDraft={isDraft}
+                  />
+                  {body && (
+                    <span className="group-aria-expanded/toggle:hidden">
                       {" · "}
                       <span dir="auto">{plainExcerpt(body, 160)}</span>
                     </span>
-                  </span>
-                  <ChevronDownIcon
-                    aria-hidden
-                    className="size-3.5 shrink-0 translate-y-0.5 text-muted-foreground transition-transform group-open/body:rotate-180"
-                  />
-                  <span className="sr-only">{t("readMore")}</span>
-                </summary>
-                <div dir="auto" className="mt-1">
+                  )}
+                </span>
+              </>
+            }
+          >
+            <div className="pt-2 pb-1">
+              {body && (
+                <div dir="auto" className="mb-3">
                   <Markdown size="compact">{body}</Markdown>
                 </div>
-              </details>
-            ) : (
-              <p className="meta line-clamp-1">
-                <EntryContext
-                  entry={entry}
-                  reader={reader}
-                  concerned={concerned}
-                  isDraft={isDraft}
-                />
-              </p>
-            )}
-          </div>
+              )}
+              <HomeworkActions
+                postId={entry.id}
+                subject={entry.subject}
+                practice={
+                  !isDraft &&
+                  reader.practiceClassIds?.has(entry.class_id) === true &&
+                  (concerned.length > 0 || team)
+                }
+              />
+            </div>
+          </EntryDisclosure>
           {canEdit && <PostActions postId={entry.id} editHref={`/devoirs/${entry.id}/modifier`} />}
         </div>
         {attachments.length > 0 && (

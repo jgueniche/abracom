@@ -15,6 +15,7 @@ import { defaultWeek, pivotDay, SCHOOL_TIME_ZONE, weekDays } from "@/lib/homewor
 import { canWriteInSchool, isSchoolAdmin } from "@/lib/permissions";
 import { attachmentViews } from "@/server/queries/attachments";
 import { getClassSizes, getHomeworkDiary, getNextHomeworkDay } from "@/server/queries/class-space";
+import { getPracticeClassIds } from "@/server/queries/practice";
 import { getMyTeachingClasses } from "@/server/queries/classes";
 import { getMyChildren } from "@/server/queries/family";
 
@@ -87,9 +88,11 @@ export default async function DiaryPage({
     getClassSizes(ids.filter((id) => teamClassIds.has(id))),
     // Asked alongside, so that the common case pays nothing for it.
     opensHere ? getNextHomeworkDay(ids, pivot) : Promise.resolve(null),
+    getPracticeClassIds(user, ids),
   ]);
   let [entries, sizes] = first;
   const nextDay = first[2];
+  const practiceClassIds = first[3];
   // During the holidays the day being prepared holds nothing, and neither does the week: the
   // diary opened on two weeks of empty days. It now opens on the first day that holds homework —
   // « Pour lundi · 2 novembre » — when that day is within a month (ADR-0077).
@@ -204,6 +207,7 @@ export default async function DiaryPage({
               userId: user.id,
               isAdmin: schoolId ? isSchoolAdmin(user.roles, schoolId) : false,
               showClass: classIds.size > 1,
+              practiceClassIds,
             }}
           />
         </>

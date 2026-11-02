@@ -10,6 +10,7 @@ import { defaultWeek, pivotDay, SCHOOL_TIME_ZONE } from "@/lib/homework";
 import { canWriteInSchool, isSchoolAdmin } from "@/lib/permissions";
 import { attachmentViews } from "@/server/queries/attachments";
 import { getHomeworkDiary } from "@/server/queries/class-space";
+import { getPracticeClassIds } from "@/server/queries/practice";
 import { getMyChildren } from "@/server/queries/family";
 
 /**
@@ -41,7 +42,10 @@ export default async function HomeworkPage({
   const monday = asked ? mondayOf(asked) : isDateKey(semaine) ? mondayOf(semaine) : opening;
   const sunday = addDays(monday, 6);
 
-  const entries = await getHomeworkDiary([classId], monday, sunday);
+  const [entries, practiceClassIds] = await Promise.all([
+    getHomeworkDiary([classId], monday, sunday),
+    getPracticeClassIds(user, [classId]),
+  ]);
   const attachments = await attachmentViews(entries.flatMap((entry) => entry.media));
 
   // The reader's own children in this class — asked as "whose guardian am I", never read off
@@ -118,6 +122,7 @@ export default async function HomeworkPage({
           userId: user.id,
           isAdmin: isSchoolAdmin(user.roles, cls.school_id),
           showClass: false,
+          practiceClassIds,
         }}
       />
     </Column>
