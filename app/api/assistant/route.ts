@@ -1,8 +1,9 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { z } from "zod";
 
 import { getAssistantModel } from "@/lib/ai/assistant";
 import { assistantMode } from "@/lib/ai/config";
+import { fallbackAnswer, type FallbackLabels } from "@/lib/assistant/fallback";
 import { type AssistantLink, quickPlan, rulePlan } from "@/lib/assistant/plan";
 import {
   ANSWER_SYSTEM,
@@ -96,6 +97,19 @@ export async function POST(request: Request) {
     teaching: ctx.teaching.map((cls) => cls.name),
   };
 
+  const locale = (await getLocale()) === "en" ? "en-GB" : "fr-FR";
+  const fallbackLabels: FallbackLabels = {
+    homework: t("fallback.homework"),
+    menus: t("fallback.menus"),
+    agenda: t("fallback.agenda"),
+    announcements: t("fallback.announcements"),
+    absences: t("fallback.absences"),
+    help: t("fallback.help"),
+    search: t("fallback.search"),
+    nothing: t("fallback.nothing"),
+    toConfirm: t("fallback.toConfirm"),
+  };
+
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       try {
@@ -119,23 +133,37 @@ export async function POST(request: Request) {
         controller.enqueue(line({ t: "links", links }));
 
         const hrefs = new Set(links.map((link) => link.href));
+        const shown = results.map(({ tool, data }) => ({ tool, data }));
         let firstMs = 0;
-        for await (const text of model.answer(
-          ANSWER_SYSTEM,
-          answerPrompt(
-            brief,
-            turns,
-            results.map(({ tool, data }) => ({ tool, data })),
-            links,
-          ),
-        )) {
-          if (!firstMs) firstMs = Date.now() - started;
-          controller.enqueue(line({ t: "text", v: text }));
+        let answeredBy = "model";
+        try {
+          for await (const text of model.answer(
+            ANSWER_SYSTEM,
+            answerPrompt(brief, turns, shown, links),
+          )) {
+            if (!firstMs) firstMs = Date.now() - started;
+            controller.enqueue(line({ t: "text", v: text }));
+          }
+        } catch (error) {
+          // Words already on screen cannot be taken back: that answer stops with an error.
+          if (firstMs) throw error;
+          console.warn("[assistant] answer:", (error as Error).message);
+          answeredBy = "fallback_after_error";
+        }
+        // No word from the model (Google silent twice, or the fake provider): what the tools
+        // found, read back as lists with their links, rather than an error (ADR-0088).
+        if (!firstMs) {
+          if (answeredBy === "model") answeredBy = "fallback";
+          const intro = answeredBy === "fallback_after_error" ? `${t("fallback.slow")}\n\n` : "";
+          firstMs = Date.now() - started;
+          controller.enqueue(
+            line({ t: "text", v: intro + fallbackAnswer(shown, fallbackLabels, locale) }),
+          );
         }
         controller.enqueue(line({ t: "done" }));
         // Durations only, never the question (ADR-0088): where an answer spends its time.
         console.info(
-          `[assistant] plan=${source} tools=${plan.calls.map((c) => c.tool).join(",") || "-"} links=${hrefs.size} context_ms=${contextMs} plan_ms=${planMs} tools_ms=${toolsMs} first_ms=${firstMs} ms=${Date.now() - started}`,
+          `[assistant] plan=${source} answer=${answeredBy} tools=${plan.calls.map((c) => c.tool).join(",") || "-"} links=${hrefs.size} context_ms=${contextMs} plan_ms=${planMs} tools_ms=${toolsMs} first_ms=${firstMs} ms=${Date.now() - started}`,
         );
       } catch (error) {
         console.error("[assistant] answer:", (error as Error).message);

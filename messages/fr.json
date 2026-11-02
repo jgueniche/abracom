@@ -2679,6 +2679,18 @@
       "absencesToday": "Quelles absences aujourd'hui ?",
       "lastAnnouncements": "Quelles sont les dernières annonces ?",
       "newFamily": "Comment inscrire une nouvelle famille ?"
+    },
+    "fallback": {
+      "homework": "Les devoirs :",
+      "menus": "Au menu :",
+      "agenda": "Dans l'agenda :",
+      "announcements": "Les dernières annonces :",
+      "absences": "Les absences :",
+      "help": "Dans l'aide :",
+      "search": "J'ai trouvé :",
+      "nothing": "Je n'ai rien trouvé à ce sujet dans ce que vous pouvez voir. Regardez dans [l'aide](/aide).",
+      "toConfirm": "à confirmer",
+      "slow": "L'IA met trop de temps à répondre. Voici ce que j'ai trouvé :"
     }
   }
 }

@@ -2679,6 +2679,18 @@
       "absencesToday": "Who is absent today?",
       "lastAnnouncements": "What are the latest announcements?",
       "newFamily": "How do I register a new family?"
+    },
+    "fallback": {
+      "homework": "Homework:",
+      "menus": "On the menu:",
+      "agenda": "In the calendar:",
+      "announcements": "Latest announcements:",
+      "absences": "Absences:",
+      "help": "In the help:",
+      "search": "I found:",
+      "nothing": "I found nothing about this in what you can see. Have a look at [the help](/aide).",
+      "toConfirm": "to confirm",
+      "slow": "The AI is taking too long to answer. Here is what I found:"
     }
   }
 }

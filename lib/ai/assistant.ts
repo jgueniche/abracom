@@ -64,7 +64,7 @@ export function getAssistantModel(): AssistantModel | null {
           model,
           contents: [{ role: "user", parts: [{ text: prompt }] }],
           config: {
-            ...base(20_000),
+            ...base(PLAN_TIMEOUT_MS),
             systemInstruction: system,
             responseMimeType: "application/json",
           },
@@ -77,23 +77,54 @@ export function getAssistantModel(): AssistantModel | null {
       }
     },
     async *answer(system, prompt) {
-      const stream = await ai.models.generateContentStream({
-        model,
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        config: { ...base(40_000), systemInstruction: system },
-      });
-      for await (const chunk of stream) {
-        const text = chunk.text;
-        if (text) yield text;
+      // Google sometimes sits on a request (production, 2026-11-02: 40 s without a word, 504s
+      // on the plan). Not a word within FIRST_WORDS_MS: the request is dropped and made once
+      // more; a second silence is the caller's to handle — it answers without the model.
+      for (let attempt = 1; ; attempt += 1) {
+        const abort = new AbortController();
+        const deadline = setTimeout(() => abort.abort(), FIRST_WORDS_MS);
+        let started = false;
+        try {
+          const stream = await ai.models.generateContentStream({
+            model,
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            config: {
+              ...base(ANSWER_TIMEOUT_MS),
+              systemInstruction: system,
+              abortSignal: abort.signal,
+            },
+          });
+          for await (const chunk of stream) {
+            if (!started) {
+              started = true;
+              clearTimeout(deadline);
+            }
+            const text = chunk.text;
+            if (text) yield text;
+          }
+          return;
+        } catch (error) {
+          if (started || attempt >= 2) throw error;
+          console.warn(`[assistant] answer: no first words in ${FIRST_WORDS_MS} ms, trying again`);
+        } finally {
+          clearTimeout(deadline);
+        }
       }
     },
   };
 }
 
+/** The plan is optional (the rules stand in): it does not get to hold the answer up. */
+const PLAN_TIMEOUT_MS = 8_000;
+/** First words usually arrive within 1 to 3 s. */
+const FIRST_WORDS_MS = 10_000;
+const ANSWER_TIMEOUT_MS = 40_000;
+
 /**
  * A model that calls nobody (`PRACTICE_AI_PROVIDER=fake`): no plan (the caller uses the plan made
- * from the words of the question), and an answer that reads the tool results back as a list —
- * enough to play the whole path in development and in the e2e suite.
+ * from the words of the question) and no words, so the caller answers without the model
+ * (`lib/assistant/fallback.ts`) — the very path a reader takes when Google does not answer, played
+ * in development and in the e2e suite.
  */
 function fakeAssistant(): AssistantModel {
   return {
@@ -101,48 +132,8 @@ function fakeAssistant(): AssistantModel {
     async plan() {
       return null;
     },
-    async *answer(_system, prompt) {
-      const results = /Résultats des outils \(JSON\) :\n(.*)\n\nLiens autorisés/s.exec(prompt)?.[1];
-      const parsed = results ? (JSON.parse(results) as FakeResult[]) : [];
-      const lines: string[] = [];
-      for (const result of parsed) {
-        const items = result.data?.items ?? result.data?.days ?? [];
-        if (items.length === 0) continue;
-        lines.push(FAKE_TITLES[result.tool] ?? result.tool);
-        for (const item of items.slice(0, 5)) {
-          const label = item.title ?? item.student ?? item.day ?? "—";
-          const detail = item.due_on ?? item.from ?? item.main_course ?? "";
-          lines.push(
-            `- ${item.link ? `[${label}](${item.link})` : label}${detail ? ` — ${detail}` : ""}`,
-          );
-        }
-      }
-      const text =
-        lines.length > 0
-          ? lines.join("\n")
-          : "Je n'ai rien trouvé à ce sujet dans ce que vous pouvez voir. Regardez dans [Aide](/aide).";
-      for (const word of text.split(/(?<= )/)) {
-        yield word;
-        await new Promise((resolve) => setTimeout(resolve, 4));
-      }
+    async *answer() {
+      return;
     },
   };
 }
-
-type FakeResult = {
-  tool: string;
-  data?: {
-    items?: Array<Record<string, string | undefined>>;
-    days?: Array<Record<string, string | undefined>>;
-  };
-};
-
-const FAKE_TITLES: Record<string, string> = {
-  homework: "Voici les devoirs :",
-  agenda: "Dans l'agenda :",
-  menus: "Au menu :",
-  announcements: "Les dernières annonces :",
-  absences: "Les absences :",
-  help: "Dans l'aide :",
-  search: "J'ai trouvé :",
-};
