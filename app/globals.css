@@ -277,6 +277,13 @@
     scroll-padding-bottom: calc(var(--nav-h) + 4.75rem);
   }
   /*
+   * The assistant's bubble floats in the bottom-right corner, above the tab bar
+   * (ADR-0088): a control tabbed to there would stop underneath its 56 px.
+   */
+  html:has([data-assistant-bubble]) {
+    scroll-padding-bottom: calc(var(--nav-h) + 5rem);
+  }
+  /*
    * Tailwind v4 dropped v3's opinionated `cursor: pointer` on buttons and
    * follows the user agent instead, which shows an arrow. Nothing in the
    * application declared it back, so every control in the interface — buttons,

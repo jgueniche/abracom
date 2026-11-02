@@ -2646,5 +2646,39 @@
       "quotaSchool": "L'école a atteint le nombre de feuilles prévu pour aujourd'hui. Revenez demain.",
       "unexpected": "La demande n'a pas abouti. Vérifiez la connexion et réessayez."
     }
+  },
+  "assistant": {
+    "open": "Poser une question à l'assistant",
+    "title": "Assistant",
+    "description": "Il cherche dans ce que vous pouvez voir dans Kesher, et rien d'autre.",
+    "greeting": "Bonjour ! Posez votre question avec vos mots : je cherche dans les devoirs, l'agenda, les menus, les annonces et l'aide.",
+    "label": "Votre question",
+    "placeholder": "Votre question…",
+    "send": "Envoyer",
+    "reset": "Nouvelle conversation",
+    "close": "Fermer l'assistant",
+    "disclaimer": "Réponses préparées par une IA, qui peut se tromper.",
+    "thinking": "L'assistant cherche…",
+    "you": "Vous",
+    "assistant": "Assistant",
+    "error": "La réponse n'a pas pu être préparée. Réessayez.",
+    "errors": {
+      "refused": "Requête refusée.",
+      "signedOut": "Connectez-vous pour poser une question.",
+      "unavailable": "L'assistant n'est pas disponible pour le moment.",
+      "notUnderstood": "La question n'a pas été comprise.",
+      "quota": "Vous avez posé beaucoup de questions aujourd'hui. Revenez demain !"
+    },
+    "suggestions": {
+      "homeworkTomorrow": "Quels devoirs pour demain ?",
+      "menuWeek": "Qu'y a-t-il à la cantine cette semaine ?",
+      "nextEvents": "Quels sont les prochains événements ?",
+      "reportAbsence": "Comment signaler une absence ?",
+      "publishHomework": "Comment publier un devoir ?",
+      "weekPlan": "Qu'est-ce qui est prévu cette semaine ?",
+      "absencesToday": "Quelles absences aujourd'hui ?",
+      "lastAnnouncements": "Quelles sont les dernières annonces ?",
+      "newFamily": "Comment inscrire une nouvelle famille ?"
+    }
   }
 }

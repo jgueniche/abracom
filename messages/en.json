@@ -2646,5 +2646,39 @@
       "quotaSchool": "The school has reached today's number of sheets. Come back tomorrow.",
       "unexpected": "The request did not go through. Check the connection and try again."
     }
+  },
+  "assistant": {
+    "open": "Ask the assistant a question",
+    "title": "Assistant",
+    "description": "It searches what you can see in Kesher, and nothing else.",
+    "greeting": "Hello! Ask your question in your own words: I search homework, the calendar, menus, announcements and help.",
+    "label": "Your question",
+    "placeholder": "Your question…",
+    "send": "Send",
+    "reset": "New conversation",
+    "close": "Close the assistant",
+    "disclaimer": "Answers prepared by an AI, which can be wrong.",
+    "thinking": "The assistant is searching…",
+    "you": "You",
+    "assistant": "Assistant",
+    "error": "The answer could not be prepared. Try again.",
+    "errors": {
+      "refused": "Request refused.",
+      "signedOut": "Sign in to ask a question.",
+      "unavailable": "The assistant is not available at the moment.",
+      "notUnderstood": "The question was not understood.",
+      "quota": "You have asked a lot of questions today. Come back tomorrow!"
+    },
+    "suggestions": {
+      "homeworkTomorrow": "What homework is due tomorrow?",
+      "menuWeek": "What is on the lunch menu this week?",
+      "nextEvents": "What are the next events?",
+      "reportAbsence": "How do I report an absence?",
+      "publishHomework": "How do I post homework?",
+      "weekPlan": "What is planned this week?",
+      "absencesToday": "Who is absent today?",
+      "lastAnnouncements": "What are the latest announcements?",
+      "newFamily": "How do I register a new family?"
+    }
   }
 }
