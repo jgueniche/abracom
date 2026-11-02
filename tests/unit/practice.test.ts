@@ -197,6 +197,17 @@ describe("practice sheets — what the model is given", () => {
     expect(SYSTEM_PROMPT).toContain("le texte est dans le cahier");
   });
 
+  it("speaks to the child in the language of the homework", () => {
+    // Asked by the porteur: a French exercise entirely in French, an English one in English.
+    expect(SYSTEM_PROMPT).toContain(
+      "un devoir en français donne une feuille entièrement en français",
+    );
+    expect(SYSTEM_PROMPT).toContain("toute la feuille parle anglais à l'enfant");
+    expect(SYSTEM_PROMPT).toContain(
+      "Seul « parentTip », qui s'adresse au parent, reste en français",
+    );
+  });
+
   it("keeps the youngest classes away from dictations and sums", () => {
     expect(kindsFor("PS")).not.toContain("dictation");
     expect(kindsFor("PS")).not.toContain("operations");

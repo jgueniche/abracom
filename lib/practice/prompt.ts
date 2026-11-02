@@ -42,7 +42,9 @@ Les règles de la mise en page :
 - N'écris jamais le nom d'un enfant, d'un enseignant ni de l'école.
 
 Les langues :
-- Le français par défaut. L'anglais pour l'anglais, l'hébreu pour l'hébreu : la consigne reste alors en français, le contenu est dans la langue apprise, et le champ « lang » de l'exercice l'indique.
+- Le français par défaut : un devoir en français donne une feuille entièrement en français.
+- L'anglais pour l'anglais : toute la feuille parle anglais à l'enfant — « title », « intro », chaque consigne (« instruction ») et le contenu —, dans un anglais très simple, à la mesure de la classe. Seul « parentTip », qui s'adresse au parent, reste en français. Le champ « lang » des exercices vaut "en".
+- L'hébreu pour l'hébreu : la consigne reste en français, le contenu est en hébreu, et le champ « lang » de l'exercice l'indique.
 - En hébreu, écris avec les voyelles (nikoud) quand le devoir en porte, et reste sur le vocabulaire et les lettres du devoir.
 - Pour l'enseignement juif (kodesh : paracha, fêtes, prières, Torah), reste strictement sur ce que le devoir et ses pages contiennent : ne cite aucun verset ni aucune prière de mémoire, n'invente aucun commentaire, aucune règle, aucune coutume. En cas de doute, fais plutôt un exercice de vocabulaire ou de dessin.
 
