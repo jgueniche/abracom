@@ -2923,6 +2923,16 @@ question entière et choisit dans les résultats ; une question de suivi (« et 
 date ou une question non reconnue passe encore par le modèle. Les neuf questions proposées par la
 bulle se passent toutes du premier appel (test à l'appui).
 
+**Quand Google tarde (2026-11-02, après #35)** : entre 11 h 28 et 11 h 38 UTC, des réponses sont
+restées 40 s sans un mot puis ont échoué, et l'appel de plan a reçu `504 DEADLINE_EXCEEDED` de
+Google lui-même ; dix minutes plus tard, les mêmes questions répondaient en 2,5 à 4,4 s. Aucun
+incident affiché par Google. Le code ne peut pas rendre Vertex rapide, mais il peut cesser de faire
+attendre une minute pour une erreur : le plan a 8 s (les règles prennent le relais), la réponse a
+10 s pour dire son premier mot, faute de quoi la demande est refaite une fois ; au second silence,
+l'assistant **répond sans le modèle** — ce que les outils ont trouvé, sous les droits du lecteur, en
+listes avec leurs liens (`lib/assistant/fallback.ts`), précédé d'une phrase qui le dit. C'est aussi
+toute la réponse du fournisseur factice, donc le chemin que jouent les e2e.
+
 ### Ce qui reste
 
 Mesurer en production la durée d'une réponse et son coût ; regarder les plans que le modèle écrit

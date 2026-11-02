@@ -1335,6 +1335,8 @@ trouvable depuis le cahier de texte, avec une ouverture du devoir plus belle et 
 - [x] En production (#33) : réponses justes et limitées aux enfants du compte, mais premiers mots en
       3,6 à 15 s. Durée de chaque étape au journal (#34) ; « minimal » refusé par Vertex ; le choix
       des outils par le modèle (1,6 à 3,4 s) est sauté quand les mots de la question suffisent.
+- [x] Quand Google tarde : plan à 8 s, premier mot à 10 s avec une nouvelle tentative, puis réponse
+      sans le modèle (les résultats des outils, avec leurs liens) plutôt qu'une erreur à 60 s.
 - [x] Choix du porteur : une feuille d'anglais parle anglais à l'enfant (titre, consignes, contenu),
       le conseil au parent reste en français.
 - [ ] **Au porteur** : poser de vraies questions en production et regarder la facture Google

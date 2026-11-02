@@ -29,6 +29,8 @@ Il connaît **vos classes** — leurs devoirs, leur agenda, leurs absences — e
 Il voit ce que vous voyez dans l'école : toutes les classes, l'agenda, les absences, les annonces.
 :::
 
+**Quand l'IA tarde** à répondre, l'assistant n'attend pas indéfiniment : il affiche ce qu'il a trouvé, en liste, avec les liens, sans la phrase rédigée.
+
 **Il ne fait rien à votre place** : il n'envoie pas de message, ne déclare pas d'absence, ne signe rien. Il dit où le faire et donne le lien. Il ne lit **ni les conversations privées ni les évaluations**.
 
 **C'est une intelligence artificielle, qui peut se tromper.** Ses réponses s'appuient sur les écrans de Kesher, mais vérifiez sur l'écran indiqué avant de vous organiser — une date, un horaire, un devoir.
