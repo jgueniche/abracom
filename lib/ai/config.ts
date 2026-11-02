@@ -17,3 +17,9 @@ export function practiceMode(): PracticeMode | null {
   if (env.PRACTICE_AI_PROVIDER === "fake") return "fake";
   return env.GOOGLE_CLOUD_PROJECT && env.GOOGLE_SERVICE_ACCOUNT_KEY ? "vertex" : null;
 }
+
+/**
+ * Whether the assistant is offered (ADR-0088): the same provider and the same switch as practice
+ * sheets — one sub-processor. Read on every page by the shell, so it lives here, not beside the SDK.
+ */
+export const assistantMode = practiceMode;
