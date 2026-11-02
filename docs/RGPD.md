@@ -6,29 +6,30 @@
 
 ## 1. Registre des traitements
 
-| Traitement               | Finalité                                                             | Base légale                                  | Données                                                               | Accès                                                                                             |
-| ------------------------ | -------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Comptes et rôles         | Authentifier les parents, enseignants et l'équipe                    | Exécution du contrat de scolarité            | e-mail, nom, téléphone, langue, rôles, acceptation des CGU            | Personne concernée, direction                                                                     |
-| Dossier élève            | Rattacher les enfants aux responsables et aux classes                | Contrat de scolarité, intérêt légitime       | identité, date de naissance, classe, allergies / PAI, droits          | Responsables, équipe de la classe, direction                                                      |
-| Communication officielle | Annonces, documents, signatures, accusés de lecture                  | Intérêt légitime (fonctionnement de l'école) | lectures, signatures (horodatage, IP, navigateur)                     | Direction, personne concernée                                                                     |
-| Espace classe            | Devoirs, cahier de vie, mots, absences, évaluations                  | Contrat de scolarité                         | publications, photos (droit à l'image signé), évaluations             | Familles de la classe, équipe                                                                     |
-| Messagerie               | Échanges parents ↔ enseignants / direction, modération               | Intérêt légitime                             | messages, pièces jointes, signalements                                | Membres du fil, modérateurs                                                                       |
-| Agenda et communauté     | Événements, RSVP, bénévolat, annuaire opt-in, annonces               | Consentement (opt-in) / intérêt légitime     | réponses, inscriptions, coordonnées partagées, petites annonces       | Membres de l'école selon l'opt-in                                                                 |
-| Notifications            | Push, e-mail, résumé quotidien                                       | Intérêt légitime, préférences                | abonnements push, préférences, historique de livraison                | Personne concernée                                                                                |
-| Présence (pointage)      | Constater la présence, l'arrivée, le départ et qui récupère l'enfant | Contrat de scolarité, sécurité des mineurs   | listes, occurrences datées, statut, heures, responsable qui récupère  | Équipe désignée liste par liste, direction ; la famille pour son enfant (périscolaire et sorties) |
-| Entraînement (IA)        | Feuilles d'exercices préparées à partir d'un devoir (ADR-0087)       | Intérêt légitime (soutien scolaire)          | devoir et pages jointes envoyés au modèle ; **aucune donnée d'élève** | Familles de la classe, équipe ; Google Cloud (sous-traitant, UE)                                  |
-| Journal d'audit          | Traçabilité des actions d'administration et de modération            | Obligation de sécurité (art. 32)             | acteur, action, entité, horodatage                                    | Direction                                                                                         |
-| Observabilité            | Détection des erreurs                                                | Intérêt légitime                             | traces techniques sans données personnelles (`sendDefaultPii: false`) | Prestataire technique                                                                             |
+| Traitement               | Finalité                                                             | Base légale                                  | Données                                                                                                   | Accès                                                                                             |
+| ------------------------ | -------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Comptes et rôles         | Authentifier les parents, enseignants et l'équipe                    | Exécution du contrat de scolarité            | e-mail, nom, téléphone, langue, rôles, acceptation des CGU                                                | Personne concernée, direction                                                                     |
+| Dossier élève            | Rattacher les enfants aux responsables et aux classes                | Contrat de scolarité, intérêt légitime       | identité, date de naissance, classe, allergies / PAI, droits                                              | Responsables, équipe de la classe, direction                                                      |
+| Communication officielle | Annonces, documents, signatures, accusés de lecture                  | Intérêt légitime (fonctionnement de l'école) | lectures, signatures (horodatage, IP, navigateur)                                                         | Direction, personne concernée                                                                     |
+| Espace classe            | Devoirs, cahier de vie, mots, absences, évaluations                  | Contrat de scolarité                         | publications, photos (droit à l'image signé), évaluations                                                 | Familles de la classe, équipe                                                                     |
+| Messagerie               | Échanges parents ↔ enseignants / direction, modération               | Intérêt légitime                             | messages, pièces jointes, signalements                                                                    | Membres du fil, modérateurs                                                                       |
+| Agenda et communauté     | Événements, RSVP, bénévolat, annuaire opt-in, annonces               | Consentement (opt-in) / intérêt légitime     | réponses, inscriptions, coordonnées partagées, petites annonces                                           | Membres de l'école selon l'opt-in                                                                 |
+| Notifications            | Push, e-mail, résumé quotidien                                       | Intérêt légitime, préférences                | abonnements push, préférences, historique de livraison                                                    | Personne concernée                                                                                |
+| Présence (pointage)      | Constater la présence, l'arrivée, le départ et qui récupère l'enfant | Contrat de scolarité, sécurité des mineurs   | listes, occurrences datées, statut, heures, responsable qui récupère                                      | Équipe désignée liste par liste, direction ; la famille pour son enfant (périscolaire et sorties) |
+| Entraînement (IA)        | Feuilles d'exercices préparées à partir d'un devoir (ADR-0087)       | Intérêt légitime (soutien scolaire)          | devoir et pages jointes envoyés au modèle ; **aucune donnée d'élève**                                     | Familles de la classe, équipe ; Google Cloud (sous-traitant, UE)                                  |
+| Assistant (IA)           | Répondre aux questions d'un membre sur ce qu'il voit déjà (ADR-0088) | Intérêt légitime (fonctionnement de l'école) | question, prénoms et classes de ses enfants, résultats lus sous ses droits ; nombre de questions par jour | Personne concernée ; Google Cloud (sous-traitant, UE)                                             |
+| Journal d'audit          | Traçabilité des actions d'administration et de modération            | Obligation de sécurité (art. 32)             | acteur, action, entité, horodatage                                                                        | Direction                                                                                         |
+| Observabilité            | Détection des erreurs                                                | Intérêt légitime                             | traces techniques sans données personnelles (`sendDefaultPii: false`)                                     | Prestataire technique                                                                             |
 
 ## 2. Sous-traitants et hébergement (Union européenne uniquement)
 
-| Prestataire              | Rôle                                                               | Région                              |
-| ------------------------ | ------------------------------------------------------------------ | ----------------------------------- |
-| Supabase                 | Base de données, authentification, stockage, temps réel            | `eu-west-3` (Paris)                 |
-| Vercel                   | Hébergement de l'application                                       | `cdg1` (Paris)                      |
-| Resend                   | E-mails transactionnels                                            | Région UE du workspace              |
-| Sentry                   | Suivi des erreurs (optionnel)                                      | Région UE (`ingest.de`)             |
-| Google Cloud (Vertex AI) | Feuilles d'entraînement : exercices, illustration, voix (ADR-0087) | Multi-région `eu` — jamais `global` |
+| Prestataire              | Rôle                                                       | Région                              |
+| ------------------------ | ---------------------------------------------------------- | ----------------------------------- |
+| Supabase                 | Base de données, authentification, stockage, temps réel    | `eu-west-3` (Paris)                 |
+| Vercel                   | Hébergement de l'application                               | `cdg1` (Paris)                      |
+| Resend                   | E-mails transactionnels                                    | Région UE du workspace              |
+| Sentry                   | Suivi des erreurs (optionnel)                              | Région UE (`ingest.de`)             |
+| Google Cloud (Vertex AI) | Feuilles d'entraînement (ADR-0087) et assistant (ADR-0088) | Multi-région `eu` — jamais `global` |
 
 Aucun traceur tiers, aucune analyse d'audience externe. Les polices sont auto-hébergées.
 
@@ -41,6 +42,18 @@ Google ne s'entraîne pas sur les données des clients de Vertex AI (conditions 
 traitement IA porte sur un contenu pédagogique, ne prend aucune décision sur un enfant et ne
 l'évalue pas. Les feuilles sont supprimées avec leur devoir.
 
+**Ce qui part chez Google pour une question à l'assistant** (ADR-0088) : la question et les huit
+derniers échanges de la conversation, la date, le rôle de la personne, **les prénoms de ses enfants
+et le nom de leur classe** (ou les classes d'une enseignante), et ce que les outils ont lu **sous ses
+propres droits** — devoirs, événements, menus, annonces, absences **sans leur motif**, articles
+d'aide. Jamais une conversation privée, une évaluation, ni une donnée d'une autre famille : les
+outils passent par les politiques RLS avec la session de la personne, comme ses écrans. Kesher ne
+conserve **pas** la conversation (elle vit dans l'onglet du navigateur, `sessionStorage`) ; la base
+ne garde que le **nombre** de questions par personne et par jour (`assistant_usage`, plafond 60),
+purgé après 31 jours. L'assistant ne fait rien à la place de la personne et ne juge aucun enfant ;
+chaque réponse est signalée comme préparée par une IA. L'article d'aide invite à ne pas y écrire de
+sujet de santé ou de conflit.
+
 ## 3. Durées de conservation (appliquées par `purge_expired_data()`, chaque nuit)
 
 | Donnée                                                 | Durée                                                                                    | Mécanisme                                                             |
@@ -51,6 +64,7 @@ l'évalue pas. Les feuilles sont supprimées avec leur devoir.
 | Notifications                                          | 6 mois (historique de livraison : 30 jours)                                              | Suppression                                                           |
 | Petites annonces retirées / refusées                   | 90 jours                                                                                 | Suppression                                                           |
 | Pointages (présence, arrivée, départ, récupération)    | 12 mois glissants                                                                        | Suppression des occurrences (les pointages suivent en cascade)        |
+| Compteur de questions à l'assistant                    | 31 jours (la conversation elle-même n'est jamais conservée)                              | Suppression (`purge_assistant_usage()`, worker quotidien)             |
 | Journal d'audit                                        | 3 ans                                                                                    | Suppression                                                           |
 | Signatures électroniques                               | Durée de scolarité + 1 an (valeur probante)                                              | Suivent le dossier élève                                              |
 | Compte utilisateur                                     | Jusqu'à la demande de suppression ou 1 an d'inactivité après le départ du dernier enfant | Anonymisation (`delete_my_account`)                                   |

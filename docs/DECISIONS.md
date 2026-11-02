@@ -2831,8 +2831,102 @@ aucun visible en local :
 Première feuille réelle : écrite par `gemini-3.8-flash` en 16 s environ, illustration WebP de
 61 Ko, cinq voix (la poésie et quatre mots), prénom posé par l'application.
 
+**Correctif du 2026-11-02, signalé par le porteur** : la voix d'une poésie française commençait
+par une phrase en anglais. Pour régler le ton, le texte était précédé d'une direction de lecture
+(« Read this aloud for a young child: slowly, warmly… ») ; Gemini-TTS l'a lue à voix haute. Une
+direction est une demande, pas une garantie : la voix ne reçoit plus que le texte de l'exercice
+(`lib/ai/speech.ts`), sa langue vient du seul `languageCode`, et un test l'impose. Les feuilles
+déjà préparées gardent leur ancienne voix jusqu'à ce que l'équipe les jette.
+
 ### Ce qui reste
 
 L'assistant en bulle (session suivante) ; une vraie session sur Google Cloud pour mesurer la durée
 et le coût d'une feuille, et la qualité de l'hébreu ; l'association « relier » à l'écran au doigt
 (aujourd'hui sur papier seulement).
+
+## ADR-0088 — L'assistant : une bulle qui lit sous les droits du lecteur, et rien d'autre
+
+**Statut** : acceptée (2026-11-02) · **Contexte** : second chantier demandé par le porteur en
+session 37 — « un agent IA sous forme d'une petite bulle d'aide », qui aide à naviguer et répond
+avec le contenu de l'application, **strictement limité au rôle de chacun** : un parent ne voit que
+ses enfants et ce que l'école publie pour tous, une enseignante ses classes, la direction et le
+secrétariat toute l'école.
+
+### La décision
+
+- **La frontière est la base, pas le modèle.** L'assistant n'a que sept outils, en lecture seule,
+  et chacun est une requête que l'application exécute déjà pour ses écrans, **avec la session du
+  lecteur** (`lib/assistant/tools.ts`) : devoirs (`getHomeworkDiary`), agenda, menus, annonces,
+  absences (sans le motif), aide (les articles du rôle), recherche (`global_search`, sans les
+  messages). Les politiques RLS décident de ce qui revient, exactement comme à l'écran. Aucun
+  outil n'écrit, aucun ne lit une conversation privée ni une évaluation. Un modèle trompé par une
+  question habile ne peut demander que ce que la personne voit déjà.
+- **Deux appels.** Le premier choisit les outils (JSON, schéma écrit dans le prompt puisque Vertex
+  refuse `responseJsonSchema`, ADR-0087 ; `planSchema` vérifie, quatre appels au plus, dates au
+  format AAAA-MM-JJ). S'il échoue ou répond de travers, **un plan tiré des mots de la question**
+  (`rulePlan`) prend le relais — c'est aussi tout le planificateur du fournisseur factice. Le second
+  répond à partir des seuls résultats, **en flux** (NDJSON : `links`, `text`, `done`).
+- **Les liens viennent du serveur.** Avec la réponse part la liste des liens qu'elle peut porter :
+  les écrans que les rôles du lecteur ouvrent (`destinations` : pas de messagerie pour un
+  responsable en lecture seule, pas d'administration pour une famille) et les devoirs, événements,
+  annonces et articles que les outils ont rendus. Le navigateur ne dessine un lien que s'il figure
+  dans cette liste (`allowedLink`) ; toute autre adresse écrite par le modèle reste du texte. Le
+  Markdown est assaini, sans image ni titre.
+- **Rien de la conversation n'est gardé.** Elle vit dans l'onglet (`sessionStorage`), et la base ne
+  compte que les questions du jour (`assistant_usage`, 60 par personne et par jour, jour de Paris,
+  `assistant_take_question()` en `security definer` ; purge à 31 jours). Le journal du serveur
+  n'écrit que la source du plan, les outils et la durée — jamais la question.
+- **Même fournisseur que S'entraîner** : Google Cloud, Vertex AI, multi-région `eu`,
+  `gemini-3.8-flash` (`ASSISTANT_MODEL` pour en changer), étiquettes `feature=assistant` pour la
+  facture. Un seul sous-traitant, un seul interrupteur : `PRACTICE_AI_PROVIDER=off` coupe les deux,
+  `fake` les rend jouables sans clé. Une école coupe l'assistant seul par `modules.assistant=false`.
+- **La bulle** : un rond de 56 px en bas à droite, au-dessus de la barre du bas sur téléphone ; un
+  panneau latéral (plein écran sur téléphone) avec quatre questions proposées selon la perspective,
+  la réponse qui s'écrit, « Réponses préparées par une IA, qui peut se tromper » sous le champ, et
+  « Nouvelle conversation ». Absente des écrans dont elle couvrirait les commandes (conversation,
+  composeurs, pointage). La page et le défilement au clavier lui laissent la place (SC 2.4.11).
+- **Le poids** : la coquille ne lit que `assistantMode()` (`lib/ai/config.ts`) ; le SDK Google ne vit
+  que dans la fonction de `/api/assistant` (règle de l'ADR-0066). Cette route fixe `maxDuration` et
+  reçoit donc sa propre fonction Vercel : elle est dans `outputFileTracingIncludes`, sans quoi
+  l'outil d'aide lèverait `ENOENT` en production (correctif #28).
+
+### Écartés
+
+- **Des outils « tout-puissants » sous la clé de service**, filtrés ensuite par le code : la
+  moindre erreur de filtre ferait parler l'assistant d'un autre enfant.
+- **Le « function calling » natif** : il demande un aller-retour par outil et dépend d'un format que
+  Vertex a déjà refusé une fois ; deux appels suffisent pour des questions de cette taille.
+- **Agir pour la personne** (déclarer une absence, envoyer un message) : chaque geste a son écran,
+  ses contrôles et son journal ; l'assistant donne le lien.
+
+### Ce qui reste
+
+Mesurer en production la durée d'une réponse et son coût ; regarder les plans que le modèle écrit
+pour de vraies questions et enrichir `rulePlan` des formulations qui reviennent.
+
+## ADR-0089 — Un devoir se déplie sur place, et dit ce qu'on peut en faire
+
+**Statut** : acceptée (2026-11-02) · **Contexte** : retour du porteur sur la session 37 — pour
+arriver à « S'entraîner », il fallait toucher le titre du devoir, ce que personne ne devine ; la
+petite flèche qui dépliait la consigne sautait d'un coup (un `<details>` natif) et n'apportait
+presque rien.
+
+### La décision
+
+- **Toute la ligne déplie**, titre et matière compris (`EntryDisclosure`) : un bouton dans un
+  `<h3>`, `aria-expanded`, le panneau `inert` quand il est replié — le motif accordéon de WAI-ARIA.
+  Replié, la ligne montre le début de la consigne ; déplié, cet extrait s'efface au profit du texte
+  entier.
+- **L'animation porte la hauteur** : `grid-template-rows` de `0fr` à `1fr` en 220 ms à
+  l'ouverture, 150 ms à la fermeture (la sortie plus vive que l'entrée), avec l'opacité ;
+  interruptible, et rien sous `prefers-reduced-motion`.
+- **Déplié, le devoir dit ce qu'on peut en faire**, en deux boutons et une phrase : **Imprimer**
+  (la fiche s'ouvre et lance l'impression elle-même une fois ses images chargées, `?imprimer=1`
+  retiré de l'adresse aussitôt) et **Exercices en plus** (✨, « Bêta » pour l'hébreu et le kodesh),
+  sous-titré « Préparés par l'IA à partir de ce devoir, à faire à l'écran ou à imprimer. », qui
+  mène au niveau « Pareil » ; puis « Voir la fiche → ». Les exercices ne sont offerts que là où ils existent
+  (classe ouverte à l'entraînement, école qui ne l'a pas coupé, devoir publié).
+- **Le rond « Fait » ne bouge pas** : le porteur l'aime tel qu'il est.
+- Après la publication d'un devoir, l'enseignante atterrit sur **le jour de son échéance**, le
+  devoir déplié (`?jour=…#devoir-…`) — la vue Jour s'ouvrait sur aujourd'hui, et un devoir pour
+  demain n'y figurait pas.

@@ -4,18 +4,21 @@ import type { ReactNode } from "react";
 
 import { SchoolMark } from "@/components/domain/school-logo";
 import { AccountMenu } from "@/components/layouts/account-menu";
+import { AssistantBubble } from "@/components/layouts/assistant-bubble";
 import { BottomNav, TopNav } from "@/components/layouts/bottom-nav";
 import { HelpIndexProvider } from "@/components/layouts/help-hint";
 import { NotificationBell } from "@/components/layouts/notification-bell";
 import { PerspectiveSwitcher } from "@/components/layouts/perspective-switcher";
 import { InstallPrompt } from "@/components/layouts/pwa";
 import { SearchBox } from "@/components/layouts/search-box";
+import { assistantMode } from "@/lib/ai/config";
 import { isTestSchool } from "@/lib/auth/school-choice";
 import { type CurrentUser, displayName, initials } from "@/lib/auth/session";
 import { helpIndexFor } from "@/lib/help/articles";
 import { helpRolesFor } from "@/lib/help/roles";
 import { canUseMessaging, rolesIn } from "@/lib/permissions";
 import { appName } from "@/lib/env";
+import { cn } from "@/lib/utils";
 import { getUnreadMessageCount } from "@/server/queries/messaging";
 
 /**
@@ -33,9 +36,10 @@ import { getUnreadMessageCount } from "@/server/queries/messaging";
  * avatar under the 44 px touch target the project mandates.
  */
 export async function AppShell({ user, children }: { user: CurrentUser; children: ReactNode }) {
-  const [tc, tt, unreadMessages, helpIndex] = await Promise.all([
+  const [tc, tt, ta, unreadMessages, helpIndex] = await Promise.all([
     getTranslations("common"),
     getTranslations("testSchool"),
+    getTranslations("assistant"),
     getUnreadMessageCount(),
     helpIndexFor(helpRolesFor(user.roles)),
   ]);
@@ -50,6 +54,23 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
   const onlyClass =
     perspective !== "admin" && user.classIds?.length === 1 ? user.classIds[0] : null;
   const classHref = onlyClass ? `/classes/${onlyClass}/cahier` : "/classes";
+  // The assistant (ADR-0088): offered when the provider is configured and the school has not
+  // switched it off; the first questions suggested are those of the perspective in use.
+  const modules = (user.school?.modules ?? {}) as Record<string, unknown>;
+  const showAssistant =
+    Boolean(user.school) && assistantMode() !== null && modules.assistant !== false;
+  const readOnly = !canMessage && isParent;
+  const suggestions =
+    perspective === "admin"
+      ? ["absencesToday", "lastAnnouncements", "nextEvents", "newFamily"]
+      : perspective === "teacher"
+        ? ["weekPlan", "publishHomework", "menuWeek", "lastAnnouncements"]
+        : [
+            "homeworkTomorrow",
+            "menuWeek",
+            "nextEvents",
+            readOnly ? "lastAnnouncements" : "reportAbsence",
+          ];
   const showStyleGuide =
     process.env.NODE_ENV !== "production" || process.env.VERCEL_ENV === "preview";
   // The layout is rendered again on a full load and after a mutation, never on a tab change:
@@ -119,7 +140,11 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
       <main
         id="contenu"
         tabIndex={-1}
-        className="mx-auto w-full max-w-[110rem] flex-1 px-4 pt-6 pb-[calc(var(--nav-h)+1.5rem)] outline-none md:px-6 lg:px-8 lg:pt-8 lg:pb-14 2xl:px-12"
+        className={cn(
+          "mx-auto w-full max-w-[110rem] flex-1 px-4 pt-6 pb-[calc(var(--nav-h)+1.5rem)] outline-none md:px-6 lg:px-8 lg:pt-8 lg:pb-14 2xl:px-12",
+          // The end of the page scrolls clear of the assistant's bubble.
+          showAssistant && "pb-[calc(var(--nav-h)+5.5rem)] lg:pb-28",
+        )}
       >
         {/* The index the "?" of every page header looks the current path up in. */}
         <HelpIndexProvider articles={helpIndex}>{children}</HelpIndexProvider>
@@ -131,6 +156,9 @@ export async function AppShell({ user, children }: { user: CurrentUser; children
         classHref={classHref}
         refreshKey={renderedAt}
       />
+      {showAssistant && (
+        <AssistantBubble suggestions={suggestions.map((key) => ta(`suggestions.${key}`))} />
+      )}
       <InstallPrompt />
     </div>
   );

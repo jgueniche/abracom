@@ -11,6 +11,7 @@ import {
 import type { Lang } from "@/lib/practice/schema";
 
 import { type PracticeProvider, ProviderError, type SheetRequest } from "./types";
+import { spokenText } from "./speech";
 import { pcmToWav, sampleRateOf } from "./wav";
 
 /**
@@ -156,17 +157,12 @@ export function vertexProvider(config: VertexConfig): PracticeProvider {
       }
     },
 
-    async speak(text: string, lang: Lang, style: "text" | "word") {
-      // Gemini-TTS takes its direction in the prompt itself, before a colon.
-      const direction =
-        style === "word"
-          ? "Say this word once, slowly and very clearly, for a young child learning it"
-          : "Read this aloud for a young child: slowly, warmly and clearly, with the natural rhythm of a poem or a story";
+    async speak(text: string, lang: Lang) {
       try {
         const response = await call(() =>
           ai.models.generateContent({
             model: config.ttsModel,
-            contents: [{ role: "user", parts: [{ text: `${direction}:\n${text}` }] }],
+            contents: [{ role: "user", parts: [{ text: spokenText(text) }] }],
             config: {
               responseModalities: ["AUDIO"],
               speechConfig: {

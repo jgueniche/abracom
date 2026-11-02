@@ -81,6 +81,9 @@ export async function runNotificationJob(
     if (events.error) throw events.error;
     if (birthdays.error) throw birthdays.error;
     if (purge.error) throw purge.error;
+    // The assistant's daily counts (ADR-0088): a month is enough. Never a reason to fail the job.
+    const usage = await admin.rpc("purge_assistant_usage");
+    if (usage.error) console.warn("[jobs] purge_assistant_usage:", usage.error.message);
     report.processed = (events.data ?? 0) + (birthdays.data ?? 0);
     return report;
   }

@@ -30,6 +30,8 @@ const serverEnvSchema = z.object({
   PRACTICE_IMAGE_MODEL: z.string().trim().min(1).optional(),
   PRACTICE_TTS_MODEL: z.string().trim().min(1).optional(),
   PRACTICE_TTS_VOICE: z.string().trim().min(1).optional(),
+  /** The assistant's model (ADR-0088); by default the one that writes the practice sheets. */
+  ASSISTANT_MODEL: z.string().trim().min(1).optional(),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
@@ -51,5 +53,6 @@ export function getServerEnv(): ServerEnv {
     PRACTICE_IMAGE_MODEL: process.env.PRACTICE_IMAGE_MODEL,
     PRACTICE_TTS_MODEL: process.env.PRACTICE_TTS_MODEL,
     PRACTICE_TTS_VOICE: process.env.PRACTICE_TTS_VOICE,
+    ASSISTANT_MODEL: process.env.ASSISTANT_MODEL,
   });
 }

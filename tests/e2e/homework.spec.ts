@@ -123,6 +123,9 @@ test.describe("the homework space", () => {
         teacher.waitForURL((url) => url.pathname === "/devoirs", { timeout: 30_000 }),
         teacher.getByRole("button", { name: "Publier le devoir" }).click(),
       ]);
+      // Publishing lands on the day of the homework, whatever the hour (session 38).
+      const day = new URL(teacher.url()).searchParams.get("jour");
+      expect(day).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       const published = teacher.locator("article", { hasText: title });
       await expect(published).toBeVisible();
       await expect(
@@ -134,7 +137,7 @@ test.describe("the homework space", () => {
       // ── a parent of the class ─────────────────────────────────────────────
       const parent = await browser.newPage();
       await signIn(parent, "parent-1@demo.local");
-      await parent.goto("/devoirs");
+      await parent.goto(`/devoirs?jour=${day}`);
       const entry = parent.locator("article", { hasText: title });
       await expect(entry).toBeVisible();
 
@@ -163,11 +166,10 @@ test.describe("the homework space", () => {
       await parent.keyboard.press("Escape");
       await expect(viewer).toBeHidden();
 
-      // the homework's own page, printable
-      await parent
-        .locator("article", { hasText: title })
-        .getByRole("link", { name: title })
-        .click();
+      // the homework unfolds in place, then leads to its own page, printable (session 38)
+      const unfolded = parent.locator("article", { hasText: title });
+      await unfolded.getByRole("button", { expanded: false }).click();
+      await unfolded.getByRole("link", { name: "Voir la fiche" }).click();
       await expect(parent.getByRole("heading", { level: 1, name: title })).toBeVisible();
       await expect(parent.getByRole("button", { name: "Imprimer" })).toBeVisible();
       await parent.close();

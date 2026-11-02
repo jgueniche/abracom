@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { AutoPrint } from "@/components/domain/homework/auto-print";
 import { DoneToggle } from "@/components/domain/homework/done-toggle";
 import { HomeworkPages } from "@/components/domain/homework/homework-pages";
 import { HomeworkProgress } from "@/components/domain/homework/progress";
@@ -40,8 +41,19 @@ export async function generateMetadata({
  * and « Imprimer » prints them one per sheet, under the title and the date: the page of the
  * revision book a child left at school comes out of the family printer as a page.
  */
-export default async function HomeworkPage({ params }: { params: Promise<{ postId: string }> }) {
-  const [{ postId }, user] = await Promise.all([params, requireCurrentUser()]);
+export default async function HomeworkPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ postId: string }>;
+  /** `?imprimer=1`: « Imprimer » from the diary — the page prints itself once loaded. */
+  searchParams: Promise<{ imprimer?: string }>;
+}) {
+  const [{ postId }, { imprimer }, user] = await Promise.all([
+    params,
+    searchParams,
+    requireCurrentUser(),
+  ]);
   if (!/^[0-9a-f-]{36}$/i.test(postId)) notFound();
   const [t, tPractice, format, homework, children] = await Promise.all([
     getTranslations("diary"),
@@ -81,6 +93,7 @@ export default async function HomeworkPage({ params }: { params: Promise<{ postI
 
   return (
     <Column width="text">
+      {imprimer === "1" && <AutoPrint />}
       <Link
         href={`/devoirs?semaine=${mondayOf(homework.due_on)}#devoir-${homework.id}`}
         className="no-print mb-3 -ml-1 inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-sm font-medium text-foreground/75 hover:text-foreground"

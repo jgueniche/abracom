@@ -728,7 +728,34 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   sans `content/help`), la clé Google était collée incomplète (diagnostic sans secret), **Vertex
   refuse `responseJsonSchema`** (repli sur le schéma dans le prompt, refus journalisés), les polices
   Google faisaient échouer un build sur deux (polices dans le dépôt), et **le modèle avait inventé
-  la poésie à apprendre** (interdit par le prompt). **Session suivante** : l'assistant en bulle.
+  la poésie à apprendre** (interdit par le prompt).
+- **Session 38 — l'assistant en bulle, et un devoir qui se déplie** (ADR-0088, ADR-0089), jouée
+  sur une pile Supabase réelle avec le fournisseur factice. (1) **Le cahier de texte** : toucher une
+  ligne de devoir la **déplie sur place** — la consigne entière, la hauteur animée en 220 ms (150 ms
+  au repli, rien sous `prefers-reduced-motion`), motif accordéon WAI-ARIA — et dit ce qu'on peut en
+  faire : **Imprimer** (la fiche lance l'impression une fois ses pages chargées), **Exercices en
+  plus** (« préparés par l'IA à partir de ce devoir », bêta pour l'hébreu et le kodesh) et « Voir la
+  fiche » ; le rond « Fait » ne bouge pas. Après publication, l'enseignante atterrit sur le jour du
+  devoir, déplié. (2) **L'assistant** : une bulle en bas à droite ouvre un panneau où l'on pose une
+  question avec ses mots ; sept outils **en lecture seule, sous la session du lecteur** (devoirs,
+  agenda, menus, annonces, absences sans motif, aide, recherche sans les messages) — les RLS
+  décident comme à l'écran, donc un parent ne voit que ses enfants ; un premier appel choisit les
+  outils (repli sur un plan tiré des mots de la question), le second répond **en flux** ; les liens
+  ne sont dessinés que s'ils figurent dans la liste remise par le serveur (pas de messagerie pour un
+  responsable en lecture seule). Rien de la conversation n'est conservé (onglet du navigateur) ; la
+  base compte 60 questions par personne et par jour (`assistant_usage`, purge à 31 jours). Même
+  fournisseur que S'entraîner (Vertex AI `eu`), `modules.assistant=false` pour couper. **Trouvé en
+  regardant** : un titre en hébreu renversait la date posée à côté (bidi, isolé par `<bdi>`) ; une
+  session expirée aurait fait lire la page de connexion comme une réponse ; le bouton de fermeture
+  du panneau latéral partagé ne faisait que 28 px (44 désormais). Vérifié : `pnpm check` (263 tests), `pnpm build`
+  (le SDK Google n'est que dans la fonction `/api/assistant`), **649 assertions pgTAP** sur les deux
+  chemins, 60 e2e sur le build de production (dont 4 nouveaux, répétés trois fois), axe à
+  0 violation sérieuse, panneau ouvert, à 390 et 1 440 px en clair et en sombre. **La migration
+  part avec « Deploy database » à la fusion** ; avant, `/api/assistant` répond « indisponible ».
+  **Signalé par le porteur sur S'entraîner** : la voix d'une poésie française commençait par une
+  phrase en anglais — la direction de lecture placée devant le texte (« Read this aloud for a young
+  child… »), que Gemini-TTS a lue. La voix ne reçoit plus que le texte de l'exercice, dans sa
+  langue ; les feuilles déjà préparées gardent l'ancienne voix jusqu'à ce que l'équipe les jette.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur
   `abracom.vercel.app`, donc le bundle navigateur porte bien la configuration Supabase — c'est le seul
   écran qui utilise le client Supabase du navigateur, et donc le seul test qui tranche. Un premier

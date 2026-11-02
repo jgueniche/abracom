@@ -104,6 +104,8 @@ const nextConfig: NextConfig = {
     // A route with its own `maxDuration` gets a function of its own on Vercel, outside the group
     // that carries the articles above: without this line its header threw ENOENT (ADR-0087).
     "/devoirs/[postId]/entrainement/[level]": ["./content/help/**/*"],
+    // The assistant's « help » tool reads the same articles (ADR-0088).
+    "/api/assistant": ["./content/help/**/*"],
   },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];

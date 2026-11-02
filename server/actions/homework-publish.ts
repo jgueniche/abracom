@@ -5,7 +5,6 @@ import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
 import { requireCurrentUser } from "@/lib/auth/session";
-import { mondayOf } from "@/lib/calendar/dates";
 import { PAGE_IMAGE_EDGE } from "@/lib/media";
 import { isSchoolStaff } from "@/lib/permissions";
 import { BUCKETS } from "@/lib/storage";
@@ -243,11 +242,13 @@ export async function saveHomework(
     for (const id of input.alsoFor) revalidatePath(`/classes/${id}`, "layout");
     revalidatePath("/accueil");
 
-    const week = mondayOf(input.dueOn);
+    // The day of the homework, not only its week: the diary opens on one day (ADR-0083), and a
+    // homework set in the morning for tomorrow landed on today's page, out of sight. The anchor
+    // unfolds it (session 38).
     const href =
       input.returnTo === "devoirs"
-        ? `/devoirs?semaine=${week}#devoir-${input.postId}`
-        : `/classes/${input.classId}/devoirs?semaine=${week}#devoir-${input.postId}`;
+        ? `/devoirs?jour=${input.dueOn}#devoir-${input.postId}`
+        : `/classes/${input.classId}/devoirs?jour=${input.dueOn}#devoir-${input.postId}`;
     const message = existing
       ? t("updated")
       : input.publish

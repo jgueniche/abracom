@@ -127,3 +127,29 @@ export async function getPracticeSheet(
 export function isStalePending(row: { status: string; updated_at: string }, now = Date.now()) {
   return row.status === "pending" && now - new Date(row.updated_at).getTime() > STALE_PENDING_MS;
 }
+
+/**
+ * The classes, among these, whose homework offers « S'entraîner » — for the diary, which shows
+ * the three levels under each homework it unfolds. One question for the whole week, asked beside
+ * the homework itself; tolerant like the rest (no provider, no column: an empty set).
+ */
+export async function getPracticeClassIds(
+  user: CurrentUser,
+  classIds: readonly string[],
+): Promise<Set<string>> {
+  if (!practiceMode() || classIds.length === 0) return new Set();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("classes")
+    .select("id, school_id, practice_enabled")
+    .in("id", [...classIds]);
+  if (error || !data) {
+    if (error) console.warn("[practice] classes:", error.code, error.message);
+    return new Set();
+  }
+  return new Set(
+    data
+      .filter((cls) => cls.practice_enabled && schoolAllowsPractice(user, cls.school_id))
+      .map((cls) => cls.id),
+  );
+}
