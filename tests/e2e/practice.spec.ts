@@ -85,7 +85,8 @@ test.describe("practice sheets", () => {
       const block = page.locator("#entrainement");
       await expect(block.getByRole("heading", { name: "S'entraîner" })).toBeVisible();
       await block.getByRole("link", { name: level.label }).click();
-      await expect(page).toHaveURL(new RegExp(`/entrainement/${level.slug}$`));
+      // The first visit compiles the route on a dev server: more than the default 5 s.
+      await expect(page).toHaveURL(new RegExp(`/entrainement/${level.slug}$`), { timeout: 30_000 });
 
       // Opening the page is the request; the sheet arrives on its own.
       await expect(
