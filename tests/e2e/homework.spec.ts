@@ -164,9 +164,9 @@ test.describe("the homework space", () => {
       await expect(viewer).toBeHidden();
 
       // the homework unfolds in place, then leads to its own page, printable (session 38)
-      const entry = parent.locator("article", { hasText: title });
-      await entry.getByRole("button", { name: new RegExp(title) }).click();
-      await entry.getByRole("link", { name: "Voir la fiche" }).click();
+      const unfolded = parent.locator("article", { hasText: title });
+      await unfolded.getByRole("button", { name: new RegExp(title) }).click();
+      await unfolded.getByRole("link", { name: "Voir la fiche" }).click();
       await expect(parent.getByRole("heading", { level: 1, name: title })).toBeVisible();
       await expect(parent.getByRole("button", { name: "Imprimer" })).toBeVisible();
       await parent.close();
