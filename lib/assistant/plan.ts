@@ -72,7 +72,10 @@ export function rulePlan(question: string, reader: ReaderSummary): Plan {
   const calls: Plan["calls"] = [];
   const tomorrow = addDays(today, 1);
 
-  const week = /prevu|programme|cette semaine/.test(q);
+  // « Cette semaine » alone asks for the week's plan; « la cantine cette semaine » does not.
+  const week =
+    /prevu|programme|cette semaine/.test(q) &&
+    !/cantine|menu|manger|dejeuner|repas|gouter|absen|retard|annonce|circulaire/.test(q);
   if (/devoir|lecon|exercice|poesie|cahier de texte|a faire|reciter|apprendre/.test(q) || week) {
     const range = /demain/.test(q)
       ? { from: tomorrow, to: tomorrow }

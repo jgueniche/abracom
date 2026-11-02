@@ -761,7 +761,10 @@ durées de conservation dans `docs/RGPD.md` (session 14).
   15 s. Le journal découpe désormais chaque réponse (`context_ms`, `plan_ms`, `tools_ms`,
   `first_ms`) : « minimal » est refusé par Vertex pour ce modèle, et le vrai poste était le choix
   des outils par le modèle (1,6 à 3,4 s), désormais sauté quand les mots de la question suffisent
-  (`quickPlan`, les neuf questions proposées comprises). Choix du porteur : une feuille
+  (`quickPlan`, les neuf questions proposées comprises). Quand Google tarde (dix minutes de réponses
+  à 40 s puis en erreur, `504` côté Google, aucun incident affiché), l'assistant ne fait plus
+  attendre une minute : 8 s pour le plan, 10 s pour le premier mot avec une nouvelle tentative, puis
+  **une réponse sans le modèle** — les résultats des outils en listes avec leurs liens. Choix du porteur : une feuille
   d'**anglais** parle anglais à l'enfant (titre, consignes, contenu), le conseil au parent reste en
   français.
 - **Production saine** (vérifiée par le porteur le 2026-09-10) : une conversation s'ouvre sur

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import fr from "@/messages/fr.json";
 
+import { fallbackAnswer } from "@/lib/assistant/fallback";
 import { allowedLink, planSchema, quickPlan, rulePlan } from "@/lib/assistant/plan";
 import { ANSWER_SYSTEM, answerPrompt, plannerPrompt, readerBrief } from "@/lib/assistant/prompt";
 
@@ -171,5 +172,53 @@ describe("prompts", () => {
     expect(ANSWER_SYSTEM).toMatch(/UNIQUEMENT des résultats d'outils/);
     expect(ANSWER_SYSTEM).toMatch(/Tu ne fais rien à la place de la personne/);
     expect(ANSWER_SYSTEM).toMatch(/peut se tromper/);
+  });
+});
+
+describe("fallbackAnswer — an answer without the model", () => {
+  const labels = fr.assistant.fallback;
+
+  it("reads the tools back as lists, each title with its link", () => {
+    const text = fallbackAnswer(
+      [
+        {
+          tool: "homework",
+          data: {
+            items: [
+              {
+                title: "Fiche d'additions n° 3",
+                subject: "Mathématiques",
+                due_on: "2026-11-03",
+                link: "/devoirs/abc",
+              },
+            ],
+          },
+        },
+        {
+          tool: "menus",
+          data: { days: [{ day: "lundi", main_course: "Omelette", side: "Ratatouille" }] },
+        },
+      ],
+      labels,
+    );
+    expect(text).toContain(
+      "Les devoirs :\n- [Fiche d'additions n° 3](/devoirs/abc) — Mathématiques — mardi 3 novembre",
+    );
+    expect(text).toContain("Au menu :\n- lundi : Omelette, Ratatouille");
+  });
+
+  it("never draws a link that is not a path inside Kesher", () => {
+    const text = fallbackAnswer(
+      [{ tool: "help", data: { items: [{ title: "Piège", link: "https://example.com" }] } }],
+      labels,
+    );
+    expect(text).toContain("- Piège");
+    expect(text).not.toContain("example.com");
+  });
+
+  it("says when nothing was found", () => {
+    expect(fallbackAnswer([{ tool: "homework", data: { items: [] } }], labels)).toBe(
+      labels.nothing,
+    );
   });
 });
