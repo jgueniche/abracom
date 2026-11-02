@@ -2810,6 +2810,27 @@ sur le disque. La route est ajoutée à `outputFileTracingIncludes` (`next.confi
 la trace du build (50 articles sur 50). Toute route future qui change `maxDuration`, `memory` ou sa
 région doit y figurer aussi.
 
+**Mise en service, le soir même** (compte parent 19, école test, production). Quatre défauts,
+aucun visible en local :
+
+- la clé du compte de service collée dans Vercel était incomplète (1 675 caractères, la seule clé
+  privée ou une copie coupée) : la lecture accepte désormais toutes les formes de collage du
+  fichier, et le journal décrit ce qui ne va pas **sans écrire un caractère du secret** ;
+- **Vertex refuse `responseJsonSchema`** tel que nous l'écrivons (`400 INVALID_ARGUMENT`, sans
+  dire pourquoi) : la demande essaie le schéma dans son dialecte le plus simple (`anyOf`, sans
+  `additionalProperties`), puis le schéma écrit dans le prompt, qui passe ; chaque refus est au
+  journal, et `parseSheet` vérifie la réponse dans tous les cas ;
+- `next/font/google` faisait échouer un build sur deux (Google répond pour Playwrite par une
+  adresse sans extension) : les deux polices de la feuille sont dans le dépôt (OFL) ;
+- **un texte à apprendre inventé** : pour « Savoir réciter la première strophe sans le cahier »,
+  le modèle a écrit une poésie de son cru et l'a présentée comme celle du devoir. Le prompt
+  l'interdit désormais — un texte à apprendre ne s'écrit que s'il figure dans la consigne ou les
+  pages jointes ; sinon, exercices autour du thème, méthode pour apprendre, et le conseil au
+  parent dit que le texte est dans le cahier.
+
+Première feuille réelle : écrite par `gemini-3.8-flash` en 16 s environ, illustration WebP de
+61 Ko, cinq voix (la poésie et quatre mots), prénom posé par l'application.
+
 ### Ce qui reste
 
 L'assistant en bulle (session suivante) ; une vraie session sur Google Cloud pour mesurer la durée

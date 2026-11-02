@@ -5,7 +5,7 @@ routes: [/devoirs/[postId]/entrainement/[level]]
 topic: daily
 keywords: [s'entraîner, entraînement, exercices, IA, intelligence artificielle, feuille, imprimer, corrigé, poésie, écouter, prononciation, hébreu, bêta]
 since: 37
-reviewed: 2026-11-01
+reviewed: 2026-11-02
 ---
 
 Sous chaque devoir, le bloc **S'entraîner** propose une **feuille d'exercices de plus**, préparée par une intelligence artificielle à partir du devoir : même notion, même niveau de classe, à faire **à l'écran ou imprimée**. Trois portes : **Plus facile**, **Pareil**, **Pour aller plus loin**. On y arrive aussi par le lien « S'entraîner » en haut de la fiche du devoir.
@@ -17,6 +17,8 @@ Sous chaque devoir, le bloc **S'entraîner** propose une **feuille d'exercices d
 **Imprimer** sort la feuille sans les boutons, avec le prénom de l'enfant en haut. Les cases deviennent des cases à remplir au crayon, les mots à recopier sont posés sur des **lignes Seyès** en écriture attachée, et un **QR code** à côté de chaque exercice qui se lit à voix haute ramène à la voix, depuis le téléphone. **Afficher le corrigé** le déplie en bas de la page — et, imprimé, sur une feuille à part, pour que l'enfant ne l'ait pas sous les yeux.
 
 **Ce qui est envoyé à l'IA** : le devoir (titre, consigne, matière, niveau) et les pages jointes par l'enseignant·e. **Aucun nom d'enfant ni de famille** : le prénom en haut de la feuille est écrit par l'application, après coup. Les calculs du corrigé sont faits par l'application, pas par l'IA. Le service utilisé est Google Cloud (Gemini), en Europe uniquement.
+
+**Une poésie ou une leçon à apprendre** n'est recopiée sur la feuille que si l'enseignant·e l'a écrite dans le devoir ou jointe en page. Si elle n'est que dans le cahier, l'IA ne la réécrit jamais — un texte inventé serait appris de travers : la feuille travaille alors le thème et la façon de l'apprendre, et le conseil aux parents le rappelle.
 
 **Hébreu et kodesh sont en bêta** : la feuille le dit en tête. L'IA se trompe encore sur le nikoud et ne connaît pas les textes aussi bien qu'un enseignant — relisez la feuille avant de la donner.
 
