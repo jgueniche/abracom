@@ -2831,6 +2831,11 @@ aucun visible en local :
 Première feuille réelle : écrite par `gemini-3.8-flash` en 16 s environ, illustration WebP de
 61 Ko, cinq voix (la poésie et quatre mots), prénom posé par l'application.
 
+**Langue de la feuille, choix du porteur (2026-11-02)** : un devoir en français donne une feuille
+entièrement en français ; un devoir d'**anglais**, une feuille qui parle anglais à l'enfant — titre,
+petite histoire, consignes, contenu, dans un anglais simple —, seul le conseil au parent restant en
+français. L'hébreu garde ses consignes en français.
+
 **Correctif du 2026-11-02, signalé par le porteur** : la voix d'une poésie française commençait
 par une phrase en anglais. Pour régler le ton, le texte était précédé d'une direction de lecture
 (« Read this aloud for a young child: slowly, warmly… ») ; Gemini-TTS l'a lue à voix haute. Une
@@ -2898,6 +2903,16 @@ secrétariat toute l'école.
   Vertex a déjà refusé une fois ; deux appels suffisent pour des questions de cette taille.
 - **Agir pour la personne** (déclarer une absence, envoyer un message) : chaque geste a son écran,
   ses contrôles et son journal ; l'assistant donne le lien.
+
+### Mesuré en production, et corrigé (2026-11-02)
+
+Premières questions réelles (compte parent 19, `gemini-3.8-flash`) : réponses justes, limitées aux
+deux enfants du compte, liens valides — mais les premiers mots arrivaient en **3,6 à 15 s**. La
+fonction tourne bien à Paris (`x-vercel-id` : `…::cdg1::…` ; le champ `region` des journaux Vercel
+est le point d'entrée du réseau, pas la fonction). Le temps passe dans les deux appels au modèle,
+réglés sur une réflexion « low ». Ils passent à **« minimal »**, avec un repli automatique sur « low »
+si Vertex le refuse pour ce modèle (retenu pour la vie de l'instance), et le journal découpe chaque
+réponse : `context_ms`, `plan_ms`, `tools_ms`, `first_ms`, `ms` — jamais la question.
 
 ### Ce qui reste
 

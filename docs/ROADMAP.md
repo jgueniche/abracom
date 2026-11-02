@@ -1332,6 +1332,10 @@ trouvable depuis le cahier de texte, avec une ouverture du devoir plus belle et 
       responsable en lecture seule sans messagerie, requêtes refusées).
 - [x] Signalé par le porteur : la voix d'une poésie française commençait par la direction de
       lecture, en anglais. La voix ne reçoit plus que le texte de l'exercice (ADR-0087, correctif).
+- [x] En production (#33) : réponses justes et limitées aux enfants du compte, mais premiers mots en
+      3,6 à 15 s. Réflexion « minimal » avec repli sur « low », durée de chaque étape au journal.
+- [x] Choix du porteur : une feuille d'anglais parle anglais à l'enfant (titre, consignes, contenu),
+      le conseil au parent reste en français.
 - [ ] **Au porteur** : poser de vraies questions en production et regarder la facture Google
       (étiquette `feature=assistant`).
 
