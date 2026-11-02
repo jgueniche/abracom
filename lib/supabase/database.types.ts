@@ -589,6 +589,24 @@ export type Database = {
           },
         ]
       }
+      assistant_usage: {
+        Row: {
+          day: string
+          questions: number
+          user_id: string
+        }
+        Insert: {
+          day: string
+          questions?: number
+          user_id: string
+        }
+        Update: {
+          day?: string
+          questions?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       attendance_list_managers: {
         Row: {
           added_by: string | null
@@ -3420,6 +3438,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      assistant_take_question: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       attendance_can_manage: {
         Args: { list_: string; uid?: string }
         Returns: boolean
@@ -4035,6 +4057,10 @@ export type Database = {
       prune_class_thread_members: { Args: { class_: string }; Returns: number }
       publish_assessments: {
         Args: { class_: string; period: string }
+        Returns: number
+      }
+      purge_assistant_usage: {
+        Args: Record<PropertyKey, never>
         Returns: number
       }
       purge_expired_data: { Args: Record<PropertyKey, never>; Returns: Json }
